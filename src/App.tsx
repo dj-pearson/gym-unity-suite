@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import AuthPage from "./pages/AuthPage";
+import MembersPage from "./pages/MembersPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -74,10 +75,7 @@ const App = () => (
             {/* Placeholder routes for future pages */}
             <Route path="/members" element={
               <ProtectedRoute>
-                <div className="text-center py-8">
-                  <h1 className="text-2xl font-bold mb-4">Members Management</h1>
-                  <p className="text-muted-foreground">Coming soon...</p>
-                </div>
+                <MembersPage />
               </ProtectedRoute>
             } />
             

@@ -145,7 +145,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, organizationId?: string) => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -159,12 +159,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           description: error.message,
           variant: "destructive",
         });
-      } else {
-        toast({
-          title: "Check your email",
-          description: "We've sent you a confirmation link.",
-        });
+        return { error };
       }
+
+      // Set up user profile after successful signup
+      if (data.user) {
+        try {
+          await supabase.functions.invoke('setup-new-user', {
+            body: {
+              userId: data.user.id,
+              email: data.user.email,
+              role: 'member'
+            }
+          });
+        } catch (setupError) {
+          console.error('Profile setup error:', setupError);
+          // Don't fail the signup if profile setup fails
+        }
+      }
+      
+      toast({
+        title: "Check your email",
+        description: "We've sent you a confirmation link.",
+      });
       
       return { error };
     } catch (error) {
