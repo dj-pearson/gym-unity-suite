@@ -12,7 +12,8 @@ import {
   Dumbbell,
   UserCheck,
   BarChart3,
-  Store
+  Store,
+  Phone
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -23,6 +24,7 @@ interface DashboardLayoutProps {
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Members', href: '/members', icon: Users },
+  { name: 'CRM', href: '/crm', icon: Phone },
   { name: 'Classes', href: '/classes', icon: Calendar },
   { name: 'Check-ins', href: '/checkins', icon: UserCheck },
   { name: 'Billing', href: '/billing', icon: CreditCard },

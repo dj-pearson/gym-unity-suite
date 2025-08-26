@@ -204,6 +204,163 @@ export type Database = {
           },
         ]
       }
+      lead_activities: {
+        Row: {
+          activity_type: string
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          lead_id: string
+          next_action: string | null
+          outcome: string | null
+          scheduled_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          activity_type: string
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          lead_id: string
+          next_action?: string | null
+          outcome?: string | null
+          scheduled_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          activity_type?: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          lead_id?: string
+          next_action?: string | null
+          outcome?: string | null
+          scheduled_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_stages: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_closed: boolean | null
+          name: string
+          order_index: number
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_closed?: boolean | null
+          name: string
+          order_index: number
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_closed?: boolean | null
+          name?: string
+          order_index?: number
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          email: string
+          estimated_value: number | null
+          first_name: string | null
+          id: string
+          interest_level: string | null
+          last_contact_date: string | null
+          last_name: string | null
+          next_follow_up_date: string | null
+          notes: string | null
+          organization_id: string
+          phone: string | null
+          source: string | null
+          stage_id: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          email: string
+          estimated_value?: number | null
+          first_name?: string | null
+          id?: string
+          interest_level?: string | null
+          last_contact_date?: string | null
+          last_name?: string | null
+          next_follow_up_date?: string | null
+          notes?: string | null
+          organization_id: string
+          phone?: string | null
+          source?: string | null
+          stage_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          email?: string
+          estimated_value?: number | null
+          first_name?: string | null
+          id?: string
+          interest_level?: string | null
+          last_contact_date?: string | null
+          last_name?: string | null
+          next_follow_up_date?: string | null
+          notes?: string | null
+          organization_id?: string
+          phone?: string | null
+          source?: string | null
+          stage_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_stage_id_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "lead_stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           address: string | null

@@ -13,6 +13,7 @@ import ClassesPage from "./pages/ClassesPage";
 import CheckInsPage from "./pages/CheckInsPage";
 import BillingPage from "./pages/BillingPage";
 import ReportsPage from "./pages/ReportsPage";
+import { CRMPage } from "./pages/CRMPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -107,6 +108,12 @@ const App = () => (
             <Route path="/members" element={
               <ProtectedRoute>
                 <MembersPage />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/crm" element={
+              <ProtectedRoute>
+                <CRMPage />
               </ProtectedRoute>
             } />
             
