@@ -1,0 +1,152 @@
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuth } from '@/contexts/AuthContext';
+import { Loader2, Dumbbell } from 'lucide-react';
+
+export const LoginForm: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, signUp } = useAuth();
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    await signIn(email, password);
+    setIsLoading(false);
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      return;
+    }
+    
+    setIsLoading(true);
+    await signUp(email, password);
+    setIsLoading(false);
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-xl mb-4 shadow-glow">
+            <Dumbbell className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-gradient-hero mb-2">Gym Unity Suite</h1>
+          <p className="text-muted-foreground">
+            Complete gym management platform
+          </p>
+        </div>
+
+        <Card className="gym-card">
+          <CardHeader>
+            <CardTitle>Welcome Back</CardTitle>
+            <CardDescription>
+              Sign in to your account or create a new one to get started
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="signin" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="signin">Sign In</TabsTrigger>
+                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="signin" className="space-y-4">
+                <form onSubmit={handleSignIn} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-email">Email</Label>
+                    <Input
+                      id="signin-email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-password">Password</Label>
+                    <Input
+                      id="signin-password"
+                      type="password"
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-gradient-primary hover:opacity-90 transition-smooth"
+                    disabled={isLoading}
+                  >
+                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Sign In
+                  </Button>
+                </form>
+              </TabsContent>
+              
+              <TabsContent value="signup" className="space-y-4">
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email">Email</Label>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password">Password</Label>
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      placeholder="Create a password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirm Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      placeholder="Confirm your password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  {password !== confirmPassword && confirmPassword && (
+                    <p className="text-sm text-destructive">Passwords do not match</p>
+                  )}
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-gradient-secondary hover:opacity-90 transition-smooth"
+                    disabled={isLoading || password !== confirmPassword}
+                  >
+                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Create Account
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
