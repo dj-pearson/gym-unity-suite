@@ -20,7 +20,7 @@ serve(async (req) => {
 
     const { userId, email, role = "member" } = await req.json();
 
-    // Get the default organization (FitCore Gym)
+    // Get the default organization and location (FitCore Gym)
     const { data: organization, error: orgError } = await supabaseAdmin
       .from("organizations")
       .select("id")
@@ -35,6 +35,21 @@ serve(async (req) => {
       );
     }
 
+    // Get the default location for this organization
+    const { data: location, error: locationError } = await supabaseAdmin
+      .from("locations")
+      .select("id")
+      .eq("organization_id", organization.id)
+      .single();
+
+    if (locationError || !location) {
+      console.error("Location not found:", locationError);
+      return new Response(
+        JSON.stringify({ error: "Default location not found" }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Create profile for the new user
     const { data: profile, error: profileError } = await supabaseAdmin
       .from("profiles")
@@ -42,6 +57,7 @@ serve(async (req) => {
         id: userId,
         email: email,
         organization_id: organization.id,
+        location_id: location.id, // Assign to default location
         role: role,
         updated_at: new Date().toISOString(),
       });
