@@ -5,6 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { PERMISSIONS } from "@/hooks/usePermissions";
+
+// Pages
 import Dashboard from "./pages/Dashboard";
 import AuthPage from "./pages/AuthPage";
 import LandingPage from "./pages/LandingPage";
@@ -18,25 +22,6 @@ import { LeadsPage } from "./pages/LeadsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
-
-// Protected Route Component
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-lg text-muted-foreground">Loading...</div>
-      </div>
-    );
-  }
-  
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-  
-  return <DashboardLayout>{children}</DashboardLayout>;
-};
 
 // Public Route Component (shows landing page if not authenticated, redirects to dashboard if authenticated)
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
@@ -71,9 +56,11 @@ const HomeRoute = () => {
   
   if (user) {
     return (
-      <DashboardLayout>
-        <Dashboard />
-      </DashboardLayout>
+      <ProtectedRoute permission={PERMISSIONS.VIEW_DASHBOARD}>
+        <DashboardLayout>
+          <Dashboard />
+        </DashboardLayout>
+      </ProtectedRoute>
     );
   }
   
@@ -100,69 +87,88 @@ const App = () => (
             
             {/* Protected Routes */}
             <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
+              <ProtectedRoute permission={PERMISSIONS.VIEW_DASHBOARD}>
+                <DashboardLayout>
+                  <Dashboard />
+                </DashboardLayout>
               </ProtectedRoute>
             } />
             
-            {/* Placeholder routes for future pages */}
             <Route path="/members" element={
-              <ProtectedRoute>
-                <MembersPage />
+              <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
+                <DashboardLayout>
+                  <MembersPage />
+                </DashboardLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/crm" element={
-              <ProtectedRoute>
-                <CRMPage />
+              <ProtectedRoute permission={PERMISSIONS.VIEW_CRM}>
+                <DashboardLayout>
+                  <CRMPage />
+                </DashboardLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/leads" element={
-              <ProtectedRoute>
-                <LeadsPage />
+              <ProtectedRoute permission={PERMISSIONS.VIEW_CRM}>
+                <DashboardLayout>
+                  <LeadsPage />
+                </DashboardLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/classes" element={
-              <ProtectedRoute>
-                <ClassesPage />
+              <ProtectedRoute permission={PERMISSIONS.VIEW_CLASSES}>
+                <DashboardLayout>
+                  <ClassesPage />
+                </DashboardLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/checkins" element={
-              <ProtectedRoute>
-                <CheckInsPage />
+              <ProtectedRoute permission={PERMISSIONS.VIEW_CHECKINS}>
+                <DashboardLayout>
+                  <CheckInsPage />
+                </DashboardLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/billing" element={
-              <ProtectedRoute>
-                <BillingPage />
+              <ProtectedRoute permission={PERMISSIONS.VIEW_BILLING}>
+                <DashboardLayout>
+                  <BillingPage />
+                </DashboardLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/reports" element={
-              <ProtectedRoute>
-                <ReportsPage />
+              <ProtectedRoute permission={PERMISSIONS.VIEW_REPORTS}>
+                <DashboardLayout>
+                  <ReportsPage />
+                </DashboardLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/retail" element={
-              <ProtectedRoute>
-                <div className="text-center py-8">
-                  <h1 className="text-2xl font-bold mb-4">Retail & POS</h1>
-                  <p className="text-muted-foreground">Point of sale system coming soon...</p>
-                </div>
+              <ProtectedRoute permission={PERMISSIONS.VIEW_RETAIL}>
+                <DashboardLayout>
+                  <div className="text-center py-8">
+                    <h1 className="text-2xl font-bold mb-4">Retail & POS</h1>
+                    <p className="text-muted-foreground">Point of sale system coming soon...</p>
+                  </div>
+                </DashboardLayout>
               </ProtectedRoute>
             } />
             
             <Route path="/settings" element={
-              <ProtectedRoute>
-                <div className="text-center py-8">
-                  <h1 className="text-2xl font-bold mb-4">Settings</h1>
-                  <p className="text-muted-foreground">Organization settings coming soon...</p>
-                </div>
+              <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                <DashboardLayout>
+                  <div className="text-center py-8">
+                    <h1 className="text-2xl font-bold mb-4">Settings</h1>
+                    <p className="text-muted-foreground">Organization settings coming soon...</p>
+                  </div>
+                </DashboardLayout>
               </ProtectedRoute>
             } />
             

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePermissions, PERMISSIONS } from '@/hooks/usePermissions';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,47 +33,48 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-// Navigation structure organized by functional areas
+// Navigation structure organized by functional areas with permissions
 const navigationGroups = [
   {
     title: 'Overview',
     items: [
-      { name: 'Dashboard', href: '/', icon: LayoutDashboard }
+      { name: 'Dashboard', href: '/', icon: LayoutDashboard, permission: PERMISSIONS.VIEW_DASHBOARD }
     ]
   },
   {
     title: 'Sales & Marketing',
     items: [
-      { name: 'CRM', href: '/crm', icon: Phone },
-      { name: 'Leads Pipeline', href: '/leads', icon: TrendingUp } // Future implementation
+      { name: 'CRM', href: '/crm', icon: Phone, permission: PERMISSIONS.VIEW_CRM },
+      { name: 'Leads Pipeline', href: '/leads', icon: TrendingUp, permission: PERMISSIONS.VIEW_CRM }
     ]
   },
   {
     title: 'Operations',
     items: [
-      { name: 'Members', href: '/members', icon: Users },
-      { name: 'Classes', href: '/classes', icon: Calendar },
-      { name: 'Check-ins', href: '/checkins', icon: UserCheck }
+      { name: 'Members', href: '/members', icon: Users, permission: PERMISSIONS.VIEW_MEMBERS },
+      { name: 'Classes', href: '/classes', icon: Calendar, permission: PERMISSIONS.VIEW_CLASSES },
+      { name: 'Check-ins', href: '/checkins', icon: UserCheck, permission: PERMISSIONS.VIEW_CHECKINS }
     ]
   },
   {
     title: 'Business',
     items: [
-      { name: 'Billing', href: '/billing', icon: CreditCard },
-      { name: 'Reports', href: '/reports', icon: BarChart3 },
-      { name: 'Retail', href: '/retail', icon: Store }
+      { name: 'Billing', href: '/billing', icon: CreditCard, permission: PERMISSIONS.VIEW_BILLING },
+      { name: 'Reports', href: '/reports', icon: BarChart3, permission: PERMISSIONS.VIEW_REPORTS },
+      { name: 'Retail', href: '/retail', icon: Store, permission: PERMISSIONS.VIEW_RETAIL }
     ]
   },
   {
     title: 'Configuration',
     items: [
-      { name: 'Settings', href: '/settings', icon: Settings }
+      { name: 'Settings', href: '/settings', icon: Settings, permission: PERMISSIONS.VIEW_SETTINGS }
     ]
   }
 ];
 
 export function AppSidebar() {
   const { profile, organization, signOut } = useAuth();
+  const { hasPermission } = usePermissions();
   const { state } = useSidebar();
   const location = useLocation();
   const navigate = useNavigate();
@@ -117,8 +119,16 @@ export function AppSidebar() {
 
       <SidebarContent className="px-2 py-4">
         {navigationGroups.map((group) => {
+          // Filter items based on user permissions
+          const visibleItems = group.items.filter(item => 
+            item.permission ? hasPermission(item.permission) : true
+          );
+          
+          // Skip empty groups
+          if (visibleItems.length === 0) return null;
+          
           const isExpanded = expandedGroups.includes(group.title);
-          const hasActiveItem = group.items.some(item => isActive(item.href));
+          const hasActiveItem = visibleItems.some(item => isActive(item.href));
 
           return (
             <SidebarGroup key={group.title}>
@@ -147,7 +157,7 @@ export function AppSidebar() {
                 )}
               >
                 <SidebarMenu className="space-y-1">
-                  {group.items.map((item) => {
+                  {visibleItems.map((item) => {
                     const itemIsActive = isActive(item.href);
                     
                     return (
