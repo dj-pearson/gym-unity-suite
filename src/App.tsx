@@ -14,6 +14,7 @@ import CheckInsPage from "./pages/CheckInsPage";
 import BillingPage from "./pages/BillingPage";
 import ReportsPage from "./pages/ReportsPage";
 import { CRMPage } from "./pages/CRMPage";
+import { LeadsPage } from "./pages/LeadsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -114,6 +115,12 @@ const App = () => (
             <Route path="/crm" element={
               <ProtectedRoute>
                 <CRMPage />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/leads" element={
+              <ProtectedRoute>
+                <LeadsPage />
               </ProtectedRoute>
             } />
             
