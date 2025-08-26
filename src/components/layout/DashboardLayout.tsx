@@ -1,42 +1,44 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
-  LayoutDashboard, 
-  Users, 
-  Calendar, 
-  CreditCard, 
-  Settings, 
-  LogOut,
+  SidebarProvider, 
+  SidebarInset, 
+  SidebarTrigger 
+} from '@/components/ui/sidebar';
+import { AppSidebar } from './AppSidebar';
+import { 
   Dumbbell,
-  UserCheck,
-  BarChart3,
-  Store,
-  Phone
+  LogOut,
+  Menu
 } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Members', href: '/members', icon: Users },
-  { name: 'CRM', href: '/crm', icon: Phone },
-  { name: 'Classes', href: '/classes', icon: Calendar },
-  { name: 'Check-ins', href: '/checkins', icon: UserCheck },
-  { name: 'Billing', href: '/billing', icon: CreditCard },
-  { name: 'Reports', href: '/reports', icon: BarChart3 },
-  { name: 'Retail', href: '/retail', icon: Store },
-  { name: 'Settings', href: '/settings', icon: Settings },
-];
+/**
+ * IMPORTANT: This platform is MOBILE-FIRST
+ * 
+ * All new pages must include:
+ * 1. Proper mobile-optimized headers
+ * 2. Sidebar integration (if backend/authenticated)
+ * 3. Complete mobile responsiveness using best practices
+ * 4. Touch-friendly interactions and proper spacing
+ * 
+ * Functional Page Organization:
+ * - Sales & Marketing: CRM, Lead Management, Pipeline, Marketing Automation
+ * - Operations: Member Management, Class Scheduling, Check-ins, Equipment
+ * - Business: Billing, Reports, Analytics, Retail/POS
+ * - Configuration: Settings, User Management, Integrations
+ */
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { profile, organization, signOut } = useAuth();
-  const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleSignOut = async () => {
     await signOut();
@@ -44,112 +46,50 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Sidebar */}
-      <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
-        <div className="flex flex-col flex-grow bg-card border-r border-border shadow-elevation-1">
-          {/* Logo */}
-          <div className="flex items-center flex-shrink-0 px-6 py-6">
-            <div className="flex items-center">
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-lg mr-3">
-                <Dumbbell className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-foreground">
-                  {organization?.name || 'Gym Unity Suite'}
-                </h1>
-                <p className="text-xs text-muted-foreground capitalize">
-                  {profile?.role} Portal
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <nav className="flex-1 px-4 space-y-1">
-            {navigation.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Button
-                  key={item.name}
-                  variant={isActive ? 'secondary' : 'ghost'}
-                  className={cn(
-                    'w-full justify-start transition-smooth',
-                    isActive && 'bg-gradient-primary text-white shadow-glow'
-                  )}
-                  onClick={() => navigate(item.href)}
-                >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.name}
-                </Button>
-              );
-            })}
-          </nav>
-
-          {/* User info and sign out */}
-          <div className="flex-shrink-0 p-4 border-t border-border">
-            <div className="flex items-center mb-3">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-gradient-secondary rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-white">
-                    {profile?.first_name?.[0] || profile?.email?.[0]?.toUpperCase() || 'U'}
-                  </span>
-                </div>
-              </div>
-              <div className="ml-3 flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">
-                  {profile?.first_name || profile?.email}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {profile?.email}
-                </p>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full justify-start"
-              onClick={handleSignOut}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main content */}
-      <div className="lg:pl-64">
-        <div className="flex flex-col">
-          {/* Mobile header */}
-          <div className="lg:hidden bg-card border-b border-border px-4 py-3 shadow-elevation-1">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="flex items-center justify-center w-8 h-8 bg-gradient-primary rounded-lg mr-3">
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <AppSidebar />
+        
+        <SidebarInset className="flex-1 flex flex-col">
+          {/* Mobile-first header with sidebar trigger */}
+          <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+            <div className="flex h-14 items-center gap-4 px-4 lg:px-6">
+              <SidebarTrigger className="-ml-1 text-sidebar-foreground" />
+              
+              {/* Mobile header content */}
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="flex items-center justify-center w-8 h-8 bg-gradient-primary rounded-lg flex-shrink-0 lg:hidden">
                   <Dumbbell className="w-5 h-5 text-white" />
                 </div>
-                <h1 className="text-lg font-bold text-foreground">
-                  {organization?.name || 'Gym Unity Suite'}
-                </h1>
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-lg font-bold text-foreground truncate">
+                    {organization?.name || 'Rep Club'}
+                  </h1>
+                </div>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSignOut}
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
 
-          {/* Page content */}
-          <main className="flex-1">
-            <div className="p-6">
+              {/* Mobile sign out button */}
+              <div className="lg:hidden">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleSignOut}
+                  className="w-9 h-9"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </header>
+
+          {/* Main content area - mobile optimized */}
+          <main className="flex-1 overflow-auto">
+            <div className="container max-w-none p-4 md:p-6 lg:p-8">
               {children}
             </div>
           </main>
-        </div>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
