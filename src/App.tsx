@@ -8,6 +8,8 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import AuthPage from "./pages/AuthPage";
 import MembersPage from "./pages/MembersPage";
+import ClassesPage from "./pages/ClassesPage";
+import CheckInsPage from "./pages/CheckInsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -81,19 +83,13 @@ const App = () => (
             
             <Route path="/classes" element={
               <ProtectedRoute>
-                <div className="text-center py-8">
-                  <h1 className="text-2xl font-bold mb-4">Class Scheduling</h1>
-                  <p className="text-muted-foreground">Coming soon...</p>
-                </div>
+                <ClassesPage />
               </ProtectedRoute>
             } />
             
             <Route path="/checkins" element={
               <ProtectedRoute>
-                <div className="text-center py-8">
-                  <h1 className="text-2xl font-bold mb-4">Member Check-ins</h1>
-                  <p className="text-muted-foreground">Coming soon...</p>
-                </div>
+                <CheckInsPage />
               </ProtectedRoute>
             } />
             
