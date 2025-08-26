@@ -103,8 +103,8 @@ export default function LandingPage() {
               <Dumbbell className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gradient-hero">Gym Unity Suite</h1>
-              <p className="text-xs text-muted-foreground">Complete Gym Management</p>
+              <h1 className="text-xl font-bold text-gradient-hero">Rep Club</h1>
+              <p className="text-xs text-muted-foreground">Elite Fitness Management</p>
             </div>
           </div>
           <Button 
@@ -120,17 +120,17 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
         <div className="max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-primary/10 text-primary border-primary/20">
-            All-in-One Gym Management Platform
+          <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
+            Elite Fitness Management Platform
           </Badge>
           <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gradient-hero leading-tight">
-            Revolutionize Your 
+            Elevate Your 
             <br />
-            Fitness Business
+            Fitness Experience
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            From boutique studios to enterprise gym chains, our comprehensive platform handles 
-            member management, billing, class scheduling, and analytics in one powerful system.
+            Premium management solutions for discerning fitness professionals. From exclusive boutiques 
+            to luxury fitness clubs, Rep Club delivers unparalleled sophistication and performance.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <Button 
@@ -187,12 +187,12 @@ export default function LandingPage() {
       {/* Benefits Section */}
       <section className="bg-muted/50 py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Why Choose Gym Unity Suite?</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Built by fitness industry experts who understand your challenges
-            </p>
-          </div>
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">Why Choose Rep Club?</h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Crafted by elite fitness professionals for the most discerning standards
+          </p>
+        </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {benefits.map((benefit, index) => (
@@ -246,8 +246,8 @@ export default function LandingPage() {
             Ready to Transform Your Gym?
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join hundreds of fitness businesses already using Gym Unity Suite. 
-            Start your free trial today - no credit card required.
+            Join the elite community of fitness professionals already using Rep Club. 
+            Experience excellence today - no credit card required.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <Button 
@@ -277,13 +277,13 @@ export default function LandingPage() {
             <div className="flex items-center justify-center w-8 h-8 bg-gradient-primary rounded-lg">
               <Dumbbell className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-bold text-gradient-hero">Gym Unity Suite</span>
+            <span className="text-lg font-bold text-gradient-hero">Rep Club</span>
           </div>
           <p className="text-muted-foreground mb-4">
-            The complete gym management solution for modern fitness businesses.
+            Elite fitness management solutions for discerning professionals.
           </p>
           <p className="text-sm text-muted-foreground">
-            © 2025 Gym Unity Suite. All rights reserved.
+            © 2025 Rep Club. All rights reserved.
           </p>
         </div>
       </footer>
