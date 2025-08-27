@@ -13,7 +13,7 @@ import {
   Calendar,
   Hash,
   Download,
-  Printer,
+  FileText,
   CheckCircle,
   CreditCard
 } from 'lucide-react';
@@ -355,7 +355,7 @@ export const MemberCardStep: React.FC<MemberCardStepProps> = ({
                 Download Card Data
               </Button>
               <Button variant="outline">
-                <Printer className="h-4 w-4 mr-2" />
+                <FileText className="h-4 w-4 mr-2" />
                 Print Card
               </Button>
             </div>
