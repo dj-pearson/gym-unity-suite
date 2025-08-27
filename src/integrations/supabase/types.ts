@@ -78,6 +78,13 @@ export type Database = {
             foreignKeyName: "announcements_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "announcements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -89,6 +96,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      campaign_executions: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          executed_at: string
+          id: string
+          member_id: string
+          notes: string | null
+          reward_claimed: boolean | null
+          reward_claimed_at: string | null
+          status: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          executed_at?: string
+          id?: string
+          member_id: string
+          notes?: string | null
+          reward_claimed?: boolean | null
+          reward_claimed_at?: string | null
+          status?: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          executed_at?: string
+          id?: string
+          member_id?: string
+          notes?: string | null
+          reward_claimed?: boolean | null
+          reward_claimed_at?: string | null
+          status?: string
+        }
+        Relationships: []
       }
       check_ins: {
         Row: {
@@ -153,6 +196,13 @@ export type Database = {
             foreignKeyName: "check_ins_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "check_ins_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -196,6 +246,13 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "class_bookings_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -304,6 +361,13 @@ export type Database = {
             foreignKeyName: "classes_instructor_id_fkey"
             columns: ["instructor_id"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "classes_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -386,6 +450,13 @@ export type Database = {
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "commission_calculations_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -536,6 +607,13 @@ export type Database = {
             foreignKeyName: "fitness_assessments_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "fitness_assessments_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -649,6 +727,13 @@ export type Database = {
             foreignKeyName: "lead_attribution_disputes_current_salesperson_id_fkey"
             columns: ["current_salesperson_id"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "lead_attribution_disputes_current_salesperson_id_fkey"
+            columns: ["current_salesperson_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -657,6 +742,13 @@ export type Database = {
             columns: ["disputing_salesperson_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "lead_attribution_disputes_disputing_salesperson_id_fkey"
+            columns: ["disputing_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -678,6 +770,13 @@ export type Database = {
             columns: ["reviewed_by"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "lead_attribution_disputes_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -813,6 +912,13 @@ export type Database = {
             foreignKeyName: "lead_split_commissions_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "lead_split_commissions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -828,6 +934,13 @@ export type Database = {
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "lead_split_commissions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -963,6 +1076,13 @@ export type Database = {
             foreignKeyName: "leads_assigned_salesperson_fkey"
             columns: ["assigned_salesperson"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "leads_assigned_salesperson_fkey"
+            columns: ["assigned_salesperson"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -971,6 +1091,13 @@ export type Database = {
             columns: ["entered_by"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "leads_entered_by_fkey"
+            columns: ["entered_by"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -1033,6 +1160,45 @@ export type Database = {
           },
         ]
       }
+      loyalty_points: {
+        Row: {
+          activity_type: string
+          created_at: string
+          current_balance: number
+          id: string
+          member_id: string
+          points_earned: number
+          points_redeemed: number
+          reason: string
+          reference_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string
+          current_balance?: number
+          id?: string
+          member_id: string
+          points_earned?: number
+          points_redeemed?: number
+          reason: string
+          reference_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string
+          current_balance?: number
+          id?: string
+          member_id?: string
+          points_earned?: number
+          points_redeemed?: number
+          reason?: string
+          reference_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       member_cards: {
         Row: {
           barcode: string | null
@@ -1082,6 +1248,13 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_cards_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -1142,6 +1315,13 @@ export type Database = {
             foreignKeyName: "member_documents_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_documents_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1156,10 +1336,95 @@ export type Database = {
             foreignKeyName: "member_documents_uploaded_by_fkey"
             columns: ["uploaded_by"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
+      }
+      member_engagement_history: {
+        Row: {
+          created_at: string
+          engagement_type: string
+          engagement_value: number | null
+          id: string
+          member_id: string
+          metadata: Json | null
+        }
+        Insert: {
+          created_at?: string
+          engagement_type: string
+          engagement_value?: number | null
+          id?: string
+          member_id: string
+          metadata?: Json | null
+        }
+        Update: {
+          created_at?: string
+          engagement_type?: string
+          engagement_value?: number | null
+          id?: string
+          member_id?: string
+          metadata?: Json | null
+        }
+        Relationships: []
+      }
+      member_feedback: {
+        Row: {
+          assigned_to: string | null
+          content: string
+          created_at: string
+          feedback_type: string
+          id: string
+          is_anonymous: boolean | null
+          member_id: string
+          rating: number | null
+          responded_at: string | null
+          responded_by: string | null
+          response: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          content: string
+          created_at?: string
+          feedback_type: string
+          id?: string
+          is_anonymous?: boolean | null
+          member_id: string
+          rating?: number | null
+          responded_at?: string | null
+          responded_by?: string | null
+          response?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          content?: string
+          created_at?: string
+          feedback_type?: string
+          id?: string
+          is_anonymous?: boolean | null
+          member_id?: string
+          rating?: number | null
+          responded_at?: string | null
+          responded_by?: string | null
+          response?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       member_messages: {
         Row: {
@@ -1207,6 +1472,13 @@ export type Database = {
             foreignKeyName: "member_messages_recipient_id_fkey"
             columns: ["recipient_id"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_messages_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1215,6 +1487,13 @@ export type Database = {
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -1266,6 +1545,13 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_milestones_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -1332,6 +1618,13 @@ export type Database = {
             foreignKeyName: "member_orientations_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_orientations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1346,10 +1639,65 @@ export type Database = {
             foreignKeyName: "member_orientations_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_orientations_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
+      }
+      member_referrals: {
+        Row: {
+          conversion_date: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          program_id: string
+          referee_email: string
+          referee_name: string | null
+          referral_code: string | null
+          referrer_id: string
+          reward_given_date: string | null
+          signup_date: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          conversion_date?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          program_id: string
+          referee_email: string
+          referee_name?: string | null
+          referral_code?: string | null
+          referrer_id: string
+          reward_given_date?: string | null
+          signup_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          conversion_date?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          program_id?: string
+          referee_email?: string
+          referee_name?: string | null
+          referral_code?: string | null
+          referrer_id?: string
+          reward_given_date?: string | null
+          signup_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       membership_agreement_templates: {
         Row: {
@@ -1424,6 +1772,13 @@ export type Database = {
             foreignKeyName: "membership_agreements_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "membership_agreements_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1439,6 +1794,13 @@ export type Database = {
             columns: ["witness_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "membership_agreements_witness_id_fkey"
+            columns: ["witness_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -1561,6 +1923,13 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "memberships_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -1712,6 +2081,13 @@ export type Database = {
             foreignKeyName: "payment_transactions_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1727,6 +2103,13 @@ export type Database = {
             columns: ["processed_by"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_processed_by_fkey"
+            columns: ["processed_by"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -1858,6 +2241,13 @@ export type Database = {
             foreignKeyName: "profiles_parent_member_id_fkey"
             columns: ["parent_member_id"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "profiles_parent_member_id_fkey"
+            columns: ["parent_member_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1950,6 +2340,114 @@ export type Database = {
           quote_id?: string
           total_price?: number
           unit_price?: number
+        }
+        Relationships: []
+      }
+      referral_programs: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_active: boolean
+          max_referrals_per_member: number | null
+          name: string
+          organization_id: string
+          program_end_date: string | null
+          program_start_date: string
+          referee_reward_type: string | null
+          referee_reward_value: number | null
+          referrer_reward_type: string
+          referrer_reward_value: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_referrals_per_member?: number | null
+          name: string
+          organization_id: string
+          program_end_date?: string | null
+          program_start_date: string
+          referee_reward_type?: string | null
+          referee_reward_value?: number | null
+          referrer_reward_type: string
+          referrer_reward_value: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_referrals_per_member?: number | null
+          name?: string
+          organization_id?: string
+          program_end_date?: string | null
+          program_start_date?: string
+          referee_reward_type?: string | null
+          referee_reward_value?: number | null
+          referrer_reward_type?: string
+          referrer_reward_value?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      retention_campaigns: {
+        Row: {
+          campaign_type: string
+          created_at: string
+          created_by: string
+          description: string | null
+          end_date: string | null
+          id: string
+          is_active: boolean
+          message_template: string
+          name: string
+          organization_id: string
+          reward_type: string | null
+          reward_value: number | null
+          start_date: string | null
+          trigger_conditions: Json
+          updated_at: string
+        }
+        Insert: {
+          campaign_type: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          message_template: string
+          name: string
+          organization_id: string
+          reward_type?: string | null
+          reward_value?: number | null
+          start_date?: string | null
+          trigger_conditions?: Json
+          updated_at?: string
+        }
+        Update: {
+          campaign_type?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          message_template?: string
+          name?: string
+          organization_id?: string
+          reward_type?: string | null
+          reward_value?: number | null
+          start_date?: string | null
+          trigger_conditions?: Json
+          updated_at?: string
         }
         Relationships: []
       }
@@ -2062,6 +2560,13 @@ export type Database = {
             foreignKeyName: "salesperson_commissions_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "salesperson_commissions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -2070,6 +2575,13 @@ export type Database = {
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "salesperson_commissions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -2124,6 +2636,13 @@ export type Database = {
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "salesperson_referral_links_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -2237,6 +2756,13 @@ export type Database = {
             foreignKeyName: "support_tickets_assigned_to_fkey"
             columns: ["assigned_to"]
             isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "support_tickets_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -2245,6 +2771,13 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "support_tickets_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
             referencedColumns: ["member_id"]
           },
           {
@@ -2276,6 +2809,21 @@ export type Database = {
           total_visits: number | null
           visits_last_30_days: number | null
           visits_last_7_days: number | null
+        }
+        Relationships: []
+      }
+      member_engagement_summary: {
+        Row: {
+          check_ins: number | null
+          class_bookings: number | null
+          email: string | null
+          engagements_last_30_days: number | null
+          first_name: string | null
+          last_engagement: string | null
+          last_name: string | null
+          loyalty_points_balance: number | null
+          member_id: string | null
+          total_engagements: number | null
         }
         Relationships: []
       }
