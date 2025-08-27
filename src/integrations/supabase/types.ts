@@ -356,6 +356,45 @@ export type Database = {
           },
         ]
       }
+      class_waitlists: {
+        Row: {
+          class_id: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          joined_at: string
+          member_id: string
+          notified_at: string | null
+          priority_order: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          joined_at?: string
+          member_id: string
+          notified_at?: string | null
+          priority_order?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          joined_at?: string
+          member_id?: string
+          notified_at?: string | null
+          priority_order?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       classes: {
         Row: {
           category_id: string | null
