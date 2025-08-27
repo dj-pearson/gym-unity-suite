@@ -43,13 +43,15 @@ interface ClassCalendarViewProps {
   onScheduleClick?: () => void;
 }
 
+type ViewModeType = 'week' | 'month';
+
 export default function ClassCalendarView({ onClassClick, onScheduleClick }: ClassCalendarViewProps) {
   const { profile } = useAuth();
   const { toast } = useToast();
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [viewMode, setViewMode] = useState<'week' | 'month'>('week');
+  const [viewMode, setViewMode] = useState<ViewModeType>('week');
 
   useEffect(() => {
     fetchClasses();
@@ -166,6 +168,10 @@ export default function ClassCalendarView({ onClassClick, onScheduleClick }: Cla
 
   const canScheduleClasses = profile?.role && ['owner', 'manager', 'staff'].includes(profile.role);
 
+  const handleViewModeChange = (mode: ViewModeType) => {
+    setViewMode(mode);
+  };
+
   if (viewMode === 'month') {
     return (
       <div className="space-y-4">
@@ -184,16 +190,16 @@ export default function ClassCalendarView({ onClassClick, onScheduleClick }: Cla
           </div>
           <div className="flex space-x-2">
             <Button
-              variant={viewMode === 'week' ? 'default' : 'outline'}
+              variant={viewMode === ('week' as ViewModeType) ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setViewMode('week')}
+              onClick={() => handleViewModeChange('week' as ViewModeType)}
             >
               Week
             </Button>
             <Button
-              variant={viewMode === 'month' ? 'default' : 'outline'}
+              variant={viewMode === ('month' as ViewModeType) ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setViewMode('month')}
+              onClick={() => handleViewModeChange('month' as ViewModeType)}
             >
               Month
             </Button>
@@ -279,16 +285,16 @@ export default function ClassCalendarView({ onClassClick, onScheduleClick }: Cla
         </div>
         <div className="flex space-x-2">
           <Button
-            variant={viewMode === 'week' ? 'default' : 'outline'}
+            variant={viewMode === ('week' as ViewModeType) ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setViewMode('week')}
+            onClick={() => handleViewModeChange('week' as ViewModeType)}
           >
             Week
           </Button>
           <Button
-            variant={viewMode === 'month' ? 'default' : 'outline'}
+            variant={viewMode === ('month' as ViewModeType) ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setViewMode('month')}
+            onClick={() => handleViewModeChange('month' as ViewModeType)}
           >
             Month
           </Button>
