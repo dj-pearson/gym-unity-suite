@@ -25,6 +25,7 @@ import ClassScheduleForm from '@/components/classes/ClassScheduleForm';
 import MemberBookingDialog from '@/components/classes/MemberBookingDialog';
 import CategoryManager from '@/components/classes/CategoryManager';
 import ClassCalendarView from '@/components/classes/ClassCalendarView';
+import WaitlistManager from '@/components/classes/WaitlistManager';
 
 interface Class {
   id: string;
@@ -58,6 +59,12 @@ interface Class {
       email: string;
     };
   }>;
+  waitlist?: Array<{
+    id: string;
+    member_id: string;
+    status: string;
+    priority_order: number;
+  }>;
 }
 
 export default function ClassesPage() {
@@ -71,6 +78,7 @@ export default function ClassesPage() {
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
   const [showBookingDialog, setShowBookingDialog] = useState(false);
   const [showCategoryManager, setShowCategoryManager] = useState(false);
+  const [showWaitlistManager, setShowWaitlistManager] = useState(false);
   const [activeTab, setActiveTab] = useState('list');
 
   useEffect(() => {
@@ -125,7 +133,7 @@ export default function ClassesPage() {
         query = query.gte('scheduled_at', new Date().toISOString());
       }
 
-      const { data, error } = await query;
+      const { data: classesData, error } = await query;
 
       if (error) {
         toast({
@@ -136,8 +144,14 @@ export default function ClassesPage() {
         return;
       }
 
+      // Fetch waitlist data separately
+      const { data: waitlistData } = await supabase
+        .from('class_waitlists')
+        .select('class_id, id, member_id, status, priority_order')
+        .eq('status', 'waiting');
+
       // Transform the data to match our interface
-      const transformedClasses = data.map(classItem => ({
+      const transformedClasses = classesData.map(classItem => ({
         ...classItem,
         category: classItem.class_categories,
         instructor: classItem.profiles,
@@ -145,7 +159,8 @@ export default function ClassesPage() {
         bookings: classItem.class_bookings?.map(booking => ({
           ...booking,
           member: booking.profiles
-        })) || []
+        })) || [],
+        waitlist: waitlistData?.filter(w => w.class_id === classItem.id) || []
       }));
 
       setClasses(transformedClasses);
@@ -281,6 +296,15 @@ export default function ClassesPage() {
               Categories
             </Button>
           )}
+          {canScheduleClasses && (
+            <Button 
+              variant="outline"
+              onClick={() => setShowWaitlistManager(true)}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Waitlists
+            </Button>
+          )}
         </div>
       </div>
 
@@ -304,23 +328,18 @@ export default function ClassesPage() {
         </Card>
         <Card className="gym-card">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-success">
-              {Math.round(classes.reduce((sum, c) => sum + (c.bookings.length / c.max_capacity), 0) / classes.length * 100) || 0}%
+            <div className="text-2xl font-bold text-warning">
+              {classes.reduce((sum, c) => sum + (c.waitlist?.length || 0), 0)}
             </div>
-            <div className="text-sm text-muted-foreground">Avg Capacity</div>
+            <div className="text-sm text-muted-foreground">Waitlist Members</div>
           </CardContent>
         </Card>
         <Card className="gym-card">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-warning">
-              {classes.filter(c => {
-                const now = new Date();
-                const classTime = new Date(c.scheduled_at);
-                const endTime = new Date(classTime.getTime() + c.duration_minutes * 60000);
-                return now >= classTime && now <= endTime;
-              }).length}
+            <div className="text-2xl font-bold text-success">
+              {Math.round(classes.reduce((sum, c) => sum + (c.bookings.length / c.max_capacity), 0) / classes.length * 100) || 0}%
             </div>
-            <div className="text-sm text-muted-foreground">Currently Running</div>
+            <div className="text-sm text-muted-foreground">Avg Capacity</div>
           </CardContent>
         </Card>
       </div>
@@ -399,7 +418,9 @@ export default function ClassesPage() {
               {filteredClasses.map((classItem) => {
                 const status = getClassStatus(classItem);
                 const bookedCount = classItem.bookings.filter(b => b.status === 'booked').length;
+                const waitlistCount = classItem.waitlist?.length || 0;
                 const capacityPercentage = (bookedCount / classItem.max_capacity) * 100;
+                const isClassFull = bookedCount >= classItem.max_capacity;
 
                 return (
                   <Card 
@@ -482,15 +503,36 @@ export default function ClassesPage() {
                           </span>
                         </div>
                         <div className="w-full bg-muted rounded-full h-2">
-                          <div 
-                            className={`h-2 rounded-full transition-smooth ${
-                              capacityPercentage >= 90 ? 'bg-gradient-to-r from-warning to-destructive' :
-                              capacityPercentage >= 70 ? 'bg-gradient-to-r from-primary to-warning' :
-                              'bg-gradient-primary'
-                            }`}
+                          <div
+                            className="bg-gradient-primary h-2 rounded-full transition-all duration-300"
                             style={{ width: `${Math.min(capacityPercentage, 100)}%` }}
                           />
                         </div>
+                        <div className="flex items-center justify-between text-xs">
+                          <span className={`${
+                            capacityPercentage >= 100 
+                              ? 'text-destructive font-medium' 
+                              : capacityPercentage >= 80 
+                              ? 'text-warning' 
+                              : 'text-muted-foreground'
+                          }`}>
+                            {capacityPercentage.toFixed(0)}% full
+                          </span>
+                          {waitlistCount > 0 && (
+                            <span className="text-warning text-xs font-medium">
+                              +{waitlistCount} waitlist
+                            </span>
+                          )}
+                        </div>
+                        
+                        {/* Show waitlist indicator if class is full and has waitlist */}
+                        {isClassFull && waitlistCount > 0 && (
+                          <div className="mt-2 px-2 py-1 bg-warning/10 rounded-md">
+                            <div className="text-xs text-warning font-medium text-center">
+                              {waitlistCount} on waitlist
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {/* Description */}
@@ -546,10 +588,20 @@ export default function ClassesPage() {
       )}
 
       {/* Category Manager Dialog */}
-      <CategoryManager
-        isOpen={showCategoryManager}
-        onClose={() => setShowCategoryManager(false)}
-      />
+      {showCategoryManager && (
+        <CategoryManager 
+          isOpen={showCategoryManager}
+          onClose={() => setShowCategoryManager(false)}
+        />
+      )}
+
+      {/* Waitlist Manager Dialog */}
+      {showWaitlistManager && (
+        <WaitlistManager 
+          isOpen={showWaitlistManager}
+          onClose={() => setShowWaitlistManager(false)}
+        />
+      )}
     </div>
   );
 }

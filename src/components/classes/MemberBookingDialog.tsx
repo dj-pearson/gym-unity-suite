@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Clock, MapPin, Users, User, Calendar } from 'lucide-react';
+import { Clock, MapPin, Users, User, Calendar, UserPlus, UserMinus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -42,6 +42,14 @@ interface ClassData {
   }>;
 }
 
+interface WaitlistEntry {
+  id: string;
+  member_id: string;
+  priority_order: number;
+  status: string;
+  joined_at: string;
+}
+
 interface MemberBookingDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -58,12 +66,45 @@ export default function MemberBookingDialog({
   const { profile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [waitlistEntries, setWaitlistEntries] = useState<WaitlistEntry[]>([]);
+  const [waitlistLoading, setWaitlistLoading] = useState(false);
 
   const isBooked = classData.bookings.some(
     booking => booking.member_id === profile?.id && booking.status === 'booked'
   );
   const availableSpots = classData.max_capacity - classData.bookings.filter(b => b.status === 'booked').length;
   const isPastClass = new Date(classData.scheduled_at) < new Date();
+  
+  const userWaitlistEntry = waitlistEntries.find(
+    entry => entry.member_id === profile?.id && entry.status === 'waiting'
+  );
+  const isOnWaitlist = !!userWaitlistEntry;
+  const waitlistPosition = userWaitlistEntry?.priority_order || 0;
+  const waitlistCount = waitlistEntries.filter(entry => entry.status === 'waiting').length;
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchWaitlistEntries();
+    }
+  }, [isOpen, classData.id]);
+
+  const fetchWaitlistEntries = async () => {
+    try {
+      setWaitlistLoading(true);
+      const { data, error } = await supabase
+        .from('class_waitlists')
+        .select('*')
+        .eq('class_id', classData.id)
+        .order('priority_order', { ascending: true });
+
+      if (error) throw error;
+      setWaitlistEntries(data || []);
+    } catch (error: any) {
+      console.error('Error fetching waitlist entries:', error);
+    } finally {
+      setWaitlistLoading(false);
+    }
+  };
 
   const handleBooking = async () => {
     if (!profile?.id) return;
@@ -72,10 +113,10 @@ export default function MemberBookingDialog({
       setLoading(true);
 
       if (isBooked) {
-        // Cancel booking
+        // Cancel booking - this will automatically promote someone from waitlist
         const { error } = await supabase
           .from('class_bookings')
-          .delete()
+          .update({ status: 'cancelled' })
           .eq('class_id', classData.id)
           .eq('member_id', profile.id)
           .eq('status', 'booked');
@@ -84,10 +125,10 @@ export default function MemberBookingDialog({
 
         toast({
           title: "Booking Cancelled",
-          description: "You have successfully cancelled your booking",
+          description: "You have successfully cancelled your booking. If there's a waitlist, the next person has been notified.",
         });
-      } else {
-        // Create booking
+      } else if (availableSpots > 0) {
+        // Create booking directly
         const { error } = await supabase
           .from('class_bookings')
           .insert({
@@ -105,10 +146,61 @@ export default function MemberBookingDialog({
       }
 
       onBookingChange();
+      fetchWaitlistEntries();
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message || "Failed to process booking",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleWaitlist = async () => {
+    if (!profile?.id) return;
+
+    try {
+      setLoading(true);
+
+      if (isOnWaitlist) {
+        // Leave waitlist
+        const { error } = await supabase
+          .from('class_waitlists')
+          .delete()
+          .eq('class_id', classData.id)
+          .eq('member_id', profile.id);
+
+        if (error) throw error;
+
+        toast({
+          title: "Left Waitlist",
+          description: "You have been removed from the waitlist",
+        });
+      } else {
+        // Join waitlist
+        const { error } = await supabase
+          .from('class_waitlists')
+          .insert({
+            class_id: classData.id,
+            member_id: profile.id,
+            status: 'waiting'
+          });
+
+        if (error) throw error;
+
+        toast({
+          title: "Joined Waitlist",
+          description: "You've been added to the waitlist. We'll notify you if a spot opens up!",
+        });
+      }
+
+      fetchWaitlistEntries();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to process waitlist request",
         variant: "destructive",
       });
     } finally {
@@ -213,11 +305,24 @@ export default function MemberBookingDialog({
                   You can cancel your booking up until the class starts
                 </p>
               </div>
+            ) : isOnWaitlist ? (
+              <div className="text-center">
+                <div className="text-warning font-medium mb-1">📋 You're on the waitlist</div>
+                <p className="text-sm text-muted-foreground">
+                  Position #{waitlistPosition} • {waitlistCount} people waiting
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  We'll notify you if a spot opens up!
+                </p>
+              </div>
             ) : availableSpots === 0 ? (
               <div className="text-center">
                 <div className="text-destructive font-medium mb-1">Class is full</div>
                 <p className="text-sm text-muted-foreground">
-                  All spots for this class have been taken
+                  {waitlistCount > 0 
+                    ? `${waitlistCount} people on waitlist` 
+                    : 'Join the waitlist to be notified if spots open up'
+                  }
                 </p>
               </div>
             ) : isPastClass ? (
@@ -244,14 +349,43 @@ export default function MemberBookingDialog({
             </Button>
             
             {!isPastClass && (
-              <Button
-                onClick={handleBooking}
-                disabled={loading || (!isBooked && availableSpots === 0)}
-                variant={isBooked ? "destructive" : "default"}
-                className={!isBooked ? "bg-gradient-secondary hover:opacity-90" : ""}
-              >
-                {loading ? 'Processing...' : isBooked ? 'Cancel Booking' : 'Book Class'}
-              </Button>
+              <>
+                {/* Main booking button */}
+                {availableSpots > 0 && (
+                  <Button
+                    onClick={handleBooking}
+                    disabled={loading}
+                    variant={isBooked ? "destructive" : "default"}
+                    className={!isBooked ? "bg-gradient-secondary hover:opacity-90" : ""}
+                  >
+                    {loading ? 'Processing...' : isBooked ? 'Cancel Booking' : 'Book Class'}
+                  </Button>
+                )}
+                
+                {/* Waitlist button - show when class is full or user is on waitlist */}
+                {(availableSpots === 0 || isOnWaitlist) && !isBooked && (
+                  <Button
+                    onClick={handleWaitlist}
+                    disabled={loading || waitlistLoading}
+                    variant={isOnWaitlist ? "outline" : "secondary"}
+                    className="flex items-center gap-2"
+                  >
+                    {loading ? (
+                      'Processing...'
+                    ) : isOnWaitlist ? (
+                      <>
+                        <UserMinus className="h-4 w-4" />
+                        Leave Waitlist
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="h-4 w-4" />
+                        Join Waitlist
+                      </>
+                    )}
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </div>
