@@ -1,14 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { QRCodeDisplay } from '@/components/auth/QRCodeDisplay';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { User, Mail, Phone, MapPin, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ProfileEditForm } from '@/components/members/ProfileEditForm';
+import { MembershipInfo } from '@/components/members/MembershipInfo';
+import { NotificationSettings } from '@/components/members/NotificationSettings';
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Calendar, 
+  Edit, 
+  Shield,
+  Bell,
+  CreditCard
+} from 'lucide-react';
+import { Database } from '@/integrations/supabase/types';
+
+type Profile = Database['public']['Tables']['profiles']['Row'];
 
 export default function MemberProfilePage() {
   const { profile, organization } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentProfile, setCurrentProfile] = useState<Profile | null>(profile as Profile | null);
 
-  if (!profile || profile.role !== 'member') {
+  if (!currentProfile || currentProfile.role !== 'member') {
     return (
       <div className="container mx-auto py-8">
         <div className="text-center">
@@ -23,106 +43,186 @@ export default function MemberProfilePage() {
     );
   }
 
-  return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Member Profile</h1>
-        <p className="text-muted-foreground">
-          Manage your membership and access your digital gym card
-        </p>
-      </div>
+  const handleProfileUpdate = (updatedProfile: Profile) => {
+    setCurrentProfile(updatedProfile);
+    setIsEditing(false);
+  };
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Profile Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5" />
-              Profile Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <User className="w-4 h-4 text-muted-foreground" />
-                <span className="font-medium">Name</span>
-              </div>
-              <p className="text-lg">
-                {profile.first_name || profile.last_name 
-                  ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim()
-                  : 'Not provided'
-                }
-              </p>
-            </div>
-
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Mail className="w-4 h-4 text-muted-foreground" />
-                <span className="font-medium">Email</span>
-              </div>
-              <p>{profile.email}</p>
-            </div>
-
-            {profile.phone && (
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Phone className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-medium">Phone</span>
-                </div>
-                <p>{profile.phone}</p>
-              </div>
-            )}
-
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <MapPin className="w-4 h-4 text-muted-foreground" />
-                <span className="font-medium">Gym</span>
-              </div>
-              <p>{organization?.name || 'Unknown'}</p>
-            </div>
-
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
-                <span className="font-medium">Member Since</span>
-              </div>
-              <p>
-                {new Date(profile.created_at || '').toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </p>
-            </div>
-
-            <div>
-              <Badge variant="secondary" className="capitalize">
-                {profile.role} Member
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* QR Code Section */}
-        <div>
-          <QRCodeDisplay />
-          
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>How to Use Your Member ID</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Show your QR code at the front desk for quick check-in</li>
-                <li>• Provide your Member ID number to staff when needed</li>
-                <li>• Use your Member ID to book classes and services</li>
-                <li>• Keep this information secure and don't share with others</li>
-                <li>• Contact staff if you need a new Member ID generated</li>
-              </ul>
-            </CardContent>
-          </Card>
+  if (isEditing) {
+    return (
+      <div className="container mx-auto py-8 px-4 max-w-4xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Edit Profile</h1>
+          <p className="text-muted-foreground">
+            Update your personal information and preferences
+          </p>
         </div>
+
+        <ProfileEditForm
+          profile={currentProfile}
+          onUpdate={handleProfileUpdate}
+          onCancel={() => setIsEditing(false)}
+        />
       </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto py-8 px-4 max-w-6xl">
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Member Profile</h1>
+          <p className="text-muted-foreground">
+            Manage your membership information and preferences
+          </p>
+        </div>
+        <Button onClick={() => setIsEditing(true)}>
+          <Edit className="w-4 h-4 mr-2" />
+          Edit Profile
+        </Button>
+      </div>
+
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview" className="flex items-center gap-2">
+            <User className="w-4 h-4" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="membership" className="flex items-center gap-2">
+            <Shield className="w-4 h-4" />
+            Membership
+          </TabsTrigger>
+          <TabsTrigger value="billing" className="flex items-center gap-2">
+            <CreditCard className="w-4 h-4" />
+            Billing
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="flex items-center gap-2">
+            <Bell className="w-4 h-4" />
+            Notifications
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Profile Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  Profile Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <User className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-medium">Name</span>
+                  </div>
+                  <p className="text-lg">
+                    {currentProfile.first_name || currentProfile.last_name 
+                      ? `${currentProfile.first_name || ''} ${currentProfile.last_name || ''}`.trim()
+                      : 'Not provided'
+                    }
+                  </p>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Mail className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-medium">Email</span>
+                  </div>
+                  <p>{currentProfile.email}</p>
+                </div>
+
+                {currentProfile.phone && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
+                      <span className="font-medium">Phone</span>
+                    </div>
+                    <p>{currentProfile.phone}</p>
+                  </div>
+                )}
+
+                {currentProfile.emergency_contact_name && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <span className="font-medium">Emergency Contact</span>
+                    </div>
+                    <p>{currentProfile.emergency_contact_name}</p>
+                    {currentProfile.emergency_contact_phone && (
+                      <p className="text-sm text-muted-foreground">
+                        {currentProfile.emergency_contact_phone}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-medium">Gym</span>
+                  </div>
+                  <p>{organization?.name || 'Unknown'}</p>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-medium">Member Since</span>
+                  </div>
+                  <p>
+                    {new Date(currentProfile.created_at || '').toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </p>
+                </div>
+
+                <div>
+                  <Badge variant="secondary" className="capitalize">
+                    {currentProfile.role} Member
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* QR Code Section */}
+            <div>
+              <QRCodeDisplay />
+              
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle>How to Use Your Member ID</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li>• Show your QR code at the front desk for quick check-in</li>
+                    <li>• Provide your Member ID number to staff when needed</li>
+                    <li>• Use your Member ID to book classes and services</li>
+                    <li>• Keep this information secure and don't share with others</li>
+                    <li>• Contact staff if you need a new Member ID generated</li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="membership">
+          <MembershipInfo memberId={currentProfile.id} />
+        </TabsContent>
+
+        <TabsContent value="billing">
+          <MembershipInfo memberId={currentProfile.id} />
+        </TabsContent>
+
+        <TabsContent value="notifications">
+          <NotificationSettings memberId={currentProfile.id} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
