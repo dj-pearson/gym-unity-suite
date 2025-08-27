@@ -179,17 +179,33 @@
   
   /* Typography utilities */
   .text-gradient-primary {
+    color: hsl(var(--primary)); /* Fallback for mobile */
     background: var(--gradient-primary);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
   
+  /* Add support for browsers that don't support gradient text */
+  @supports not (-webkit-background-clip: text) {
+    .text-gradient-primary {
+      color: hsl(var(--primary));
+    }
+  }
+  
   .text-gradient-hero {
+    color: hsl(var(--foreground)); /* Fallback for mobile */
     background: var(--gradient-hero);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+  
+  /* Add support for browsers that don't support gradient text */
+  @supports not (-webkit-background-clip: text) {
+    .text-gradient-hero {
+      color: hsl(var(--foreground));
+    }
   }
 }
 
