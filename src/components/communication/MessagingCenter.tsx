@@ -321,14 +321,14 @@ export function MessagingCenter() {
                           <span className="font-medium text-foreground truncate">
                             {otherProfile?.first_name} {otherProfile?.last_name}
                           </span>
-                          <Badge variant="outline" size="sm">
+                          <Badge variant="outline" className="text-xs">
                             {otherProfile?.role}
                           </Badge>
-                          <Badge variant={message.message_type === 'support' ? 'destructive' : 'secondary'} size="sm">
+                          <Badge variant={message.message_type === 'support' ? 'destructive' : 'secondary'} className="text-xs">
                             {message.message_type}
                           </Badge>
                           {isUnread && (
-                            <Badge variant="default" size="sm">New</Badge>
+                            <Badge variant="default" className="text-xs">New</Badge>
                           )}
                         </div>
                         <span className="text-xs text-muted-foreground flex-shrink-0">

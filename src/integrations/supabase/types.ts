@@ -14,6 +14,82 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          announcement_type: string
+          content: string
+          created_at: string
+          created_by: string
+          custom_recipients: string[] | null
+          expires_at: string | null
+          id: string
+          is_published: boolean
+          organization_id: string
+          priority: string
+          published_at: string | null
+          scheduled_for: string | null
+          target_audience: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          announcement_type?: string
+          content: string
+          created_at?: string
+          created_by: string
+          custom_recipients?: string[] | null
+          expires_at?: string | null
+          id?: string
+          is_published?: boolean
+          organization_id: string
+          priority?: string
+          published_at?: string | null
+          scheduled_for?: string | null
+          target_audience?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          announcement_type?: string
+          content?: string
+          created_at?: string
+          created_by?: string
+          custom_recipients?: string[] | null
+          expires_at?: string | null
+          id?: string
+          is_published?: boolean
+          organization_id?: string
+          priority?: string
+          published_at?: string | null
+          scheduled_for?: string | null
+          target_audience?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "announcements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "announcements_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       check_ins: {
         Row: {
           checked_in_at: string
@@ -315,6 +391,66 @@ export type Database = {
           {
             foreignKeyName: "commission_calculations_salesperson_id_fkey"
             columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fitness_assessments: {
+        Row: {
+          assessment_date: string
+          created_at: string
+          experience_level: string
+          fitness_goals: string[]
+          health_conditions: string | null
+          id: string
+          member_id: string
+          previous_injuries: string | null
+          specific_goals: string | null
+          updated_at: string
+          workout_frequency: string
+          workout_preferences: string[]
+        }
+        Insert: {
+          assessment_date?: string
+          created_at?: string
+          experience_level: string
+          fitness_goals?: string[]
+          health_conditions?: string | null
+          id?: string
+          member_id: string
+          previous_injuries?: string | null
+          specific_goals?: string | null
+          updated_at?: string
+          workout_frequency: string
+          workout_preferences?: string[]
+        }
+        Update: {
+          assessment_date?: string
+          created_at?: string
+          experience_level?: string
+          fitness_goals?: string[]
+          health_conditions?: string | null
+          id?: string
+          member_id?: string
+          previous_injuries?: string | null
+          specific_goals?: string | null
+          updated_at?: string
+          workout_frequency?: string
+          workout_preferences?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fitness_assessments_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "fitness_assessments_member_id_fkey"
+            columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -842,6 +978,196 @@ export type Database = {
           {
             foreignKeyName: "member_documents_uploaded_by_fkey"
             columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          message_type: string
+          recipient_id: string
+          sender_id: string
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          message_type?: string
+          recipient_id: string
+          sender_id: string
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          message_type?: string
+          recipient_id?: string
+          sender_id?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_messages_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_messages_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_milestones: {
+        Row: {
+          achievement_date: string
+          created_at: string
+          description: string | null
+          id: string
+          member_id: string
+          milestone_type: string
+          recognition_sent: boolean
+          recognition_sent_at: string | null
+          title: string
+        }
+        Insert: {
+          achievement_date: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          member_id: string
+          milestone_type: string
+          recognition_sent?: boolean
+          recognition_sent_at?: string | null
+          title: string
+        }
+        Update: {
+          achievement_date?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          member_id?: string
+          milestone_type?: string
+          recognition_sent?: boolean
+          recognition_sent_at?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_milestones_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_milestones_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_orientations: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          member_id: string
+          orientation_type: string
+          scheduled_date: string
+          scheduled_time: string
+          special_requests: string | null
+          staff_notes: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          member_id: string
+          orientation_type: string
+          scheduled_date: string
+          scheduled_time: string
+          special_requests?: string | null
+          staff_notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          member_id?: string
+          orientation_type?: string
+          scheduled_date?: string
+          scheduled_time?: string
+          special_requests?: string | null
+          staff_notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_orientations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_orientations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_orientations_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_orientations_member_id_fkey"
+            columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1579,6 +1905,87 @@ export type Database = {
             columns: ["membership_plan_id"]
             isOneToOne: false
             referencedRelation: "membership_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          assigned_to: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          member_id: string
+          organization_id: string
+          priority: string
+          resolution_notes: string | null
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          category?: string
+          created_at?: string
+          description: string
+          id?: string
+          member_id: string
+          organization_id: string
+          priority?: string
+          resolution_notes?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          member_id?: string
+          organization_id?: string
+          priority?: string
+          resolution_notes?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "support_tickets_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "support_tickets_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]

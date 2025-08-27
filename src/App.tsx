@@ -25,6 +25,8 @@ import { LeadsPage } from "./pages/LeadsPage";
 import CommissionsPage from "./pages/CommissionsPage";
 import ReferralsPage from "./pages/ReferralsPage";
 import AttributionPage from "./pages/AttributionPage";
+import OnboardingPage from "./pages/OnboardingPage";
+import CommunicationPage from "./pages/CommunicationPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -114,6 +116,20 @@ const App = () => (
               <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
                 <DashboardLayout>
                   <MembersPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/onboarding" element={
+              <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
+                <OnboardingPage />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/communication" element={
+              <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
+                <DashboardLayout>
+                  <CommunicationPage />
                 </DashboardLayout>
               </ProtectedRoute>
             } />

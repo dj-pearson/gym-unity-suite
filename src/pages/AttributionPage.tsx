@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LeadAttributionManager } from '@/components/crm/LeadAttributionManager';
+import { LeadAttributionManager } from '@/components/crm/PlaceholderCRMComponents';
 import { UserX, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 
 export default function AttributionPage() {
@@ -102,10 +102,7 @@ export default function AttributionPage() {
         </CardContent>
       </Card>
 
-      <LeadAttributionManager
-        isOpen={showAttributionManager}
-        onClose={() => setShowAttributionManager(false)}
-      />
+      <LeadAttributionManager />
     </div>
   );
 }
