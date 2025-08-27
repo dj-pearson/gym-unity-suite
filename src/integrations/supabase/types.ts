@@ -770,48 +770,87 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address_line1: string | null
+          address_line2: string | null
           avatar_url: string | null
           barcode: string | null
           barcode_generated_at: string | null
+          city: string | null
+          country: string | null
           created_at: string
+          date_of_birth: string | null
           email: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
           first_name: string | null
+          gender: string | null
           id: string
+          interests: string[] | null
+          join_date: string | null
           last_name: string | null
           location_id: string | null
+          member_notes: string | null
           organization_id: string
           phone: string | null
+          postal_code: string | null
           role: Database["public"]["Enums"]["user_role"]
+          state: string | null
           updated_at: string
         }
         Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
           avatar_url?: string | null
           barcode?: string | null
           barcode_generated_at?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
+          date_of_birth?: string | null
           email: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           first_name?: string | null
+          gender?: string | null
           id: string
+          interests?: string[] | null
+          join_date?: string | null
           last_name?: string | null
           location_id?: string | null
+          member_notes?: string | null
           organization_id: string
           phone?: string | null
+          postal_code?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          state?: string | null
           updated_at?: string
         }
         Update: {
+          address_line1?: string | null
+          address_line2?: string | null
           avatar_url?: string | null
           barcode?: string | null
           barcode_generated_at?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
+          date_of_birth?: string | null
           email?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           first_name?: string | null
+          gender?: string | null
           id?: string
+          interests?: string[] | null
+          join_date?: string | null
           last_name?: string | null
           location_id?: string | null
+          member_notes?: string | null
           organization_id?: string
           phone?: string | null
+          postal_code?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          state?: string | null
           updated_at?: string
         }
         Relationships: [
