@@ -659,6 +659,10 @@ export type Database = {
         Args: { user_id: string }
         Returns: string
       }
+      setup_default_lead_stages: {
+        Args: { org_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       membership_status:

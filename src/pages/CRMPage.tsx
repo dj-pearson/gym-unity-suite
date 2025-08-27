@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Search, Filter, Phone, Mail, Calendar, User, FileText } from 'lucide-react';
+import { Plus, Search, Filter, Phone, Mail, Calendar, User, FileText, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { LeadForm } from '@/components/crm/LeadForm';
 import { LeadDetail } from '@/components/crm/LeadDetail';
 import { ActivityForm } from '@/components/crm/ActivityForm';
 import { PipelineView } from '@/components/crm/PipelineView';
+import { LeadStagesManager } from '@/components/crm/LeadStagesManager';
 
 interface Lead {
   id: string;
@@ -66,6 +67,7 @@ export const CRMPage: React.FC = () => {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [showActivityForm, setShowActivityForm] = useState(false);
+  const [showStagesManager, setShowStagesManager] = useState(false);
   const [activeTab, setActiveTab] = useState('leads');
 
   useEffect(() => {
@@ -214,10 +216,16 @@ export const CRMPage: React.FC = () => {
           <h1 className="text-3xl font-bold">CRM Dashboard</h1>
           <p className="text-muted-foreground">Manage leads and track sales activities</p>
         </div>
-        <Button onClick={() => setShowLeadForm(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Lead
-        </Button>
+        <div className="flex space-x-2">
+          <Button variant="outline" onClick={() => setShowStagesManager(true)}>
+            <Settings className="h-4 w-4 mr-2" />
+            Manage Stages
+          </Button>
+          <Button onClick={() => setShowLeadForm(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Lead
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -419,6 +427,12 @@ export const CRMPage: React.FC = () => {
             setShowActivityForm(false);
             fetchRecentActivities();
           }}
+        />
+      )}
+
+      {showStagesManager && (
+        <LeadStagesManager
+          onClose={() => setShowStagesManager(false)}
         />
       )}
     </div>

@@ -73,7 +73,8 @@ export const LeadForm: React.FC<LeadFormProps> = ({ onClose, onSuccess, lead }) 
       const leadData = {
         ...formData,
         organization_id: profile.organization_id,
-        estimated_value: formData.estimated_value ? parseFloat(formData.estimated_value) : null
+        estimated_value: formData.estimated_value ? parseFloat(formData.estimated_value) : null,
+        stage_id: formData.stage_id || null // Convert empty string to null for UUID field
       };
 
       let result;
