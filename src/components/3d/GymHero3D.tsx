@@ -86,54 +86,32 @@ function FloatingOrb({ position, color = "#FF6B35" }: {
 
 // Main 3D Scene
 function Scene() {
-  const dumbbells = useMemo(() => [
-    { position: [-3, 1, -2] as [number, number, number], rotation: [0.2, 0.5, 0.1] as [number, number, number], scale: 0.8 },
-    { position: [3, -1, -1] as [number, number, number], rotation: [-0.1, -0.3, 0.2] as [number, number, number], scale: 1.1 },
-    { position: [-1, -2, -3] as [number, number, number], rotation: [0.3, 1.2, -0.1] as [number, number, number], scale: 0.6 },
-    { position: [2, 2, -4] as [number, number, number], rotation: [-0.2, 0.8, 0.3] as [number, number, number], scale: 0.9 },
-  ], []);
-
-  const orbs = useMemo(() => [
-    { position: [-4, 2, -1] as [number, number, number], color: "#FF6B35" },
-    { position: [4, -2, -2] as [number, number, number], color: "#4A90E2" },
-    { position: [0, 3, -3] as [number, number, number], color: "#7B68EE" },
-    { position: [-2, -1, 1] as [number, number, number], color: "#FF6B35" },
-    { position: [3, 1, 2] as [number, number, number], color: "#4A90E2" },
-  ], []);
+  console.log('Scene component rendering');
 
   return (
     <>
       {/* Lighting */}
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.6} />
       <directionalLight position={[10, 10, 5]} intensity={1} />
-      <pointLight position={[-10, -10, -10]} color="#FF6B35" intensity={0.5} />
-      <pointLight position={[10, 10, 10]} color="#4A90E2" intensity={0.3} />
+      
+      {/* Simple test cube to verify rendering */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="#FF6B35" />
+      </mesh>
 
-      {/* Dumbbells */}
-      {dumbbells.map((dumbbell, index) => (
-        <Dumbbell
-          key={index}
-          position={dumbbell.position}
-          rotation={dumbbell.rotation}
-          scale={dumbbell.scale}
-        />
-      ))}
+      {/* Single dumbbell for testing */}
+      <Dumbbell position={[2, 0, -1]} rotation={[0, 0, 0]} scale={1} />
 
-      {/* Floating orbs */}
-      {orbs.map((orb, index) => (
-        <FloatingOrb
-          key={index}
-          position={orb.position}
-          color={orb.color}
-        />
-      ))}
+      {/* Single floating orb for testing */}
+      <FloatingOrb position={[-2, 1, -1]} color="#4A90E2" />
 
       {/* Controls */}
       <OrbitControls 
         enableZoom={false} 
         enablePan={false}
         autoRotate
-        autoRotateSpeed={0.3}
+        autoRotateSpeed={0.5}
         maxPolarAngle={Math.PI / 2}
         minPolarAngle={Math.PI / 3}
         enabled={false}
@@ -143,15 +121,23 @@ function Scene() {
 }
 
 export default function GymHero3D() {
+  console.log('GymHero3D component mounting');
+  
   return (
-    <div className="absolute inset-0 -z-10">
+    <div 
+      className="absolute inset-0 -z-10"
+      style={{ width: '100%', height: '100%' }}
+    >
       <Canvas
         camera={{ position: [0, 0, 8], fov: 50 }}
         style={{ 
+          width: '100%',
+          height: '100%',
           background: 'transparent',
           pointerEvents: 'none'
         }}
         gl={{ alpha: true, antialias: true }}
+        onCreated={(state) => console.log('Canvas created:', state)}
       >
         <Scene />
       </Canvas>
