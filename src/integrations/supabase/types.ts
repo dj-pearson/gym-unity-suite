@@ -208,6 +208,63 @@ export type Database = {
           },
         ]
       }
+      class_analytics: {
+        Row: {
+          attendance: number
+          attendance_rate: number
+          bookings: number
+          cancellations: number
+          capacity: number
+          class_date: string
+          class_id: string | null
+          class_name: string
+          created_at: string
+          id: string
+          instructor_id: string | null
+          instructor_name: string | null
+          no_shows: number
+          organization_id: string
+          revenue: number | null
+          utilization_rate: number
+        }
+        Insert: {
+          attendance?: number
+          attendance_rate?: number
+          bookings?: number
+          cancellations?: number
+          capacity?: number
+          class_date: string
+          class_id?: string | null
+          class_name: string
+          created_at?: string
+          id?: string
+          instructor_id?: string | null
+          instructor_name?: string | null
+          no_shows?: number
+          organization_id: string
+          revenue?: number | null
+          utilization_rate?: number
+        }
+        Update: {
+          attendance?: number
+          attendance_rate?: number
+          bookings?: number
+          cancellations?: number
+          capacity?: number
+          class_date?: string
+          class_id?: string | null
+          class_name?: string
+          created_at?: string
+          id?: string
+          instructor_id?: string | null
+          instructor_name?: string | null
+          no_shows?: number
+          organization_id?: string
+          revenue?: number | null
+          utilization_rate?: number
+        }
+        Relationships: []
+      }
       class_bookings: {
         Row: {
           attended_at: string | null
@@ -618,6 +675,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      kpi_metrics: {
+        Row: {
+          created_at: string
+          id: string
+          metric_category: string
+          metric_name: string
+          metric_unit: string | null
+          metric_value: number
+          organization_id: string
+          period_end: string
+          period_start: string
+          target_value: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metric_category: string
+          metric_name: string
+          metric_unit?: string | null
+          metric_value: number
+          organization_id: string
+          period_end: string
+          period_start: string
+          target_value?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metric_category?: string
+          metric_name?: string
+          metric_unit?: string | null
+          metric_value?: number
+          organization_id?: string
+          period_end?: string
+          period_start?: string
+          target_value?: number | null
+        }
+        Relationships: []
       }
       lead_activities: {
         Row: {
@@ -1199,6 +1295,114 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_analytics: {
+        Row: {
+          campaign_id: string | null
+          campaign_name: string
+          campaign_type: string
+          click_through_rate: number | null
+          clicks: number | null
+          conversion_rate: number | null
+          conversions: number | null
+          cost: number | null
+          cost_per_lead: number | null
+          created_at: string
+          customer_acquisition_cost: number | null
+          id: string
+          impressions: number | null
+          leads_generated: number | null
+          organization_id: string
+          period_end: string
+          period_start: string
+          revenue: number | null
+          roi: number | null
+          updated_at: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          campaign_name: string
+          campaign_type: string
+          click_through_rate?: number | null
+          clicks?: number | null
+          conversion_rate?: number | null
+          conversions?: number | null
+          cost?: number | null
+          cost_per_lead?: number | null
+          created_at?: string
+          customer_acquisition_cost?: number | null
+          id?: string
+          impressions?: number | null
+          leads_generated?: number | null
+          organization_id: string
+          period_end: string
+          period_start: string
+          revenue?: number | null
+          roi?: number | null
+          updated_at?: string
+        }
+        Update: {
+          campaign_id?: string | null
+          campaign_name?: string
+          campaign_type?: string
+          click_through_rate?: number | null
+          clicks?: number | null
+          conversion_rate?: number | null
+          conversions?: number | null
+          cost?: number | null
+          cost_per_lead?: number | null
+          created_at?: string
+          customer_acquisition_cost?: number | null
+          id?: string
+          impressions?: number | null
+          leads_generated?: number | null
+          organization_id?: string
+          period_end?: string
+          period_start?: string
+          revenue?: number | null
+          roi?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      member_analytics_snapshots: {
+        Row: {
+          active_members: number
+          average_visits_per_member: number | null
+          churned_members: number
+          created_at: string
+          id: string
+          new_members: number
+          organization_id: string
+          retention_rate: number | null
+          snapshot_date: string
+          total_members: number
+        }
+        Insert: {
+          active_members?: number
+          average_visits_per_member?: number | null
+          churned_members?: number
+          created_at?: string
+          id?: string
+          new_members?: number
+          organization_id: string
+          retention_rate?: number | null
+          snapshot_date: string
+          total_members?: number
+        }
+        Update: {
+          active_members?: number
+          average_visits_per_member?: number | null
+          churned_members?: number
+          created_at?: string
+          id?: string
+          new_members?: number
+          organization_id?: string
+          retention_rate?: number | null
+          snapshot_date?: string
+          total_members?: number
+        }
+        Relationships: []
+      }
       member_cards: {
         Row: {
           barcode: string | null
@@ -1265,6 +1469,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      member_cohorts: {
+        Row: {
+          cohort_period: string
+          cohort_size: number
+          created_at: string
+          id: string
+          month_1_rate: number | null
+          month_1_retained: number | null
+          month_12_rate: number | null
+          month_12_retained: number | null
+          month_2_rate: number | null
+          month_2_retained: number | null
+          month_3_rate: number | null
+          month_3_retained: number | null
+          month_6_rate: number | null
+          month_6_retained: number | null
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          cohort_period: string
+          cohort_size?: number
+          created_at?: string
+          id?: string
+          month_1_rate?: number | null
+          month_1_retained?: number | null
+          month_12_rate?: number | null
+          month_12_retained?: number | null
+          month_2_rate?: number | null
+          month_2_retained?: number | null
+          month_3_rate?: number | null
+          month_3_retained?: number | null
+          month_6_rate?: number | null
+          month_6_retained?: number | null
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          cohort_period?: string
+          cohort_size?: number
+          created_at?: string
+          id?: string
+          month_1_rate?: number | null
+          month_1_retained?: number | null
+          month_12_rate?: number | null
+          month_12_retained?: number | null
+          month_2_rate?: number | null
+          month_2_retained?: number | null
+          month_3_rate?: number | null
+          month_3_retained?: number | null
+          month_6_rate?: number | null
+          month_6_retained?: number | null
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       member_documents: {
         Row: {
@@ -2451,6 +2712,60 @@ export type Database = {
         }
         Relationships: []
       }
+      revenue_analytics: {
+        Row: {
+          average_transaction_value: number
+          class_revenue: number
+          created_at: string
+          id: string
+          membership_revenue: number
+          net_revenue: number
+          organization_id: string
+          other_revenue: number
+          period_end: string
+          period_start: string
+          period_type: string
+          refunds: number
+          total_revenue: number
+          transaction_count: number
+          updated_at: string
+        }
+        Insert: {
+          average_transaction_value?: number
+          class_revenue?: number
+          created_at?: string
+          id?: string
+          membership_revenue?: number
+          net_revenue?: number
+          organization_id: string
+          other_revenue?: number
+          period_end: string
+          period_start: string
+          period_type: string
+          refunds?: number
+          total_revenue?: number
+          transaction_count?: number
+          updated_at?: string
+        }
+        Update: {
+          average_transaction_value?: number
+          class_revenue?: number
+          created_at?: string
+          id?: string
+          membership_revenue?: number
+          net_revenue?: number
+          organization_id?: string
+          other_revenue?: number
+          period_end?: string
+          period_start?: string
+          period_type?: string
+          refunds?: number
+          total_revenue?: number
+          transaction_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sales_quotes: {
         Row: {
           accepted_at: string | null
@@ -2653,6 +2968,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      staff_performance_analytics: {
+        Row: {
+          average_class_utilization: number | null
+          classes_taught: number | null
+          commission_earned: number | null
+          created_at: string
+          id: string
+          leads_converted: number | null
+          member_satisfaction_score: number | null
+          organization_id: string
+          period_end: string
+          period_start: string
+          sales_made: number | null
+          staff_id: string
+          total_class_revenue: number | null
+          total_sales_revenue: number | null
+          tours_conducted: number | null
+          updated_at: string
+        }
+        Insert: {
+          average_class_utilization?: number | null
+          classes_taught?: number | null
+          commission_earned?: number | null
+          created_at?: string
+          id?: string
+          leads_converted?: number | null
+          member_satisfaction_score?: number | null
+          organization_id: string
+          period_end: string
+          period_start: string
+          sales_made?: number | null
+          staff_id: string
+          total_class_revenue?: number | null
+          total_sales_revenue?: number | null
+          tours_conducted?: number | null
+          updated_at?: string
+        }
+        Update: {
+          average_class_utilization?: number | null
+          classes_taught?: number | null
+          commission_earned?: number | null
+          created_at?: string
+          id?: string
+          leads_converted?: number | null
+          member_satisfaction_score?: number | null
+          organization_id?: string
+          period_end?: string
+          period_start?: string
+          sales_made?: number | null
+          staff_id?: string
+          total_class_revenue?: number | null
+          total_sales_revenue?: number | null
+          tours_conducted?: number | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       subscribers: {
         Row: {
