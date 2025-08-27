@@ -30,6 +30,8 @@ import NotFound from "./pages/NotFound";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberClasses from "./pages/MemberClasses";
 import MemberWorkoutHistory from "./pages/MemberWorkoutHistory";
+import MemberNotifications from "./pages/MemberNotifications";
+import { MemberLayout } from "./components/layout/MemberLayout";
 
 const queryClient = new QueryClient();
 
@@ -67,9 +69,9 @@ const HomeRoute = () => {
       if (user && profile?.role === 'member') {
         return (
           <ProtectedRoute roles={['member']}>
-            <DashboardLayout>
+            <MemberLayout>
               <MemberDashboard />
-            </DashboardLayout>
+            </MemberLayout>
           </ProtectedRoute>
         );
       }
@@ -144,11 +146,11 @@ const App = () => (
 
             <Route path="/membership-success" element={<MembershipSuccessPage />} />
             
-            <Route path="/member/dashboard" element={
+            <Route path="/member/notifications" element={
               <ProtectedRoute roles={['member']}>
-                <DashboardLayout>
-                  <MemberDashboard />
-                </DashboardLayout>
+                <MemberLayout>
+                  <MemberNotifications />
+                </MemberLayout>
               </ProtectedRoute>
             } />
             
