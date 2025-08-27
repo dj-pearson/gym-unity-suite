@@ -135,7 +135,7 @@ export default function LandingPage() {
               <div className="absolute -inset-1 bg-gradient-primary opacity-20 blur-lg rounded-lg -z-10"></div>
             </span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto backdrop-blur-sm bg-background/30 rounded-lg p-4">
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Premium management solutions for discerning fitness professionals. From exclusive boutiques 
             to luxury fitness clubs, Rep Club delivers unparalleled sophistication and performance.
           </p>
@@ -143,7 +143,7 @@ export default function LandingPage() {
             <Button 
               size="lg" 
               onClick={() => navigate('/auth')}
-              className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow backdrop-blur-sm"
+              className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow"
             >
               Start Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -151,7 +151,7 @@ export default function LandingPage() {
             <Button 
               variant="outline" 
               size="lg"
-              className="px-8 py-4 text-lg backdrop-blur-sm bg-background/20 border-white/20"
+              className="px-8 py-4 text-lg"
             >
               Watch Demo
             </Button>

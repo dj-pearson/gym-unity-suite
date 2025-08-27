@@ -133,9 +133,10 @@ function Scene() {
         enableZoom={false} 
         enablePan={false}
         autoRotate
-        autoRotateSpeed={0.5}
+        autoRotateSpeed={0.3}
         maxPolarAngle={Math.PI / 2}
         minPolarAngle={Math.PI / 3}
+        enabled={false}
       />
     </>
   );
@@ -143,10 +144,14 @@ function Scene() {
 
 export default function GymHero3D() {
   return (
-    <div className="absolute inset-0 -z-10 opacity-60">
+    <div className="absolute inset-0 -z-10">
       <Canvas
         camera={{ position: [0, 0, 8], fov: 50 }}
-        style={{ background: 'transparent' }}
+        style={{ 
+          background: 'transparent',
+          pointerEvents: 'none'
+        }}
+        gl={{ alpha: true, antialias: true }}
       >
         <Scene />
       </Canvas>
