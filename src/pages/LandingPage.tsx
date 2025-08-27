@@ -17,6 +17,7 @@ import {
   Star
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import GymHero3D from '@/components/3d/GymHero3D';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -118,17 +119,23 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 text-center">
-        <div className="max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
+      <section className="relative container mx-auto px-4 py-20 text-center overflow-hidden">
+        {/* 3D Background */}
+        <GymHero3D />
+        
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20 backdrop-blur-sm">
             Elite Fitness Management Platform
           </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gradient-hero leading-tight">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gradient-hero leading-tight drop-shadow-lg">
             Elevate Your 
             <br />
-            Fitness Experience
+            <span className="relative">
+              Fitness Experience
+              <div className="absolute -inset-1 bg-gradient-primary opacity-20 blur-lg rounded-lg -z-10"></div>
+            </span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto backdrop-blur-sm bg-background/30 rounded-lg p-4">
             Premium management solutions for discerning fitness professionals. From exclusive boutiques 
             to luxury fitness clubs, Rep Club delivers unparalleled sophistication and performance.
           </p>
@@ -136,7 +143,7 @@ export default function LandingPage() {
             <Button 
               size="lg" 
               onClick={() => navigate('/auth')}
-              className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow"
+              className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow backdrop-blur-sm"
             >
               Start Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -144,7 +151,7 @@ export default function LandingPage() {
             <Button 
               variant="outline" 
               size="lg"
-              className="px-8 py-4 text-lg"
+              className="px-8 py-4 text-lg backdrop-blur-sm bg-background/20 border-white/20"
             >
               Watch Demo
             </Button>
