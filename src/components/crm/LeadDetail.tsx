@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, Mail, Calendar, User, Plus, Edit, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 import { LeadForm } from './LeadForm';
+import { MembershipConversionDialog } from './MembershipConversionDialog';
 
 interface LeadDetailProps {
   lead: any;
@@ -61,22 +62,7 @@ export const LeadDetail: React.FC<LeadDetailProps> = ({
     }
   };
 
-  const convertToMember = async () => {
-    try {
-      const { error } = await supabase
-        .from('leads')
-        .update({ status: 'member' })
-        .eq('id', lead.id);
-
-      if (error) throw error;
-      
-      toast.success('Lead converted to member successfully');
-      onUpdate();
-    } catch (error: any) {
-      console.error('Error converting lead:', error);
-      toast.error('Failed to convert lead');
-    }
-  };
+  const [showConversionDialog, setShowConversionDialog] = useState(false);
 
   const getActivityIcon = (type: string) => {
     switch (type) {
@@ -107,7 +93,7 @@ export const LeadDetail: React.FC<LeadDetailProps> = ({
                   Edit
                 </Button>
                 {lead.status === 'lead' && (
-                  <Button onClick={convertToMember}>
+                  <Button onClick={() => setShowConversionDialog(true)}>
                     Convert to Member
                   </Button>
                 )}
@@ -306,6 +292,18 @@ export const LeadDetail: React.FC<LeadDetailProps> = ({
           onClose={() => setShowEditForm(false)}
           onSuccess={() => {
             setShowEditForm(false);
+            onUpdate();
+          }}
+        />
+      )}
+
+      {showConversionDialog && (
+        <MembershipConversionDialog
+          lead={lead}
+          isOpen={showConversionDialog}
+          onClose={() => setShowConversionDialog(false)}
+          onSuccess={() => {
+            setShowConversionDialog(false);
             onUpdate();
           }}
         />

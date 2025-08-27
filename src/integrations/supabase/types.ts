@@ -405,41 +405,203 @@ export type Database = {
           },
         ]
       }
+      member_cards: {
+        Row: {
+          barcode: string | null
+          card_number: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          issued_at: string
+          member_id: string
+          nfc_enabled: boolean | null
+          nfc_uid: string | null
+          qr_code: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          barcode?: string | null
+          card_number: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          issued_at?: string
+          member_id: string
+          nfc_enabled?: boolean | null
+          nfc_uid?: string | null
+          qr_code?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          barcode?: string | null
+          card_number?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          issued_at?: string
+          member_id?: string
+          nfc_enabled?: boolean | null
+          nfc_uid?: string | null
+          qr_code?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_cards_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      membership_agreement_templates: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_default: boolean | null
+          name: string
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_default?: boolean | null
+          name: string
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean | null
+          name?: string
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      membership_agreements: {
+        Row: {
+          agreement_content: string
+          created_at: string
+          id: string
+          member_id: string
+          signature_data: string | null
+          signed_at: string
+          template_id: string | null
+          witness_id: string | null
+        }
+        Insert: {
+          agreement_content: string
+          created_at?: string
+          id?: string
+          member_id: string
+          signature_data?: string | null
+          signed_at?: string
+          template_id?: string | null
+          witness_id?: string | null
+        }
+        Update: {
+          agreement_content?: string
+          created_at?: string
+          id?: string
+          member_id?: string
+          signature_data?: string | null
+          signed_at?: string
+          template_id?: string | null
+          witness_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "membership_agreements_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "membership_agreements_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "membership_agreement_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "membership_agreements_witness_id_fkey"
+            columns: ["witness_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       membership_plans: {
         Row: {
           access_level: string | null
+          annual_maintenance_fee: number | null
           billing_interval: string
+          commitment_months: number | null
           created_at: string
           description: string | null
+          features: string[] | null
           id: string
+          is_prepaid: boolean | null
           max_classes_per_month: number | null
           name: string
           organization_id: string
+          plan_type: string | null
+          prepaid_months: number | null
           price: number
+          requires_commitment: boolean | null
+          signup_fee: number | null
           updated_at: string
         }
         Insert: {
           access_level?: string | null
+          annual_maintenance_fee?: number | null
           billing_interval: string
+          commitment_months?: number | null
           created_at?: string
           description?: string | null
+          features?: string[] | null
           id?: string
+          is_prepaid?: boolean | null
           max_classes_per_month?: number | null
           name: string
           organization_id: string
+          plan_type?: string | null
+          prepaid_months?: number | null
           price: number
+          requires_commitment?: boolean | null
+          signup_fee?: number | null
           updated_at?: string
         }
         Update: {
           access_level?: string | null
+          annual_maintenance_fee?: number | null
           billing_interval?: string
+          commitment_months?: number | null
           created_at?: string
           description?: string | null
+          features?: string[] | null
           id?: string
+          is_prepaid?: boolean | null
           max_classes_per_month?: number | null
           name?: string
           organization_id?: string
+          plan_type?: string | null
+          prepaid_months?: number | null
           price?: number
+          requires_commitment?: boolean | null
+          signup_fee?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -536,6 +698,76 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string | null
+          id: string
+          member_id: string
+          membership_id: string | null
+          notes: string | null
+          payment_method: string
+          payment_status: string | null
+          processed_by: string | null
+          stripe_payment_intent_id: string | null
+          transaction_reference: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string | null
+          id?: string
+          member_id: string
+          membership_id?: string | null
+          notes?: string | null
+          payment_method: string
+          payment_status?: string | null
+          processed_by?: string | null
+          stripe_payment_intent_id?: string | null
+          transaction_reference?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string | null
+          id?: string
+          member_id?: string
+          membership_id?: string | null
+          notes?: string | null
+          payment_method?: string
+          payment_status?: string | null
+          processed_by?: string | null
+          stripe_payment_intent_id?: string | null
+          transaction_reference?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_processed_by_fkey"
+            columns: ["processed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -599,6 +831,57 @@ export type Database = {
           },
         ]
       }
+      promotions: {
+        Row: {
+          applicable_plans: string[] | null
+          created_at: string
+          current_uses: number | null
+          description: string | null
+          discount_type: string
+          discount_value: number
+          id: string
+          is_active: boolean | null
+          max_uses: number | null
+          name: string
+          organization_id: string
+          updated_at: string
+          valid_from: string
+          valid_until: string | null
+        }
+        Insert: {
+          applicable_plans?: string[] | null
+          created_at?: string
+          current_uses?: number | null
+          description?: string | null
+          discount_type: string
+          discount_value: number
+          id?: string
+          is_active?: boolean | null
+          max_uses?: number | null
+          name: string
+          organization_id: string
+          updated_at?: string
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Update: {
+          applicable_plans?: string[] | null
+          created_at?: string
+          current_uses?: number | null
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          id?: string
+          is_active?: boolean | null
+          max_uses?: number | null
+          name?: string
+          organization_id?: string
+          updated_at?: string
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           created_at: string
@@ -652,6 +935,10 @@ export type Database = {
     }
     Functions: {
       generate_member_barcode: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_member_card_number: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
