@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -15,12 +16,15 @@ import {
   User,
   MoreVertical,
   Filter,
-  Search
+  Search,
+  Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import ClassScheduleForm from '@/components/classes/ClassScheduleForm';
 import MemberBookingDialog from '@/components/classes/MemberBookingDialog';
+import CategoryManager from '@/components/classes/CategoryManager';
+import ClassCalendarView from '@/components/classes/ClassCalendarView';
 
 interface Class {
   id: string;
@@ -66,6 +70,8 @@ export default function ClassesPage() {
   const [showScheduleForm, setShowScheduleForm] = useState(false);
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
   const [showBookingDialog, setShowBookingDialog] = useState(false);
+  const [showCategoryManager, setShowCategoryManager] = useState(false);
+  const [activeTab, setActiveTab] = useState('list');
 
   useEffect(() => {
     fetchClasses();
@@ -256,15 +262,26 @@ export default function ClassesPage() {
             </p>
           </div>
         </div>
-        {canScheduleClasses && (
-          <Button 
-            className="bg-gradient-secondary hover:opacity-90"
-            onClick={() => setShowScheduleForm(true)}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Schedule Class
-          </Button>
-        )}
+        <div className="flex items-center space-x-2">
+          {canScheduleClasses && (
+            <Button 
+              className="bg-gradient-secondary hover:opacity-90"
+              onClick={() => setShowScheduleForm(true)}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Schedule Class
+            </Button>
+          )}
+          {canScheduleClasses && (
+            <Button 
+              variant="outline"
+              onClick={() => setShowCategoryManager(true)}
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              Categories
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -308,178 +325,195 @@ export default function ClassesPage() {
         </Card>
       </div>
 
-      {/* View Toggle and Search */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Button
-            variant={viewMode === 'upcoming' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('upcoming')}
-          >
-            Upcoming
-          </Button>
-          <Button
-            variant={viewMode === 'all' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('all')}
-          >
-            All Classes
-          </Button>
-        </div>
-        
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search classes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-64"
-            />
-          </div>
-          <Button variant="outline" size="sm">
-            <Filter className="mr-2 h-4 w-4" />
-            Filter
-          </Button>
-        </div>
-      </div>
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="list">List View</TabsTrigger>
+          <TabsTrigger value="calendar">Calendar View</TabsTrigger>
+        </TabsList>
 
-      {/* Classes Grid */}
-      {filteredClasses.length === 0 ? (
-        <Card className="gym-card">
-          <CardContent className="text-center py-12">
-            <Calendar className="mx-auto h-12 w-12 text-muted-foreground opacity-50 mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">
-              {searchTerm ? 'No classes found' : 'No classes scheduled'}
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              {searchTerm 
-                ? 'Try adjusting your search terms'
-                : 'Start by scheduling your first class'
-              }
-            </p>
-            {!searchTerm && canScheduleClasses && (
-              <Button 
-                className="bg-gradient-secondary hover:opacity-90"
-                onClick={() => setShowScheduleForm(true)}
+        <TabsContent value="list" className="space-y-4">
+          {/* View Toggle and Search */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Button
+                variant={viewMode === 'upcoming' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('upcoming')}
               >
-                <Plus className="mr-2 h-4 w-4" />
-                Schedule First Class
+                Upcoming
               </Button>
-            )}
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredClasses.map((classItem) => {
-            const status = getClassStatus(classItem);
-            const bookedCount = classItem.bookings.filter(b => b.status === 'booked').length;
-            const capacityPercentage = (bookedCount / classItem.max_capacity) * 100;
-
-            return (
-              <Card 
-                key={classItem.id} 
-                className="gym-card hover:shadow-elevation-2 cursor-pointer"
-                onClick={() => handleClassClick(classItem)}
+              <Button
+                variant={viewMode === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('all')}
               >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h3 className="font-semibold text-foreground">{classItem.name}</h3>
-                        <Badge variant={status.variant} className="text-xs">
-                          {status.label}
-                        </Badge>
+                All Classes
+              </Button>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search classes..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 w-64"
+                />
+              </div>
+              <Button variant="outline" size="sm">
+                <Filter className="mr-2 h-4 w-4" />
+                Filter
+              </Button>
+            </div>
+          </div>
+
+          {/* Classes Grid */}
+          {filteredClasses.length === 0 ? (
+            <Card className="gym-card">
+              <CardContent className="text-center py-12">
+                <Calendar className="mx-auto h-12 w-12 text-muted-foreground opacity-50 mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">
+                  {searchTerm ? 'No classes found' : 'No classes scheduled'}
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  {searchTerm 
+                    ? 'Try adjusting your search terms'
+                    : 'Start by scheduling your first class'
+                  }
+                </p>
+                {!searchTerm && canScheduleClasses && (
+                  <Button 
+                    className="bg-gradient-secondary hover:opacity-90"
+                    onClick={() => setShowScheduleForm(true)}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Schedule First Class
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredClasses.map((classItem) => {
+                const status = getClassStatus(classItem);
+                const bookedCount = classItem.bookings.filter(b => b.status === 'booked').length;
+                const capacityPercentage = (bookedCount / classItem.max_capacity) * 100;
+
+                return (
+                  <Card 
+                    key={classItem.id} 
+                    className="gym-card hover:shadow-elevation-2 cursor-pointer"
+                    onClick={() => handleClassClick(classItem)}
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <h3 className="font-semibold text-foreground">{classItem.name}</h3>
+                            <Badge variant={status.variant} className="text-xs">
+                              {status.label}
+                            </Badge>
+                          </div>
+                          {classItem.category && (
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs mb-2"
+                              style={{ 
+                                borderColor: classItem.category.color,
+                                color: classItem.category.color 
+                              }}
+                            >
+                              {classItem.category.name}
+                            </Badge>
+                          )}
+                        </div>
+                        <Button variant="ghost" size="sm">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
                       </div>
-                      {classItem.category && (
-                        <Badge 
-                          variant="outline" 
-                          className="text-xs mb-2"
-                          style={{ 
-                            borderColor: classItem.category.color,
-                            color: classItem.category.color 
-                          }}
-                        >
-                          {classItem.category.name}
-                        </Badge>
+                    </CardHeader>
+                    
+                    <CardContent className="space-y-4">
+                      {/* Time and Location */}
+                      <div className="space-y-2">
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Clock className="mr-2 h-4 w-4" />
+                          <span>{formatClassTime(classItem.scheduled_at)}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <MapPin className="mr-2 h-4 w-4" />
+                          <span>{classItem.location.name}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Clock className="mr-2 h-4 w-4" />
+                          <span>{classItem.duration_minutes} minutes</span>
+                        </div>
+                      </div>
+
+                      {/* Instructor */}
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={classItem.instructor?.avatar_url} />
+                          <AvatarFallback className="bg-gradient-primary text-white text-xs">
+                            {getInstructorInitials(classItem.instructor)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center text-sm">
+                            <User className="mr-1 h-3 w-3 text-muted-foreground" />
+                            <span className="font-medium text-foreground truncate">
+                              {getInstructorName(classItem.instructor)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Capacity */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground flex items-center">
+                            <Users className="mr-1 h-4 w-4" />
+                            Capacity
+                          </span>
+                          <span className="font-medium">
+                            {bookedCount}/{classItem.max_capacity}
+                          </span>
+                        </div>
+                        <div className="w-full bg-muted rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full transition-smooth ${
+                              capacityPercentage >= 90 ? 'bg-gradient-to-r from-warning to-destructive' :
+                              capacityPercentage >= 70 ? 'bg-gradient-to-r from-primary to-warning' :
+                              'bg-gradient-primary'
+                            }`}
+                            style={{ width: `${Math.min(capacityPercentage, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      {classItem.description && (
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {classItem.description}
+                        </p>
                       )}
-                    </div>
-                    <Button variant="ghost" size="sm">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="space-y-4">
-                  {/* Time and Location */}
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Clock className="mr-2 h-4 w-4" />
-                      <span>{formatClassTime(classItem.scheduled_at)}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <MapPin className="mr-2 h-4 w-4" />
-                      <span>{classItem.location.name}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Clock className="mr-2 h-4 w-4" />
-                      <span>{classItem.duration_minutes} minutes</span>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </TabsContent>
 
-                  {/* Instructor */}
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={classItem.instructor?.avatar_url} />
-                      <AvatarFallback className="bg-gradient-primary text-white text-xs">
-                        {getInstructorInitials(classItem.instructor)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center text-sm">
-                        <User className="mr-1 h-3 w-3 text-muted-foreground" />
-                        <span className="font-medium text-foreground truncate">
-                          {getInstructorName(classItem.instructor)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Capacity */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground flex items-center">
-                        <Users className="mr-1 h-4 w-4" />
-                        Capacity
-                      </span>
-                      <span className="font-medium">
-                        {bookedCount}/{classItem.max_capacity}
-                      </span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full transition-smooth ${
-                          capacityPercentage >= 90 ? 'bg-gradient-to-r from-warning to-destructive' :
-                          capacityPercentage >= 70 ? 'bg-gradient-to-r from-primary to-warning' :
-                          'bg-gradient-primary'
-                        }`}
-                        style={{ width: `${Math.min(capacityPercentage, 100)}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Description */}
-                  {classItem.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {classItem.description}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+        <TabsContent value="calendar">
+          <ClassCalendarView 
+            onClassClick={handleClassClick}
+            onScheduleClick={() => setShowScheduleForm(true)}
+          />
+        </TabsContent>
+      </Tabs>
 
       {/* Schedule Form Dialog */}
       <Dialog open={showScheduleForm} onOpenChange={setShowScheduleForm}>
@@ -510,6 +544,12 @@ export default function ClassesPage() {
           }}
         />
       )}
+
+      {/* Category Manager Dialog */}
+      <CategoryManager
+        isOpen={showCategoryManager}
+        onClose={() => setShowCategoryManager(false)}
+      />
     </div>
   );
 }
