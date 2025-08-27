@@ -539,6 +539,8 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          barcode: string | null
+          barcode_generated_at: string | null
           created_at: string
           email: string
           first_name: string | null
@@ -552,6 +554,8 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          barcode?: string | null
+          barcode_generated_at?: string | null
           created_at?: string
           email: string
           first_name?: string | null
@@ -565,6 +569,8 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          barcode?: string | null
+          barcode_generated_at?: string | null
           created_at?: string
           email?: string
           first_name?: string | null
@@ -598,6 +604,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_member_barcode: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_user_organization_id: {
         Args: { user_id: string }
         Returns: string
