@@ -14,9 +14,13 @@ import {
   MoreVertical,
   Mail,
   Phone,
-  Calendar
+  Calendar,
+  UserCheck,
+  FileText,
+  Users2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { MemberDetailDialog } from '@/components/members/MemberDetailDialog';
 
 interface Member {
   id: string;
@@ -26,6 +30,9 @@ interface Member {
   phone?: string;
   avatar_url?: string;
   created_at: string;
+  parent_member_id?: string;
+  relationship_type?: string;
+  family_notes?: string;
   membership?: {
     status: string;
     plan: {
@@ -41,6 +48,8 @@ export default function MembersPage() {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchMembers();
@@ -62,6 +71,9 @@ export default function MembersPage() {
           phone,
           avatar_url,
           created_at,
+          parent_member_id,
+          relationship_type,
+          family_notes,
           memberships (
             status,
             membership_plans (
@@ -135,6 +147,11 @@ export default function MembersPage() {
       return `${member.first_name} ${member.last_name}`;
     }
     return member.email;
+  };
+
+  const handleMemberClick = (member: Member) => {
+    setSelectedMember(member);
+    setIsDetailDialogOpen(true);
   };
 
   if (loading) {
@@ -252,7 +269,8 @@ export default function MembersPage() {
                 return (
                   <div
                     key={member.id}
-                    className="flex items-center justify-between p-4 border border-border rounded-lg hover:shadow-elevation-1 transition-smooth"
+                    className="flex items-center justify-between p-4 border border-border rounded-lg hover:shadow-elevation-1 transition-smooth cursor-pointer"
+                    onClick={() => handleMemberClick(member)}
                   >
                     <div className="flex items-center space-x-4 flex-1">
                       <Avatar className="h-12 w-12">
@@ -270,6 +288,12 @@ export default function MembersPage() {
                           <Badge variant={statusBadge.variant}>
                             {statusBadge.label}
                           </Badge>
+                          {member.parent_member_id && (
+                            <Badge variant="outline" className="text-xs">
+                              <Users2 className="w-3 h-3 mr-1" />
+                              Family
+                            </Badge>
+                          )}
                         </div>
                         
                         <div className="flex items-center space-x-4 mt-1 text-sm text-muted-foreground">
@@ -299,9 +323,28 @@ export default function MembersPage() {
                       </div>
                     </div>
                     
-                    <Button variant="ghost" size="sm">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleMemberClick(member);
+                        }}
+                      >
+                        <UserCheck className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Handle more actions
+                        }}
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 );
               })}
@@ -309,6 +352,15 @@ export default function MembersPage() {
           )}
         </CardContent>
       </Card>
+
+      <MemberDetailDialog
+        member={selectedMember}
+        isOpen={isDetailDialogOpen}
+        onClose={() => {
+          setIsDetailDialogOpen(false);
+          setSelectedMember(null);
+        }}
+      />
     </div>
   );
 }

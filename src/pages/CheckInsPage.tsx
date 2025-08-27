@@ -15,10 +15,12 @@ import {
   TrendingUp,
   Calendar,
   CheckCircle,
-  XCircle
+  XCircle,
+  UserPlus
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { StatCard } from '@/components/dashboard/StatCard';
+import { GuestCheckInDialog } from '@/components/members/GuestCheckInDialog';
 
 interface Member {
   id: string;
@@ -32,7 +34,10 @@ interface CheckIn {
   id: string;
   checked_in_at: string;
   checked_out_at?: string;
-  member: Member;
+  is_guest: boolean;
+  guest_name?: string;
+  guest_email?: string;
+  member?: Member;
   location: {
     name: string;
   };
@@ -47,6 +52,7 @@ export default function CheckInsPage() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkInLoading, setCheckInLoading] = useState(false);
+  const [isGuestDialogOpen, setIsGuestDialogOpen] = useState(false);
 
   useEffect(() => {
     Promise.all([fetchCheckIns(), fetchMembers()]);
@@ -64,6 +70,9 @@ export default function CheckInsPage() {
           id,
           checked_in_at,
           checked_out_at,
+          is_guest,
+          guest_name,
+          guest_email,
           profiles!check_ins_member_id_fkey (
             id,
             email,
@@ -225,9 +234,9 @@ export default function CheckInsPage() {
 
   const todaysStats = {
     totalCheckIns: checkIns.length,
+    memberCheckIns: checkIns.filter(c => !c.is_guest).length,
+    guestCheckIns: checkIns.filter(c => c.is_guest).length,
     currentlyInGym: checkIns.filter(c => !c.checked_out_at).length,
-    peakHour: '6:00 PM', // This would be calculated from actual data
-    avgDuration: '90 min' // This would be calculated from actual data
   };
 
   const formatTime = (dateString: string) => {
@@ -262,10 +271,17 @@ export default function CheckInsPage() {
           <div>
             <h1 className="text-3xl font-bold text-foreground">Check-ins</h1>
             <p className="text-muted-foreground">
-              Manage member check-ins and track facility usage
+              Manage member and guest check-ins, track facility usage
             </p>
           </div>
         </div>
+        <Button 
+          onClick={() => setIsGuestDialogOpen(true)}
+          className="bg-gradient-secondary hover:opacity-90"
+        >
+          <UserPlus className="mr-2 h-4 w-4" />
+          Guest Check-In
+        </Button>
         <div className="text-right">
           <p className="text-sm text-muted-foreground">
             {new Date().toLocaleDateString('en-US', {
@@ -280,27 +296,27 @@ export default function CheckInsPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <StatCard
-          title="Today's Check-ins"
+          title="Total Check-ins"
           value={todaysStats.totalCheckIns}
           icon={UserCheck}
           gradient="success"
         />
         <StatCard
-          title="Currently in Gym"
-          value={todaysStats.currentlyInGym}
+          title="Member Check-ins"
+          value={todaysStats.memberCheckIns}
           icon={Users}
           gradient="primary"
         />
         <StatCard
-          title="Peak Hour"
-          value={todaysStats.peakHour}
-          icon={TrendingUp}
+          title="Guest Check-ins"
+          value={todaysStats.guestCheckIns}
+          icon={UserPlus}
           gradient="secondary"
         />
         <StatCard
-          title="Avg Duration"
-          value={todaysStats.avgDuration}
-          icon={Clock}
+          title="Currently in Gym"
+          value={todaysStats.currentlyInGym}
+          icon={TrendingUp}
           gradient="warning"
         />
       </div>
@@ -334,7 +350,7 @@ export default function CheckInsPage() {
                 ) : (
                   filteredMembers.map((member) => {
                     const isCheckedIn = checkIns.some(
-                      c => c.member.id === member.id && !c.checked_out_at
+                      c => c.member?.id === member.id && !c.checked_out_at && !c.is_guest
                     );
                     
                     return (
@@ -437,19 +453,32 @@ export default function CheckInsPage() {
                   >
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={checkIn.member.avatar_url} />
+                        <AvatarImage src={checkIn.member?.avatar_url} />
                         <AvatarFallback className="bg-gradient-primary text-white text-xs">
-                          {getMemberInitials(checkIn.member)}
+                          {checkIn.is_guest 
+                            ? checkIn.guest_name?.[0]?.toUpperCase() || 'G' 
+                            : getMemberInitials(checkIn.member!)
+                          }
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <div className="font-medium text-sm">
-                          {getMemberName(checkIn.member)}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <div className="font-medium text-sm">
+                            {checkIn.is_guest ? checkIn.guest_name : getMemberName(checkIn.member!)}
+                          </div>
+                          {checkIn.is_guest && (
+                            <Badge variant="outline" className="text-xs">Guest</Badge>
+                          )}
                         </div>
                         <div className="text-xs text-muted-foreground">
                           {formatTime(checkIn.checked_in_at)}
                           {checkIn.checked_out_at && (
                             <> - {formatTime(checkIn.checked_out_at)}</>
+                          )}
+                          {checkIn.is_guest && checkIn.guest_email && (
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {checkIn.guest_email}
+                            </div>
                           )}
                         </div>
                       </div>
@@ -468,6 +497,12 @@ export default function CheckInsPage() {
           </CardContent>
         </Card>
       </div>
+
+      <GuestCheckInDialog
+        isOpen={isGuestDialogOpen}
+        onClose={() => setIsGuestDialogOpen(false)}
+        onSuccess={() => fetchCheckIns()}
+      />
     </div>
   );
 }
