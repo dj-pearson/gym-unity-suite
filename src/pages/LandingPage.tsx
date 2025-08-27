@@ -103,7 +103,7 @@ export default function LandingPage() {
               <Dumbbell className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gradient-hero">Rep Club</h1>
+              <h1 className="text-xl font-bold text-foreground">Rep Club</h1>
               <p className="text-xs text-muted-foreground">Elite Fitness Management</p>
             </div>
           </div>
@@ -123,7 +123,7 @@ export default function LandingPage() {
           <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
             Elite Fitness Management Platform
           </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gradient-hero leading-tight">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-foreground leading-tight">
             Elevate Your 
             <br />
             <span className="relative">
@@ -279,7 +279,7 @@ export default function LandingPage() {
             <div className="flex items-center justify-center w-8 h-8 bg-gradient-primary rounded-lg">
               <Dumbbell className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-bold text-gradient-hero">Rep Club</span>
+            <span className="text-lg font-bold text-foreground">Rep Club</span>
           </div>
           <p className="text-muted-foreground mb-4">
             Elite fitness management solutions for discerning professionals.
