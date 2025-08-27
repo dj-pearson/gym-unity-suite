@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import AuthPage from "./pages/AuthPage";
 import LandingPage from "./pages/LandingPage";
 import MembersPage from "./pages/MembersPage";
+import MemberProfilePage from "./pages/MemberProfilePage";
 import ClassesPage from "./pages/ClassesPage";
 import CheckInsPage from "./pages/CheckInsPage";
 import BillingPage from "./pages/BillingPage";
@@ -44,25 +45,35 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 
 // Home Route Component (shows landing if not authenticated, dashboard if authenticated)  
 const HomeRoute = () => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-lg text-muted-foreground">Loading...</div>
-      </div>
-    );
-  }
-  
-  if (user) {
-    return (
-      <ProtectedRoute permission={PERMISSIONS.VIEW_DASHBOARD}>
-        <DashboardLayout>
-          <Dashboard />
-        </DashboardLayout>
-      </ProtectedRoute>
-    );
-  }
+      const { user, profile, loading } = useAuth();
+      
+      if (loading) {
+        return (
+          <div className="min-h-screen flex items-center justify-center bg-background">
+            <div className="animate-pulse text-lg text-muted-foreground">Loading...</div>
+          </div>
+        );
+      }
+      
+      if (user && profile?.role === 'member') {
+        return (
+          <ProtectedRoute roles={['member']}>
+            <DashboardLayout>
+              <MemberProfilePage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        );
+      }
+      
+      if (user) {
+        return (
+          <ProtectedRoute permission={PERMISSIONS.VIEW_DASHBOARD}>
+            <DashboardLayout>
+              <Dashboard />
+            </DashboardLayout>
+          </ProtectedRoute>
+        );
+      }
   
   return <LandingPage />;
 };
@@ -98,6 +109,14 @@ const App = () => (
               <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
                 <DashboardLayout>
                   <MembersPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/profile" element={
+              <ProtectedRoute roles={['member']}>
+                <DashboardLayout>
+                  <MemberProfilePage />
                 </DashboardLayout>
               </ProtectedRoute>
             } />

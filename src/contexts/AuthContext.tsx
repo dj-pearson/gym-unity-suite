@@ -13,6 +13,10 @@ interface Profile {
   phone?: string;
   role: 'owner' | 'manager' | 'staff' | 'trainer' | 'member';
   avatar_url?: string;
+  barcode?: string;
+  barcode_generated_at?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface Organization {

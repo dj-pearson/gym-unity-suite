@@ -5,7 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { Loader2, Dumbbell } from 'lucide-react';
+import { Loader2, Dumbbell, Mail, QrCode } from 'lucide-react';
+import { BarcodeLogin } from './BarcodeLogin';
 
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -55,9 +56,19 @@ export const LoginForm: React.FC = () => {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="signin" className="flex items-center gap-1">
+                  <Mail className="w-4 h-4" />
+                  <span className="hidden sm:inline">Sign In</span>
+                </TabsTrigger>
+                <TabsTrigger value="member" className="flex items-center gap-1">
+                  <QrCode className="w-4 h-4" />
+                  <span className="hidden sm:inline">Member</span>
+                </TabsTrigger>
+                <TabsTrigger value="signup" className="flex items-center gap-1">
+                  <Mail className="w-4 h-4" />
+                  <span className="hidden sm:inline">Sign Up</span>
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="signin" className="space-y-4">
@@ -93,6 +104,10 @@ export const LoginForm: React.FC = () => {
                     Sign In
                   </Button>
                 </form>
+              </TabsContent>
+              
+              <TabsContent value="member" className="space-y-4">
+                <BarcodeLogin />
               </TabsContent>
               
               <TabsContent value="signup" className="space-y-4">

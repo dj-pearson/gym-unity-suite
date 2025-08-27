@@ -17,8 +17,9 @@
 - [x] Role-based access: Admin, Owner, Manager, Staff, Member (database structure)
 - [x] **Role-based UI permissions and route protection**
 - [x] **Permission system with granular access controls**
-- [ ] Member app login with QR/barcode generation
-- [ ] Forgotten barcode recovery system
+- [x] **Member app login with QR/barcode generation**
+- [x] **Forgotten barcode recovery system**
+- [ ] Member app login enhancements
 
 ### MEMBERSHIP & CRM
 - [x] Lead capture & CRM pipeline (basic)
