@@ -8,7 +8,6 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PERMISSIONS } from "@/hooks/usePermissions";
 
-// Pages
 import Dashboard from "./pages/Dashboard";
 import AuthPage from "./pages/AuthPage";
 import LandingPage from "./pages/LandingPage";
@@ -28,6 +27,9 @@ import AttributionPage from "./pages/AttributionPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import CommunicationPage from "./pages/CommunicationPage";
 import NotFound from "./pages/NotFound";
+import MemberDashboard from "./pages/MemberDashboard";
+import MemberClasses from "./pages/MemberClasses";
+import MemberWorkoutHistory from "./pages/MemberWorkoutHistory";
 
 const queryClient = new QueryClient();
 
@@ -66,7 +68,7 @@ const HomeRoute = () => {
         return (
           <ProtectedRoute roles={['member']}>
             <DashboardLayout>
-              <MemberProfilePage />
+              <MemberDashboard />
             </DashboardLayout>
           </ProtectedRoute>
         );
@@ -141,6 +143,14 @@ const App = () => (
             } />
 
             <Route path="/membership-success" element={<MembershipSuccessPage />} />
+            
+            <Route path="/member/dashboard" element={
+              <ProtectedRoute roles={['member']}>
+                <DashboardLayout>
+                  <MemberDashboard />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
             
             <Route path="/profile" element={
               <ProtectedRoute roles={['member']}>
