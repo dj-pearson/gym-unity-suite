@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -18,6 +19,8 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
+import ClassScheduleForm from '@/components/classes/ClassScheduleForm';
+import MemberBookingDialog from '@/components/classes/MemberBookingDialog';
 
 interface Class {
   id: string;
@@ -44,6 +47,7 @@ interface Class {
   bookings: Array<{
     id: string;
     status: string;
+    member_id: string;
     member: {
       first_name?: string;
       last_name?: string;
@@ -59,6 +63,9 @@ export default function ClassesPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'upcoming' | 'all'>('upcoming');
+  const [showScheduleForm, setShowScheduleForm] = useState(false);
+  const [selectedClass, setSelectedClass] = useState<Class | null>(null);
+  const [showBookingDialog, setShowBookingDialog] = useState(false);
 
   useEffect(() => {
     fetchClasses();
@@ -97,6 +104,7 @@ export default function ClassesPage() {
           class_bookings (
             id,
             status,
+            member_id,
             profiles!class_bookings_member_id_fkey (
               first_name,
               last_name,
@@ -146,6 +154,15 @@ export default function ClassesPage() {
       setLoading(false);
     }
   };
+
+  const handleClassClick = (classItem: Class) => {
+    if (profile?.role === 'member') {
+      setSelectedClass(classItem);
+      setShowBookingDialog(true);
+    }
+  };
+
+  const canScheduleClasses = profile?.role && ['owner', 'manager', 'staff'].includes(profile.role);
 
   const filteredClasses = classes.filter(classItem =>
     `${classItem.name} ${classItem.instructor?.first_name} ${classItem.instructor?.last_name} ${classItem.category?.name}`
@@ -239,10 +256,15 @@ export default function ClassesPage() {
             </p>
           </div>
         </div>
-        <Button className="bg-gradient-secondary hover:opacity-90">
-          <Plus className="mr-2 h-4 w-4" />
-          Schedule Class
-        </Button>
+        {canScheduleClasses && (
+          <Button 
+            className="bg-gradient-secondary hover:opacity-90"
+            onClick={() => setShowScheduleForm(true)}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Schedule Class
+          </Button>
+        )}
       </div>
 
       {/* Stats Cards */}
@@ -336,8 +358,11 @@ export default function ClassesPage() {
                 : 'Start by scheduling your first class'
               }
             </p>
-            {!searchTerm && (
-              <Button className="bg-gradient-secondary hover:opacity-90">
+            {!searchTerm && canScheduleClasses && (
+              <Button 
+                className="bg-gradient-secondary hover:opacity-90"
+                onClick={() => setShowScheduleForm(true)}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Schedule First Class
               </Button>
@@ -352,7 +377,11 @@ export default function ClassesPage() {
             const capacityPercentage = (bookedCount / classItem.max_capacity) * 100;
 
             return (
-              <Card key={classItem.id} className="gym-card hover:shadow-elevation-2 cursor-pointer">
+              <Card 
+                key={classItem.id} 
+                className="gym-card hover:shadow-elevation-2 cursor-pointer"
+                onClick={() => handleClassClick(classItem)}
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -450,6 +479,36 @@ export default function ClassesPage() {
             );
           })}
         </div>
+      )}
+
+      {/* Schedule Form Dialog */}
+      <Dialog open={showScheduleForm} onOpenChange={setShowScheduleForm}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <ClassScheduleForm
+            onSuccess={() => {
+              setShowScheduleForm(false);
+              fetchClasses();
+            }}
+            onCancel={() => setShowScheduleForm(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Member Booking Dialog */}
+      {selectedClass && (
+        <MemberBookingDialog
+          isOpen={showBookingDialog}
+          onClose={() => {
+            setShowBookingDialog(false);
+            setSelectedClass(null);
+          }}
+          classData={selectedClass}
+          onBookingChange={() => {
+            fetchClasses();
+            setShowBookingDialog(false);
+            setSelectedClass(null);
+          }}
+        />
       )}
     </div>
   );
