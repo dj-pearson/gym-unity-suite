@@ -303,6 +303,23 @@ export default function SalesQuotesManager() {
     setFormData({ ...formData, line_items: updatedItems });
   };
 
+  const handleEdit = (quote: SalesQuote) => {
+    setEditingQuote(quote);
+    setFormData({
+      lead_id: quote.lead_id,
+      valid_until: quote.valid_until ? quote.valid_until.split('T')[0] : '',
+      notes: quote.notes || '',
+      terms_conditions: quote.terms_conditions || '',
+      line_items: quote.line_items?.map(item => ({
+        item_name: item.item_name,
+        description: item.description || '',
+        quantity: item.quantity.toString(),
+        unit_price: item.unit_price.toString()
+      })) || [{ item_name: '', description: '', quantity: '1', unit_price: '0' }]
+    });
+    setDialogOpen(true);
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'accepted': return 'default';
