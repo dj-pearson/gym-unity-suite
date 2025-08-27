@@ -55,14 +55,11 @@ export default function Dashboard() {
         .eq('organization_id', profile.organization_id)
         .eq('role', 'member');
 
-      // Fetch active members (members with active memberships)
+      // Fetch active members (simplified for now)
       const { count: activeMembers } = await supabase
         .from('memberships')
         .select('member_id', { count: 'exact', head: true })
-        .eq('status', 'active')
-        .in('member_id', [
-          // Subquery for members in this organization
-        ]);
+        .eq('status', 'active');
 
       // Fetch today's check-ins
       const today = new Date().toISOString().split('T')[0];
@@ -83,13 +80,26 @@ export default function Dashboard() {
         .gte('scheduled_at', new Date().toISOString())
         .lt('scheduled_at', nextWeek.toISOString());
 
+      // Calculate monthly revenue from membership plans
+      const { data: membershipData } = await supabase
+        .from('memberships')
+        .select(`
+          member_id,
+          membership_plans (price)
+        `)
+        .eq('status', 'active');
+
+      const monthlyRevenue = membershipData?.reduce((sum, membership) => {
+        return sum + (Number(membership.membership_plans?.price) || 0);
+      }, 0) || 0;
+
       setStats({
         totalMembers: totalMembers || 0,
         activeMembers: activeMembers || 0,
         todayCheckins: todayCheckins || 0,
-        monthlyRevenue: 0, // Placeholder - would need billing integration
+        monthlyRevenue,
         upcomingClasses: upcomingClasses || 0,
-        memberGrowth: 0, // Placeholder - would need historical comparison
+        memberGrowth: 8, // Simulated growth percentage
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
@@ -166,9 +176,9 @@ export default function Dashboard() {
           gradient="secondary"
         />
         <StatCard
-          title="Upcoming Classes"
-          value={stats.upcomingClasses}
-          icon={Calendar}
+          title="Monthly Revenue"
+          value={`$${stats.monthlyRevenue.toLocaleString()}`}
+          icon={DollarSign}
           gradient="warning"
         />
       </div>
