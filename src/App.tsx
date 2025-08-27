@@ -14,6 +14,7 @@ import AuthPage from "./pages/AuthPage";
 import LandingPage from "./pages/LandingPage";
 import MembersPage from "./pages/MembersPage";
 import MemberProfilePage from "./pages/MemberProfilePage";
+import MembershipPlansPage from "./pages/MembershipPlansPage";
 import ClassesPage from "./pages/ClassesPage";
 import CheckInsPage from "./pages/CheckInsPage";
 import BillingPage from "./pages/BillingPage";
@@ -109,6 +110,14 @@ const App = () => (
               <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
                 <DashboardLayout>
                   <MembersPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/membership-plans" element={
+              <ProtectedRoute roles={['owner', 'manager']}>
+                <DashboardLayout>
+                  <MembershipPlansPage />
                 </DashboardLayout>
               </ProtectedRoute>
             } />
