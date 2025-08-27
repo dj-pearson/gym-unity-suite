@@ -153,23 +153,29 @@ export default function MemberDashboard() {
         .order('created_at', { ascending: false })
         .limit(3);
 
-      // Combine upcoming classes with null checks
+      // Combine upcoming classes with proper type checking
       const combinedClasses: UpcomingClass[] = [
-        ...(bookedClasses?.filter(bc => bc.class).map(bc => ({
-          id: bc.class.id,
-          name: bc.class.name,
-          scheduled_at: bc.class.scheduled_at,
-          location: bc.class.location,
-          booking_status: 'booked' as const
-        })) || []),
-        ...(waitlistedClasses?.filter(wc => wc.class).map(wc => ({
-          id: wc.class.id,
-          name: wc.class.name,
-          scheduled_at: wc.class.scheduled_at,
-          location: wc.class.location,
-          booking_status: 'waitlisted' as const,
-          waitlist_position: wc.priority_order
-        })) || [])
+        ...(bookedClasses?.filter(bc => bc.class && typeof bc.class === 'object').map(bc => {
+          const classData = bc.class as any;
+          return {
+            id: classData.id || '',
+            name: classData.name || '',
+            scheduled_at: classData.scheduled_at || '',
+            location: classData.location,
+            booking_status: 'booked' as const
+          };
+        }) || []),
+        ...(waitlistedClasses?.filter(wc => wc.class && typeof wc.class === 'object').map(wc => {
+          const classData = wc.class as any;
+          return {
+            id: classData.id || '',
+            name: classData.name || '',
+            scheduled_at: classData.scheduled_at || '',
+            location: classData.location,
+            booking_status: 'waitlisted' as const,
+            waitlist_position: wc.priority_order
+          };
+        }) || [])
       ].sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
 
       // Combine recent activities

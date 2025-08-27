@@ -221,38 +221,44 @@ export default function MemberClasses() {
         .gte('class.scheduled_at', new Date().toISOString())
         .order('class.scheduled_at', { ascending: true });
 
-      // Transform data to match ClassWithBooking interface
-      const bookedClassesData = booked?.map(booking => ({
-        id: booking.class?.id || '',
-        name: booking.class?.name || '',
-        scheduled_at: booking.class?.scheduled_at || '',
-        max_capacity: booking.class?.max_capacity || 0,
-        duration_minutes: booking.class?.duration_minutes || 0,
-        description: booking.class?.description,
-        location: booking.class?.location,
-        instructor: booking.class?.instructor,
-        category: booking.class?.category,
-        current_bookings: 0,
-        user_booking: { id: booking.id, status: booking.status }
-      })) || [];
+      // Transform data to match ClassWithBooking interface with proper type checking
+      const bookedClassesData = booked?.filter(booking => booking.class && typeof booking.class === 'object').map(booking => {
+        const classData = booking.class as any;
+        return {
+          id: classData.id || '',
+          name: classData.name || '',
+          scheduled_at: classData.scheduled_at || '',
+          max_capacity: classData.max_capacity || 0,
+          duration_minutes: classData.duration_minutes || 0,
+          description: classData.description,
+          location: classData.location,
+          instructor: classData.instructor,
+          category: classData.category,
+          current_bookings: 0,
+          user_booking: { id: booking.id, status: booking.status }
+        };
+      }) || [];
 
-      const waitlistedClassesData = waitlisted?.filter(waitlist => waitlist.class).map(waitlist => ({
-        id: waitlist.class.id,
-        name: waitlist.class.name,
-        scheduled_at: waitlist.class.scheduled_at,
-        max_capacity: waitlist.class.max_capacity,
-        duration_minutes: waitlist.class.duration_minutes,
-        description: waitlist.class.description,
-        location: waitlist.class.location,
-        instructor: waitlist.class.instructor,
-        category: waitlist.class.category,
-        current_bookings: 0,
-        user_waitlist: { 
-          id: waitlist.id, 
-          priority_order: waitlist.priority_order, 
-          status: waitlist.status 
-        }
-      })) || [];
+      const waitlistedClassesData = waitlisted?.filter(waitlist => waitlist.class && typeof waitlist.class === 'object').map(waitlist => {
+        const classData = waitlist.class as any;
+        return {
+          id: classData.id || '',
+          name: classData.name || '',
+          scheduled_at: classData.scheduled_at || '',
+          max_capacity: classData.max_capacity || 0,
+          duration_minutes: classData.duration_minutes || 0,
+          description: classData.description,
+          location: classData.location,
+          instructor: classData.instructor,
+          category: classData.category,
+          current_bookings: 0,
+          user_waitlist: { 
+            id: waitlist.id, 
+            priority_order: waitlist.priority_order, 
+            status: waitlist.status 
+          }
+        };
+      }) || [];
 
       setBookedClasses(bookedClassesData);
       setWaitlistedClasses(waitlistedClassesData);
