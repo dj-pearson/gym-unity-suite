@@ -79,7 +79,7 @@ export default function AnalyticsDashboard() {
         .gte('created_at', startDate.toISOString())
         .eq('payment_status', 'completed');
 
-      const monthlyRevenue = transactions?.reduce((sum, t) => sum + parseFloat(t.amount), 0) || 0;
+      const monthlyRevenue = transactions?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
 
       // Calculate growth (compare with previous period)
       const prevStartDate = new Date(startDate);

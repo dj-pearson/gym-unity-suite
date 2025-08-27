@@ -62,7 +62,7 @@ export default function KPIDashboard({ timeRange }: KPIDashboardProps) {
         .eq('payment_status', 'completed')
         .gte('created_at', startDate.toISOString());
 
-      const revenue = currentRevenue?.reduce((sum, t) => sum + parseFloat(t.amount), 0) || 0;
+      const revenue = currentRevenue?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
 
       // 3. Class Utilization
       const { data: classes } = await supabase

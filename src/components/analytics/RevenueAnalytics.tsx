@@ -57,7 +57,7 @@ export default function RevenueAnalytics({ timeRange }: RevenueAnalyticsProps) {
       if (!transactions) return;
 
       // Calculate total revenue and metrics
-      const total = transactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+      const total = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalRevenue(total);
       setAvgTransactionValue(transactions.length > 0 ? total / transactions.length : 0);
 
@@ -76,7 +76,7 @@ export default function RevenueAnalytics({ timeRange }: RevenueAnalyticsProps) {
           };
         }
         
-        const amount = parseFloat(transaction.amount);
+        const amount = Number(transaction.amount);
         dailyRevenue[date].revenue += amount;
         dailyRevenue[date].transactions += 1;
         
@@ -95,7 +95,7 @@ export default function RevenueAnalytics({ timeRange }: RevenueAnalyticsProps) {
       // Calculate revenue breakdown
       const membershipRevenue = transactions
         .filter(t => t.membership_id)
-        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+        .reduce((sum, t) => sum + Number(t.amount), 0);
       
       const otherRevenue = total - membershipRevenue;
 
@@ -115,7 +115,7 @@ export default function RevenueAnalytics({ timeRange }: RevenueAnalyticsProps) {
         .lt('created_at', startDate.toISOString())
         .eq('payment_status', 'completed');
 
-      const prevTotal = prevTransactions?.reduce((sum, t) => sum + parseFloat(t.amount), 0) || 0;
+      const prevTotal = prevTransactions?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
       const growth = prevTotal > 0 ? ((total - prevTotal) / prevTotal) * 100 : 0;
       setRevenueGrowth(growth);
 
