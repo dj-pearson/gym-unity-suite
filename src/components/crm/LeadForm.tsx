@@ -25,6 +25,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ onClose, onSuccess, lead }) 
   const { profile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [stages, setStages] = useState<LeadStage[]>([]);
+  const [salespeople, setSalespeople] = useState([]);
   const [formData, setFormData] = useState({
     email: lead?.email || '',
     first_name: lead?.first_name || '',
@@ -34,11 +35,14 @@ export const LeadForm: React.FC<LeadFormProps> = ({ onClose, onSuccess, lead }) 
     interest_level: lead?.interest_level || 'cold',
     estimated_value: lead?.estimated_value || '',
     stage_id: lead?.stage_id || '',
-    notes: lead?.notes || ''
+    notes: lead?.notes || '',
+    assigned_salesperson: lead?.assigned_salesperson || '',
+    referral_code: lead?.referral_code || ''
   });
 
   useEffect(() => {
     fetchStages();
+    fetchSalespeople();
   }, []);
 
   const fetchStages = async () => {
@@ -64,6 +68,23 @@ export const LeadForm: React.FC<LeadFormProps> = ({ onClose, onSuccess, lead }) 
     }
   };
 
+  const fetchSalespeople = async () => {
+    if (!profile?.organization_id) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, email, role')
+        .eq('organization_id', profile.organization_id)
+        .in('role', ['staff', 'manager', 'owner']);
+
+      if (error) throw error;
+      setSalespeople(data || []);
+    } catch (error) {
+      console.error('Error fetching salespeople:', error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profile?.organization_id) return;
@@ -73,8 +94,10 @@ export const LeadForm: React.FC<LeadFormProps> = ({ onClose, onSuccess, lead }) 
       const leadData = {
         ...formData,
         organization_id: profile.organization_id,
+        entered_by: profile.id, // Set who entered this lead
         estimated_value: formData.estimated_value ? parseFloat(formData.estimated_value) : null,
-        stage_id: formData.stage_id || null // Convert empty string to null for UUID field
+        stage_id: formData.stage_id || null, // Convert empty string to null for UUID field
+        assigned_salesperson: formData.assigned_salesperson || null
       };
 
       let result;
@@ -205,6 +228,37 @@ export const LeadForm: React.FC<LeadFormProps> = ({ onClose, onSuccess, lead }) 
                 step="0.01"
                 value={formData.estimated_value}
                 onChange={(e) => setFormData({ ...formData, estimated_value: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="assigned_salesperson">Assigned Salesperson</Label>
+              <Select 
+                value={formData.assigned_salesperson} 
+                onValueChange={(value) => setFormData({ ...formData, assigned_salesperson: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select salesperson" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">No assignment</SelectItem>
+                  {salespeople.map((person: any) => (
+                    <SelectItem key={person.id} value={person.id}>
+                      {person.first_name} {person.last_name} ({person.role})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="referral_code">Referral Code</Label>
+              <Input
+                id="referral_code"
+                value={formData.referral_code}
+                onChange={(e) => setFormData({ ...formData, referral_code: e.target.value })}
+                placeholder="If lead came from referral link"
               />
             </div>
           </div>

@@ -5,10 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Phone, Mail, Calendar, User, Plus, Edit, MapPin } from 'lucide-react';
+import { Phone, Mail, Calendar, User, Plus, Edit, MapPin, DollarSign, Users, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { LeadForm } from './LeadForm';
 import { MembershipConversionDialog } from './MembershipConversionDialog';
+import { SalespersonCommissionManager } from './SalespersonCommissionManager';
+import { SalespersonReferralManager } from './SalespersonReferralManager';
+import { LeadAttributionManager } from './LeadAttributionManager';
 
 interface LeadDetailProps {
   lead: any;
@@ -39,6 +42,10 @@ export const LeadDetail: React.FC<LeadDetailProps> = ({
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
+  const [showConversionDialog, setShowConversionDialog] = useState(false);
+  const [showCommissionManager, setShowCommissionManager] = useState(false);
+  const [showReferralManager, setShowReferralManager] = useState(false);
+  const [showAttributionManager, setShowAttributionManager] = useState(false);
 
   useEffect(() => {
     fetchActivities();
@@ -61,8 +68,6 @@ export const LeadDetail: React.FC<LeadDetailProps> = ({
       setLoading(false);
     }
   };
-
-  const [showConversionDialog, setShowConversionDialog] = useState(false);
 
   const getActivityIcon = (type: string) => {
     switch (type) {
@@ -91,6 +96,18 @@ export const LeadDetail: React.FC<LeadDetailProps> = ({
                 <Button variant="outline" onClick={() => setShowEditForm(true)}>
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
+                </Button>
+                <Button variant="outline" onClick={() => setShowCommissionManager(true)}>
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Commissions
+                </Button>
+                <Button variant="outline" onClick={() => setShowReferralManager(true)}>
+                  <Users className="h-4 w-4 mr-2" />
+                  Referrals
+                </Button>
+                <Button variant="outline" onClick={() => setShowAttributionManager(true)}>
+                  <Settings className="h-4 w-4 mr-2" />
+                  Attribution
                 </Button>
                 {lead.status === 'lead' && (
                   <Button onClick={() => setShowConversionDialog(true)}>
@@ -267,16 +284,31 @@ export const LeadDetail: React.FC<LeadDetailProps> = ({
 
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-sm">Assignment</CardTitle>
+                      <CardTitle className="text-sm">Salesperson Assignment</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      {lead.assigned_staff ? (
+                    <CardContent className="space-y-2">
+                      {lead.assigned_salesperson ? (
                         <div>
-                          <strong>Assigned to:</strong> {lead.assigned_staff.first_name} {lead.assigned_staff.last_name}
+                          <strong>Assigned to:</strong> {lead.assigned_salesperson.first_name} {lead.assigned_salesperson.last_name}
                         </div>
                       ) : (
-                        <p className="text-muted-foreground">Not assigned to anyone</p>
+                        <p className="text-muted-foreground">Not assigned to salesperson</p>
                       )}
+                      {lead.entered_by && (
+                        <div>
+                          <strong>Entered by:</strong> {lead.entered_by.first_name} {lead.entered_by.last_name}
+                        </div>
+                      )}
+                      {lead.referral_code && (
+                        <div>
+                          <strong>Referral Code:</strong> <code className="text-sm bg-muted px-1 rounded">{lead.referral_code}</code>
+                        </div>
+                      )}
+                      <div>
+                        <strong>Attribution:</strong> <Badge variant={lead.attribution_status === 'confirmed' ? 'default' : 'secondary'}>
+                          {lead.attribution_status?.replace('_', ' ') || 'confirmed'}
+                        </Badge>
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
@@ -306,6 +338,27 @@ export const LeadDetail: React.FC<LeadDetailProps> = ({
             setShowConversionDialog(false);
             onUpdate();
           }}
+        />
+      )}
+
+      {showCommissionManager && (
+        <SalespersonCommissionManager
+          isOpen={showCommissionManager}
+          onClose={() => setShowCommissionManager(false)}
+        />
+      )}
+
+      {showReferralManager && (
+        <SalespersonReferralManager
+          isOpen={showReferralManager}
+          onClose={() => setShowReferralManager(false)}
+        />
+      )}
+
+      {showAttributionManager && (
+        <LeadAttributionManager
+          isOpen={showAttributionManager}
+          onClose={() => setShowAttributionManager(false)}
         />
       )}
     </>

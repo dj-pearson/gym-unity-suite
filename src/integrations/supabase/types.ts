@@ -204,6 +204,73 @@ export type Database = {
           },
         ]
       }
+      commission_calculations: {
+        Row: {
+          commission_amount: number
+          commission_type: string
+          created_at: string
+          id: string
+          lead_id: string
+          membership_id: string | null
+          payment_period_end: string | null
+          payment_period_start: string | null
+          revenue_basis: string
+          salesperson_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          commission_amount: number
+          commission_type: string
+          created_at?: string
+          id?: string
+          lead_id: string
+          membership_id?: string | null
+          payment_period_end?: string | null
+          payment_period_start?: string | null
+          revenue_basis: string
+          salesperson_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          commission_amount?: number
+          commission_type?: string
+          created_at?: string
+          id?: string
+          lead_id?: string
+          membership_id?: string | null
+          payment_period_end?: string | null
+          payment_period_start?: string | null
+          revenue_basis?: string
+          salesperson_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_calculations_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_calculations_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_calculations_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_activities: {
         Row: {
           activity_type: string
@@ -257,6 +324,129 @@ export type Database = {
           },
         ]
       }
+      lead_attribution_disputes: {
+        Row: {
+          created_at: string
+          current_salesperson_id: string | null
+          dispute_reason: string
+          disputing_salesperson_id: string
+          evidence: string | null
+          id: string
+          lead_id: string
+          resolution_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_salesperson_id?: string | null
+          dispute_reason: string
+          disputing_salesperson_id: string
+          evidence?: string | null
+          id?: string
+          lead_id: string
+          resolution_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_salesperson_id?: string | null
+          dispute_reason?: string
+          disputing_salesperson_id?: string
+          evidence?: string | null
+          id?: string
+          lead_id?: string
+          resolution_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_attribution_disputes_current_salesperson_id_fkey"
+            columns: ["current_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_attribution_disputes_disputing_salesperson_id_fkey"
+            columns: ["disputing_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_attribution_disputes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_attribution_disputes_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_split_commissions: {
+        Row: {
+          commission_percentage: number
+          created_at: string
+          created_by: string | null
+          id: string
+          lead_id: string
+          salesperson_id: string
+        }
+        Insert: {
+          commission_percentage: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lead_id: string
+          salesperson_id: string
+        }
+        Update: {
+          commission_percentage?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lead_id?: string
+          salesperson_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_split_commissions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_split_commissions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_split_commissions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_stages: {
         Row: {
           color: string | null
@@ -295,9 +485,12 @@ export type Database = {
       }
       leads: {
         Row: {
+          assigned_salesperson: string | null
           assigned_to: string | null
+          attribution_status: string | null
           created_at: string
           email: string
+          entered_by: string | null
           estimated_value: number | null
           first_name: string | null
           id: string
@@ -308,15 +501,19 @@ export type Database = {
           notes: string | null
           organization_id: string
           phone: string | null
+          referral_code: string | null
           source: string | null
           stage_id: string | null
           status: string | null
           updated_at: string
         }
         Insert: {
+          assigned_salesperson?: string | null
           assigned_to?: string | null
+          attribution_status?: string | null
           created_at?: string
           email: string
+          entered_by?: string | null
           estimated_value?: number | null
           first_name?: string | null
           id?: string
@@ -327,15 +524,19 @@ export type Database = {
           notes?: string | null
           organization_id: string
           phone?: string | null
+          referral_code?: string | null
           source?: string | null
           stage_id?: string | null
           status?: string | null
           updated_at?: string
         }
         Update: {
+          assigned_salesperson?: string | null
           assigned_to?: string | null
+          attribution_status?: string | null
           created_at?: string
           email?: string
+          entered_by?: string | null
           estimated_value?: number | null
           first_name?: string | null
           id?: string
@@ -346,12 +547,27 @@ export type Database = {
           notes?: string | null
           organization_id?: string
           phone?: string | null
+          referral_code?: string | null
           source?: string | null
           stage_id?: string | null
           status?: string | null
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "leads_assigned_salesperson_fkey"
+            columns: ["assigned_salesperson"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_entered_by_fkey"
+            columns: ["entered_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "leads_stage_id_fkey"
             columns: ["stage_id"]
@@ -665,6 +881,48 @@ export type Database = {
           },
         ]
       }
+      organization_commission_settings: {
+        Row: {
+          allow_split_commissions: boolean | null
+          created_at: string
+          default_commission_type: string
+          default_commission_value: number
+          default_duration_months: number | null
+          default_revenue_basis: string
+          id: string
+          max_split_salespeople: number | null
+          organization_id: string
+          require_manager_approval_for_attribution: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          allow_split_commissions?: boolean | null
+          created_at?: string
+          default_commission_type: string
+          default_commission_value: number
+          default_duration_months?: number | null
+          default_revenue_basis: string
+          id?: string
+          max_split_salespeople?: number | null
+          organization_id: string
+          require_manager_approval_for_attribution?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          allow_split_commissions?: boolean | null
+          created_at?: string
+          default_commission_type?: string
+          default_commission_value?: number
+          default_duration_months?: number | null
+          default_revenue_basis?: string
+          id?: string
+          max_split_salespeople?: number | null
+          organization_id?: string
+          require_manager_approval_for_attribution?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       organizations: {
         Row: {
           created_at: string
@@ -921,6 +1179,110 @@ export type Database = {
         }
         Relationships: []
       }
+      salesperson_commissions: {
+        Row: {
+          commission_type: string
+          commission_value: number
+          created_at: string
+          created_by: string | null
+          duration_months: number | null
+          id: string
+          is_active: boolean | null
+          organization_id: string
+          revenue_basis: string
+          salesperson_id: string
+          updated_at: string
+        }
+        Insert: {
+          commission_type: string
+          commission_value: number
+          created_at?: string
+          created_by?: string | null
+          duration_months?: number | null
+          id?: string
+          is_active?: boolean | null
+          organization_id: string
+          revenue_basis: string
+          salesperson_id: string
+          updated_at?: string
+        }
+        Update: {
+          commission_type?: string
+          commission_value?: number
+          created_at?: string
+          created_by?: string | null
+          duration_months?: number | null
+          id?: string
+          is_active?: boolean | null
+          organization_id?: string
+          revenue_basis?: string
+          salesperson_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salesperson_commissions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesperson_commissions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      salesperson_referral_links: {
+        Row: {
+          click_count: number | null
+          conversion_count: number | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          link_url: string
+          organization_id: string
+          referral_code: string
+          salesperson_id: string
+          updated_at: string
+        }
+        Insert: {
+          click_count?: number | null
+          conversion_count?: number | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          link_url: string
+          organization_id: string
+          referral_code: string
+          salesperson_id: string
+          updated_at?: string
+        }
+        Update: {
+          click_count?: number | null
+          conversion_count?: number | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          link_url?: string
+          organization_id?: string
+          referral_code?: string
+          salesperson_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salesperson_referral_links_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscribers: {
         Row: {
           created_at: string
@@ -978,6 +1340,10 @@ export type Database = {
         Returns: string
       }
       generate_member_card_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_referral_code: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
