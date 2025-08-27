@@ -397,6 +397,90 @@ export type Database = {
           },
         ]
       }
+      email_templates: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          subject: string
+          template_type: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          subject: string
+          template_type?: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          subject?: string
+          template_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      facility_tours: {
+        Row: {
+          created_at: string
+          follow_up_date: string | null
+          guide_id: string | null
+          id: string
+          lead_id: string
+          notes: string | null
+          outcome: string | null
+          scheduled_date: string
+          scheduled_time: string
+          status: string
+          tour_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          follow_up_date?: string | null
+          guide_id?: string | null
+          id?: string
+          lead_id: string
+          notes?: string | null
+          outcome?: string | null
+          scheduled_date: string
+          scheduled_time: string
+          status?: string
+          tour_type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          follow_up_date?: string | null
+          guide_id?: string | null
+          id?: string
+          lead_id?: string
+          notes?: string | null
+          outcome?: string | null
+          scheduled_date?: string
+          scheduled_time?: string
+          status?: string
+          tour_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       fitness_assessments: {
         Row: {
           assessment_date: string
@@ -644,6 +728,51 @@ export type Database = {
           rule_name?: string
           score_points?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      lead_sources: {
+        Row: {
+          conversion_rate: number | null
+          cost_per_lead: number | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          source_type: string
+          tracking_url: string | null
+          updated_at: string
+          utm_parameters: Json | null
+        }
+        Insert: {
+          conversion_rate?: number | null
+          cost_per_lead?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          source_type?: string
+          tracking_url?: string | null
+          updated_at?: string
+          utm_parameters?: Json | null
+        }
+        Update: {
+          conversion_rate?: number | null
+          cost_per_lead?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          source_type?: string
+          tracking_url?: string | null
+          updated_at?: string
+          utm_parameters?: Json | null
         }
         Relationships: []
       }
@@ -1781,6 +1910,102 @@ export type Database = {
           organization_id?: string
           updated_at?: string
           valid_from?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
+      quote_line_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          item_id: string | null
+          item_name: string
+          item_type: string
+          quantity: number
+          quote_id: string
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          item_id?: string | null
+          item_name: string
+          item_type: string
+          quantity?: number
+          quote_id: string
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          item_id?: string | null
+          item_name?: string
+          item_type?: string
+          quantity?: number
+          quote_id?: string
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: []
+      }
+      sales_quotes: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          created_by: string
+          discount_amount: number | null
+          id: string
+          lead_id: string
+          notes: string | null
+          quote_number: string
+          sent_at: string | null
+          status: string
+          subtotal: number
+          tax_amount: number | null
+          terms_conditions: string | null
+          total_amount: number
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          created_by: string
+          discount_amount?: number | null
+          id?: string
+          lead_id: string
+          notes?: string | null
+          quote_number: string
+          sent_at?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number | null
+          terms_conditions?: string | null
+          total_amount?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          created_by?: string
+          discount_amount?: number | null
+          id?: string
+          lead_id?: string
+          notes?: string | null
+          quote_number?: string
+          sent_at?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number | null
+          terms_conditions?: string | null
+          total_amount?: number
+          updated_at?: string
           valid_until?: string | null
         }
         Relationships: []
