@@ -15,6 +15,7 @@ import LandingPage from "./pages/LandingPage";
 import MembersPage from "./pages/MembersPage";
 import MemberProfilePage from "./pages/MemberProfilePage";
 import MembershipPlansPage from "./pages/MembershipPlansPage";
+import MembershipSuccessPage from "./pages/MembershipSuccessPage";
 import ClassesPage from "./pages/ClassesPage";
 import CheckInsPage from "./pages/CheckInsPage";
 import BillingPage from "./pages/BillingPage";
@@ -115,12 +116,12 @@ const App = () => (
             } />
             
             <Route path="/membership-plans" element={
-              <ProtectedRoute roles={['owner', 'manager']}>
-                <DashboardLayout>
-                  <MembershipPlansPage />
-                </DashboardLayout>
-              </ProtectedRoute>
+              <DashboardLayout>
+                <MembershipPlansPage />
+              </DashboardLayout>
             } />
+
+            <Route path="/membership-success" element={<MembershipSuccessPage />} />
             
             <Route path="/profile" element={
               <ProtectedRoute roles={['member']}>

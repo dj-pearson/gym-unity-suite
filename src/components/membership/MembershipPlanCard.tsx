@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, Trash2, DollarSign, Calendar, Users, MapPin, Infinity } from 'lucide-react';
+import SubscriptionButton from './SubscriptionButton';
 
 interface MembershipPlan {
   id: string;
@@ -21,6 +22,8 @@ interface MembershipPlanCardProps {
   onDelete: (planId: string) => void;
   memberCount?: number;
   canManage?: boolean;
+  isCurrentPlan?: boolean;
+  showSubscribeButton?: boolean;
 }
 
 export default function MembershipPlanCard({ 
@@ -28,7 +31,9 @@ export default function MembershipPlanCard({
   onEdit, 
   onDelete, 
   memberCount = 0,
-  canManage = false
+  canManage = false,
+  isCurrentPlan = false,
+  showSubscribeButton = false
 }: MembershipPlanCardProps) {
   const formatPrice = (price: number, interval: string) => {
     const formatted = price.toFixed(2);
@@ -58,13 +63,20 @@ export default function MembershipPlanCard({
   };
 
   return (
-    <Card className="gym-card hover:shadow-elevation-2 transition-all">
+    <Card className={`gym-card hover:shadow-elevation-2 transition-all ${isCurrentPlan ? 'ring-2 ring-primary' : ''}`}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-xl font-bold text-foreground mb-2">
-              {plan.name}
-            </CardTitle>
+            <div className="flex items-center space-x-2 mb-2">
+              <CardTitle className="text-xl font-bold text-foreground">
+                {plan.name}
+              </CardTitle>
+              {isCurrentPlan && (
+                <Badge className="bg-primary text-primary-foreground">
+                  Current Plan
+                </Badge>
+              )}
+            </div>
             <div className="flex items-center space-x-2 mb-2">
               <Badge className={`text-xs ${getBillingBadgeColor(plan.billing_interval)}`}>
                 <Calendar className="mr-1 h-3 w-3" />
@@ -161,6 +173,19 @@ export default function MembershipPlanCard({
                 ${(plan.price * memberCount / (plan.billing_interval === 'yearly' ? 12 : plan.billing_interval === 'quarterly' ? 3 : 1)).toFixed(2)}
               </span>
             </div>
+          </div>
+        )}
+
+        {/* Subscription Button */}
+        {showSubscribeButton && (
+          <div className="pt-4 border-t">
+            <SubscriptionButton
+              membershipPlanId={plan.id}
+              planName={plan.name}
+              price={plan.price}
+              billingInterval={plan.billing_interval}
+              isCurrentPlan={isCurrentPlan}
+            />
           </div>
         )}
       </CardContent>

@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Plus, CreditCard, TrendingUp, Users, DollarSign } from 'lucide-react';
 import MembershipPlanForm from '@/components/membership/MembershipPlanForm';
 import MembershipPlanCard from '@/components/membership/MembershipPlanCard';
+import SubscriptionStatus from '@/components/membership/SubscriptionStatus';
 
 interface MembershipPlan {
   id: string;
@@ -34,12 +35,27 @@ export default function MembershipPlansPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingPlan, setEditingPlan] = useState<MembershipPlan | null>(null);
+  const [subscriptionData, setSubscriptionData] = useState<any>(null);
 
   const canManagePlans = profile?.role && ['owner', 'manager'].includes(profile.role);
+  const canViewSubscriptions = profile?.role === 'member';
 
   useEffect(() => {
     fetchPlans();
-  }, [profile?.organization_id]);
+    if (canViewSubscriptions) {
+      checkSubscriptionStatus();
+    }
+  }, [profile?.organization_id, canViewSubscriptions]);
+
+  const checkSubscriptionStatus = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription');
+      if (error) throw error;
+      setSubscriptionData(data);
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+    }
+  };
 
   const fetchPlans = async () => {
     if (!profile?.organization_id) return;
@@ -182,37 +198,46 @@ export default function MembershipPlansPage() {
         )}
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="gym-card">
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-foreground">{plans.length}</div>
-            <div className="text-sm text-muted-foreground">Active Plans</div>
-          </CardContent>
-        </Card>
-        <Card className="gym-card">
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-primary">{totalMembers}</div>
-            <div className="text-sm text-muted-foreground">Total Members</div>
-          </CardContent>
-        </Card>
-        <Card className="gym-card">
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-success">
-              ${totalMonthlyRevenue.toFixed(0)}
-            </div>
-            <div className="text-sm text-muted-foreground">Monthly Revenue</div>
-          </CardContent>
-        </Card>
-        <Card className="gym-card">
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-warning">
-              ${averageRevenuePerMember.toFixed(0)}
-            </div>
-            <div className="text-sm text-muted-foreground">Avg Revenue/Member</div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Member View: Subscription Status + Plan Selection */}
+      {canViewSubscriptions && (
+        <div className="mb-6">
+          <SubscriptionStatus />
+        </div>
+      )}
+
+      {/* Stats Cards - Only show for staff */}
+      {canManagePlans && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <Card className="gym-card">
+            <CardContent className="p-4">
+              <div className="text-2xl font-bold text-foreground">{plans.length}</div>
+              <div className="text-sm text-muted-foreground">Active Plans</div>
+            </CardContent>
+          </Card>
+          <Card className="gym-card">
+            <CardContent className="p-4">
+              <div className="text-2xl font-bold text-primary">{totalMembers}</div>
+              <div className="text-sm text-muted-foreground">Total Members</div>
+            </CardContent>
+          </Card>
+          <Card className="gym-card">
+            <CardContent className="p-4">
+              <div className="text-2xl font-bold text-success">
+                ${totalMonthlyRevenue.toFixed(0)}
+              </div>
+              <div className="text-sm text-muted-foreground">Monthly Revenue</div>
+            </CardContent>
+          </Card>
+          <Card className="gym-card">
+            <CardContent className="p-4">
+              <div className="text-2xl font-bold text-warning">
+                ${averageRevenuePerMember.toFixed(0)}
+              </div>
+              <div className="text-sm text-muted-foreground">Avg Revenue/Member</div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Plans Grid */}
       {plans.length === 0 ? (
@@ -241,6 +266,8 @@ export default function MembershipPlansPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {plans.map((plan) => {
             const stats = planStats.find(s => s.planId === plan.id);
+            const isCurrentPlan = subscriptionData?.membership_plan_id === plan.id;
+            
             return (
               <MembershipPlanCard
                 key={plan.id}
@@ -249,6 +276,8 @@ export default function MembershipPlansPage() {
                 onDelete={handleDelete}
                 memberCount={stats?.memberCount || 0}
                 canManage={canManagePlans}
+                isCurrentPlan={isCurrentPlan}
+                showSubscribeButton={canViewSubscriptions}
               />
             );
           })}

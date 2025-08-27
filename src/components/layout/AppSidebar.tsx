@@ -51,6 +51,7 @@ const navigationGroups = [
   {
     title: 'Operations',
     items: [
+      { name: 'Membership Plans', href: '/membership-plans', icon: CreditCard },
       { name: 'Members', href: '/members', icon: Users, permission: PERMISSIONS.VIEW_MEMBERS },
       { name: 'Classes', href: '/classes', icon: Calendar, permission: PERMISSIONS.VIEW_CLASSES },
       { name: 'Check-ins', href: '/checkins', icon: UserCheck, permission: PERMISSIONS.VIEW_CHECKINS }
