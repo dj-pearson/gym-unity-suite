@@ -17,6 +17,7 @@ import {
   Star
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ModernHeroElements from '@/components/ui/ModernHeroElements';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -119,6 +120,7 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative container mx-auto px-4 py-20 text-center overflow-hidden">
+        <ModernHeroElements />
         <div className="relative z-10 max-w-4xl mx-auto">
           <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
             Elite Fitness Management Platform

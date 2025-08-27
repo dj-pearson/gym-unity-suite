@@ -73,7 +73,8 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
-			backgroundImage: {
+        backgroundImage: {
+          'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-secondary': 'var(--gradient-secondary)',
 				'gradient-hero': 'var(--gradient-hero)',
@@ -152,7 +153,7 @@ export default {
 				'pulse-slower': 'pulse 6s ease-in-out infinite',
 				'bounce-gentle': 'bounce-gentle 3s ease-in-out infinite',
 				'drift-1': 'drift-1 12s ease-in-out infinite',
-				'drift-2': 'drift-2 15s ease-in-out infinite',
+				'drift-2': 'drift-2 8s ease-in-out infinite',
 				'spin-slow': 'spin 20s linear infinite',
 			}
 		}
