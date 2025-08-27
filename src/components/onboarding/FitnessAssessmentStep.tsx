@@ -174,7 +174,7 @@ export function FitnessAssessmentStep({ onComplete }: FitnessAssessmentStepProps
                     </div>
                     <p className="font-medium text-sm">{goal.label}</p>
                     {isSelected && (
-                      <Badge variant="default" size="sm" className="mt-2">Selected</Badge>
+                      <Badge variant="default" className="mt-2">Selected</Badge>
                     )}
                   </CardContent>
                 </Card>

@@ -49,15 +49,28 @@ export default function OnboardingPage() {
       case 'welcome':
         return <WelcomeStep leadId={leadId} onComplete={() => handleStepComplete('welcome')} />;
       case 'information':
-        return <MemberInformationStep leadId={leadId} onComplete={() => handleStepComplete('information')} />;
+        return <MemberInformationStep 
+          lead={{ id: leadId }} 
+          onMemberInfoComplete={() => handleStepComplete('information')} 
+        />;
       case 'agreement':
-        return <AgreementStep onComplete={() => handleStepComplete('agreement')} />;
+        return <AgreementStep 
+          templates={[]} 
+          lead={{ id: leadId }} 
+          plan={{}} 
+          onAgreementSigned={() => handleStepComplete('agreement')} 
+        />;
       case 'assessment':
         return <FitnessAssessmentStep onComplete={() => handleStepComplete('assessment')} />;
       case 'orientation':
         return <OrientationSchedulingStep onComplete={() => handleStepComplete('orientation')} />;
       case 'member-card':
-        return <MemberCardStep onComplete={() => handleStepComplete('member-card')} />;
+        return <MemberCardStep 
+          lead={{ id: leadId }} 
+          plan={{}} 
+          onCardGenerated={() => handleStepComplete('member-card')} 
+          loading={false} 
+        />;
       default:
         return null;
     }
