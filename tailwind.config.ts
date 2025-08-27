@@ -113,11 +113,47 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				// Mobile gym element animations
+				'float-1': {
+					'0%, 100%': { transform: 'translateY(0px) rotate(12deg)' },
+					'50%': { transform: 'translateY(-20px) rotate(18deg)' },
+				},
+				'float-2': {
+					'0%, 100%': { transform: 'translateY(0px) rotate(-12deg)' },
+					'50%': { transform: 'translateY(-15px) rotate(-18deg)' },
+				},
+				'float-3': {
+					'0%, 100%': { transform: 'translateY(0px) rotate(45deg)' },
+					'50%': { transform: 'translateY(-10px) rotate(50deg)' },
+				},
+				'bounce-gentle': {
+					'0%, 100%': { transform: 'translateY(0px)' },
+					'50%': { transform: 'translateY(-8px)' },
+				},
+				'drift-1': {
+					'0%, 100%': { transform: 'translate(0px, 0px)' },
+					'33%': { transform: 'translate(30px, -20px)' },
+					'66%': { transform: 'translate(-20px, 10px)' },
+				},
+				'drift-2': {
+					'0%, 100%': { transform: 'translate(0px, 0px)' },
+					'50%': { transform: 'translate(-25px, -15px)' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				// Mobile-optimized gym animations
+				'float-1': 'float-1 6s ease-in-out infinite',
+				'float-2': 'float-2 8s ease-in-out infinite',
+				'float-3': 'float-3 7s ease-in-out infinite',
+				'pulse-slow': 'pulse 4s ease-in-out infinite',
+				'pulse-slower': 'pulse 6s ease-in-out infinite',
+				'bounce-gentle': 'bounce-gentle 3s ease-in-out infinite',
+				'drift-1': 'drift-1 12s ease-in-out infinite',
+				'drift-2': 'drift-2 15s ease-in-out infinite',
+				'spin-slow': 'spin 20s linear infinite',
 			}
 		}
 	},

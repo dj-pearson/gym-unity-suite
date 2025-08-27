@@ -17,7 +17,7 @@ import {
   Star
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import GymHero3D from '@/components/3d/GymHero3D';
+import MobileGymElements from '@/components/3d/MobileGymElements';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -120,19 +120,18 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative container mx-auto px-4 py-20 text-center overflow-hidden">
-        {/* 3D Background */}
-        <GymHero3D />
+        {/* Mobile-optimized gym elements */}
+        <MobileGymElements />
         
         <div className="relative z-10 max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20 backdrop-blur-sm">
+          <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
             Elite Fitness Management Platform
           </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gradient-hero leading-tight drop-shadow-lg">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gradient-hero leading-tight">
             Elevate Your 
             <br />
             <span className="relative">
               Fitness Experience
-              <div className="absolute -inset-1 bg-gradient-primary opacity-20 blur-lg rounded-lg -z-10"></div>
             </span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
