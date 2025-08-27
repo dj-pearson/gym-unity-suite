@@ -605,6 +605,48 @@ export type Database = {
           },
         ]
       }
+      lead_scoring_rules: {
+        Row: {
+          created_at: string
+          criteria_field: string
+          criteria_operator: string
+          criteria_type: string
+          criteria_value: string
+          id: string
+          is_active: boolean
+          organization_id: string
+          rule_name: string
+          score_points: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          criteria_field: string
+          criteria_operator: string
+          criteria_type: string
+          criteria_value: string
+          id?: string
+          is_active?: boolean
+          organization_id: string
+          rule_name: string
+          score_points?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          criteria_field?: string
+          criteria_operator?: string
+          criteria_type?: string
+          criteria_value?: string
+          id?: string
+          is_active?: boolean
+          organization_id?: string
+          rule_name?: string
+          score_points?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       lead_split_commissions: {
         Row: {
           commission_percentage: number
@@ -718,10 +760,12 @@ export type Database = {
           interest_level: string | null
           last_contact_date: string | null
           last_name: string | null
+          lead_score: number | null
           next_follow_up_date: string | null
           notes: string | null
           organization_id: string
           phone: string | null
+          qualification_status: string | null
           referral_code: string | null
           source: string | null
           stage_id: string | null
@@ -741,10 +785,12 @@ export type Database = {
           interest_level?: string | null
           last_contact_date?: string | null
           last_name?: string | null
+          lead_score?: number | null
           next_follow_up_date?: string | null
           notes?: string | null
           organization_id: string
           phone?: string | null
+          qualification_status?: string | null
           referral_code?: string | null
           source?: string | null
           stage_id?: string | null
@@ -764,10 +810,12 @@ export type Database = {
           interest_level?: string | null
           last_contact_date?: string | null
           last_name?: string | null
+          lead_score?: number | null
           next_follow_up_date?: string | null
           notes?: string | null
           organization_id?: string
           phone?: string | null
+          qualification_status?: string | null
           referral_code?: string | null
           source?: string | null
           stage_id?: string | null
@@ -2023,6 +2071,10 @@ export type Database = {
       get_user_organization_id: {
         Args: { user_id: string }
         Returns: string
+      }
+      recalculate_lead_scores: {
+        Args: { org_id: string }
+        Returns: undefined
       }
       setup_default_lead_stages: {
         Args: { org_id: string }
