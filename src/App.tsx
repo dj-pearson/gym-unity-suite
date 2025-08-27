@@ -22,6 +22,9 @@ import BillingPage from "./pages/BillingPage";
 import ReportsPage from "./pages/ReportsPage";
 import { CRMPage } from "./pages/CRMPage";
 import { LeadsPage } from "./pages/LeadsPage";
+import CommissionsPage from "./pages/CommissionsPage";
+import ReferralsPage from "./pages/ReferralsPage";
+import AttributionPage from "./pages/AttributionPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -143,6 +146,30 @@ const App = () => (
               <ProtectedRoute permission={PERMISSIONS.VIEW_CRM}>
                 <DashboardLayout>
                   <LeadsPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/commissions" element={
+              <ProtectedRoute permission={PERMISSIONS.VIEW_CRM}>
+                <DashboardLayout>
+                  <CommissionsPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/referrals" element={
+              <ProtectedRoute permission={PERMISSIONS.VIEW_CRM}>
+                <DashboardLayout>
+                  <ReferralsPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/attribution" element={
+              <ProtectedRoute permission={PERMISSIONS.VIEW_CRM}>
+                <DashboardLayout>
+                  <AttributionPage />
                 </DashboardLayout>
               </ProtectedRoute>
             } />

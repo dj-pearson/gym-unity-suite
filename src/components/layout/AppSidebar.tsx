@@ -30,7 +30,10 @@ import {
   Store,
   Phone,
   TrendingUp,
-  ChevronRight
+  ChevronRight,
+  DollarSign,
+  Share2,
+  UserX
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
@@ -45,7 +48,10 @@ const navigationGroups = [
     title: 'Sales & Marketing',
     items: [
       { name: 'CRM', href: '/crm', icon: Phone, permission: PERMISSIONS.VIEW_CRM },
-      { name: 'Leads Pipeline', href: '/leads', icon: TrendingUp, permission: PERMISSIONS.VIEW_CRM }
+      { name: 'Leads Pipeline', href: '/leads', icon: TrendingUp, permission: PERMISSIONS.VIEW_CRM },
+      { name: 'Commissions', href: '/commissions', icon: DollarSign, permission: PERMISSIONS.VIEW_CRM },
+      { name: 'Referrals', href: '/referrals', icon: Share2, permission: PERMISSIONS.VIEW_CRM },
+      { name: 'Lead Attribution', href: '/attribution', icon: UserX, permission: PERMISSIONS.VIEW_CRM }
     ]
   },
   {
