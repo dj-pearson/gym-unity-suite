@@ -2248,6 +2248,141 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          class_reminders: boolean
+          created_at: string
+          email_enabled: boolean
+          id: string
+          marketing_notifications: boolean
+          member_id: string
+          membership_updates: boolean
+          push_enabled: boolean
+          sms_enabled: boolean
+          updated_at: string
+          waitlist_updates: boolean
+        }
+        Insert: {
+          class_reminders?: boolean
+          created_at?: string
+          email_enabled?: boolean
+          id?: string
+          marketing_notifications?: boolean
+          member_id: string
+          membership_updates?: boolean
+          push_enabled?: boolean
+          sms_enabled?: boolean
+          updated_at?: string
+          waitlist_updates?: boolean
+        }
+        Update: {
+          class_reminders?: boolean
+          created_at?: string
+          email_enabled?: boolean
+          id?: string
+          marketing_notifications?: boolean
+          member_id?: string
+          membership_updates?: boolean
+          push_enabled?: boolean
+          sms_enabled?: boolean
+          updated_at?: string
+          waitlist_updates?: boolean
+        }
+        Relationships: []
+      }
+      notification_templates: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          subject: string
+          template_type: string
+          updated_at: string
+          variables: Json | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          subject: string
+          template_type: string
+          updated_at?: string
+          variables?: Json | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          subject?: string
+          template_type?: string
+          updated_at?: string
+          variables?: Json | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          member_id: string
+          message: string
+          metadata: Json | null
+          organization_id: string
+          priority: string
+          read_at: string | null
+          scheduled_for: string | null
+          sent_at: string | null
+          status: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          member_id: string
+          message: string
+          metadata?: Json | null
+          organization_id: string
+          priority?: string
+          read_at?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          status?: string
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          member_id?: string
+          message?: string
+          metadata?: Json | null
+          organization_id?: string
+          priority?: string
+          read_at?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       organization_commission_settings: {
         Row: {
           allow_split_commissions: boolean | null
@@ -3240,6 +3375,10 @@ export type Database = {
       }
     }
     Functions: {
+      create_class_reminder_notifications: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       generate_member_barcode: {
         Args: Record<PropertyKey, never>
         Returns: string
