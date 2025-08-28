@@ -40,20 +40,20 @@ const Dumbbell = () => {
   return (
     <Float speed={2} rotationIntensity={0.2} floatIntensity={0.3}>
       <group ref={dumbbellRef} scale={[1.4, 1.4, 1.4]}>
-        {/* Left Weight Plates */}
+        {/* Left Weight Plates - Using spheres for more rounded look */}
         <mesh position={[-2.5, 0, 0]} material={goldMaterial} castShadow receiveShadow>
-          <cylinderGeometry args={[1.3, 1.3, 0.6, 32]} />
+          <sphereGeometry args={[1.2, 32, 16]} />
         </mesh>
-        <mesh position={[-2.2, 0, 0]} material={blackMaterial} castShadow>
-          <cylinderGeometry args={[1.05, 1.05, 0.4, 32]} />
+        <mesh position={[-2.5, 0, 0]} material={blackMaterial} castShadow scale={[0.85, 0.85, 0.85]}>
+          <sphereGeometry args={[1.0, 32, 16]} />
         </mesh>
         
-        {/* Right Weight Plates */}
+        {/* Right Weight Plates - Using spheres for more rounded look */}
         <mesh position={[2.5, 0, 0]} material={goldMaterial} castShadow receiveShadow>
-          <cylinderGeometry args={[1.3, 1.3, 0.6, 32]} />
+          <sphereGeometry args={[1.2, 32, 16]} />
         </mesh>
-        <mesh position={[2.2, 0, 0]} material={blackMaterial} castShadow>
-          <cylinderGeometry args={[1.05, 1.05, 0.4, 32]} />
+        <mesh position={[2.5, 0, 0]} material={blackMaterial} castShadow scale={[0.85, 0.85, 0.85]}>
+          <sphereGeometry args={[1.0, 32, 16]} />
         </mesh>
         
         {/* Main Handle/Bar */}
@@ -92,7 +92,7 @@ const Dumbbell = () => {
 // Main Hero 3D Component
 export const Hero3DDumbbell: React.FC = () => {
   return (
-    <div className="absolute right-2 md:right-8 lg:right-16 top-1/2 -translate-y-1/2 w-48 h-48 md:w-72 md:h-72 lg:w-96 lg:h-96 opacity-15 md:opacity-25 lg:opacity-35 pointer-events-none z-0">
+    <div className="absolute right-2 md:right-8 lg:right-16 top-1/2 -translate-y-1/2 w-48 h-48 md:w-72 md:h-72 lg:w-96 lg:h-96 opacity-25 md:opacity-35 lg:opacity-45 pointer-events-none z-0">
       <Canvas
         camera={{ 
           position: [0, 0, 9], 

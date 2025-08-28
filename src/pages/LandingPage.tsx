@@ -126,7 +126,7 @@ export default function LandingPage() {
         {/* 3D Dumbbell Element */}
         <Hero3DDumbbell />
         
-        <div className="relative z-10 max-w-4xl mx-auto">
+        <div className="relative z-20 max-w-4xl mx-auto">
           <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
             Elite Fitness Management Platform
           </Badge>
