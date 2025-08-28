@@ -59,7 +59,7 @@ export default function MarketingPage() {
     if (hasPermission(PERMISSIONS.VIEW_REPORTS)) {
       fetchMarketingStats();
     }
-  }, [profile?.organization_id, hasPermission]);
+  }, [profile?.organization_id]); // Removed hasPermission from dependencies
 
   const fetchMarketingStats = async () => {
     if (!profile?.organization_id) return;
