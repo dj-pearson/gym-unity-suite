@@ -1,11 +1,14 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment, Float } from '@react-three/drei';
+import { OrbitControls, Environment, Float, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
-// 3D Dumbbell Component
+// 3D Dumbbell Component using GLB model
 const Dumbbell = () => {
   const dumbbellRef = useRef<THREE.Group>(null);
+  
+  // Load the GLB model
+  const { scene } = useGLTF('/models/dumbbells.glb');
   
   useFrame((state) => {
     if (dumbbellRef.current) {
@@ -16,43 +19,10 @@ const Dumbbell = () => {
     }
   });
 
-  // Create materials with clean, professional appearance
-  const weightMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-    color: '#2c3e50',
-    metalness: 0.6,
-    roughness: 0.2,
-    envMapIntensity: 1.5,
-  }), []);
-
-  const handleMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-    color: '#34495e',
-    metalness: 0.8,
-    roughness: 0.1,
-    envMapIntensity: 2,
-  }), []);
-
   return (
     <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.2}>
-      <group ref={dumbbellRef} scale={[1.8, 1.8, 1.8]} rotation={[0.1, 0.2, 0]}>
-        {/* Left Weight - Simple cylinder */}
-        <mesh position={[-2.2, 0, 0]} material={weightMaterial} castShadow receiveShadow>
-          <cylinderGeometry args={[1, 1, 0.8, 32]} />
-        </mesh>
-        
-        {/* Right Weight - Simple cylinder */}
-        <mesh position={[2.2, 0, 0]} material={weightMaterial} castShadow receiveShadow>
-          <cylinderGeometry args={[1, 1, 0.8, 32]} />
-        </mesh>
-        
-        {/* Main Handle/Bar */}
-        <mesh material={handleMaterial} rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.08, 0.08, 4.4, 32]} />
-        </mesh>
-        
-        {/* Handle Grip */}
-        <mesh material={handleMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[0.12, 0.12, 1.5, 32]} />
-        </mesh>
+      <group ref={dumbbellRef} scale={[2, 2, 2]} rotation={[0.1, 0.2, 0]}>
+        <primitive object={scene} />
       </group>
     </Float>
   );
@@ -75,12 +45,8 @@ export const Hero3DDumbbell: React.FC = () => {
           alpha: true,
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.2,
-          shadowMap: {
-            enabled: true,
-            type: THREE.PCFSoftShadowMap,
-          },
         }}
-        shadows="soft"
+        shadows
       >
         {/* Clean professional lighting */}
         <ambientLight intensity={0.6} />
@@ -106,3 +72,6 @@ export const Hero3DDumbbell: React.FC = () => {
     </div>
   );
 };
+
+// Preload the GLB model for better performance
+useGLTF.preload('/models/dumbbells.glb');
