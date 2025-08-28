@@ -35,7 +35,8 @@ import {
   Share2,
   UserX,
   MessageSquare,
-  Mail
+  Mail,
+  Zap
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
@@ -80,6 +81,7 @@ const navigationGroups = [
   {
     title: 'Configuration',
     items: [
+      { name: 'Integrations', href: '/integrations', icon: Zap, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Settings', href: '/settings', icon: Settings, permission: PERMISSIONS.VIEW_SETTINGS }
     ]
   }

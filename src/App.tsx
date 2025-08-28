@@ -28,6 +28,7 @@ import StaffPage from "./pages/StaffPage";
 import MarketingPage from "./pages/MarketingPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import CommunicationPage from "./pages/CommunicationPage";
+import IntegrationsPage from "./pages/IntegrationsPage";
 import NotFound from "./pages/NotFound";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberClasses from "./pages/MemberClasses";
@@ -259,6 +260,14 @@ const App = () => (
                     <h1 className="text-2xl font-bold mb-4">Retail & POS</h1>
                     <p className="text-muted-foreground">Point of sale system coming soon...</p>
                   </div>
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/integrations" element={
+              <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                <DashboardLayout>
+                  <IntegrationsPage />
                 </DashboardLayout>
               </ProtectedRoute>
             } />
