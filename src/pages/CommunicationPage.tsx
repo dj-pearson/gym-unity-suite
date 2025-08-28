@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { SimpleMessagingCenter } from '@/components/communication/SimpleMessagingCenter';
+import { MessagingCenter } from '@/components/communication/MessagingCenter';
 import { AnnouncementManager, EmailTemplates, SupportTickets, MilestoneTracking } from '@/components/communication/PlaceholderComponents';
 import { MessageSquare, Megaphone, Mail, Headphones, Trophy } from 'lucide-react';
 
@@ -42,7 +42,7 @@ export default function CommunicationPage() {
         </TabsList>
 
         <TabsContent value="messaging" className="space-y-6">
-          <SimpleMessagingCenter />
+          <MessagingCenter />
         </TabsContent>
 
         <TabsContent value="announcements" className="space-y-6">
