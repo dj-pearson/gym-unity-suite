@@ -30,6 +30,7 @@ import OnboardingPage from "./pages/OnboardingPage";
 import CommunicationPage from "./pages/CommunicationPage";
 import IntegrationsPage from "./pages/IntegrationsPage";
 import SecurityPage from "./pages/SecurityPage";
+import AdvancedFeaturesPage from "./pages/AdvancedFeaturesPage";
 import NotFound from "./pages/NotFound";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberClasses from "./pages/MemberClasses";
@@ -277,6 +278,14 @@ const App = () => (
               <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                 <DashboardLayout>
                   <SecurityPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/advanced" element={
+              <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                <DashboardLayout>
+                  <AdvancedFeaturesPage />
                 </DashboardLayout>
               </ProtectedRoute>
             } />

@@ -37,7 +37,8 @@ import {
   MessageSquare,
   Mail,
   Zap,
-  Shield
+  Shield,
+  Rocket
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
@@ -84,6 +85,7 @@ const navigationGroups = [
     items: [
       { name: 'Integrations', href: '/integrations', icon: Zap, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Security', href: '/security', icon: Shield, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Advanced', href: '/advanced', icon: Rocket, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Settings', href: '/settings', icon: Settings, permission: PERMISSIONS.VIEW_SETTINGS }
     ]
   }
