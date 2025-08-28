@@ -31,6 +31,7 @@ import CommunicationPage from "./pages/CommunicationPage";
 import IntegrationsPage from "./pages/IntegrationsPage";
 import SecurityPage from "./pages/SecurityPage";
 import AdvancedFeaturesPage from "./pages/AdvancedFeaturesPage";
+import EquipmentPage from "./pages/EquipmentPage";
 import NotFound from "./pages/NotFound";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberClasses from "./pages/MemberClasses";
@@ -219,6 +220,14 @@ const App = () => (
               <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
                 <DashboardLayout>
                   <CommunicationPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/equipment" element={
+              <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                <DashboardLayout>
+                  <EquipmentPage />
                 </DashboardLayout>
               </ProtectedRoute>
             } />

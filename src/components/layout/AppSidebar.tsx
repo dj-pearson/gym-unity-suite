@@ -38,7 +38,8 @@ import {
   Mail,
   Zap,
   Shield,
-  Rocket
+  Rocket,
+  Wrench
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
@@ -68,6 +69,7 @@ const navigationGroups = [
       { name: 'Staff', href: '/staff', icon: Users, permission: PERMISSIONS.MANAGE_STAFF },
       { name: 'Onboarding', href: '/onboarding', icon: UserCheck, permission: PERMISSIONS.VIEW_MEMBERS },
       { name: 'Communication', href: '/communication', icon: MessageSquare, permission: PERMISSIONS.VIEW_MEMBERS },
+      { name: 'Equipment', href: '/equipment', icon: Wrench, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Classes', href: '/classes', icon: Calendar, permission: PERMISSIONS.VIEW_CLASSES },
       { name: 'Check-ins', href: '/checkins', icon: UserCheck, permission: PERMISSIONS.VIEW_CHECKINS }
     ]
