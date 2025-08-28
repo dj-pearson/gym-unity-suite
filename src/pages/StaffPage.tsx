@@ -64,7 +64,7 @@ export default function StaffPage() {
     if (hasPermission(PERMISSIONS.MANAGE_STAFF)) {
       fetchStaff();
     }
-  }, [profile?.organization_id, hasPermission]);
+  }, [profile?.organization_id]); // Removed hasPermission from dependencies
 
   const fetchStaff = async () => {
     if (!profile?.organization_id) return;
