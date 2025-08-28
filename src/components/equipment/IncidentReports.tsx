@@ -129,7 +129,25 @@ export default function IncidentReports() {
 
       if (locationsError) throw locationsError;
 
-      setIncidents(incidentsData || []);
+      setIncidents((incidentsData || []).map(incident => {
+        const locations = incident.locations && 
+          typeof incident.locations === 'object' && 
+          incident.locations !== null && 
+          !Array.isArray(incident.locations) &&
+          'name' in incident.locations ? incident.locations : null;
+        
+        const profiles = incident.profiles && 
+          typeof incident.profiles === 'object' && 
+          incident.profiles !== null && 
+          !Array.isArray(incident.profiles) &&
+          'first_name' in incident.profiles ? incident.profiles : null;
+        
+        return {
+          ...incident,
+          locations,
+          profiles
+        };
+      }));
       setLocations(locationsData || []);
     } catch (error) {
       console.error('Error fetching data:', error);

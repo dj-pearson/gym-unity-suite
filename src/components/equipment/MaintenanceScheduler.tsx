@@ -132,7 +132,25 @@ export default function MaintenanceScheduler() {
 
       if (staffError) throw staffError;
 
-      setSchedules(schedulesData || []);
+      setSchedules((schedulesData || []).map(schedule => {
+        const equipment = schedule.equipment && 
+          typeof schedule.equipment === 'object' && 
+          schedule.equipment !== null && 
+          !Array.isArray(schedule.equipment) &&
+          'name' in schedule.equipment ? schedule.equipment : null;
+        
+        const profiles = schedule.profiles && 
+          typeof schedule.profiles === 'object' && 
+          schedule.profiles !== null && 
+          !Array.isArray(schedule.profiles) &&
+          'first_name' in schedule.profiles ? schedule.profiles : null;
+        
+        return {
+          ...schedule,
+          equipment,
+          profiles
+        };
+      }));
       setEquipment(equipmentData || []);
       setStaff(staffData || []);
     } catch (error) {
