@@ -34,7 +34,8 @@ import {
   DollarSign,
   Share2,
   UserX,
-  MessageSquare
+  MessageSquare,
+  Mail
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
@@ -50,6 +51,7 @@ const navigationGroups = [
     items: [
       { name: 'CRM', href: '/crm', icon: Phone, permission: PERMISSIONS.VIEW_CRM },
       { name: 'Leads Pipeline', href: '/leads', icon: TrendingUp, permission: PERMISSIONS.VIEW_CRM },
+      { name: 'Marketing', href: '/marketing', icon: Mail, permission: PERMISSIONS.VIEW_REPORTS },
       { name: 'Commissions', href: '/commissions', icon: DollarSign, permission: PERMISSIONS.VIEW_CRM },
       { name: 'Referrals', href: '/referrals', icon: Share2, permission: PERMISSIONS.VIEW_CRM },
       { name: 'Lead Attribution', href: '/attribution', icon: UserX, permission: PERMISSIONS.VIEW_CRM }

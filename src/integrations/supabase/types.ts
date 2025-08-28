@@ -1334,6 +1334,198 @@ export type Database = {
         }
         Relationships: []
       }
+      loyalty_program_rules: {
+        Row: {
+          activity_type: string
+          conditions: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          organization_id: string
+          points_awarded: number
+          updated_at: string
+        }
+        Insert: {
+          activity_type: string
+          conditions?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          organization_id: string
+          points_awarded?: number
+          updated_at?: string
+        }
+        Update: {
+          activity_type?: string
+          conditions?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          organization_id?: string
+          points_awarded?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_program_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loyalty_redemptions: {
+        Row: {
+          created_at: string
+          fulfilled_at: string | null
+          fulfilled_by: string | null
+          id: string
+          member_id: string
+          notes: string | null
+          points_used: number
+          redeemed_at: string
+          reward_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          fulfilled_at?: string | null
+          fulfilled_by?: string | null
+          id?: string
+          member_id: string
+          notes?: string | null
+          points_used: number
+          redeemed_at?: string
+          reward_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          fulfilled_at?: string | null
+          fulfilled_by?: string | null
+          id?: string
+          member_id?: string
+          notes?: string | null
+          points_used?: number
+          redeemed_at?: string
+          reward_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_redemptions_fulfilled_by_fkey"
+            columns: ["fulfilled_by"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "loyalty_redemptions_fulfilled_by_fkey"
+            columns: ["fulfilled_by"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "loyalty_redemptions_fulfilled_by_fkey"
+            columns: ["fulfilled_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loyalty_redemptions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "loyalty_redemptions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "loyalty_redemptions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loyalty_redemptions_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_rewards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loyalty_rewards: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          expiry_date: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          organization_id: string
+          points_cost: number
+          redemption_limit: number | null
+          stock_quantity: number | null
+          terms_conditions: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          expiry_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          organization_id: string
+          points_cost: number
+          redemption_limit?: number | null
+          stock_quantity?: number | null
+          terms_conditions?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          expiry_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          organization_id?: string
+          points_cost?: number
+          redemption_limit?: number | null
+          stock_quantity?: number | null
+          terms_conditions?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_rewards_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marketing_analytics: {
         Row: {
           campaign_id: string | null
@@ -1402,6 +1594,104 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      marketing_campaigns: {
+        Row: {
+          bounced_count: number | null
+          campaign_type: string
+          clicked_count: number | null
+          content: string
+          created_at: string
+          created_by: string
+          custom_recipients: string[] | null
+          delivered_count: number | null
+          id: string
+          name: string
+          opened_count: number | null
+          organization_id: string
+          scheduled_at: string | null
+          sent_at: string | null
+          sent_count: number | null
+          status: string
+          subject: string | null
+          target_segment: string
+          unsubscribed_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          bounced_count?: number | null
+          campaign_type: string
+          clicked_count?: number | null
+          content: string
+          created_at?: string
+          created_by: string
+          custom_recipients?: string[] | null
+          delivered_count?: number | null
+          id?: string
+          name: string
+          opened_count?: number | null
+          organization_id: string
+          scheduled_at?: string | null
+          sent_at?: string | null
+          sent_count?: number | null
+          status?: string
+          subject?: string | null
+          target_segment?: string
+          unsubscribed_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          bounced_count?: number | null
+          campaign_type?: string
+          clicked_count?: number | null
+          content?: string
+          created_at?: string
+          created_by?: string
+          custom_recipients?: string[] | null
+          delivered_count?: number | null
+          id?: string
+          name?: string
+          opened_count?: number | null
+          organization_id?: string
+          scheduled_at?: string | null
+          sent_at?: string | null
+          sent_count?: number | null
+          status?: string
+          subject?: string | null
+          target_segment?: string
+          unsubscribed_count?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_campaigns_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "marketing_campaigns_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "marketing_campaigns_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketing_campaigns_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       member_analytics_snapshots: {
         Row: {
@@ -1998,6 +2288,77 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      member_segments: {
+        Row: {
+          created_at: string
+          created_by: string
+          criteria: Json
+          description: string | null
+          id: string
+          is_dynamic: boolean | null
+          last_calculated_at: string | null
+          member_count: number | null
+          name: string
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          criteria: Json
+          description?: string | null
+          id?: string
+          is_dynamic?: boolean | null
+          last_calculated_at?: string | null
+          member_count?: number | null
+          name: string
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          criteria?: Json
+          description?: string | null
+          id?: string
+          is_dynamic?: boolean | null
+          last_calculated_at?: string | null
+          member_count?: number | null
+          name?: string
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_segments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_segments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_segments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_segments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       membership_agreement_templates: {
         Row: {

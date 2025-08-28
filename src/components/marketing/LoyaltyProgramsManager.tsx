@@ -79,14 +79,8 @@ export default function LoyaltyProgramsManager() {
           points_redeemed,
           activity_type,
           reason,
-          created_at,
-          profiles!loyalty_points_member_id_fkey (
-            first_name,
-            last_name,
-            email
-          )
+          created_at
         `)
-        .eq('profiles.organization_id', profile.organization_id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -99,16 +93,37 @@ export default function LoyaltyProgramsManager() {
         return;
       }
 
+      // Get unique member IDs and fetch their profiles separately
+      const memberIds = [...new Set(loyaltyData?.map(entry => entry.member_id) || [])];
+      
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, email, organization_id')
+        .in('id', memberIds)
+        .eq('organization_id', profile.organization_id);
+
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+      }
+
+      // Create a map of profiles for quick lookup
+      const profilesMap = new Map();
+      profilesData?.forEach(p => profilesMap.set(p.id, p));
+
       // Transform and aggregate data
       const memberMap = new Map();
       loyaltyData?.forEach(entry => {
         const memberId = entry.member_id;
+        const memberProfile = profilesMap.get(memberId);
+        
+        if (!memberProfile) return; // Skip if profile not found or not in organization
+        
         if (!memberMap.has(memberId)) {
           memberMap.set(memberId, {
             member_id: memberId,
-            first_name: entry.profiles?.first_name,
-            last_name: entry.profiles?.last_name,
-            email: entry.profiles?.email,
+            first_name: memberProfile.first_name,
+            last_name: memberProfile.last_name,
+            email: memberProfile.email,
             current_balance: entry.current_balance,
             points_earned: entry.points_earned,
             points_redeemed: entry.points_redeemed,
