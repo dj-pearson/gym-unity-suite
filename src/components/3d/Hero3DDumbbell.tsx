@@ -35,7 +35,7 @@ export const Hero3DDumbbell: React.FC = () => {
       <div className="absolute right-0 top-0 w-full h-full md:w-3/4 lg:w-2/3 opacity-20 md:opacity-25 lg:opacity-30">
       <Canvas
         camera={{ 
-          position: [15, 8, 10], 
+          position: [15, 8, 50], 
           fov: 35,
           near: 0.1,
           far: 1000,
