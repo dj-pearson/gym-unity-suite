@@ -16,111 +16,42 @@ const Dumbbell = () => {
     }
   });
 
-  // Create materials with enhanced visuals for better 3D appearance
-  const goldMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-    color: '#FFD700',
-    metalness: 0.95,
-    roughness: 0.1,
-    envMapIntensity: 2.5,
-    emissive: '#332200',
-    emissiveIntensity: 0.05,
-  }), []);
-
-  const blackMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-    color: '#0a0a0a',
-    metalness: 0.7,
-    roughness: 0.4,
+  // Create materials with clean, professional appearance
+  const weightMaterial = useMemo(() => new THREE.MeshStandardMaterial({
+    color: '#2c3e50',
+    metalness: 0.6,
+    roughness: 0.2,
     envMapIntensity: 1.5,
-    emissive: '#000000',
-    emissiveIntensity: 0.02,
   }), []);
 
   const handleMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-    color: '#C0C0C0',
-    metalness: 0.98,
-    roughness: 0.02,
-    envMapIntensity: 3,
-    emissive: '#111111',
-    emissiveIntensity: 0.03,
+    color: '#34495e',
+    metalness: 0.8,
+    roughness: 0.1,
+    envMapIntensity: 2,
   }), []);
 
   return (
-    <Float speed={2} rotationIntensity={0.2} floatIntensity={0.3}>
-      <group ref={dumbbellRef} scale={[1.2, 1.2, 1.2]} rotation={[0.2, 0.3, 0]}>
-        {/* Left Weight Bell - Proper 3D spherical weight */}
-        <group position={[-2.5, 0, 0]}>
-          {/* Main weight sphere */}
-          <mesh material={goldMaterial} castShadow receiveShadow>
-            <sphereGeometry args={[1.2, 32, 32]} />
-          </mesh>
-          {/* Weight details - hexagonal pattern */}
-          <mesh position={[0, 0, 1.21]} material={blackMaterial} castShadow>
-            <cylinderGeometry args={[0.8, 0.8, 0.02, 6]} />
-          </mesh>
-          <mesh position={[0, 0, -1.21]} material={blackMaterial} castShadow>
-            <cylinderGeometry args={[0.8, 0.8, 0.02, 6]} />
-          </mesh>
-          {/* Weight number marking */}
-          <mesh position={[1.21, 0, 0]} material={blackMaterial} castShadow>
-            <cylinderGeometry args={[0.3, 0.3, 0.02, 8]} />
-          </mesh>
-        </group>
+    <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.2}>
+      <group ref={dumbbellRef} scale={[1.8, 1.8, 1.8]} rotation={[0.1, 0.2, 0]}>
+        {/* Left Weight - Simple cylinder */}
+        <mesh position={[-2.2, 0, 0]} material={weightMaterial} castShadow receiveShadow>
+          <cylinderGeometry args={[1, 1, 0.8, 32]} />
+        </mesh>
         
-        {/* Right Weight Bell - Proper 3D spherical weight */}
-        <group position={[2.5, 0, 0]}>
-          {/* Main weight sphere */}
-          <mesh material={goldMaterial} castShadow receiveShadow>
-            <sphereGeometry args={[1.2, 32, 32]} />
-          </mesh>
-          {/* Weight details - hexagonal pattern */}
-          <mesh position={[0, 0, 1.21]} material={blackMaterial} castShadow>
-            <cylinderGeometry args={[0.8, 0.8, 0.02, 6]} />
-          </mesh>
-          <mesh position={[0, 0, -1.21]} material={blackMaterial} castShadow>
-            <cylinderGeometry args={[0.8, 0.8, 0.02, 6]} />
-          </mesh>
-          {/* Weight number marking */}
-          <mesh position={[-1.21, 0, 0]} material={blackMaterial} castShadow>
-            <cylinderGeometry args={[0.3, 0.3, 0.02, 8]} />
-          </mesh>
-        </group>
+        {/* Right Weight - Simple cylinder */}
+        <mesh position={[2.2, 0, 0]} material={weightMaterial} castShadow receiveShadow>
+          <cylinderGeometry args={[1, 1, 0.8, 32]} />
+        </mesh>
         
-        {/* Main Handle/Bar - Horizontal orientation */}
+        {/* Main Handle/Bar */}
         <mesh material={handleMaterial} rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.08, 0.08, 5.0, 32]} />
+          <cylinderGeometry args={[0.08, 0.08, 4.4, 32]} />
         </mesh>
         
-        {/* Handle Grip Section - Textured for realism */}
-        <mesh material={blackMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[0.12, 0.12, 2.0, 32]} />
-        </mesh>
-        
-        {/* Handle grip texture rings */}
-        {Array.from({ length: 8 }, (_, i) => (
-          <mesh 
-            key={i} 
-            position={[(-0.8 + (i * 0.2)), 0, 0]} 
-            material={handleMaterial} 
-            rotation={[0, 0, Math.PI / 2]}
-          >
-            <cylinderGeometry args={[0.125, 0.125, 0.05, 32]} />
-          </mesh>
-        ))}
-        
-        {/* Connection joints between handle and weights */}
-        <mesh position={[-1.3, 0, 0]} material={handleMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[0.15, 0.08, 0.4, 32]} />
-        </mesh>
-        <mesh position={[1.3, 0, 0]} material={handleMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[0.15, 0.08, 0.4, 32]} />
-        </mesh>
-        
-        {/* End caps for professional look */}
-        <mesh position={[-1.5, 0, 0]} material={goldMaterial} castShadow>
-          <sphereGeometry args={[0.15, 16, 16]} />
-        </mesh>
-        <mesh position={[1.5, 0, 0]} material={goldMaterial} castShadow>
-          <sphereGeometry args={[0.15, 16, 16]} />
+        {/* Handle Grip */}
+        <mesh material={handleMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
+          <cylinderGeometry args={[0.12, 0.12, 1.5, 32]} />
         </mesh>
       </group>
     </Float>
@@ -151,34 +82,22 @@ export const Hero3DDumbbell: React.FC = () => {
         }}
         shadows="soft"
       >
-        {/* Enhanced Lighting Setup for 3D depth */}
-        <ambientLight intensity={0.4} color="#ffffff" />
+        {/* Clean professional lighting */}
+        <ambientLight intensity={0.6} />
         <directionalLight 
           position={[10, 10, 5]} 
-          intensity={1.5} 
+          intensity={1} 
           castShadow
-          shadow-mapSize={[2048, 2048]}
+          shadow-mapSize={[1024, 1024]}
           shadow-camera-far={50}
           shadow-camera-left={-10}
           shadow-camera-right={10}
           shadow-camera-top={10}
           shadow-camera-bottom={-10}
-          shadow-bias={-0.0001}
-        />
-        <pointLight position={[-5, 5, 3]} intensity={0.8} color="#FFD700" />
-        <pointLight position={[5, -3, -2]} intensity={0.6} color="#87CEEB" />
-        <spotLight 
-          position={[0, 8, 0]} 
-          angle={0.6} 
-          penumbra={1} 
-          intensity={1.2} 
-          castShadow 
-          color="#ffffff"
-          shadow-mapSize={[1024, 1024]}
         />
         
-        {/* Environment for realistic reflections */}
-        <Environment preset="studio" />
+        {/* Simple environment */}
+        <Environment preset="sunset" />
         
         {/* 3D Dumbbell */}
         <Dumbbell />
