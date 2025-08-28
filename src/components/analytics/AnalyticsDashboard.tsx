@@ -12,6 +12,9 @@ import ClassAnalytics from './ClassAnalytics';
 import MarketingAnalytics from './MarketingAnalytics';
 import StaffAnalytics from './StaffAnalytics';
 import KPIDashboard from './KPIDashboard';
+import RealTimeAnalytics from './RealTimeAnalytics';
+import PredictiveAnalytics from './PredictiveAnalytics';
+import ExportReports from './ExportReports';
 
 interface DashboardMetrics {
   totalMembers: number;
@@ -240,8 +243,10 @@ export default function AnalyticsDashboard() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-6">
+            <TabsList className="grid w-full grid-cols-8">
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="realtime">Real-time</TabsTrigger>
+              <TabsTrigger value="predictive">Predictive</TabsTrigger>
               <TabsTrigger value="revenue">Revenue</TabsTrigger>
               <TabsTrigger value="members">Members</TabsTrigger>
               <TabsTrigger value="classes">Classes</TabsTrigger>
@@ -251,6 +256,14 @@ export default function AnalyticsDashboard() {
 
             <TabsContent value="overview" className="space-y-4">
               <KPIDashboard timeRange={timeRange} />
+            </TabsContent>
+
+            <TabsContent value="realtime" className="space-y-4">
+              <RealTimeAnalytics />
+            </TabsContent>
+
+            <TabsContent value="predictive" className="space-y-4">
+              <PredictiveAnalytics />
             </TabsContent>
 
             <TabsContent value="revenue" className="space-y-4">
@@ -273,6 +286,13 @@ export default function AnalyticsDashboard() {
               <StaffAnalytics timeRange={timeRange} />
             </TabsContent>
           </Tabs>
+        </CardContent>
+      </Card>
+
+      {/* Export Reports Section */}
+      <Card>
+        <CardContent className="p-0">
+          <ExportReports />
         </CardContent>
       </Card>
     </div>

@@ -564,6 +564,51 @@ export type Database = {
           },
         ]
       }
+      daily_analytics_snapshots: {
+        Row: {
+          active_members: number
+          class_attendance_rate: number
+          class_bookings: number
+          classes_scheduled: number
+          created_at: string
+          id: string
+          new_members_today: number
+          organization_id: string
+          snapshot_date: string
+          total_check_ins: number
+          total_members: number
+          total_revenue: number
+        }
+        Insert: {
+          active_members?: number
+          class_attendance_rate?: number
+          class_bookings?: number
+          classes_scheduled?: number
+          created_at?: string
+          id?: string
+          new_members_today?: number
+          organization_id: string
+          snapshot_date?: string
+          total_check_ins?: number
+          total_members?: number
+          total_revenue?: number
+        }
+        Update: {
+          active_members?: number
+          class_attendance_rate?: number
+          class_bookings?: number
+          classes_scheduled?: number
+          created_at?: string
+          id?: string
+          new_members_today?: number
+          organization_id?: string
+          snapshot_date?: string
+          total_check_ins?: number
+          total_members?: number
+          total_revenue?: number
+        }
+        Relationships: []
+      }
       email_templates: {
         Row: {
           content: string
@@ -4024,18 +4069,29 @@ export type Database = {
       }
       member_engagement_summary: {
         Row: {
-          check_ins: number | null
-          class_bookings: number | null
+          avg_visit_duration_minutes: number | null
+          classes_attended: number | null
+          classes_booked_last_30: number | null
           email: string | null
-          engagements_last_30_days: number | null
+          engagement_status: string | null
           first_name: string | null
-          last_engagement: string | null
+          join_date: string | null
           last_name: string | null
-          loyalty_points_balance: number | null
+          last_visit_date: string | null
           member_id: string | null
-          total_engagements: number | null
+          organization_id: string | null
+          total_visits: number | null
+          visits_last_30_days: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
