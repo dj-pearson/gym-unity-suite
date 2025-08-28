@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ModernHeroElements from '@/components/ui/ModernHeroElements';
+import { Hero3DDumbbell } from '@/components/3d/Hero3DDumbbell';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -119,20 +120,24 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative container mx-auto px-4 py-20 text-center overflow-hidden">
+      <section className="relative container mx-auto px-4 py-20 text-center overflow-hidden min-h-[80vh] flex items-center">
         <ModernHeroElements />
+        
+        {/* 3D Dumbbell Element */}
+        <Hero3DDumbbell />
+        
         <div className="relative z-10 max-w-4xl mx-auto">
           <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
             Elite Fitness Management Platform
           </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-foreground leading-tight">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-foreground leading-tight">
             Elevate Your 
             <br />
-            <span className="relative">
+            <span className="relative text-gradient-primary">
               Fitness Experience
             </span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
             Premium management solutions for discerning fitness professionals. From exclusive boutiques 
             to luxury fitness clubs, Rep Club delivers unparalleled sophistication and performance.
           </p>
@@ -140,7 +145,7 @@ export default function LandingPage() {
             <Button 
               size="lg" 
               onClick={() => navigate('/auth')}
-              className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow"
+              className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow hover:shadow-elevation-3 transition-all duration-300"
             >
               Start Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -148,7 +153,7 @@ export default function LandingPage() {
             <Button 
               variant="outline" 
               size="lg"
-              className="px-8 py-4 text-lg"
+              className="px-8 py-4 text-lg hover:bg-primary/5 transition-all duration-300"
             >
               Watch Demo
             </Button>
