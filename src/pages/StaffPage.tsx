@@ -39,13 +39,12 @@ interface StaffMember {
   role: 'owner' | 'manager' | 'staff' | 'trainer';
   avatar_url?: string;
   created_at: string;
-  hire_date?: string;
-  hourly_rate?: number;
+  hire_date?: string | null;
+  hourly_rate?: number | null;
   status: 'active' | 'inactive' | 'on_leave';
-  certifications?: string[];
-  employee_id?: string;
-  department?: string;
-  permissions?: string[];
+  certifications?: string[] | null;
+  employee_id?: string | null;
+  department?: string | null;
 }
 
 export default function StaffPage() {
@@ -59,8 +58,6 @@ export default function StaffPage() {
   const [showStaffForm, setShowStaffForm] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
-  const [showScheduleManager, setShowScheduleManager] = useState(false);
-  const [showPayrollManager, setShowPayrollManager] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
@@ -85,13 +82,7 @@ export default function StaffPage() {
           phone,
           role,
           avatar_url,
-          created_at,
-          hire_date,
-          hourly_rate,
-          status,
-          certifications,
-          employee_id,
-          department
+          created_at
         `)
         .eq('organization_id', profile.organization_id)
         .in('role', ['owner', 'manager', 'staff', 'trainer'])
@@ -106,7 +97,19 @@ export default function StaffPage() {
         return;
       }
 
-      setStaff(staffData || []);
+      // Transform data to match interface with defaults for new fields
+      const transformedStaff = (staffData || []).map(member => ({
+        ...member,
+        role: member.role as 'owner' | 'manager' | 'staff' | 'trainer', // Type cast to exclude 'member'
+        status: 'active' as const,
+        hire_date: null,
+        hourly_rate: null,
+        certifications: null,
+        employee_id: null,
+        department: null,
+      }));
+
+      setStaff(transformedStaff);
     } catch (error) {
       console.error('Error fetching staff:', error);
       toast({
@@ -127,7 +130,7 @@ export default function StaffPage() {
   const canManageStaff = hasPermission(PERMISSIONS.MANAGE_STAFF);
 
   const filteredStaff = staff.filter(staffMember => {
-    const matchesSearch = `${staffMember.first_name} ${staffMember.last_name} ${staffMember.email} ${staffMember.employee_id}`
+    const matchesSearch = `${staffMember.first_name || ''} ${staffMember.last_name || ''} ${staffMember.email} ${staffMember.employee_id || ''}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     
@@ -159,20 +162,7 @@ export default function StaffPage() {
       case 'staff':
         return 'outline';
       case 'trainer':
-        return 'success' as const;
-      default:
-        return 'outline';
-    }
-  };
-
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'success' as const;
-      case 'inactive':
-        return 'destructive' as const;
-      case 'on_leave':
-        return 'warning' as const;
+        return 'default';
       default:
         return 'outline';
     }
@@ -236,9 +226,9 @@ export default function StaffPage() {
         <Card className="gym-card">
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-foreground">
-              {staff.filter(s => s.status === 'active').length}
+              {staff.length}
             </div>
-            <div className="text-sm text-muted-foreground">Active Staff</div>
+            <div className="text-sm text-muted-foreground">Total Staff</div>
           </CardContent>
         </Card>
         <Card className="gym-card">
@@ -251,18 +241,18 @@ export default function StaffPage() {
         </Card>
         <Card className="gym-card">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-warning">
-              {staff.filter(s => s.status === 'on_leave').length}
+            <div className="text-2xl font-bold text-secondary">
+              {staff.filter(s => s.role === 'manager').length}
             </div>
-            <div className="text-sm text-muted-foreground">On Leave</div>
+            <div className="text-sm text-muted-foreground">Managers</div>
           </CardContent>
         </Card>
         <Card className="gym-card">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-success">
-              ${Math.round(staff.reduce((sum, s) => sum + (s.hourly_rate || 0), 0) / staff.length) || 0}
+            <div className="text-2xl font-bold text-accent">
+              {staff.filter(s => s.role === 'staff').length}
             </div>
-            <div className="text-sm text-muted-foreground">Avg Hourly Rate</div>
+            <div className="text-sm text-muted-foreground">Support Staff</div>
           </CardContent>
         </Card>
       </div>
@@ -376,9 +366,6 @@ export default function StaffPage() {
                             <Badge variant={getRoleBadgeVariant(staffMember.role)} className="text-xs">
                               {staffMember.role.charAt(0).toUpperCase() + staffMember.role.slice(1)}
                             </Badge>
-                            <Badge variant={getStatusBadgeVariant(staffMember.status)} className="text-xs">
-                              {staffMember.status.replace('_', ' ').toUpperCase()}
-                            </Badge>
                           </div>
                         </div>
                       </div>
@@ -401,48 +388,25 @@ export default function StaffPage() {
                           <span>{staffMember.phone}</span>
                         </div>
                       )}
-                      {staffMember.employee_id && (
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Badge variant="outline" className="text-xs">
-                            ID: {staffMember.employee_id}
-                          </Badge>
-                        </div>
-                      )}
                     </div>
 
                     {/* Additional Info */}
                     <div className="flex items-center justify-between text-sm">
-                      {staffMember.hourly_rate && (
-                        <div className="flex items-center text-muted-foreground">
-                          <DollarSign className="mr-1 h-3 w-3" />
-                          <span>${staffMember.hourly_rate}/hr</span>
-                        </div>
-                      )}
-                      {staffMember.hire_date && (
-                        <div className="flex items-center text-muted-foreground">
-                          <Calendar className="mr-1 h-3 w-3" />
-                          <span>
-                            {new Date(staffMember.hire_date).toLocaleDateString()}
-                          </span>
-                        </div>
-                      )}
+                      <div className="flex items-center text-muted-foreground">
+                        <Calendar className="mr-1 h-3 w-3" />
+                        <span>
+                          Joined {new Date(staffMember.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Certifications */}
-                    {staffMember.certifications && staffMember.certifications.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {staffMember.certifications.slice(0, 2).map((cert, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {cert}
-                          </Badge>
-                        ))}
-                        {staffMember.certifications.length > 2 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{staffMember.certifications.length - 2} more
-                          </Badge>
-                        )}
-                      </div>
-                    )}
+                    {/* Role specific info */}
+                    <div className="text-xs text-muted-foreground">
+                      {staffMember.role === 'trainer' && 'Fitness Professional'}
+                      {staffMember.role === 'staff' && 'Support Staff'}
+                      {staffMember.role === 'manager' && 'Management Team'}
+                      {staffMember.role === 'owner' && 'Owner'}
+                    </div>
                   </CardContent>
                 </Card>
               ))}

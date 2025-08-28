@@ -2556,6 +2556,77 @@ export type Database = {
           },
         ]
       }
+      payroll_periods: {
+        Row: {
+          created_at: string
+          created_by: string
+          end_date: string
+          id: string
+          notes: string | null
+          organization_id: string
+          processed_at: string | null
+          start_date: string
+          status: string | null
+          total_amount: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          end_date: string
+          id?: string
+          notes?: string | null
+          organization_id: string
+          processed_at?: string | null
+          start_date: string
+          status?: string | null
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          end_date?: string
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          processed_at?: string | null
+          start_date?: string
+          status?: string | null
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_periods_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "payroll_periods_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "payroll_periods_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_periods_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           address_line1: string | null
@@ -2563,16 +2634,21 @@ export type Database = {
           avatar_url: string | null
           barcode: string | null
           barcode_generated_at: string | null
+          certifications: string[] | null
           city: string | null
           country: string | null
           created_at: string
           date_of_birth: string | null
+          department: string | null
           email: string
           emergency_contact_name: string | null
           emergency_contact_phone: string | null
+          employee_id: string | null
           family_notes: string | null
           first_name: string | null
           gender: string | null
+          hire_date: string | null
+          hourly_rate: number | null
           id: string
           interests: string[] | null
           join_date: string | null
@@ -2586,6 +2662,7 @@ export type Database = {
           relationship_type: string | null
           role: Database["public"]["Enums"]["user_role"]
           state: string | null
+          status: string | null
           updated_at: string
         }
         Insert: {
@@ -2594,16 +2671,21 @@ export type Database = {
           avatar_url?: string | null
           barcode?: string | null
           barcode_generated_at?: string | null
+          certifications?: string[] | null
           city?: string | null
           country?: string | null
           created_at?: string
           date_of_birth?: string | null
+          department?: string | null
           email: string
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
+          employee_id?: string | null
           family_notes?: string | null
           first_name?: string | null
           gender?: string | null
+          hire_date?: string | null
+          hourly_rate?: number | null
           id: string
           interests?: string[] | null
           join_date?: string | null
@@ -2617,6 +2699,7 @@ export type Database = {
           relationship_type?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           state?: string | null
+          status?: string | null
           updated_at?: string
         }
         Update: {
@@ -2625,16 +2708,21 @@ export type Database = {
           avatar_url?: string | null
           barcode?: string | null
           barcode_generated_at?: string | null
+          certifications?: string[] | null
           city?: string | null
           country?: string | null
           created_at?: string
           date_of_birth?: string | null
+          department?: string | null
           email?: string
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
+          employee_id?: string | null
           family_notes?: string | null
           first_name?: string | null
           gender?: string | null
+          hire_date?: string | null
+          hourly_rate?: number | null
           id?: string
           interests?: string[] | null
           join_date?: string | null
@@ -2648,6 +2736,7 @@ export type Database = {
           relationship_type?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           state?: string | null
+          status?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -3200,6 +3289,80 @@ export type Database = {
         }
         Relationships: []
       }
+      staff_schedules: {
+        Row: {
+          break_end: string | null
+          break_start: string | null
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_available: boolean | null
+          notes: string | null
+          organization_id: string
+          staff_id: string
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          break_end?: string | null
+          break_start?: string | null
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_available?: boolean | null
+          notes?: string | null
+          organization_id: string
+          staff_id: string
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          break_end?: string | null
+          break_start?: string | null
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_available?: boolean | null
+          notes?: string | null
+          organization_id?: string
+          staff_id?: string
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_schedules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_schedules_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "staff_schedules_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "staff_schedules_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscribers: {
         Row: {
           created_at: string
@@ -3338,6 +3501,113 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      time_entries: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          break_end: string | null
+          break_start: string | null
+          clock_in: string
+          clock_out: string | null
+          created_at: string
+          hourly_rate: number | null
+          hours_worked: number | null
+          id: string
+          notes: string | null
+          organization_id: string
+          staff_id: string
+          status: string | null
+          total_pay: number | null
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          break_end?: string | null
+          break_start?: string | null
+          clock_in: string
+          clock_out?: string | null
+          created_at?: string
+          hourly_rate?: number | null
+          hours_worked?: number | null
+          id?: string
+          notes?: string | null
+          organization_id: string
+          staff_id: string
+          status?: string | null
+          total_pay?: number | null
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          break_end?: string | null
+          break_start?: string | null
+          clock_in?: string
+          clock_out?: string | null
+          created_at?: string
+          hourly_rate?: number | null
+          hours_worked?: number | null
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          staff_id?: string
+          status?: string | null
+          total_pay?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_entries_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "time_entries_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "time_entries_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "time_entries_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "time_entries_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

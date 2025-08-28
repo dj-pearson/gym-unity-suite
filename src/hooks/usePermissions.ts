@@ -98,5 +98,6 @@ export const usePermissions = () => {
     isStaff,
     isMember,
     userRole: profile?.role,
+    PERMISSIONS,
   };
 };

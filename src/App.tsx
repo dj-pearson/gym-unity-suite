@@ -24,6 +24,7 @@ import { LeadsPage } from "./pages/LeadsPage";
 import CommissionsPage from "./pages/CommissionsPage";
 import ReferralsPage from "./pages/ReferralsPage";
 import AttributionPage from "./pages/AttributionPage";
+import StaffPage from "./pages/StaffPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import CommunicationPage from "./pages/CommunicationPage";
 import NotFound from "./pages/NotFound";
@@ -222,6 +223,14 @@ const App = () => (
               <ProtectedRoute permission={PERMISSIONS.VIEW_BILLING}>
                 <DashboardLayout>
                   <BillingPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/staff" element={
+              <ProtectedRoute permission={PERMISSIONS.MANAGE_STAFF}>
+                <DashboardLayout>
+                  <StaffPage />
                 </DashboardLayout>
               </ProtectedRoute>
             } />
