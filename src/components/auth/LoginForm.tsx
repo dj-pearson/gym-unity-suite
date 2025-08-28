@@ -5,8 +5,9 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { Loader2, Dumbbell, Mail, QrCode } from 'lucide-react';
+import { Loader2, Dumbbell, Mail, QrCode, Home, ArrowLeft } from 'lucide-react';
 import { BarcodeLogin } from './BarcodeLogin';
+import { useNavigate } from 'react-router-dom';
 
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +15,7 @@ export const LoginForm: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, signUp } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +39,19 @@ export const LoginForm: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4">
       <div className="w-full max-w-md">
+        {/* Back to Homepage Button */}
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <Home className="w-4 h-4" />
+            Back to Homepage
+          </Button>
+        </div>
+
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-xl mb-4 shadow-glow">
             <Dumbbell className="w-8 h-8 text-white" />
