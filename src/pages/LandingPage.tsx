@@ -123,10 +123,10 @@ export default function LandingPage() {
       <section className="relative container mx-auto px-4 py-20 text-center overflow-hidden min-h-[80vh] flex items-center">
         <ModernHeroElements />
         
-        {/* 3D Dumbbell Element */}
+        {/* 3D Dumbbell Element - positioned to not interfere with text */}
         <Hero3DDumbbell />
         
-        <div className="relative z-20 max-w-4xl mx-auto">
+        <div className="relative z-10 max-w-4xl mx-auto">
           <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
             Elite Fitness Management Platform
           </Badge>

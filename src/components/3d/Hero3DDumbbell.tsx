@@ -40,25 +40,37 @@ const Dumbbell = () => {
   return (
     <Float speed={2} rotationIntensity={0.2} floatIntensity={0.3}>
       <group ref={dumbbellRef} scale={[1.4, 1.4, 1.4]}>
-        {/* Left Weight Plates - Using spheres for more rounded look */}
-        <mesh position={[-2.5, 0, 0]} material={goldMaterial} castShadow receiveShadow>
-          <sphereGeometry args={[1.2, 32, 16]} />
+        {/* Left Weight Plates - Stacked realistic plates */}
+        {/* Outer large plate */}
+        <mesh position={[-2.8, 0, 0]} material={goldMaterial} castShadow receiveShadow>
+          <cylinderGeometry args={[1.3, 1.3, 0.8, 32]} />
         </mesh>
-        <mesh position={[-2.5, 0, 0]} material={blackMaterial} castShadow scale={[0.85, 0.85, 0.85]}>
-          <sphereGeometry args={[1.0, 32, 16]} />
+        {/* Middle plate */}
+        <mesh position={[-2.3, 0, 0]} material={blackMaterial} castShadow>
+          <cylinderGeometry args={[1.1, 1.1, 0.6, 32]} />
         </mesh>
-        
-        {/* Right Weight Plates - Using spheres for more rounded look */}
-        <mesh position={[2.5, 0, 0]} material={goldMaterial} castShadow receiveShadow>
-          <sphereGeometry args={[1.2, 32, 16]} />
-        </mesh>
-        <mesh position={[2.5, 0, 0]} material={blackMaterial} castShadow scale={[0.85, 0.85, 0.85]}>
-          <sphereGeometry args={[1.0, 32, 16]} />
+        {/* Inner small plate */}
+        <mesh position={[-1.9, 0, 0]} material={goldMaterial} castShadow>
+          <cylinderGeometry args={[0.9, 0.9, 0.4, 32]} />
         </mesh>
         
-        {/* Main Handle/Bar */}
+        {/* Right Weight Plates - Stacked realistic plates */}
+        {/* Outer large plate */}
+        <mesh position={[2.8, 0, 0]} material={goldMaterial} castShadow receiveShadow>
+          <cylinderGeometry args={[1.3, 1.3, 0.8, 32]} />
+        </mesh>
+        {/* Middle plate */}
+        <mesh position={[2.3, 0, 0]} material={blackMaterial} castShadow>
+          <cylinderGeometry args={[1.1, 1.1, 0.6, 32]} />
+        </mesh>
+        {/* Inner small plate */}
+        <mesh position={[1.9, 0, 0]} material={goldMaterial} castShadow>
+          <cylinderGeometry args={[0.9, 0.9, 0.4, 32]} />
+        </mesh>
+        
+        {/* Main Handle/Bar - Extended to reach new plate positions */}
         <mesh material={handleMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[0.12, 0.12, 5.2, 32]} />
+          <cylinderGeometry args={[0.12, 0.12, 6.0, 32]} />
         </mesh>
         
         {/* Handle Grips */}
@@ -69,20 +81,12 @@ const Dumbbell = () => {
           <cylinderGeometry args={[0.16, 0.16, 1.8, 32]} />
         </mesh>
         
-        {/* Decorative end caps */}
-        <mesh position={[-1.9, 0, 0]} material={goldMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
+        {/* Collar clamps to secure weights */}
+        <mesh position={[-1.6, 0, 0]} material={goldMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
           <cylinderGeometry args={[0.18, 0.18, 0.15, 32]} />
         </mesh>
-        <mesh position={[1.9, 0, 0]} material={goldMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
+        <mesh position={[1.6, 0, 0]} material={goldMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
           <cylinderGeometry args={[0.18, 0.18, 0.15, 32]} />
-        </mesh>
-        
-        {/* Weight plate details */}
-        <mesh position={[-2.7, 0, 0]} material={goldMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[0.3, 0.3, 0.05, 32]} />
-        </mesh>
-        <mesh position={[2.7, 0, 0]} material={goldMaterial} rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[0.3, 0.3, 0.05, 32]} />
         </mesh>
       </group>
     </Float>
@@ -92,7 +96,8 @@ const Dumbbell = () => {
 // Main Hero 3D Component
 export const Hero3DDumbbell: React.FC = () => {
   return (
-    <div className="absolute right-2 md:right-8 lg:right-16 top-1/2 -translate-y-1/2 w-48 h-48 md:w-72 md:h-72 lg:w-96 lg:h-96 opacity-25 md:opacity-35 lg:opacity-45 pointer-events-none z-0">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute right-2 md:right-8 lg:right-16 top-1/2 -translate-y-1/2 w-48 h-48 md:w-72 md:h-72 lg:w-96 lg:h-96 opacity-30 md:opacity-40 lg:opacity-50">
       <Canvas
         camera={{ 
           position: [0, 0, 9], 
@@ -135,6 +140,7 @@ export const Hero3DDumbbell: React.FC = () => {
         {/* 3D Dumbbell */}
         <Dumbbell />
       </Canvas>
+      </div>
     </div>
   );
 };
