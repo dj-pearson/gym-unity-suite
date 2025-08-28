@@ -2609,6 +2609,39 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_read: boolean
+          recipient_id: string
+          sender_id: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          recipient_id: string
+          sender_id: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          recipient_id?: string
+          sender_id?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           class_reminders: boolean

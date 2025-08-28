@@ -132,14 +132,6 @@ const App = () => (
               </ProtectedRoute>
             } />
             
-            <Route path="/communication" element={
-              <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
-                <DashboardLayout>
-                  <CommunicationPage />
-                </DashboardLayout>
-              </ProtectedRoute>
-            } />
-            
             <Route path="/membership-plans" element={
               <DashboardLayout>
                 <MembershipPlansPage />
@@ -216,6 +208,14 @@ const App = () => (
               <ProtectedRoute permission={PERMISSIONS.VIEW_CHECKINS}>
                 <DashboardLayout>
                   <CheckInsPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/communication" element={
+              <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
+                <DashboardLayout>
+                  <CommunicationPage />
                 </DashboardLayout>
               </ProtectedRoute>
             } />
