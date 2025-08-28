@@ -483,6 +483,75 @@ export type Database = {
           },
         ]
       }
+      cleaning_schedules: {
+        Row: {
+          area_id: string
+          assigned_to: string | null
+          created_at: string
+          estimated_duration_minutes: number | null
+          frequency: string
+          id: string
+          instructions: string | null
+          last_completed: string | null
+          next_due: string
+          organization_id: string
+          priority: string
+          status: string
+          supplies_needed: string[] | null
+          task_name: string
+          updated_at: string
+        }
+        Insert: {
+          area_id: string
+          assigned_to?: string | null
+          created_at?: string
+          estimated_duration_minutes?: number | null
+          frequency?: string
+          id?: string
+          instructions?: string | null
+          last_completed?: string | null
+          next_due: string
+          organization_id: string
+          priority?: string
+          status?: string
+          supplies_needed?: string[] | null
+          task_name: string
+          updated_at?: string
+        }
+        Update: {
+          area_id?: string
+          assigned_to?: string | null
+          created_at?: string
+          estimated_duration_minutes?: number | null
+          frequency?: string
+          id?: string
+          instructions?: string | null
+          last_completed?: string | null
+          next_due?: string
+          organization_id?: string
+          priority?: string
+          status?: string
+          supplies_needed?: string[] | null
+          task_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cleaning_schedules_area_fk"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "facility_areas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cleaning_schedules_organization_fk"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       commission_calculations: {
         Row: {
           commission_amount: number
@@ -648,6 +717,159 @@ export type Database = {
         }
         Relationships: []
       }
+      equipment: {
+        Row: {
+          brand: string | null
+          created_at: string
+          equipment_type: string
+          id: string
+          last_maintenance_date: string | null
+          location_id: string | null
+          maintenance_interval_days: number | null
+          model: string | null
+          name: string
+          next_maintenance_date: string | null
+          notes: string | null
+          organization_id: string
+          purchase_date: string | null
+          purchase_price: number | null
+          serial_number: string | null
+          specifications: Json | null
+          status: string
+          updated_at: string
+          usage_hours: number | null
+          warranty_expiry: string | null
+        }
+        Insert: {
+          brand?: string | null
+          created_at?: string
+          equipment_type?: string
+          id?: string
+          last_maintenance_date?: string | null
+          location_id?: string | null
+          maintenance_interval_days?: number | null
+          model?: string | null
+          name: string
+          next_maintenance_date?: string | null
+          notes?: string | null
+          organization_id: string
+          purchase_date?: string | null
+          purchase_price?: number | null
+          serial_number?: string | null
+          specifications?: Json | null
+          status?: string
+          updated_at?: string
+          usage_hours?: number | null
+          warranty_expiry?: string | null
+        }
+        Update: {
+          brand?: string | null
+          created_at?: string
+          equipment_type?: string
+          id?: string
+          last_maintenance_date?: string | null
+          location_id?: string | null
+          maintenance_interval_days?: number | null
+          model?: string | null
+          name?: string
+          next_maintenance_date?: string | null
+          notes?: string | null
+          organization_id?: string
+          purchase_date?: string | null
+          purchase_price?: number | null
+          serial_number?: string | null
+          specifications?: Json | null
+          status?: string
+          updated_at?: string
+          usage_hours?: number | null
+          warranty_expiry?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_location_fk"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_organization_fk"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facility_areas: {
+        Row: {
+          area_type: string
+          cleaning_frequency: string | null
+          created_at: string
+          equipment_count: number | null
+          id: string
+          last_cleaned: string | null
+          location_id: string
+          max_capacity: number | null
+          name: string
+          organization_id: string
+          safety_notes: string | null
+          special_requirements: string | null
+          square_footage: number | null
+          temperature_range: string | null
+          updated_at: string
+        }
+        Insert: {
+          area_type?: string
+          cleaning_frequency?: string | null
+          created_at?: string
+          equipment_count?: number | null
+          id?: string
+          last_cleaned?: string | null
+          location_id: string
+          max_capacity?: number | null
+          name: string
+          organization_id: string
+          safety_notes?: string | null
+          special_requirements?: string | null
+          square_footage?: number | null
+          temperature_range?: string | null
+          updated_at?: string
+        }
+        Update: {
+          area_type?: string
+          cleaning_frequency?: string | null
+          created_at?: string
+          equipment_count?: number | null
+          id?: string
+          last_cleaned?: string | null
+          location_id?: string
+          max_capacity?: number | null
+          name?: string
+          organization_id?: string
+          safety_notes?: string | null
+          special_requirements?: string | null
+          square_footage?: number | null
+          temperature_range?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_areas_location_fk"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_areas_organization_fk"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       facility_tours: {
         Row: {
           created_at: string
@@ -756,6 +978,107 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      incident_reports: {
+        Row: {
+          actions_taken: string | null
+          area_involved: string | null
+          created_at: string
+          description: string
+          equipment_involved: string | null
+          follow_up_date: string | null
+          follow_up_required: boolean | null
+          id: string
+          incident_date: string
+          incident_type: string
+          injured_person_id: string | null
+          injured_person_name: string | null
+          injured_person_type: string | null
+          insurance_claim_number: string | null
+          insurance_notified: boolean | null
+          location_id: string | null
+          medical_attention_required: boolean | null
+          medical_provider: string | null
+          organization_id: string
+          photos: string[] | null
+          reported_by: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          status: string
+          updated_at: string
+          witnesses: string[] | null
+        }
+        Insert: {
+          actions_taken?: string | null
+          area_involved?: string | null
+          created_at?: string
+          description: string
+          equipment_involved?: string | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: string
+          incident_date: string
+          incident_type?: string
+          injured_person_id?: string | null
+          injured_person_name?: string | null
+          injured_person_type?: string | null
+          insurance_claim_number?: string | null
+          insurance_notified?: boolean | null
+          location_id?: string | null
+          medical_attention_required?: boolean | null
+          medical_provider?: string | null
+          organization_id: string
+          photos?: string[] | null
+          reported_by: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+          witnesses?: string[] | null
+        }
+        Update: {
+          actions_taken?: string | null
+          area_involved?: string | null
+          created_at?: string
+          description?: string
+          equipment_involved?: string | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: string
+          incident_date?: string
+          incident_type?: string
+          injured_person_id?: string | null
+          injured_person_name?: string | null
+          injured_person_type?: string | null
+          insurance_claim_number?: string | null
+          insurance_notified?: boolean | null
+          location_id?: string | null
+          medical_attention_required?: boolean | null
+          medical_provider?: string | null
+          organization_id?: string
+          photos?: string[] | null
+          reported_by?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+          witnesses?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incident_reports_organization_fk"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -1564,6 +1887,153 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "loyalty_rewards_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_logs: {
+        Row: {
+          cost: number | null
+          created_at: string
+          description: string
+          equipment_id: string
+          id: string
+          labor_hours: number | null
+          maintenance_date: string
+          maintenance_schedule_id: string | null
+          maintenance_type: string
+          next_maintenance_date: string | null
+          notes: string | null
+          organization_id: string
+          parts_used: string[] | null
+          performed_by: string
+          photos: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string
+          description: string
+          equipment_id: string
+          id?: string
+          labor_hours?: number | null
+          maintenance_date?: string
+          maintenance_schedule_id?: string | null
+          maintenance_type: string
+          next_maintenance_date?: string | null
+          notes?: string | null
+          organization_id: string
+          parts_used?: string[] | null
+          performed_by: string
+          photos?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string
+          description?: string
+          equipment_id?: string
+          id?: string
+          labor_hours?: number | null
+          maintenance_date?: string
+          maintenance_schedule_id?: string | null
+          maintenance_type?: string
+          next_maintenance_date?: string | null
+          notes?: string | null
+          organization_id?: string
+          parts_used?: string[] | null
+          performed_by?: string
+          photos?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_logs_equipment_fk"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_logs_organization_fk"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_schedules: {
+        Row: {
+          assigned_to: string | null
+          completion_date: string | null
+          completion_notes: string | null
+          cost: number | null
+          created_at: string
+          description: string | null
+          equipment_id: string
+          estimated_duration_minutes: number | null
+          id: string
+          maintenance_type: string
+          organization_id: string
+          priority: string
+          scheduled_date: string
+          status: string
+          title: string
+          updated_at: string
+          vendor_id: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          completion_date?: string | null
+          completion_notes?: string | null
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          equipment_id: string
+          estimated_duration_minutes?: number | null
+          id?: string
+          maintenance_type?: string
+          organization_id: string
+          priority?: string
+          scheduled_date: string
+          status?: string
+          title: string
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          completion_date?: string | null
+          completion_notes?: string | null
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          equipment_id?: string
+          estimated_duration_minutes?: number | null
+          id?: string
+          maintenance_type?: string
+          organization_id?: string
+          priority?: string
+          scheduled_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_schedules_equipment_fk"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_schedules_organization_fk"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -4047,6 +4517,71 @@ export type Database = {
             columns: ["staff_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendors: {
+        Row: {
+          address: string | null
+          contact_name: string | null
+          created_at: string
+          email: string | null
+          id: string
+          insurance_expiry: string | null
+          license_number: string | null
+          name: string
+          notes: string | null
+          organization_id: string
+          phone: string | null
+          preferred_vendor: boolean | null
+          rating: number | null
+          updated_at: string
+          vendor_type: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          insurance_expiry?: string | null
+          license_number?: string | null
+          name: string
+          notes?: string | null
+          organization_id: string
+          phone?: string | null
+          preferred_vendor?: boolean | null
+          rating?: number | null
+          updated_at?: string
+          vendor_type?: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          insurance_expiry?: string | null
+          license_number?: string | null
+          name?: string
+          notes?: string | null
+          organization_id?: string
+          phone?: string | null
+          preferred_vendor?: boolean | null
+          rating?: number | null
+          updated_at?: string
+          vendor_type?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendors_organization_fk"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
