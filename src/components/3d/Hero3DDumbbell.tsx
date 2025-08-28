@@ -39,7 +39,7 @@ const Dumbbell = () => {
 
   return (
     <Float speed={2} rotationIntensity={0.2} floatIntensity={0.3}>
-      <group ref={dumbbellRef} scale={[1.4, 1.4, 1.4]}>
+      <group ref={dumbbellRef} scale={[1.4, 1.4, 1.4]} rotation={[0, 0, Math.PI / 4]}>
         {/* Left Weight Plates - Stacked realistic plates */}
         {/* Outer large plate */}
         <mesh position={[-2.8, 0, 0]} material={goldMaterial} castShadow receiveShadow>
