@@ -21,7 +21,7 @@ const Dumbbell = () => {
 
   return (
     <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.2}>
-      <group ref={dumbbellRef} scale={[2, 2, 2]} rotation={[0.1, 0.2, 0]}>
+      <group ref={dumbbellRef} scale={[0.8, 0.8, 0.8]} rotation={[0.1, 0.2, 0]}>
         <primitive object={scene} />
       </group>
     </Float>
@@ -32,11 +32,11 @@ const Dumbbell = () => {
 export const Hero3DDumbbell: React.FC = () => {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      <div className="absolute right-2 md:right-8 lg:right-16 top-1/2 -translate-y-1/2 w-48 h-48 md:w-72 md:h-72 lg:w-96 lg:h-96 opacity-30 md:opacity-40 lg:opacity-50">
+      <div className="absolute right-0 top-0 w-full h-full md:w-3/4 lg:w-2/3 opacity-20 md:opacity-25 lg:opacity-30">
       <Canvas
         camera={{ 
-          position: [4, 2, 6], 
-          fov: 50,
+          position: [8, 4, 12], 
+          fov: 45,
           near: 0.1,
           far: 1000,
         }}
