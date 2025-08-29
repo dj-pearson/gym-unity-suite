@@ -198,12 +198,33 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen relative">
-      {/* Parallax background covers everything */}
-      <InteractiveHeroBackground className="absolute inset-0 w-full h-full z-0" />
+    <div className="min-h-screen bg-gradient-subtle">
+      {/* Navigation - stays on top, separate from parallax */}
+      <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 relative">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-lg">
+              <Dumbbell className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-foreground">Rep Club</h1>
+              <p className="text-xs text-muted-foreground">Elite Fitness Management</p>
+            </div>
+          </div>
+          <Button 
+            onClick={() => navigate('/auth')}
+            className="bg-gradient-primary hover:opacity-90"
+          >
+            Get Started
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      </nav>
 
-      {/* Navigation */}
-      <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
+      {/* Parallax container for hero and features sections */}
+      <div className="relative">
+        {/* Parallax background covers only these sections */}
+        <InteractiveHeroBackground className="absolute inset-0 w-full z-0" />
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-lg">
@@ -271,19 +292,19 @@ export default function LandingPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <Card key={index} className="gym-card group hover:shadow-elevation-3 transition-all duration-300 bg-white/10 backdrop-blur-sm">
+            <Card key={index} className="gym-card group hover:shadow-elevation-3 transition-all duration-300 bg-white/10 backdrop-blur-sm border-white/20">
               <CardHeader>
                 <div className="flex items-center space-x-4">
                   <div className="p-3 bg-gradient-primary rounded-lg group-hover:scale-110 transition-transform">
                     <feature.icon className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg">{feature.title}</CardTitle>
+                    <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-base">
+                <CardDescription className="text-base text-white/80">
                   {feature.description}
                 </CardDescription>
               </CardContent>
@@ -291,6 +312,7 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+      </div>
 
       {/* Benefits Section */}
       <section className="bg-muted/50 py-20">
