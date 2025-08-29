@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ParallaxBackground } from '../ui/ParallaxBackground';
-import { Hero3DDumbbell } from '../3d/Hero3DDumbbell';
 
 interface InteractiveHeroBackgroundProps {
   className?: string;
@@ -73,17 +72,6 @@ export const InteractiveHeroBackground: React.FC<InteractiveHeroBackgroundProps>
           transition: 'background 0.3s ease-out',
         }}
       />
-
-      {/* 3D Dumbbell with enhanced interactivity */}
-      <div 
-        className="absolute inset-0 z-30"
-        style={{
-          transform: `translateX(${mousePosition.x * -10}px) translateY(${mousePosition.y * -10}px)`,
-          transition: 'transform 0.2s ease-out',
-        }}
-      >
-        <Hero3DDumbbell />
-      </div>
 
       {/* Content area - children passed from parent */}
       <div className="relative z-40 h-full">

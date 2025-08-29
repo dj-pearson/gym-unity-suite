@@ -199,8 +199,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
-      {/* Navigation */}
-      <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
+      {/* Navigation - stays on top, separate from parallax */}
+      <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 relative">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-lg">
@@ -221,69 +221,71 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero Section with Interactive Parallax Background */}
-      <InteractiveHeroBackground className="relative">
-        <div className="container mx-auto px-4 py-20 text-center flex items-center justify-center h-full">
-          <div className="relative z-10 max-w-4xl mx-auto">
-            <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
-              Elite Fitness Management Platform
-            </Badge>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
-              Elevate Your 
-              <br />
-              <span className="relative text-gradient-primary">
-                Fitness Experience
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-              Premium management solutions for discerning fitness professionals. From exclusive boutiques 
-              to luxury fitness clubs, Rep Club delivers unparalleled sophistication and performance.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <Button 
-                size="lg" 
-                onClick={() => navigate('/auth')}
-                className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow hover:shadow-elevation-3 transition-all duration-300"
-              >
-                Start Free Trial
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="px-8 py-4 text-lg border-white/30 text-white hover:bg-white/10 transition-all duration-300"
-              >
-                Watch Demo
-              </Button>
-            </div>
+      {/* Parallax container for hero and features sections */}
+      <div className="relative">
+        {/* Parallax background covers only these sections */}
+        <InteractiveHeroBackground className="absolute inset-0 w-full z-0" />
+
+      {/* Hero Section - now transparent, content only */}
+      <section className="relative container mx-auto px-4 py-20 text-center flex items-center min-h-[80vh] z-10">
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
+            Elite Fitness Management Platform
+          </Badge>
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
+            Elevate Your 
+            <br />
+            <span className="relative text-gradient-primary">
+              Fitness Experience
+            </span>
+          </h1>
+          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+            Premium management solutions for discerning fitness professionals. From exclusive boutiques 
+            to luxury fitness clubs, Rep Club delivers unparalleled sophistication and performance.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <Button 
+              size="lg" 
+              onClick={() => navigate('/auth')}
+              className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow hover:shadow-elevation-3 transition-all duration-300"
+            >
+              Start Free Trial
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="px-8 py-4 text-lg border-white/30 text-white hover:bg-white/10 transition-all duration-300"
+            >
+              Watch Demo
+            </Button>
           </div>
         </div>
-      </InteractiveHeroBackground>
+      </section>
 
-      {/* Features Grid */}
-      <section className="container mx-auto px-4 py-20">
+      {/* Features Grid - also transparent, z-10 so above background */}
+      <section className="container mx-auto px-4 py-20 z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Everything You Need to Manage Your Gym</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <h2 className="text-4xl font-bold mb-4 text-white drop-shadow-lg">Everything You Need to Manage Your Gym</h2>
+          <p className="text-xl text-white/80 max-w-2xl mx-auto">
             Powerful features designed specifically for fitness businesses of all sizes
           </p>
         </div>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <Card key={index} className="gym-card group hover:shadow-elevation-3 transition-all duration-300">
+            <Card key={index} className="gym-card group hover:shadow-elevation-3 transition-all duration-300 bg-white/10 backdrop-blur-sm border-white/20">
               <CardHeader>
                 <div className="flex items-center space-x-4">
                   <div className="p-3 bg-gradient-primary rounded-lg group-hover:scale-110 transition-transform">
                     <feature.icon className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg">{feature.title}</CardTitle>
+                    <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-base">
+                <CardDescription className="text-base text-white/80">
                   {feature.description}
                 </CardDescription>
               </CardContent>
@@ -291,6 +293,7 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+      </div>
 
       {/* Benefits Section */}
       <section className="bg-muted/50 py-20">
