@@ -21,7 +21,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import ModernHeroElements from '@/components/ui/ModernHeroElements';
+import InteractiveHeroBackground from '@/components/ui/InteractiveHeroBackground';
 import { Hero3DDumbbell } from '@/components/3d/Hero3DDumbbell';
 import OneTimePaymentButton from '@/components/membership/OneTimePaymentButton';
 
@@ -224,7 +224,7 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative container mx-auto px-4 py-20 text-center overflow-hidden min-h-[80vh] flex items-center">
-        <ModernHeroElements />
+        <InteractiveHeroBackground />
         
         {/* 3D Dumbbell Element - positioned to not interfere with text */}
         <Hero3DDumbbell />
