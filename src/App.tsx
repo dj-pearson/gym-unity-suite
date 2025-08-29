@@ -15,6 +15,9 @@ import MembersPage from "./pages/MembersPage";
 import MemberProfilePage from "./pages/MemberProfilePage";
 import MembershipPlansPage from "./pages/MembershipPlansPage";
 import MembershipSuccessPage from "./pages/MembershipSuccessPage";
+import PaymentSuccessPage from './pages/PaymentSuccessPage';
+import PaymentCancelledPage from './pages/PaymentCancelledPage';
+import PaymentDemoPage from './pages/PaymentDemoPage';
 import ClassesPage from "./pages/ClassesPage";
 import CheckInsPage from "./pages/CheckInsPage";
 import BillingPage from "./pages/BillingPage";
@@ -142,7 +145,10 @@ const App = () => (
               </DashboardLayout>
             } />
 
-            <Route path="/membership-success" element={<MembershipSuccessPage />} />
+          <Route path="/membership-success" element={<MembershipSuccessPage />} />
+          <Route path="/payment-success" element={<PaymentSuccessPage />} />
+          <Route path="/payment-cancelled" element={<PaymentCancelledPage />} />
+          <Route path="/payment-demo" element={<PaymentDemoPage />} />
             
             <Route path="/member/notifications" element={
               <ProtectedRoute roles={['member']}>
