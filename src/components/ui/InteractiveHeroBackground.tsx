@@ -31,7 +31,10 @@ export default function InteractiveHeroBackground() {
         <div 
           className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'url(/assets/Hero-Background.png)',
+            backgroundImage: `url(/assets/Hero-Background.png), linear-gradient(135deg, 
+              hsl(var(--primary) / 0.1) 0%, 
+              hsl(var(--secondary) / 0.05) 50%, 
+              hsl(var(--accent) / 0.1) 100%)`,
             filter: 'brightness(0.4) contrast(1.1)',
           }}
         />
