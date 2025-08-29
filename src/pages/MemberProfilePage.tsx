@@ -12,6 +12,7 @@ import {
   User, 
   Mail, 
   Phone, 
+  TrendingUp,
   MapPin, 
   Calendar, 
   Edit, 
@@ -20,6 +21,7 @@ import {
   CreditCard
 } from 'lucide-react';
 import { Database } from '@/integrations/supabase/types';
+import { MemberActivitySummary } from '@/components/members/MemberActivitySummary';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -71,9 +73,9 @@ export default function MemberProfilePage() {
     <div className="container mx-auto py-8 px-4 max-w-6xl">
       <div className="mb-8 flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Member Profile</h1>
+          <h2 className="text-2xl font-bold">Enhanced Member Profile</h2>
           <p className="text-muted-foreground">
-            Manage your membership information and preferences
+            Your complete fitness journey at a glance
           </p>
         </div>
         <Button onClick={() => setIsEditing(true)}>
@@ -83,10 +85,14 @@ export default function MemberProfilePage() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <User className="w-4 h-4" />
             Overview
+          </TabsTrigger>
+          <TabsTrigger value="activity" className="flex items-center gap-2">
+            <TrendingUp className="w-4 h-4" />
+            Activity
           </TabsTrigger>
           <TabsTrigger value="membership" className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
@@ -209,6 +215,10 @@ export default function MemberProfilePage() {
               </Card>
             </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="activity" className="space-y-6">
+          <MemberActivitySummary memberId={currentProfile.id} />
         </TabsContent>
 
         <TabsContent value="membership">
