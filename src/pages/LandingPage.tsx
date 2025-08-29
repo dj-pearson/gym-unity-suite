@@ -21,8 +21,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import InteractiveHeroBackground from '@/components/ui/InteractiveHeroBackground';
-import { Hero3DDumbbell } from '@/components/3d/Hero3DDumbbell';
+import { InteractiveHeroBackground } from '@/components/backgrounds/InteractiveHeroBackground';
 import OneTimePaymentButton from '@/components/membership/OneTimePaymentButton';
 
 export default function LandingPage() {
@@ -222,47 +221,44 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative container mx-auto px-4 py-20 text-center overflow-hidden min-h-[80vh] flex items-center">
-        <InteractiveHeroBackground />
-        
-        {/* 3D Dumbbell Element - positioned to not interfere with text */}
-        <Hero3DDumbbell />
-        
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
-            Elite Fitness Management Platform
-          </Badge>
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-foreground leading-tight">
-            Elevate Your 
-            <br />
-            <span className="relative text-gradient-primary">
-              Fitness Experience
-            </span>
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            Premium management solutions for discerning fitness professionals. From exclusive boutiques 
-            to luxury fitness clubs, Rep Club delivers unparalleled sophistication and performance.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Button 
-              size="lg" 
-              onClick={() => navigate('/auth')}
-              className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow hover:shadow-elevation-3 transition-all duration-300"
-            >
-              Start Free Trial
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="px-8 py-4 text-lg hover:bg-primary/5 transition-all duration-300"
-            >
-              Watch Demo
-            </Button>
+      {/* Hero Section with Interactive Parallax Background */}
+      <InteractiveHeroBackground className="relative">
+        <div className="container mx-auto px-4 py-20 text-center flex items-center justify-center h-full">
+          <div className="relative z-10 max-w-4xl mx-auto">
+            <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
+              Elite Fitness Management Platform
+            </Badge>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
+              Elevate Your 
+              <br />
+              <span className="relative text-gradient-primary">
+                Fitness Experience
+              </span>
+            </h1>
+            <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+              Premium management solutions for discerning fitness professionals. From exclusive boutiques 
+              to luxury fitness clubs, Rep Club delivers unparalleled sophistication and performance.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <Button 
+                size="lg" 
+                onClick={() => navigate('/auth')}
+                className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow hover:shadow-elevation-3 transition-all duration-300"
+              >
+                Start Free Trial
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="px-8 py-4 text-lg border-white/30 text-white hover:bg-white/10 transition-all duration-300"
+              >
+                Watch Demo
+              </Button>
+            </div>
           </div>
         </div>
-      </section>
+      </InteractiveHeroBackground>
 
       {/* Features Grid */}
       <section className="container mx-auto px-4 py-20">
