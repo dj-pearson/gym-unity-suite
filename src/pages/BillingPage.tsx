@@ -1,8 +1,11 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CreditCard, FileText, Clock } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CreditCard, FileText, Clock, Zap, Receipt } from 'lucide-react';
 import SubscriptionStatus from '@/components/membership/SubscriptionStatus';
 import { SubscriptionManager } from '@/components/membership/SubscriptionManager';
+import { InvoiceGenerator } from '@/components/billing/InvoiceGenerator';
+import { BillingAutomation } from '@/components/billing/BillingAutomation';
 
 export default function BillingPage() {
   return (
@@ -13,68 +16,79 @@ export default function BillingPage() {
           <CreditCard className="h-6 w-6 text-white" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Billing & Subscriptions</h1>
+          <h1 className="text-3xl font-bold text-foreground">Billing Management</h1>
           <p className="text-muted-foreground">
-            Manage your membership payments and subscription details
+            Comprehensive billing, invoicing, and payment automation
           </p>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Current Subscription */}
-        <div className="space-y-6">
-          <SubscriptionStatus />
-        </div>
+      {/* Main Content - Tabs */}
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview" className="flex items-center gap-2">
+            <CreditCard className="w-4 h-4" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="invoices" className="flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            Invoices
+          </TabsTrigger>
+          <TabsTrigger value="automation" className="flex items-center gap-2">
+            <Zap className="w-4 h-4" />
+            Automation
+          </TabsTrigger>
+          <TabsTrigger value="history" className="flex items-center gap-2">
+            <Receipt className="w-4 h-4" />
+            History
+          </TabsTrigger>
+        </TabsList>
 
-        {/* Subscription Management */}
-        <div className="space-y-6">
-          <SubscriptionManager />
-        </div>
-      </div>
-
-      {/* Coming Soon Features */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="gym-card opacity-75">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <FileText className="mr-2 h-5 w-5" />
-              Payment History
-            </CardTitle>
-            <CardDescription>
-              View and download your payment receipts and invoices
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8">
-              <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                <FileText className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <p className="text-sm text-muted-foreground">Coming Soon</p>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Current Subscription */}
+            <div className="space-y-6">
+              <SubscriptionStatus />
             </div>
-          </CardContent>
-        </Card>
 
-        <Card className="gym-card opacity-75">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Clock className="mr-2 h-5 w-5" />
-              Billing Reminders
-            </CardTitle>
-            <CardDescription>
-              Set up automatic reminders for upcoming payments
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8">
-              <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                <Clock className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <p className="text-sm text-muted-foreground">Coming Soon</p>
+            {/* Subscription Management */}
+            <div className="space-y-6">
+              <SubscriptionManager />
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="invoices">
+          <InvoiceGenerator />
+        </TabsContent>
+
+        <TabsContent value="automation">
+          <BillingAutomation />
+        </TabsContent>
+
+        <TabsContent value="history">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Receipt className="mr-2 h-5 w-5" />
+                Payment History
+              </CardTitle>
+              <CardDescription>
+                View and download your payment receipts and transaction history
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Receipt className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <p className="text-sm text-muted-foreground">Payment history will be displayed here</p>
+                <p className="text-xs text-muted-foreground mt-2">Feature coming soon</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

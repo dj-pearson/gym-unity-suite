@@ -26,6 +26,7 @@ import MemberBookingDialog from '@/components/classes/MemberBookingDialog';
 import CategoryManager from '@/components/classes/CategoryManager';
 import ClassCalendarView from '@/components/classes/ClassCalendarView';
 import WaitlistManager from '@/components/classes/WaitlistManager';
+import { RecurringClassTemplates } from '@/components/classes/RecurringClassTemplates';
 
 interface Class {
   id: string;
@@ -346,9 +347,10 @@ export default function ClassesPage() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="list">List View</TabsTrigger>
           <TabsTrigger value="calendar">Calendar View</TabsTrigger>
+          <TabsTrigger value="templates">Templates</TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="space-y-4">
@@ -554,6 +556,10 @@ export default function ClassesPage() {
             onClassClick={handleClassClick}
             onScheduleClick={() => setShowScheduleForm(true)}
           />
+        </TabsContent>
+        
+        <TabsContent value="templates">
+          <RecurringClassTemplates />
         </TabsContent>
       </Tabs>
 
