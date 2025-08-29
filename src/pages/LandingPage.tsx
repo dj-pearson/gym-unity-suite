@@ -14,11 +14,16 @@ import {
   Zap,
   Clock,
   ArrowRight,
-  Star
+  Star,
+  Check,
+  Building2,
+  Crown,
+  Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ModernHeroElements from '@/components/ui/ModernHeroElements';
 import { Hero3DDumbbell } from '@/components/3d/Hero3DDumbbell';
+import OneTimePaymentButton from '@/components/membership/OneTimePaymentButton';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -71,6 +76,104 @@ export default function LandingPage() {
       icon: Clock,
       title: 'Save Time Daily',
       description: 'Automate routine tasks and focus on what matters - your members'
+    }
+  ];
+
+  const pricingPlans = [
+    {
+      category: "Boutique Studio",
+      plans: [
+        {
+          name: "Starter",
+          price: 99,
+          interval: "month",
+          members: "Up to 200 members",
+          popular: false,
+          icon: Users,
+          features: [
+            "Essential class scheduling",
+            "Basic payment processing", 
+            "Mobile member app",
+            "Email support",
+            "Member management",
+            "Basic reporting"
+          ],
+          savings: "30% vs competitors"
+        },
+        {
+          name: "Professional", 
+          price: 299,
+          interval: "month",
+          members: "Up to 1,000 members",
+          popular: true,
+          icon: Building2,
+          features: [
+            "Everything in Starter",
+            "Advanced reporting & analytics",
+            "Marketing automation",
+            "Branded mobile app", 
+            "Priority support",
+            "Custom integrations"
+          ],
+          savings: "Best value"
+        },
+        {
+          name: "Premium",
+          price: 599, 
+          interval: "month",
+          members: "Unlimited members",
+          popular: false,
+          icon: Crown,
+          features: [
+            "Everything in Professional",
+            "Multi-location support",
+            "Complete custom branding",
+            "API access",
+            "Dedicated success manager",
+            "White-label options"
+          ],
+          savings: "Enterprise features"
+        }
+      ]
+    },
+    {
+      category: "Mid-Market Fitness",
+      plans: [
+        {
+          name: "Growth",
+          price: 199,
+          interval: "month", 
+          members: "Up to 500 members",
+          popular: false,
+          icon: BarChart3,
+          features: [
+            "Equipment management",
+            "Staff scheduling",
+            "Basic business intelligence",
+            "Member retention tools",
+            "Multi-location ready",
+            "Advanced reporting"
+          ],
+          savings: "Operational focus"
+        },
+        {
+          name: "Pro",
+          price: 399,
+          interval: "month",
+          members: "Up to 2,000 members", 
+          popular: true,
+          icon: Sparkles,
+          features: [
+            "Everything in Growth",
+            "Advanced retention tools",
+            "Corporate wellness features",
+            "Full multi-location support",
+            "Custom dashboards",
+            "Premium integrations"
+          ],
+          savings: "Most popular"
+        }
+      ]
     }
   ];
 
@@ -215,6 +318,162 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="text-center mb-16">
+          <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+            Transparent Pricing
+          </Badge>
+          <h2 className="text-4xl font-bold mb-4">Choose Your Rep Club Plan</h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Premium fitness management solutions with transparent, value-based pricing. 
+            No hidden fees, no surprises - just elite software for discerning professionals.
+          </p>
+        </div>
+
+        {pricingPlans.map((category, categoryIndex) => (
+          <div key={categoryIndex} className="mb-16">
+            <div className="text-center mb-12">
+              <h3 className="text-2xl font-bold text-foreground mb-2">{category.category}</h3>
+              <p className="text-muted-foreground">
+                {category.category === "Boutique Studio" 
+                  ? "Perfect for specialty fitness studios and boutique operations" 
+                  : "Designed for established fitness centers with advanced needs"
+                }
+              </p>
+            </div>
+
+            <div className={`grid gap-8 ${category.plans.length === 3 ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2'} max-w-6xl mx-auto`}>
+              {category.plans.map((plan, index) => (
+                <Card 
+                  key={index} 
+                  className={`gym-card relative ${plan.popular ? 'ring-2 ring-primary shadow-elevation-3 scale-105' : ''} hover:shadow-elevation-2 transition-all duration-300`}
+                >
+                  {plan.popular && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <Badge className="bg-primary text-primary-foreground px-4 py-1">
+                        Most Popular
+                      </Badge>
+                    </div>
+                  )}
+                  
+                  <CardHeader className="text-center pb-8">
+                    <div className="flex items-center justify-center mb-4">
+                      <div className={`p-3 rounded-xl ${plan.popular ? 'bg-gradient-primary' : 'bg-gradient-secondary'}`}>
+                        <plan.icon className="h-6 w-6 text-white" />
+                      </div>
+                    </div>
+                    <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                    <div className="mt-4">
+                      <div className="text-4xl font-bold text-foreground">
+                        ${plan.price}
+                        <span className="text-lg text-muted-foreground font-normal">/{plan.interval}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">{plan.members}</p>
+                      <Badge variant="outline" className="mt-2 text-xs">
+                        {plan.savings}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="space-y-6">
+                    <ul className="space-y-3">
+                      {plan.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-center space-x-3">
+                          <div className="flex-shrink-0">
+                            <div className="w-5 h-5 bg-success/10 rounded-full flex items-center justify-center">
+                              <Check className="h-3 w-3 text-success" />
+                            </div>
+                          </div>
+                          <span className="text-sm text-muted-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="pt-6">
+                      <OneTimePaymentButton
+                        amount={plan.price}
+                        description={`Rep Club ${plan.name} Plan - Monthly Subscription`}
+                        orderType="subscription_setup"
+                        metadata={{
+                          plan_name: plan.name,
+                          plan_category: category.category,
+                          member_limit: plan.members,
+                          billing_interval: plan.interval
+                        }}
+                        className="w-full"
+                        variant={plan.popular ? "default" : "outline"}
+                      >
+                        Get Started with {plan.name}
+                      </OneTimePaymentButton>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {/* Enterprise Pricing */}
+        <Card className="gym-card bg-gradient-hero text-white max-w-4xl mx-auto">
+          <CardHeader className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <div className="p-4 bg-white/10 rounded-xl backdrop-blur-sm">
+                <Building2 className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            <CardTitle className="text-3xl font-bold">Enterprise Solutions</CardTitle>
+            <CardDescription className="text-white/80 text-lg mt-4">
+              Custom solutions for large chains and franchises with 10+ locations
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <div className="text-2xl font-bold">$2,000+</div>
+                <div className="text-sm opacity-80">Starting monthly</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <div className="text-2xl font-bold">$150-300</div>
+                <div className="text-sm opacity-80">Per location</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <div className="text-2xl font-bold">Volume</div>
+                <div className="text-sm opacity-80">Discounts available</div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-8">
+              <div className="flex items-center space-x-2">
+                <Check className="h-4 w-4 text-success" />
+                <span>Implementation & training included</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Check className="h-4 w-4 text-success" />
+                <span>SLA agreements</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Check className="h-4 w-4 text-success" />
+                <span>Dedicated enterprise support</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Check className="h-4 w-4 text-success" />
+                <span>Custom integrations</span>
+              </div>
+            </div>
+
+            <Button 
+              variant="secondary" 
+              size="lg"
+              className="px-8"
+              onClick={() => navigate('/contact')}
+            >
+              Contact Enterprise Sales
+            </Button>
+          </CardContent>
+        </Card>
       </section>
 
       {/* Testimonials */}
