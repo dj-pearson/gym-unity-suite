@@ -13,9 +13,9 @@ const Dumbbell = () => {
   useFrame((state) => {
     if (dumbbellRef.current) {
       // Smooth rotation animation
-      dumbbellRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.3;
-      dumbbellRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.3) * 0.1;
-      dumbbellRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.1;
+      dumbbellRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.4) * 0.3;
+      dumbbellRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
+      dumbbellRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.7) * 0.1;
     }
   });
 
