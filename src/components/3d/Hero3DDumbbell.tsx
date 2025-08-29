@@ -21,7 +21,7 @@ const Dumbbell = () => {
 
   return (
     <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.2}>
-      <group ref={dumbbellRef} scale={[0.1, 0.1, 0.1]} rotation={[0.1, 0.2, 0]}>
+      <group ref={dumbbellRef} scale={[0.05, 0.05, 0.05]} rotation={[0.1, 0.2, 0]}>
         <primitive object={scene} />
       </group>
     </Float>
