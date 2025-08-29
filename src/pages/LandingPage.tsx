@@ -221,7 +221,7 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Parallax background with integrated content */}
+      {/* Parallax background with hero content only */}
       <InteractiveHeroBackground className="relative w-full z-0">
         {/* Hero Section - integrated into parallax */}
         <section className="relative container mx-auto px-4 py-20 text-center flex items-center min-h-[80vh] z-10">
@@ -259,38 +259,38 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-
-        {/* Features Grid - integrated into parallax */}
-        <section className="container mx-auto px-4 py-20 z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 text-white drop-shadow-lg">Everything You Need to Manage Your Gym</h2>
-            <p className="text-xl text-white/80 max-w-2xl mx-auto">
-              Powerful features designed specifically for fitness businesses of all sizes
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="gym-card group hover:shadow-elevation-3 transition-all duration-300 bg-white/10 backdrop-blur-sm border-white/20">
-                <CardHeader>
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-gradient-primary rounded-lg group-hover:scale-110 transition-transform">
-                      <feature.icon className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base text-white/80">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
       </InteractiveHeroBackground>
+
+      {/* Features Grid - separate section with standard background */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">Everything You Need to Manage Your Gym</h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Powerful features designed specifically for fitness businesses of all sizes
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, index) => (
+            <Card key={index} className="gym-card group hover:shadow-elevation-3 transition-all duration-300">
+              <CardHeader>
+                <div className="flex items-center space-x-4">
+                  <div className="p-3 bg-gradient-primary rounded-lg group-hover:scale-110 transition-transform">
+                    <feature.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">{feature.title}</CardTitle>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-base">
+                  {feature.description}
+                </CardDescription>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
 
       {/* Benefits Section */}
       <section className="bg-muted/50 py-20">
