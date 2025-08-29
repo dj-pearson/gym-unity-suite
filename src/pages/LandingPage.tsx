@@ -225,25 +225,6 @@ export default function LandingPage() {
       <div className="relative">
         {/* Parallax background covers only these sections */}
         <InteractiveHeroBackground className="absolute inset-0 w-full z-0" />
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-lg">
-              <Dumbbell className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Rep Club</h1>
-              <p className="text-xs text-muted-foreground">Elite Fitness Management</p>
-            </div>
-          </div>
-          <Button 
-            onClick={() => navigate('/auth')}
-            className="bg-gradient-primary hover:opacity-90"
-          >
-            Get Started
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      </nav>
 
       {/* Hero Section - now transparent, content only */}
       <section className="relative container mx-auto px-4 py-20 text-center flex items-center min-h-[80vh] z-10">
