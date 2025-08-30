@@ -172,6 +172,26 @@ export default function ClassCalendarView({ onClassClick, onScheduleClick }: Cla
     setViewMode(mode);
   };
 
+  // View mode buttons component to avoid type narrowing issues
+  const ViewModeButtons = () => (
+    <div className="flex space-x-2">
+      <Button
+        variant={viewMode === 'week' ? 'default' : 'outline'}
+        size="sm"
+        onClick={() => handleViewModeChange('week')}
+      >
+        Week
+      </Button>
+      <Button
+        variant={viewMode === 'month' ? 'default' : 'outline'}
+        size="sm"
+        onClick={() => handleViewModeChange('month')}
+      >
+        Month
+      </Button>
+    </div>
+  );
+
   if (viewMode === 'month') {
     return (
       <div className="space-y-4">
@@ -188,22 +208,7 @@ export default function ClassCalendarView({ onClassClick, onScheduleClick }: Cla
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
-          <div className="flex space-x-2">
-            <Button
-              variant={viewMode === ('week' as ViewModeType) ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleViewModeChange('week' as ViewModeType)}
-            >
-              Week
-            </Button>
-            <Button
-              variant={viewMode === ('month' as ViewModeType) ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleViewModeChange('month' as ViewModeType)}
-            >
-              Month
-            </Button>
-          </div>
+          <ViewModeButtons />
         </div>
 
         {/* Calendar */}
@@ -283,22 +288,7 @@ export default function ClassCalendarView({ onClassClick, onScheduleClick }: Cla
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
-        <div className="flex space-x-2">
-          <Button
-            variant={viewMode === ('week' as ViewModeType) ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => handleViewModeChange('week' as ViewModeType)}
-          >
-            Week
-          </Button>
-          <Button
-            variant={viewMode === ('month' as ViewModeType) ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => handleViewModeChange('month' as ViewModeType)}
-          >
-            Month
-          </Button>
-        </div>
+        <ViewModeButtons />
       </div>
 
       {/* Week Grid */}
