@@ -18,7 +18,11 @@ const trendData = [
   { month: 'Apr', revenue: 45780, members: 1247, retention: 92.4 }
 ];
 
-export default function KPIDashboard() {
+interface KPIDashboardProps {
+  timeRange: string;
+}
+
+export default function KPIDashboard({ timeRange }: KPIDashboardProps) {
   return (
     <div className="space-y-6">
       <div>
