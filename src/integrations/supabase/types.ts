@@ -101,35 +101,44 @@ export type Database = {
         Row: {
           campaign_id: string
           created_at: string
+          delivery_status: string | null
           executed_at: string
           id: string
           member_id: string
+          message_type: string | null
           notes: string | null
           reward_claimed: boolean | null
           reward_claimed_at: string | null
           status: string
+          template_id: string | null
         }
         Insert: {
           campaign_id: string
           created_at?: string
+          delivery_status?: string | null
           executed_at?: string
           id?: string
           member_id: string
+          message_type?: string | null
           notes?: string | null
           reward_claimed?: boolean | null
           reward_claimed_at?: string | null
           status?: string
+          template_id?: string | null
         }
         Update: {
           campaign_id?: string
           created_at?: string
+          delivery_status?: string | null
           executed_at?: string
           id?: string
           member_id?: string
+          message_type?: string | null
           notes?: string | null
           reward_claimed?: boolean | null
           reward_claimed_at?: string | null
           status?: string
+          template_id?: string | null
         }
         Relationships: []
       }
@@ -632,6 +641,87 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      communication_providers: {
+        Row: {
+          configuration: Json
+          created_at: string
+          id: string
+          is_active: boolean
+          is_default: boolean
+          organization_id: string
+          provider_name: string
+          provider_type: string
+          updated_at: string
+        }
+        Insert: {
+          configuration?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          organization_id: string
+          provider_name: string
+          provider_type: string
+          updated_at?: string
+        }
+        Update: {
+          configuration?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          organization_id?: string
+          provider_name?: string
+          provider_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      communication_templates: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          created_by: string
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          subject: string | null
+          template_type: string
+          updated_at: string
+          variables: Json | null
+        }
+        Insert: {
+          category?: string
+          content: string
+          created_at?: string
+          created_by: string
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          subject?: string | null
+          template_type: string
+          updated_at?: string
+          variables?: Json | null
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          subject?: string | null
+          template_type?: string
+          updated_at?: string
+          variables?: Json | null
+        }
+        Relationships: []
       }
       daily_analytics_snapshots: {
         Row: {
@@ -3156,6 +3246,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      message_history: {
+        Row: {
+          content: string
+          created_at: string
+          delivered_at: string | null
+          error_message: string | null
+          id: string
+          message_type: string
+          metadata: Json | null
+          organization_id: string
+          recipient_id: string
+          recipient_type: string
+          sent_at: string | null
+          sent_by: string
+          status: string
+          subject: string | null
+          template_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          message_type: string
+          metadata?: Json | null
+          organization_id: string
+          recipient_id: string
+          recipient_type: string
+          sent_at?: string | null
+          sent_by: string
+          status?: string
+          subject?: string | null
+          template_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          message_type?: string
+          metadata?: Json | null
+          organization_id?: string
+          recipient_id?: string
+          recipient_type?: string
+          sent_at?: string | null
+          sent_by?: string
+          status?: string
+          subject?: string | null
+          template_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       messages: {
         Row: {
