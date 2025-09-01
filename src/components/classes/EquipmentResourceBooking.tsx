@@ -31,7 +31,7 @@ interface ResourceBooking {
   start_time: string;
   end_time: string;
   purpose: string;
-  status: 'active' | 'completed' | 'cancelled';
+  status: 'confirmed' | 'cancelled' | 'completed';
   notes?: string;
   created_at: string;
   equipment?: {
@@ -70,7 +70,7 @@ export default function EquipmentResourceBooking() {
   const [loading, setLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [filterType, setFilterType] = useState<'all' | 'equipment' | 'room'>('all');
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'completed' | 'cancelled'>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'confirmed' | 'completed' | 'cancelled'>('all');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -107,18 +107,12 @@ export default function EquipmentResourceBooking() {
 
     try {
       const { data, error } = await supabase
-        .from('resource_bookings')
-        .select(`
-          *,
-          equipment:equipment(name, equipment_type),
-          facility_area:facility_areas(name, area_type),
-          booker:profiles(first_name, last_name)
-        `)
-        .eq('organization_id', profile.organization_id)
+        .from('resource_bookings' as any)
+        .select('*')
         .order('start_time', { ascending: false });
 
       if (error) throw error;
-      setBookings(data || []);
+      setBookings((data as any) || []);
     } catch (error) {
       console.error('Error fetching bookings:', error);
       toast.error('Failed to load resource bookings');
@@ -183,12 +177,11 @@ export default function EquipmentResourceBooking() {
         end_time: formData.end_time,
         purpose: formData.purpose,
         notes: formData.notes || null,
-        status: 'active' as const,
-        organization_id: profile.organization_id
+        status: 'confirmed' as const
       };
 
       const { error } = await supabase
-        .from('resource_bookings')
+        .from('resource_bookings' as any)
         .insert([bookingData]);
 
       if (error) throw error;
@@ -213,7 +206,7 @@ export default function EquipmentResourceBooking() {
   const handleCancelBooking = async (bookingId: string) => {
     try {
       const { error } = await supabase
-        .from('resource_bookings')
+        .from('resource_bookings' as any)
         .update({ status: 'cancelled' })
         .eq('id', bookingId);
 
@@ -229,7 +222,7 @@ export default function EquipmentResourceBooking() {
   const handleCompleteBooking = async (bookingId: string) => {
     try {
       const { error } = await supabase
-        .from('resource_bookings')
+        .from('resource_bookings' as any)
         .update({ status: 'completed' })
         .eq('id', bookingId);
 
@@ -254,7 +247,7 @@ export default function EquipmentResourceBooking() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active':
+      case 'confirmed':
         return 'bg-success/10 text-success border-success/20';
       case 'completed':
         return 'bg-primary/10 text-primary border-primary/20';
@@ -416,7 +409,7 @@ export default function EquipmentResourceBooking() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
               <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
@@ -451,10 +444,10 @@ export default function EquipmentResourceBooking() {
                     </div>
                     <div>
                       <h3 className="font-medium">
-                        {booking.equipment?.name || booking.facility_area?.name}
+                        Resource: {booking.resource_id}
                       </h3>
                       <p className="text-sm text-muted-foreground">
-                        {booking.equipment?.equipment_type || booking.facility_area?.area_type} • {booking.purpose}
+                        {booking.resource_type} • {booking.purpose}
                       </p>
                       <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
@@ -462,7 +455,7 @@ export default function EquipmentResourceBooking() {
                           {formatDateTime(booking.start_time)} - {formatDateTime(booking.end_time)}
                         </span>
                         <span>
-                          Booked by {booking.booker?.first_name} {booking.booker?.last_name}
+                          Booked by: {booking.booked_by}
                         </span>
                       </div>
                     </div>
@@ -473,7 +466,7 @@ export default function EquipmentResourceBooking() {
                       {booking.status}
                     </Badge>
                     
-                    {booking.status === 'active' && (
+                    {booking.status === 'confirmed' && (
                       <div className="flex items-center gap-1">
                         <Button
                           variant="outline"

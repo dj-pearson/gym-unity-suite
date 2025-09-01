@@ -1083,6 +1083,39 @@ export type Database = {
           },
         ]
       }
+      instructor_availability: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          instructor_id: string
+          is_available: boolean
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          instructor_id: string
+          is_available?: boolean
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          instructor_id?: string
+          is_available?: boolean
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       kpi_metrics: {
         Row: {
           created_at: string
@@ -3826,6 +3859,48 @@ export type Database = {
           referee_reward_value?: number | null
           referrer_reward_type?: string
           referrer_reward_value?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      resource_bookings: {
+        Row: {
+          booked_by: string
+          created_at: string
+          end_time: string
+          id: string
+          notes: string | null
+          purpose: string | null
+          resource_id: string
+          resource_type: string
+          start_time: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          booked_by: string
+          created_at?: string
+          end_time: string
+          id?: string
+          notes?: string | null
+          purpose?: string | null
+          resource_id: string
+          resource_type: string
+          start_time: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          booked_by?: string
+          created_at?: string
+          end_time?: string
+          id?: string
+          notes?: string | null
+          purpose?: string | null
+          resource_id?: string
+          resource_type?: string
+          start_time?: string
+          status?: string
           updated_at?: string
         }
         Relationships: []
