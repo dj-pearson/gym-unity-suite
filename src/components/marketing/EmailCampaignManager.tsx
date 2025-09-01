@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { 
   Mail, 
   Send, 
@@ -22,47 +25,25 @@ import {
   AlertCircle
 } from 'lucide-react';
 
-const SAMPLE_CAMPAIGNS = [
-  {
-    id: '1',
-    name: 'New Member Welcome Series',
-    subject: 'Welcome to RepClub! Your fitness journey starts now 💪',
-    status: 'active',
-    sent_count: 45,
-    open_rate: 0.85,
-    click_rate: 0.23,
-    created_at: '2024-01-15T10:00:00Z',
-    scheduled_at: null,
-    segment: 'new_members'
-  },
-  {
-    id: '2',
-    name: 'Class Reminder Campaign',
-    subject: 'Don\'t forget your yoga class tomorrow at 10 AM!',
-    status: 'scheduled',
-    sent_count: 0,
-    open_rate: 0,
-    click_rate: 0,
-    created_at: '2024-01-20T14:30:00Z',
-    scheduled_at: '2024-01-22T09:00:00Z',
-    segment: 'active_members'
-  },
-  {
-    id: '3',
-    name: 'Member Retention Offer',
-    subject: '🎯 Special offer just for you - Come back to RepClub',
-    status: 'completed',
-    sent_count: 23,
-    open_rate: 0.67,
-    click_rate: 0.15,
-    created_at: '2024-01-10T16:45:00Z',
-    scheduled_at: null,
-    segment: 'at_risk_members'
-  }
-];
+interface Campaign {
+  id: string;
+  name: string;
+  subject: string;
+  content: string;
+  status: string;
+  sent_count: number;
+  opened_count: number;
+  clicked_count: number;
+  target_segment: string;
+  created_at: string;
+  scheduled_at: string | null;
+  sent_at: string | null;
+}
 
 export default function EmailCampaignManager() {
-  const [campaigns, setCampaigns] = useState(SAMPLE_CAMPAIGNS);
+  const { profile } = useAuth();
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newCampaign, setNewCampaign] = useState({
     name: '',
@@ -71,6 +52,33 @@ export default function EmailCampaignManager() {
     segment: 'all_members',
     schedule_type: 'now'
   });
+
+  useEffect(() => {
+    if (profile?.organization_id) {
+      fetchCampaigns();
+    }
+  }, [profile?.organization_id]);
+
+  const fetchCampaigns = async () => {
+    if (!profile?.organization_id) return;
+
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('marketing_campaigns')
+        .select('*')
+        .eq('organization_id', profile.organization_id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setCampaigns(data || []);
+    } catch (error) {
+      console.error('Error fetching campaigns:', error);
+      toast.error('Failed to load campaigns');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -102,17 +110,42 @@ export default function EmailCampaignManager() {
     }
   };
 
-  const handleCreateCampaign = () => {
-    // In a real app, this would create the campaign via API
-    console.log('Creating campaign:', newCampaign);
-    setShowCreateDialog(false);
-    setNewCampaign({
-      name: '',
-      subject: '',
-      content: '',
-      segment: 'all_members',
-      schedule_type: 'now'
-    });
+  const handleCreateCampaign = async () => {
+    if (!profile?.organization_id || !profile?.id) return;
+
+    try {
+      const campaignData = {
+        organization_id: profile.organization_id,
+        name: newCampaign.name,
+        subject: newCampaign.subject,
+        content: newCampaign.content,
+        campaign_type: 'email',
+        target_segment: newCampaign.segment,
+        status: newCampaign.schedule_type === 'draft' ? 'draft' : 'active',
+        scheduled_at: newCampaign.schedule_type === 'schedule' ? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() : null,
+        created_by: profile.id
+      };
+
+      const { error } = await supabase
+        .from('marketing_campaigns')
+        .insert([campaignData]);
+
+      if (error) throw error;
+
+      toast.success('Campaign created successfully');
+      setShowCreateDialog(false);
+      setNewCampaign({
+        name: '',
+        subject: '',
+        content: '',
+        segment: 'all_members',
+        schedule_type: 'now'
+      });
+      fetchCampaigns();
+    } catch (error: any) {
+      console.error('Error creating campaign:', error);
+      toast.error(error.message || 'Failed to create campaign');
+    }
   };
 
   return (
@@ -227,7 +260,7 @@ export default function EmailCampaignManager() {
               <div className="text-sm text-muted-foreground">Emails Sent</div>
             </div>
             <div className="text-2xl font-bold text-foreground mt-1">
-              {campaigns.reduce((sum, c) => sum + c.sent_count, 0).toLocaleString()}
+              {campaigns.reduce((sum, c) => sum + (c.sent_count || 0), 0).toLocaleString()}
             </div>
           </CardContent>
         </Card>
@@ -238,7 +271,9 @@ export default function EmailCampaignManager() {
               <div className="text-sm text-muted-foreground">Avg Open Rate</div>
             </div>
             <div className="text-2xl font-bold text-foreground mt-1">
-              {(campaigns.filter(c => c.sent_count > 0).reduce((sum, c) => sum + c.open_rate, 0) / campaigns.filter(c => c.sent_count > 0).length * 100 || 0).toFixed(1)}%
+              {campaigns.filter(c => (c.sent_count || 0) > 0).length > 0 
+                ? (campaigns.filter(c => (c.sent_count || 0) > 0).reduce((sum, c) => sum + ((c.opened_count || 0) / (c.sent_count || 1)), 0) / campaigns.filter(c => (c.sent_count || 0) > 0).length * 100).toFixed(1)
+                : '0.0'}%
             </div>
           </CardContent>
         </Card>
@@ -249,7 +284,9 @@ export default function EmailCampaignManager() {
               <div className="text-sm text-muted-foreground">Avg Click Rate</div>
             </div>
             <div className="text-2xl font-bold text-foreground mt-1">
-              {(campaigns.filter(c => c.sent_count > 0).reduce((sum, c) => sum + c.click_rate, 0) / campaigns.filter(c => c.sent_count > 0).length * 100 || 0).toFixed(1)}%
+              {campaigns.filter(c => (c.sent_count || 0) > 0).length > 0 
+                ? (campaigns.filter(c => (c.sent_count || 0) > 0).reduce((sum, c) => sum + ((c.clicked_count || 0) / (c.sent_count || 1)), 0) / campaigns.filter(c => (c.sent_count || 0) > 0).length * 100).toFixed(1)
+                : '0.0'}%
             </div>
           </CardContent>
         </Card>
@@ -261,54 +298,65 @@ export default function EmailCampaignManager() {
           <CardTitle>Email Campaigns</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {campaigns.map((campaign) => (
-              <div key={campaign.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-4">
-                  {getStatusIcon(campaign.status)}
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <h3 className="font-semibold text-foreground">{campaign.name}</h3>
-                      {getStatusBadge(campaign.status)}
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-2">{campaign.subject}</p>
-                    <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                      <span className="flex items-center space-x-1">
-                        <Users className="h-3 w-3" />
-                        <span>{campaign.sent_count} sent</span>
-                      </span>
-                      {campaign.sent_count > 0 && (
-                        <>
-                          <span>{(campaign.open_rate * 100).toFixed(1)}% open</span>
-                          <span>{(campaign.click_rate * 100).toFixed(1)}% click</span>
-                        </>
-                      )}
-                      <span className="flex items-center space-x-1">
-                        <Calendar className="h-3 w-3" />
-                        <span>
-                          {campaign.scheduled_at 
-                            ? `Scheduled for ${new Date(campaign.scheduled_at).toLocaleDateString()}`
-                            : `Created ${new Date(campaign.created_at).toLocaleDateString()}`
-                          }
+          {loading ? (
+            <div className="text-center py-8 text-muted-foreground">
+              Loading campaigns...
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {campaigns.map((campaign) => (
+                <div key={campaign.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center space-x-4">
+                    {getStatusIcon(campaign.status)}
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h3 className="font-semibold text-foreground">{campaign.name}</h3>
+                        {getStatusBadge(campaign.status)}
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">{campaign.subject}</p>
+                      <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                        <span className="flex items-center space-x-1">
+                          <Users className="h-3 w-3" />
+                          <span>{campaign.sent_count || 0} sent</span>
                         </span>
-                      </span>
+                        {(campaign.sent_count || 0) > 0 && (
+                          <>
+                            <span>{(((campaign.opened_count || 0) / (campaign.sent_count || 1)) * 100).toFixed(1)}% open</span>
+                            <span>{(((campaign.clicked_count || 0) / (campaign.sent_count || 1)) * 100).toFixed(1)}% click</span>
+                          </>
+                        )}
+                        <span className="flex items-center space-x-1">
+                          <Calendar className="h-3 w-3" />
+                          <span>
+                            {campaign.scheduled_at 
+                              ? `Scheduled for ${new Date(campaign.scheduled_at).toLocaleDateString()}`
+                              : `Created ${new Date(campaign.created_at).toLocaleDateString()}`
+                            }
+                          </span>
+                        </span>
+                      </div>
                     </div>
                   </div>
+                  <div className="flex items-center space-x-2">
+                    <Button variant="outline" size="sm">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm">
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+              ))}
+              {campaigns.length === 0 && !loading && (
+                <div className="text-center py-8 text-muted-foreground">
+                  No campaigns created yet. Click "Create Campaign" to get started.
                 </div>
-              </div>
-            ))}
-          </div>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

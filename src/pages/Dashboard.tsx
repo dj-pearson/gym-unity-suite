@@ -25,6 +25,14 @@ interface DashboardStats {
   memberGrowth: number;
 }
 
+interface RecentActivity {
+  id: string;
+  type: 'checkin' | 'new_member' | 'class_booking' | 'lead_created';
+  description: string;
+  timestamp: string;
+  member_name?: string;
+}
+
 export default function Dashboard() {
   const { profile, organization } = useAuth();
   const navigate = useNavigate();
@@ -36,10 +44,14 @@ export default function Dashboard() {
     upcomingClasses: 0,
     memberGrowth: 0,
   });
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardStats();
+    if (profile?.organization_id) {
+      fetchDashboardStats();
+      fetchRecentActivity();
+    }
   }, [profile?.organization_id]);
 
   const fetchDashboardStats = async () => {
@@ -93,18 +105,107 @@ export default function Dashboard() {
         return sum + (Number(membership.membership_plans?.price) || 0);
       }, 0) || 0;
 
+      // Calculate member growth (last 30 days vs previous 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const sixtyDaysAgo = new Date();
+      sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+      const { count: recentMembers } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('organization_id', profile.organization_id)
+        .eq('role', 'member')
+        .gte('created_at', thirtyDaysAgo.toISOString());
+
+      const { count: previousMembers } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('organization_id', profile.organization_id)
+        .eq('role', 'member')
+        .gte('created_at', sixtyDaysAgo.toISOString())
+        .lt('created_at', thirtyDaysAgo.toISOString());
+
+      const memberGrowth = previousMembers > 0 
+        ? Math.round(((recentMembers - previousMembers) / previousMembers) * 100)
+        : recentMembers > 0 ? 100 : 0;
+
       setStats({
         totalMembers: totalMembers || 0,
         activeMembers: activeMembers || 0,
         todayCheckins: todayCheckins || 0,
         monthlyRevenue,
         upcomingClasses: upcomingClasses || 0,
-        memberGrowth: 8, // Simulated growth percentage
+        memberGrowth,
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchRecentActivity = async () => {
+    if (!profile?.organization_id) return;
+
+    try {
+      const activities: RecentActivity[] = [];
+
+      // Fetch recent check-ins
+      const { data: checkIns } = await supabase
+        .from('check_ins')
+        .select(`
+          id,
+          checked_in_at,
+          member_id,
+          profiles:member_id (first_name, last_name, email)
+        `)
+        .order('checked_in_at', { ascending: false })
+        .limit(5);
+
+      checkIns?.forEach((checkIn: any) => {
+        const memberName = checkIn.profiles?.first_name && checkIn.profiles?.last_name
+          ? `${checkIn.profiles.first_name} ${checkIn.profiles.last_name}`
+          : checkIn.profiles?.email || 'Member';
+        
+        activities.push({
+          id: `checkin-${checkIn.id}`,
+          type: 'checkin',
+          description: `${memberName} checked in`,
+          timestamp: checkIn.checked_in_at,
+          member_name: memberName
+        });
+      });
+
+      // Fetch recent new members
+      const { data: newMembers } = await supabase
+        .from('profiles')
+        .select('id, created_at, first_name, last_name, email')
+        .eq('organization_id', profile.organization_id)
+        .eq('role', 'member')
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      newMembers?.forEach((member: any) => {
+        const memberName = member.first_name && member.last_name
+          ? `${member.first_name} ${member.last_name}`
+          : member.email;
+        
+        activities.push({
+          id: `member-${member.id}`,
+          type: 'new_member',
+          description: `${memberName} joined the gym`,
+          timestamp: member.created_at,
+          member_name: memberName
+        });
+      });
+
+      // Sort all activities by timestamp
+      activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      
+      setRecentActivity(activities.slice(0, 5));
+    } catch (error) {
+      console.error('Error fetching recent activity:', error);
     }
   };
 
@@ -229,11 +330,35 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="text-center py-8 text-muted-foreground">
-                <Activity className="mx-auto h-12 w-12 opacity-50 mb-4" />
-                <p>No recent activity to display</p>
-                <p className="text-sm">Member activities will appear here</p>
-              </div>
+              {recentActivity.length > 0 ? (
+                recentActivity.map((activity) => (
+                  <div key={activity.id} className="flex items-center space-x-3">
+                    <div className={`p-2 rounded-full ${
+                      activity.type === 'checkin' ? 'bg-green-100 text-green-600' :
+                      activity.type === 'new_member' ? 'bg-blue-100 text-blue-600' :
+                      activity.type === 'class_booking' ? 'bg-purple-100 text-purple-600' :
+                      'bg-orange-100 text-orange-600'
+                    }`}>
+                      {activity.type === 'checkin' && <UserCheck className="h-4 w-4" />}
+                      {activity.type === 'new_member' && <Users className="h-4 w-4" />}
+                      {activity.type === 'class_booking' && <Calendar className="h-4 w-4" />}
+                      {activity.type === 'lead_created' && <Plus className="h-4 w-4" />}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{activity.description}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(activity.timestamp).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Activity className="mx-auto h-12 w-12 opacity-50 mb-4" />
+                  <p>No recent activity to display</p>
+                  <p className="text-sm">Member activities will appear here</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
