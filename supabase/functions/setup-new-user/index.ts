@@ -20,11 +20,11 @@ serve(async (req) => {
 
     const { userId, email, role = "member" } = await req.json();
 
-    // Get the default organization and location (FitCore Gym)
+    // Get the default organization and location (FitnessPro Gym)
     const { data: organization, error: orgError } = await supabaseAdmin
       .from("organizations")
       .select("id")
-      .eq("slug", "fitcore-gym")
+      .eq("slug", "fitnesspro")
       .single();
 
     if (orgError || !organization) {

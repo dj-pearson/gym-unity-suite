@@ -8,13 +8,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, Dumbbell, Mail, QrCode, Home, ArrowLeft } from 'lucide-react';
 import { BarcodeLogin } from './BarcodeLogin';
 import { useNavigate } from 'react-router-dom';
+import { RoleTestingPanel } from './RoleTestingPanel';
 
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const [showRoleTesting, setShowRoleTesting] = useState(false);
+  const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -71,7 +73,7 @@ export const LoginForm: React.FC = () => {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="signin" className="flex items-center gap-1">
                   <Mail className="w-4 h-4" />
                   <span className="hidden sm:inline">Sign In</span>
@@ -84,8 +86,13 @@ export const LoginForm: React.FC = () => {
                   <Mail className="w-4 h-4" />
                   <span className="hidden sm:inline">Sign Up</span>
                 </TabsTrigger>
+                {user && (
+                  <TabsTrigger value="testing" className="flex items-center gap-1">
+                    <QrCode className="w-4 h-4" />
+                    <span className="hidden sm:inline">Testing</span>
+                  </TabsTrigger>
+                )}
               </TabsList>
-              
               <TabsContent value="signin" className="space-y-4">
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-2">
@@ -173,6 +180,12 @@ export const LoginForm: React.FC = () => {
                   </Button>
                 </form>
               </TabsContent>
+              
+              {user && (
+                <TabsContent value="testing" className="space-y-4">
+                  <RoleTestingPanel />
+                </TabsContent>
+              )}
             </Tabs>
           </CardContent>
         </Card>
