@@ -15,6 +15,8 @@ import KPIDashboard from './KPIDashboard';
 import RealTimeAnalytics from './RealTimeAnalytics';
 import PredictiveAnalytics from './PredictiveAnalytics';
 import ExportReports from './ExportReports';
+import EnhancedDashboardMetrics from './EnhancedDashboardMetrics';
+import EnhancedChartsSection from './EnhancedChartsSection';
 
 interface DashboardMetrics {
   totalMembers: number;
@@ -167,68 +169,11 @@ export default function AnalyticsDashboard() {
         </div>
       </div>
 
-      {/* Key Metrics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="hover-scale">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold">{metrics.totalMembers}</div>
-                <div className="text-sm text-muted-foreground">Total Members</div>
-                <div className="text-xs text-green-600 mt-1">
-                  {metrics.membershipGrowth > 0 && '+'}{metrics.membershipGrowth.toFixed(1)}% growth
-                </div>
-              </div>
-              <Users className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
+      {/* Enhanced Key Metrics */}
+      <EnhancedDashboardMetrics metrics={metrics} />
 
-        <Card className="hover-scale">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold">{metrics.activeMembers}</div>
-                <div className="text-sm text-muted-foreground">Active Members</div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {metrics.totalMembers > 0 && `${((metrics.activeMembers / metrics.totalMembers) * 100).toFixed(1)}% of total`}
-                </div>
-              </div>
-              <TrendingUp className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover-scale">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold">${metrics.monthlyRevenue.toLocaleString()}</div>
-                <div className="text-sm text-muted-foreground">Period Revenue</div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  ${metrics.avgRevenuePerMember.toFixed(0)} per member
-                </div>
-              </div>
-              <DollarSign className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover-scale">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold">{metrics.classUtilization.toFixed(1)}%</div>
-                <div className="text-sm text-muted-foreground">Class Utilization</div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  Capacity usage
-                </div>
-              </div>
-              <Calendar className="h-8 w-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Enhanced Charts Section */}
+      <EnhancedChartsSection timeRange={timeRange} />
 
       {/* Detailed Analytics Tabs */}
       <Card>
