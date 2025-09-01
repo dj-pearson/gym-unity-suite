@@ -71,13 +71,9 @@ export default function TrainingSessionManager() {
   const fetchSessions = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data: sessionsData, error } = await supabase
         .from('personal_training_sessions')
-        .select(`
-          *,
-          trainer:profiles!trainer_id(first_name, last_name),
-          member:profiles!member_id(first_name, last_name)
-        `)
+        .select('*')
         .gte('session_date', dateRange.start)
         .lte('session_date', dateRange.end)
         .order('session_date', { ascending: false })
@@ -85,11 +81,34 @@ export default function TrainingSessionManager() {
 
       if (error) throw error;
 
-      const formattedSessions = (data || []).map(session => ({
-        ...session,
-        trainer_name: session.trainer ? `${session.trainer.first_name} ${session.trainer.last_name}` : 'Unknown Trainer',
-        member_name: session.member ? `${session.member.first_name} ${session.member.last_name}` : 'Unknown Member'
-      }));
+      // Fetch trainer and member names separately
+      const sessions = sessionsData || [];
+      const trainerIds = [...new Set(sessions.map(s => s.trainer_id).filter(Boolean))];
+      const memberIds = [...new Set(sessions.map(s => s.member_id).filter(Boolean))];
+      
+      const { data: trainers } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name')
+        .in('id', trainerIds);
+        
+      const { data: members } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name')
+        .in('id', memberIds);
+
+      const trainerMap = new Map((trainers || []).map(t => [t.id, t]));
+      const memberMap = new Map((members || []).map(m => [m.id, m]));
+
+      const formattedSessions = sessions.map(session => {
+        const trainer = trainerMap.get(session.trainer_id);
+        const member = memberMap.get(session.member_id);
+        
+        return {
+          ...session,
+          trainer_name: trainer ? `${trainer.first_name} ${trainer.last_name}` : 'Unknown Trainer',
+          member_name: member ? `${member.first_name} ${member.last_name}` : 'Unknown Member'
+        };
+      });
 
       setSessions(formattedSessions);
       calculateStats(formattedSessions);
