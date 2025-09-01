@@ -2998,6 +2998,39 @@ export type Database = {
           },
         ]
       }
+      member_training_packages: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          is_active: boolean
+          member_id: string
+          package_id: string
+          purchased_at: string
+          sessions_remaining: number
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          is_active?: boolean
+          member_id: string
+          package_id: string
+          purchased_at?: string
+          sessions_remaining: number
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          member_id?: string
+          package_id?: string
+          purchased_at?: string
+          sessions_remaining?: number
+        }
+        Relationships: []
+      }
       membership_agreement_templates: {
         Row: {
           content: string
@@ -3715,6 +3748,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      personal_training_sessions: {
+        Row: {
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          created_at: string
+          duration_minutes: number
+          end_time: string
+          id: string
+          member_id: string
+          notes: string | null
+          organization_id: string
+          price: number
+          session_date: string
+          session_type: string
+          start_time: string
+          status: string
+          trainer_id: string
+          updated_at: string
+        }
+        Insert: {
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          created_at?: string
+          duration_minutes?: number
+          end_time: string
+          id?: string
+          member_id: string
+          notes?: string | null
+          organization_id: string
+          price?: number
+          session_date: string
+          session_type?: string
+          start_time: string
+          status?: string
+          trainer_id: string
+          updated_at?: string
+        }
+        Update: {
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          created_at?: string
+          duration_minutes?: number
+          end_time?: string
+          id?: string
+          member_id?: string
+          notes?: string | null
+          organization_id?: string
+          price?: number
+          session_date?: string
+          session_type?: string
+          start_time?: string
+          status?: string
+          trainer_id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -4742,6 +4835,84 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      trainer_availability: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_available: boolean
+          location_id: string | null
+          start_time: string
+          trainer_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_available?: boolean
+          location_id?: string | null
+          start_time: string
+          trainer_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_available?: boolean
+          location_id?: string | null
+          start_time?: string
+          trainer_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      training_packages: {
+        Row: {
+          created_at: string
+          description: string | null
+          expiration_days: number
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          price: number
+          session_count: number
+          session_duration_minutes: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          expiration_days?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          price: number
+          session_count: number
+          session_duration_minutes?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          expiration_days?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          price?: number
+          session_count?: number
+          session_duration_minutes?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       vendors: {
         Row: {

@@ -1,479 +1,328 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { enUS } from 'date-fns/locale';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { Calendar as CalendarIcon, Clock, User, Plus, Filter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Plus,
-  Calendar as CalendarIcon,
-  Clock,
-  User,
-  Dumbbell,
-  Star,
-  MapPin
-} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { usePermissions } from '@/hooks/usePermissions';
+import { useAuth } from '@/contexts/AuthContext';
+import SessionBookingDialog from './SessionBookingDialog';
+import SessionDetailDialog from './SessionDetailDialog';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-const sessionSchema = z.object({
-  trainer_id: z.string().min(1, 'Trainer is required'),
-  session_date: z.string().min(1, 'Date is required'),
-  session_time: z.string().min(1, 'Time is required'),
-  duration_minutes: z.number().min(30, 'Minimum 30 minutes').max(180, 'Maximum 3 hours'),
-  session_type: z.enum(['assessment', 'personal_training', 'group_training', 'consultation']),
-  notes: z.string().optional(),
+const locales = { 'en-US': enUS };
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
 });
 
-type SessionFormData = z.infer<typeof sessionSchema>;
+interface TrainingSession {
+  id: string;
+  trainer_id: string;
+  member_id: string;
+  session_date: string;
+  start_time: string;
+  end_time: string;
+  duration_minutes: number;
+  session_type: string;
+  status: string;
+  price: number;
+  notes?: string;
+  trainer_name?: string;
+  member_name?: string;
+}
 
-export function PersonalTrainingScheduler() {
-  const [sessions, setSessions] = useState<any[]>([]);
-  const [trainers, setTrainers] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const { profile, organization } = useAuth();
+interface Trainer {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+}
+
+export default function PersonalTrainingScheduler() {
   const { toast } = useToast();
-
-  const form = useForm<SessionFormData>({
-    resolver: zodResolver(sessionSchema),
-    defaultValues: {
-      duration_minutes: 60,
-      session_type: 'personal_training' as const,
-    },
-  });
+  const permissions = usePermissions();
+  const { profile } = useAuth();
+  const canManageTraining = permissions.hasRole('owner') || permissions.hasRole('manager') || permissions.hasRole('staff');
+  const isTrainer = permissions.hasRole('trainer');
+  const [sessions, setSessions] = useState<TrainingSession[]>([]);
+  const [trainers, setTrainers] = useState<Trainer[]>([]);
+  const [selectedTrainer, setSelectedTrainer] = useState<string>('all');
+  const [selectedSession, setSelectedSession] = useState<TrainingSession | null>(null);
+  const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchTrainers();
     fetchSessions();
-  }, [organization?.id]);
+  }, [selectedTrainer]);
 
   const fetchTrainers = async () => {
-    if (!organization?.id) return;
-
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
-        .eq('organization_id', organization.id)
-        .eq('role', 'trainer');
+        .select('id, first_name, last_name, email')
+        .eq('role', 'trainer')
+        .order('first_name');
 
       if (error) throw error;
       setTrainers(data || []);
-    } catch (error: any) {
+    } catch (error) {
+      console.error('Error fetching trainers:', error);
       toast({
-        title: 'Error loading trainers',
-        description: error.message,
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load trainers",
+        variant: "destructive"
       });
     }
   };
 
   const fetchSessions = async () => {
-    if (!profile?.id) return;
-
     try {
-      setIsLoading(true);
-      // Note: This would require a new table 'training_sessions' in the database
-      // For now, we'll simulate the data structure
-      setSessions([
-        {
-          id: 'session-1',
-          trainer_id: 'trainer-1',
-          trainer_name: 'John Smith',
-          session_date: '2024-01-15',
-          session_time: '10:00',
-          duration_minutes: 60,
-          session_type: 'personal_training',
-          status: 'scheduled',
-          notes: 'Focus on upper body strength',
-        },
-        {
-          id: 'session-2',
-          trainer_id: 'trainer-2',
-          trainer_name: 'Sarah Johnson',
-          session_date: '2024-01-18',
-          session_time: '14:00',
-          duration_minutes: 30,
-          session_type: 'assessment',
-          status: 'completed',
-          notes: 'Initial fitness assessment',
-        },
-      ]);
-    } catch (error: any) {
+      setLoading(true);
+      let query = supabase
+        .from('personal_training_sessions')
+        .select(`
+          *,
+          trainer:profiles!trainer_id(first_name, last_name),
+          member:profiles!member_id(first_name, last_name)
+        `)
+        .order('session_date', { ascending: true });
+
+      // Filter by trainer if selected
+      if (selectedTrainer !== 'all') {
+        query = query.eq('trainer_id', selectedTrainer);
+      }
+
+      // If user is a trainer, only show their sessions
+      if (isTrainer && !canManageTraining) {
+        query = query.eq('trainer_id', profile?.id);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      const formattedSessions = (data || []).map(session => ({
+        ...session,
+        trainer_name: session.trainer ? `${session.trainer.first_name} ${session.trainer.last_name}` : 'Unknown Trainer',
+        member_name: session.member ? `${session.member.first_name} ${session.member.last_name}` : 'Unknown Member'
+      }));
+
+      setSessions(formattedSessions);
+    } catch (error) {
+      console.error('Error fetching sessions:', error);
       toast({
-        title: 'Error loading sessions',
-        description: error.message,
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load training sessions",
+        variant: "destructive"
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleSubmit = async (data: SessionFormData) => {
-    try {
-      const selectedTrainer = trainers.find(t => t.id === data.trainer_id);
-      
-      const newSession = {
-        id: `session-${Date.now()}`,
-        member_id: profile?.id,
-        trainer_id: data.trainer_id,
-        trainer_name: selectedTrainer ? `${selectedTrainer.first_name} ${selectedTrainer.last_name}` : 'Unknown',
-        session_date: data.session_date,
-        session_time: data.session_time,
-        duration_minutes: data.duration_minutes,
-        session_type: data.session_type,
-        notes: data.notes || '',
-        status: 'scheduled',
-        created_at: new Date().toISOString(),
-      };
+  const calendarEvents = sessions.map(session => {
+    const sessionDateTime = new Date(`${session.session_date}T${session.start_time}`);
+    const endDateTime = new Date(`${session.session_date}T${session.end_time}`);
 
-      // In a real implementation, this would save to the database
-      setSessions(prev => [...prev, newSession]);
+    return {
+      id: session.id,
+      title: `${session.member_name} - ${session.trainer_name}`,
+      start: sessionDateTime,
+      end: endDateTime,
+      resource: session,
+      className: `training-session-${session.status}`
+    };
+  });
 
-      toast({
-        title: 'Session scheduled',
-        description: `Your ${data.session_type.replace('_', ' ')} session has been scheduled.`,
-      });
+  const eventStyleGetter = (event: any) => {
+    let backgroundColor = '#3174ad';
+    
+    switch (event.resource.status) {
+      case 'scheduled':
+        backgroundColor = '#10b981';
+        break;
+      case 'completed':
+        backgroundColor = '#6b7280';
+        break;
+      case 'cancelled':
+        backgroundColor = '#ef4444';
+        break;
+      case 'no_show':
+        backgroundColor = '#f59e0b';
+        break;
+    }
 
-      setIsDialogOpen(false);
-      form.reset();
-    } catch (error: any) {
-      toast({
-        title: 'Error scheduling session',
-        description: error.message,
-        variant: 'destructive',
-      });
+    return {
+      style: {
+        backgroundColor,
+        borderRadius: '4px',
+        opacity: 0.8,
+        color: 'white',
+        border: '0px',
+        display: 'block'
+      }
+    };
+  };
+
+  const handleSelectEvent = (event: any) => {
+    setSelectedSession(event.resource);
+    setIsDetailDialogOpen(true);
+  };
+
+  const handleSelectSlot = ({ start }: { start: Date }) => {
+    if (canManageTraining) {
+      setIsBookingDialogOpen(true);
     }
   };
 
-  const getSessionTypeColor = (type: string) => {
-    switch (type) {
-      case 'assessment': return 'bg-blue-100 text-blue-700';
-      case 'personal_training': return 'bg-green-100 text-green-700';
-      case 'group_training': return 'bg-purple-100 text-purple-700';
-      case 'consultation': return 'bg-orange-100 text-orange-700';
-      default: return 'bg-gray-100 text-gray-700';
-    }
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, any> = {
+      scheduled: { variant: 'default', label: 'Scheduled' },
+      completed: { variant: 'secondary', label: 'Completed' },
+      cancelled: { variant: 'destructive', label: 'Cancelled' },
+      no_show: { variant: 'outline', label: 'No Show' }
+    };
+
+    const config = variants[status] || { variant: 'default', label: status };
+    return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'scheduled': return 'default';
-      case 'completed': return 'secondary';
-      case 'cancelled': return 'destructive';
-      default: return 'outline';
-    }
-  };
-
-  const isTrainerAvailable = () => {
-    // Mock availability check - in real implementation, check trainer's schedule
-    return Math.random() > 0.3; // 70% chance of availability
-  };
-
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="space-y-4">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i} className="animate-pulse">
-            <CardContent className="p-6">
-              <div className="h-4 bg-muted rounded w-48 mb-2"></div>
-              <div className="h-3 bg-muted rounded w-full"></div>
-            </CardContent>
-          </Card>
-        ))}
+        <div className="h-8 bg-muted rounded animate-pulse" />
+        <div className="h-96 bg-muted rounded animate-pulse" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold">Personal Training Sessions</h2>
-          <p className="text-muted-foreground">
-            Schedule and manage your personal training sessions
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Select value={selectedTrainer} onValueChange={setSelectedTrainer}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Filter by trainer" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Trainers</SelectItem>
+              {trainers.map((trainer) => (
+                <SelectItem key={trainer.id} value={trainer.id}>
+                  {trainer.first_name} {trainer.last_name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Schedule Session
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Dumbbell className="w-5 h-5" />
-                Schedule Training Session
-              </DialogTitle>
-            </DialogHeader>
-            
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="trainer_id">Select Trainer *</Label>
-                  <Select value={form.watch('trainer_id')} onValueChange={(value) => form.setValue('trainer_id', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose a trainer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {trainers.map((trainer) => (
-                        <SelectItem key={trainer.id} value={trainer.id}>
-                          <div className="flex items-center gap-2">
-                            <User className="w-4 h-4" />
-                            {trainer.first_name} {trainer.last_name}
-                            {trainer.specialization && (
-                              <Badge variant="outline" className="text-xs">
-                                {trainer.specialization}
-                              </Badge>
-                            )}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {form.formState.errors.trainer_id && (
-                    <p className="text-sm text-destructive mt-1">
-                      {form.formState.errors.trainer_id.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="session_type">Session Type *</Label>
-                  <Select value={form.watch('session_type')} onValueChange={(value: any) => form.setValue('session_type', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="assessment">Fitness Assessment</SelectItem>
-                      <SelectItem value="personal_training">Personal Training</SelectItem>
-                      <SelectItem value="group_training">Small Group Training</SelectItem>
-                      <SelectItem value="consultation">Consultation</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="session_date">Date *</Label>
-                  <Input
-                    id="session_date"
-                    type="date"
-                    min={new Date().toISOString().split('T')[0]}
-                    {...form.register('session_date')}
-                  />
-                  {form.formState.errors.session_date && (
-                    <p className="text-sm text-destructive mt-1">
-                      {form.formState.errors.session_date.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="session_time">Time *</Label>
-                  <Input
-                    id="session_time"
-                    type="time"
-                    {...form.register('session_time')}
-                  />
-                  {form.formState.errors.session_time && (
-                    <p className="text-sm text-destructive mt-1">
-                      {form.formState.errors.session_time.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="duration_minutes">Duration (minutes) *</Label>
-                  <Select 
-                    value={form.watch('duration_minutes')?.toString()} 
-                    onValueChange={(value) => form.setValue('duration_minutes', parseInt(value))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="30">30 minutes</SelectItem>
-                      <SelectItem value="45">45 minutes</SelectItem>
-                      <SelectItem value="60">60 minutes</SelectItem>
-                      <SelectItem value="90">90 minutes</SelectItem>
-                      <SelectItem value="120">2 hours</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="notes">Session Notes (optional)</Label>
-                <Textarea
-                  id="notes"
-                  {...form.register('notes')}
-                  placeholder="Any specific goals or requirements for this session..."
-                  rows={3}
-                />
-              </div>
-
-              {form.watch('trainer_id') && form.watch('session_date') && (
-                <div className="p-3 bg-muted/50 rounded-lg">
-                  <div className="flex items-center gap-2 text-sm">
-                    {isTrainerAvailable() ? (
-                      <>
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="text-green-700">Trainer appears to be available at this time</span>
-                      </>
-                    ) : (
-                      <>
-                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                        <span className="text-orange-700">This time slot may conflict with trainer's schedule</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex justify-end gap-2 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsDialogOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit">
-                  Schedule Session
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        {canManageTraining && (
+          <Button onClick={() => setIsBookingDialogOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Book Session
+          </Button>
+        )}
       </div>
 
-      {/* Upcoming Sessions */}
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Upcoming Sessions</h3>
-        <div className="grid gap-4">
-          {sessions
-            .filter(session => session.status === 'scheduled')
-            .map((session) => (
-              <Card key={session.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <CalendarIcon className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">
-                          {new Date(`${session.session_date}T${session.session_time}`).toLocaleDateString('en-US', {
-                            weekday: 'short',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-muted-foreground" />
-                        <span>{session.session_time}</span>
-                        <Badge variant="outline">{session.duration_minutes}min</Badge>
-                      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CalendarIcon className="w-5 h-5" />
+            Training Schedule
+          </CardTitle>
+          <CardDescription>
+            {canManageTraining ? 'Click on a time slot to book a new session or click existing sessions to view details' : 'View your upcoming training sessions'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div style={{ height: '600px' }}>
+            <Calendar
+              localizer={localizer}
+              events={calendarEvents}
+              startAccessor="start"
+              endAccessor="end"
+              views={['month', 'week', 'day']}
+              defaultView="week"
+              step={30}
+              timeslots={2}
+              eventPropGetter={eventStyleGetter}
+              onSelectEvent={handleSelectEvent}
+              onSelectSlot={handleSelectSlot}
+              selectable={canManageTraining}
+              popup
+              tooltipAccessor={(event: any) => 
+                `${event.resource.member_name} with ${event.resource.trainer_name}\n${event.resource.session_type} - ${event.resource.status}`
+              }
+            />
+          </div>
+        </CardContent>
+      </Card>
 
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-muted-foreground" />
-                        <span>{session.trainer_name}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Badge className={getSessionTypeColor(session.session_type)}>
-                        {session.session_type.replace('_', ' ')}
-                      </Badge>
-                      <Badge variant={getStatusColor(session.status)}>
-                        {session.status}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  {session.notes && (
-                    <p className="text-sm text-muted-foreground mt-2 ml-6">
-                      {session.notes}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-        </div>
-      </div>
-
-      {/* Session History */}
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Session History</h3>
-        <div className="grid gap-4">
-          {sessions
-            .filter(session => session.status === 'completed')
-            .map((session) => (
-              <Card key={session.id} className="opacity-75">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <CalendarIcon className="w-4 h-4 text-muted-foreground" />
-                        <span>
-                          {new Date(`${session.session_date}T${session.session_time}`).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-muted-foreground" />
-                        <span>{session.trainer_name}</span>
-                      </div>
-
-                      <Badge className={getSessionTypeColor(session.session_type)}>
-                        {session.session_type.replace('_', ' ')}
-                      </Badge>
-                    </div>
-
-                    <Badge variant={getStatusColor(session.status)}>
-                      {session.status}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-        </div>
-      </div>
-
-      {sessions.length === 0 && (
+      {/* Upcoming Sessions Summary */}
+      <div className="grid gap-4 md:grid-cols-3">
         <Card>
-          <CardContent className="text-center py-8">
-            <Dumbbell className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Training Sessions</h3>
-            <p className="text-muted-foreground mb-4">
-              Schedule your first personal training session to get started on your fitness journey.
-            </p>
-            <Button onClick={() => setIsDialogOpen(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Schedule Your First Session
-            </Button>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Today's Sessions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">
+              {sessions.filter(s => s.session_date === format(new Date(), 'yyyy-MM-dd')).length}
+            </div>
           </CardContent>
         </Card>
-      )}
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">This Week</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">
+              {sessions.filter(s => {
+                const sessionDate = new Date(s.session_date);
+                const today = new Date();
+                const weekStart = startOfWeek(today);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 7);
+                return sessionDate >= weekStart && sessionDate < weekEnd;
+              }).length}
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Active Trainers</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">
+              {trainers.length}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <SessionBookingDialog
+        open={isBookingDialogOpen}
+        onOpenChange={setIsBookingDialogOpen}
+        onSuccess={fetchSessions}
+        trainers={trainers}
+      />
+
+      <SessionDetailDialog
+        session={selectedSession}
+        open={isDetailDialogOpen}
+        onOpenChange={setIsDetailDialogOpen}
+        onSuccess={fetchSessions}
+      />
     </div>
   );
 }
