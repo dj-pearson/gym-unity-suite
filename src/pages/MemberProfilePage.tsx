@@ -8,6 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileEditForm } from '@/components/members/ProfileEditForm';
 import { MembershipInfo } from '@/components/members/MembershipInfo';
 import { NotificationSettings } from '@/components/members/NotificationSettings';
+import { MemberActivitySummary } from '@/components/members/MemberActivitySummary';
+import MemberCardDisplay from '@/components/members/MemberCardDisplay';
+import FitnessAssessmentDisplay from '@/components/members/FitnessAssessmentDisplay';
 import { 
   User, 
   Mail, 
@@ -18,16 +21,18 @@ import {
   Edit, 
   Shield,
   Bell,
-  CreditCard
+  CreditCard,
+  IdCard,
+  Target
 } from 'lucide-react';
 import { Database } from '@/integrations/supabase/types';
-import { MemberActivitySummary } from '@/components/members/MemberActivitySummary';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
 export default function MemberProfilePage() {
   const { profile, organization } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const [showFitnessAssessmentForm, setShowFitnessAssessmentForm] = useState(false);
   const [currentProfile, setCurrentProfile] = useState<Profile | null>(profile as Profile | null);
 
   if (!currentProfile || currentProfile.role !== 'member') {
@@ -85,26 +90,34 @@ export default function MemberProfilePage() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <User className="w-4 h-4" />
-            Overview
+            <span className="hidden sm:inline">Overview</span>
+          </TabsTrigger>
+          <TabsTrigger value="member-card" className="flex items-center gap-2">
+            <IdCard className="w-4 h-4" />
+            <span className="hidden sm:inline">Card</span>
+          </TabsTrigger>
+          <TabsTrigger value="fitness" className="flex items-center gap-2">
+            <Target className="w-4 h-4" />
+            <span className="hidden sm:inline">Fitness</span>
           </TabsTrigger>
           <TabsTrigger value="activity" className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4" />
-            Activity
+            <span className="hidden sm:inline">Activity</span>
           </TabsTrigger>
           <TabsTrigger value="membership" className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
-            Membership
+            <span className="hidden sm:inline">Membership</span>
           </TabsTrigger>
           <TabsTrigger value="billing" className="flex items-center gap-2">
             <CreditCard className="w-4 h-4" />
-            Billing
+            <span className="hidden sm:inline">Billing</span>
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="w-4 h-4" />
-            Notifications
+            <span className="hidden sm:inline">Notifications</span>
           </TabsTrigger>
         </TabsList>
 
@@ -215,6 +228,16 @@ export default function MemberProfilePage() {
               </Card>
             </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="member-card" className="space-y-6">
+          <MemberCardDisplay />
+        </TabsContent>
+
+        <TabsContent value="fitness" className="space-y-6">
+          <FitnessAssessmentDisplay 
+            onUpdateAssessment={() => setShowFitnessAssessmentForm(true)}
+          />
         </TabsContent>
 
         <TabsContent value="activity" className="space-y-6">
