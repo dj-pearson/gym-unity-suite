@@ -207,7 +207,7 @@ const App = () => {
                 </ProtectedRoute>
               } />
               
-              <Route path="/training" element={
+              <Route path="/personal-training" element={
                 <ProtectedRoute permission={PERMISSIONS.VIEW_CLASSES}>
                   <DashboardLayout>
                     <PersonalTrainingPage />
