@@ -6,13 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Search, Filter, Phone, Mail, Calendar, User, FileText, Settings } from 'lucide-react';
+import { Plus, Search, Filter, Phone, Mail, Calendar, User, FileText, Settings, BarChart3, Target, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { LeadForm } from '@/components/crm/LeadForm';
 import { LeadDetail } from '@/components/crm/LeadDetail';
 import { ActivityForm } from '@/components/crm/ActivityForm';
-import { PipelineView } from '@/components/crm/PipelineView';
+import EnhancedPipelineView from '@/components/crm/EnhancedPipelineView';
 import { LeadStagesManager } from '@/components/crm/LeadStagesManager';
+import LeadScoringDashboard from '@/components/crm/LeadScoringDashboard';
+import LeadAnalyticsDashboard from '@/components/crm/LeadAnalyticsDashboard';
 
 interface Lead {
   id: string;
@@ -270,9 +272,11 @@ export const CRMPage: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="leads">Leads</TabsTrigger>
           <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
+          <TabsTrigger value="scoring">Lead Scoring</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="activities">Activities</TabsTrigger>
         </TabsList>
 
@@ -346,7 +350,19 @@ export const CRMPage: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="pipeline">
-          <PipelineView leads={leads} onLeadSelect={setSelectedLead} />
+          <EnhancedPipelineView 
+            leads={leads} 
+            onLeadSelect={setSelectedLead}
+            onLeadUpdate={fetchLeads}
+          />
+        </TabsContent>
+
+        <TabsContent value="scoring">
+          <LeadScoringDashboard />
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <LeadAnalyticsDashboard />
         </TabsContent>
 
         <TabsContent value="activities" className="space-y-4">
