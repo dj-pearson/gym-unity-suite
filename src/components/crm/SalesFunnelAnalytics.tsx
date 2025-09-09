@@ -1,61 +1,137 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Users, Target, DollarSign, Clock } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+
+interface FunnelStage {
+  stage: string;
+  count: number;
+  conversion_rate: number;
+  color: string;
+}
+
+interface Metric {
+  title: string;
+  value: string;
+  change: string;
+  trend: 'up' | 'down';
+  icon: React.ComponentType<any>;
+  description: string;
+}
 
 export default function SalesFunnelAnalytics() {
+  const { profile } = useAuth();
+  const [funnelStages, setFunnelStages] = useState<FunnelStage[]>([]);
+  const [metrics, setMetrics] = useState<Metric[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Placeholder data for demonstration
-  const funnelStages = [
-    { stage: "New Leads", count: 150, conversion_rate: 100, color: "bg-blue-500" },
-    { stage: "Qualified", count: 75, conversion_rate: 50, color: "bg-green-500" },
-    { stage: "Tour Scheduled", count: 45, conversion_rate: 30, color: "bg-yellow-500" },
-    { stage: "Tour Completed", count: 30, conversion_rate: 20, color: "bg-orange-500" },
-    { stage: "Proposal Sent", count: 18, conversion_rate: 12, color: "bg-purple-500" },
-    { stage: "Closed Won", count: 12, conversion_rate: 8, color: "bg-emerald-500" }
-  ];
-
-  const metrics = [
-    {
-      title: "Total Leads",
-      value: "150",
-      change: "+12%",
-      trend: "up",
-      icon: Users,
-      description: "This month"
-    },
-    {
-      title: "Conversion Rate",
-      value: "8%",
-      change: "+2.1%",
-      trend: "up", 
-      icon: Target,
-      description: "Lead to customer"
-    },
-    {
-      title: "Avg. Deal Size",
-      value: "$89",
-      change: "-$5",
-      trend: "down",
-      icon: DollarSign,
-      description: "Monthly membership"
-    },
-    {
-      title: "Sales Cycle",
-      value: "14 days",
-      change: "-2 days",
-      trend: "up",
-      icon: Clock,
-      description: "Average time"
+  useEffect(() => {
+    if (profile?.organization_id) {
+      fetchAnalyticsData();
     }
-  ];
+  }, [profile?.organization_id]);
+
+  const fetchAnalyticsData = async () => {
+    if (!profile?.organization_id) return;
+
+    try {
+      setLoading(true);
+
+      // Fetch leads data and group by stage
+      const { data: leadsData, error: leadsError } = await supabase
+        .from('leads')
+        .select('id, stage_id, status, created_at')
+        .eq('organization_id', profile.organization_id);
+
+      if (leadsError) throw leadsError;
+
+      // Fetch lead stages
+      const { data: stagesData, error: stagesError } = await supabase
+        .from('lead_stages')
+        .select('id, name, order_index, is_closed')
+        .eq('organization_id', profile.organization_id)
+        .order('order_index');
+
+      if (stagesError) throw stagesError;
+
+      // Calculate funnel data
+      const totalLeads = leadsData?.length || 0;
+      const colors = ['bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-orange-500', 'bg-purple-500', 'bg-emerald-500'];
+      
+      const funnelData = stagesData?.map((stage, index) => {
+        const stageLeads = leadsData?.filter(lead => lead.stage_id === stage.id) || [];
+        const count = stageLeads.length;
+        const conversion_rate = totalLeads > 0 ? Math.round((count / totalLeads) * 100) : 0;
+        
+        return {
+          stage: stage.name,
+          count,
+          conversion_rate,
+          color: colors[index % colors.length]
+        };
+      }) || [];
+
+      setFunnelStages(funnelData);
+
+      // Calculate metrics
+      const conversions = leadsData?.filter(lead => lead.status === 'converted').length || 0;
+      const conversionRate = totalLeads > 0 ? Math.round((conversions / totalLeads) * 100) : 0;
+
+      const metricsData: Metric[] = [
+        {
+          title: "Total Leads",
+          value: totalLeads.toString(),
+          change: "0%", // Would need historical data to calculate
+          trend: "up",
+          icon: Users,
+          description: "All time"
+        },
+        {
+          title: "Conversion Rate",
+          value: `${conversionRate}%`,
+          change: "0%", // Would need historical data to calculate
+          trend: "up", 
+          icon: Target,
+          description: "Lead to customer"
+        },
+        {
+          title: "Active Stages",
+          value: stagesData?.filter(s => !s.is_closed).length.toString() || "0",
+          change: "0%",
+          trend: "up",
+          icon: DollarSign,
+          description: "Sales pipeline"
+        },
+        {
+          title: "Pipeline Health",
+          value: funnelData.length > 0 ? "Good" : "Setup Required",
+          change: "0%",
+          trend: "up",
+          icon: Clock,
+          description: "Current status"
+        }
+      ];
+
+      setMetrics(metricsData);
+    } catch (error) {
+      console.error('Error fetching analytics data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="flex justify-center p-4">Loading analytics...</div>;
+  }
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Sales Funnel Analytics</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Sales Funnel Analytics</h2>
         <p className="text-muted-foreground">
-          Track lead conversion through your sales pipeline
+          Track your lead progression and conversion rates through the sales pipeline.
         </p>
       </div>
 
@@ -104,41 +180,48 @@ export default function SalesFunnelAnalytics() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {funnelStages.map((stage, index) => {
-              const width = (stage.count / funnelStages[0].count) * 100;
-              
-              return (
-                <div key={stage.stage} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${stage.color}`} />
-                      <span className="font-medium">{stage.stage}</span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Badge variant="outline">
-                        {stage.count} leads
-                      </Badge>
-                      <Badge variant="secondary">
-                        {stage.conversion_rate}%
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-4">
-                    <div 
-                      className={`h-4 rounded-full ${stage.color} transition-all duration-500`}
-                      style={{ width: `${width}%` }}
-                    />
-                  </div>
-                  {index < funnelStages.length - 1 && (
-                    <div className="flex justify-center py-2">
-                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                        <TrendingDown className="h-4 w-4 text-gray-400" />
+            {funnelStages.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No funnel data available. Add some leads to see your sales funnel.
+              </div>
+            ) : (
+              funnelStages.map((stage, index) => {
+                const maxCount = Math.max(...funnelStages.map(s => s.count));
+                const width = maxCount > 0 ? (stage.count / maxCount) * 100 : 0;
+                
+                return (
+                  <div key={stage.stage} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full ${stage.color}`} />
+                        <span className="font-medium">{stage.stage}</span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <Badge variant="outline">
+                          {stage.count} leads
+                        </Badge>
+                        <Badge variant="secondary">
+                          {stage.conversion_rate}%
+                        </Badge>
                       </div>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                    <div className="w-full bg-gray-200 rounded-full h-4">
+                      <div 
+                        className={`h-4 rounded-full ${stage.color} transition-all duration-500`}
+                        style={{ width: `${width}%` }}
+                      />
+                    </div>
+                    {index < funnelStages.length - 1 && (
+                      <div className="flex justify-center py-2">
+                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                          <TrendingDown className="h-4 w-4 text-gray-400" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
           </div>
         </CardContent>
       </Card>
