@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { SEOHead } from '@/components/seo/SEOHead';
 import { 
   Dumbbell, 
   Users, 
@@ -197,8 +198,58 @@ export default function LandingPage() {
     }
   ];
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Rep Club",
+    "description": "Premium fitness management solutions for discerning professionals. Elite member management, luxury class scheduling, and sophisticated analytics.",
+    "url": "https://repclub.app",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web Browser",
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Starter Plan",
+        "price": "99.00",
+        "priceCurrency": "USD"
+      },
+      {
+        "@type": "Offer", 
+        "name": "Professional Plan",
+        "price": "299.00",
+        "priceCurrency": "USD"
+      },
+      {
+        "@type": "Offer",
+        "name": "Premium Plan", 
+        "price": "599.00",
+        "priceCurrency": "USD"
+      }
+    ],
+    "provider": {
+      "@type": "Organization",
+      "name": "Rep Club",
+      "url": "https://repclub.app"
+    },
+    "featureList": [
+      "Member Management",
+      "Class Scheduling",
+      "Check-in System", 
+      "Billing & Payments",
+      "Analytics & Reports",
+      "Mobile-First Design"
+    ]
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <>
+      <SEOHead
+        title="Rep Club - Elite Fitness Management Platform"
+        description="Premium fitness management solutions for discerning professionals. Elite member management, luxury class scheduling, and sophisticated analytics for boutique studios and fitness centers."
+        keywords="fitness management software, gym management system, boutique fitness, class scheduling, member management, fitness analytics, luxury gym software, premium fitness platform, fitness business software"
+        structuredData={structuredData}
+      />
+      <div className="min-h-screen bg-gradient-subtle">
       {/* Navigation - stays on top, separate from parallax */}
       <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 relative">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -552,5 +603,6 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+    </>
   );
 }

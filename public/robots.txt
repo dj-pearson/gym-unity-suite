@@ -1,14 +1,20 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
+Crawl-delay: 1
+
+# Block sensitive paths
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /auth/
+Disallow: /mobile/
+Disallow: /tablet/
+Disallow: /private/
+Disallow: /api/
+
+# Allow important paths
+Allow: /blog/
+Allow: /features/
+Allow: /pricing/
+
+# Sitemap location
+Sitemap: https://repclub.app/sitemap.xml

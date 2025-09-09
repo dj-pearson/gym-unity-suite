@@ -1,0 +1,109 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://repclub.app/#organization",
+      "name": "Rep Club",
+      "url": "https://repclub.app",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://repclub.app/logo.png",
+        "width": 200,
+        "height": 200
+      },
+      "description": "Premium fitness management solutions for discerning professionals. Elite member management, luxury class scheduling, and sophisticated analytics.",
+      "foundingDate": "2024",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "US"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "support@repclub.app"
+      },
+      "sameAs": [
+        "https://twitter.com/repclub",
+        "https://linkedin.com/company/repclub"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://repclub.app/#website",
+      "url": "https://repclub.app",
+      "name": "Rep Club - Elite Fitness Management Platform",
+      "description": "Premium fitness management solutions for boutique studios, mid-market fitness centers, and enterprise gym chains.",
+      "publisher": {
+        "@id": "https://repclub.app/#organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://repclub.app/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://repclub.app/#software",
+      "name": "Rep Club",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "Starter Plan",
+          "price": "99.00",
+          "priceCurrency": "USD",
+          "priceSpecification": {
+            "@type": "RecurringCharge",
+            "frequency": "Monthly"
+          },
+          "description": "Perfect for boutique studios with up to 200 members"
+        },
+        {
+          "@type": "Offer",
+          "name": "Professional Plan",
+          "price": "299.00",
+          "priceCurrency": "USD",
+          "priceSpecification": {
+            "@type": "RecurringCharge",
+            "frequency": "Monthly"
+          },
+          "description": "Advanced features for up to 1,000 members"
+        },
+        {
+          "@type": "Offer",
+          "name": "Premium Plan",
+          "price": "599.00",
+          "priceCurrency": "USD",
+          "priceSpecification": {
+            "@type": "RecurringCharge",
+            "frequency": "Monthly"
+          },
+          "description": "Enterprise features with unlimited members"
+        }
+      ],
+      "featureList": [
+        "Member Management",
+        "Class Scheduling",
+        "Check-in System",
+        "Billing & Payments",
+        "Analytics & Reports", 
+        "Mobile-First Design",
+        "Equipment Management",
+        "Staff Scheduling",
+        "Marketing Automation",
+        "Multi-location Support"
+      ],
+      "screenshot": "https://repclub.app/screenshots/dashboard.png",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "bestRating": "5",
+        "worstRating": "1",
+        "ratingCount": "127"
+      }
+    }
+  ]
+}

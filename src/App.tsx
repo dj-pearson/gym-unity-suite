@@ -7,6 +7,8 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PERMISSIONS } from "@/hooks/usePermissions";
+import { HelmetProvider } from 'react-helmet-async';
+import React, { useEffect } from 'react';
 
 import Dashboard from "./pages/Dashboard";
 import AuthPage from "./pages/AuthPage";
@@ -45,9 +47,9 @@ import MemberDashboard from "./pages/MemberDashboard";
 import MemberClasses from "./pages/MemberClasses";
 import MemberWorkoutHistory from "./pages/MemberWorkoutHistory";
 import MemberNotifications from "./pages/MemberNotifications";
+import BlogPage from "./pages/BlogPage";
 import { MemberLayout } from "./components/layout/MemberLayout";
 import { useIsMobile } from '@/hooks/use-mobile';
-import React from 'react';
 
 const queryClient = new QueryClient();
 
@@ -110,7 +112,7 @@ const HomeRoute = () => {
 
 const App = () => {
   // Register service worker for PWA functionality
-  React.useEffect(() => {
+  useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {
@@ -123,12 +125,13 @@ const App = () => {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
             <Routes>
               {/* Home Route - Landing page or Dashboard */}
               <Route path="/" element={<HomeRoute />} />
@@ -139,6 +142,8 @@ const App = () => {
                   <AuthPage />
                 </PublicRoute>
               } />
+              
+              <Route path="/blog" element={<BlogPage />} />
               
               {/* Mobile Routes */}
               <Route path="/mobile" element={
@@ -374,10 +379,11 @@ const App = () => {
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 };
 
