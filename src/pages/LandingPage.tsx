@@ -262,13 +262,41 @@ export default function LandingPage() {
               <p className="text-xs text-muted-foreground">Elite Fitness Management</p>
             </div>
           </div>
-          <Button 
-            onClick={() => navigate('/auth')}
-            className="bg-gradient-primary hover:opacity-90"
-          >
-            Get Started
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center space-x-8">
+            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+              Features
+            </a>
+            <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+              Pricing
+            </a>
+            <Button 
+              variant="ghost"
+              onClick={() => navigate('/blog')}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Blog
+            </Button>
+            <Button 
+              onClick={() => navigate('/auth')}
+              className="bg-gradient-primary hover:opacity-90"
+            >
+              Get Started
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+          
+          {/* Mobile Navigation */}
+          <div className="md:hidden">
+            <Button 
+              onClick={() => navigate('/auth')}
+              className="bg-gradient-primary hover:opacity-90"
+            >
+              Get Started
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </nav>
 
@@ -313,7 +341,7 @@ export default function LandingPage() {
       </InteractiveHeroBackground>
 
       {/* Features Grid - separate section with standard background */}
-      <section className="container mx-auto px-4 py-20">
+      <section id="features" className="container mx-auto px-4 py-20">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">Everything You Need to Manage Your Gym</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -368,7 +396,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="container mx-auto px-4 py-20">
+      <section id="pricing" className="container mx-auto px-4 py-20">
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
             Transparent Pricing

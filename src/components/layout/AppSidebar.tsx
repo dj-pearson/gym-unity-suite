@@ -40,7 +40,8 @@ import {
   Shield,
   Rocket,
   Wrench,
-  Weight
+  Weight,
+  FileText
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
@@ -81,6 +82,7 @@ const navigationGroups = [
     items: [
       { name: 'Billing', href: '/billing', icon: CreditCard, permission: PERMISSIONS.VIEW_BILLING },
       { name: 'Reports', href: '/reports', icon: BarChart3, permission: PERMISSIONS.VIEW_REPORTS },
+      { name: 'Blog Manager', href: '/blog/admin', icon: FileText, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Retail', href: '/retail', icon: Store, permission: PERMISSIONS.VIEW_RETAIL }
     ]
   },
