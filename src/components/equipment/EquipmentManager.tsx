@@ -71,15 +71,12 @@ export default function EquipmentManager() {
   });
 
   useEffect(() => {
-    console.log('EquipmentManager: useEffect triggered', { profile: profile?.organization_id });
     if (profile?.organization_id) {
-      console.log('EquipmentManager: Fetching equipment...');
       fetchEquipment();
     }
   }, [profile]);
 
   const fetchEquipment = async () => {
-    console.log('EquipmentManager: fetchEquipment called');
     try {
       const { data, error } = await supabase
         .from('equipment')
@@ -88,7 +85,6 @@ export default function EquipmentManager() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      console.log('EquipmentManager: Equipment fetched successfully', { count: data?.length });
       setEquipment(data || []);
     } catch (error) {
       console.error('Error fetching equipment:', error);

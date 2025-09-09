@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 
 export default function EquipmentPage() {
-  console.log('EquipmentPage: Rendering');
   const { profile } = useAuth();
   const [activeTab, setActiveTab] = useState('equipment');
 
