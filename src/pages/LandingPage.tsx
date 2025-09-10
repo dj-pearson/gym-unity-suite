@@ -265,22 +265,22 @@ export default function LandingPage() {
           
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+            <a href="#features" className="text-foreground hover:text-primary transition-colors font-medium">
               Features
             </a>
-            <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+            <a href="#pricing" className="text-foreground hover:text-primary transition-colors font-medium">
               Pricing
             </a>
             <Button 
               variant="ghost"
               onClick={() => navigate('/blog')}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-foreground hover:text-primary font-medium"
             >
               Blog
             </Button>
             <Button 
               onClick={() => navigate('/auth')}
-              className="bg-gradient-primary hover:opacity-90"
+              className="bg-gradient-primary hover:opacity-90 shadow-md"
             >
               Get Started
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -288,13 +288,21 @@ export default function LandingPage() {
           </div>
           
           {/* Mobile Navigation */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-2">
             <Button 
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/blog')}
+              className="text-foreground hover:text-primary"
+            >
+              Blog
+            </Button>
+            <Button 
+              size="sm"
               onClick={() => navigate('/auth')}
               className="bg-gradient-primary hover:opacity-90"
             >
               Get Started
-              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>
