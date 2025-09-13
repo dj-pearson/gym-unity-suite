@@ -48,6 +48,7 @@ import MemberClasses from "./pages/MemberClasses";
 import MemberWorkoutHistory from "./pages/MemberWorkoutHistory";
 import MemberNotifications from "./pages/MemberNotifications";
 import BlogPage from "./pages/BlogPage";
+import BlogPostPage from "./pages/BlogPostPage";
 import BlogAdminPage from "./pages/admin/BlogAdminPage";
 import { MemberLayout } from "./components/layout/MemberLayout";
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -157,6 +158,7 @@ const AppRoutes = () => {
               } />
               
               <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/blog/admin" element={
                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                   <DashboardLayout>
