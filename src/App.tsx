@@ -112,6 +112,25 @@ const HomeRoute = () => {
 };
 
 const App = () => {
+  return (
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <AppRoutes />
+            </TooltipProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </HelmetProvider>
+  );
+};
+
+// Separate component for routes to ensure proper React context
+const AppRoutes = () => {
   // Register service worker for PWA functionality
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -126,14 +145,7 @@ const App = () => {
   }, []);
 
   return (
-    <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AuthProvider>
-            <Routes>
+    <Routes>
               {/* Home Route - Landing page or Dashboard */}
               <Route path="/" element={<HomeRoute />} />
               
@@ -387,11 +399,6 @@ const App = () => {
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-            </AuthProvider>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </HelmetProvider>
   );
 };
 
