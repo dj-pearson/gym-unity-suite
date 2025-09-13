@@ -116,15 +116,15 @@ const App = () => {
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <AuthProvider>
-            <TooltipProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <BrowserRouter>
               <Toaster />
               <Sonner />
               <AppRoutes />
-            </TooltipProvider>
-          </AuthProvider>
-        </BrowserRouter>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </HelmetProvider>
   );
