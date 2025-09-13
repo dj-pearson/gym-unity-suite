@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SEOHead } from '@/components/seo/SEOHead';
+import { Footer } from '@/components/layout/Footer';
 import { 
   Dumbbell, 
   Users, 
@@ -621,23 +622,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-card border-t border-border py-12">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-3 mb-6">
-            <div className="flex items-center justify-center w-8 h-8 bg-gradient-primary rounded-lg">
-              <Dumbbell className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-lg font-bold text-foreground">Rep Club</span>
-          </div>
-          <p className="text-muted-foreground mb-4">
-            Elite fitness management solutions for discerning professionals.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            © 2025 Rep Club. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
     </>
   );

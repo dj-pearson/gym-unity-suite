@@ -2,18 +2,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { SEOHead } from '@/components/seo/SEOHead';
-import { Calendar, Clock, User, ArrowLeft, Share2, BookmarkPlus } from 'lucide-react';
+import { Footer } from '@/components/layout/Footer';
+import { Calendar, Clock, ArrowLeft, Share2, BookmarkPlus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface BlogPostProps {
   title: string;
   content: string;
   excerpt: string;
-  author: {
-    name: string;
-    role: string;
-    avatar?: string;
-  };
   publishedDate: string;
   readTime: number;
   category: string;
@@ -31,7 +27,6 @@ export function BlogPost({
   title,
   content,
   excerpt,
-  author,
   publishedDate,
   readTime,
   category,
@@ -49,9 +44,8 @@ export function BlogPost({
     "description": excerpt,
     "image": featuredImage,
     "author": {
-      "@type": "Person",
-      "name": author.name,
-      "jobTitle": author.role
+      "@type": "Organization",
+      "name": "Rep Club"
     },
     "publisher": {
       "@type": "Organization",
@@ -79,7 +73,6 @@ export function BlogPost({
         description={excerpt}
         keywords={keywords}
         type="article"
-        author={author.name}
         publishedTime={publishedTime}
         modifiedTime={publishedTime}
         category={category}
@@ -88,74 +81,68 @@ export function BlogPost({
         structuredData={structuredData}
       />
       
+      {/* Page Header */}
+      <header className="bg-gradient-primary text-white">
+        <div className="container mx-auto px-4 py-12 text-center">
+          <nav className="mb-6" aria-label="Breadcrumb">
+            <ol className="flex items-center justify-center space-x-2 text-sm text-white/80">
+              <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
+              <li>/</li>
+              <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+              <li>/</li>
+              <li><Link to={`/blog/category/${category.toLowerCase()}`} className="hover:text-white transition-colors">{category}</Link></li>
+            </ol>
+          </nav>
+          <Badge variant="secondary" className="mb-4 bg-white/10 text-white border-white/20">{category}</Badge>
+          <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
+            {title}
+          </h1>
+          <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto">
+            {excerpt}
+          </p>
+        </div>
+      </header>
+      
       <article className="max-w-4xl mx-auto px-4 py-8">
-        {/* Breadcrumb Navigation */}
-        <nav className="mb-6" aria-label="Breadcrumb">
-          <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <li><Link to="/" className="hover:text-foreground">Home</Link></li>
-            <li>/</li>
-            <li><Link to="/blog" className="hover:text-foreground">Blog</Link></li>
-            <li>/</li>
-            <li><Link to={`/blog/category/${category.toLowerCase()}`} className="hover:text-foreground">{category}</Link></li>
-            <li>/</li>
-            <li className="text-foreground" aria-current="page">{title}</li>
-          </ol>
-        </nav>
-
         {/* Back Button */}
-        <Button variant="ghost" asChild className="mb-6">
-          <Link to="/blog">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Blog
-          </Link>
-        </Button>
+        <div className="mb-6">
+          <Button variant="ghost" asChild>
+            <Link to="/blog">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Blog
+            </Link>
+          </Button>
+        </div>
 
-        {/* Article Header */}
-        <header className="mb-8">
-          <div className="mb-4">
-            <Badge variant="secondary" className="mb-2">{category}</Badge>
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
-              {title}
-            </h1>
-            <p className="text-xl text-muted-foreground leading-relaxed">
-              {excerpt}
-            </p>
+        {/* Article Meta */}
+        <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground border-y border-border py-4 mb-8">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4" />
+            <time dateTime={publishedTime}>
+              {new Date(publishedDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </time>
           </div>
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4" />
+            <span>{readTime} min read</span>
+          </div>
+        </div>
 
-          {/* Article Meta */}
-          <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground border-y border-border py-4">
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              <span>By <strong className="text-foreground">{author.name}</strong>, {author.role}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <time dateTime={publishedTime}>
-                {new Date(publishedDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </time>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              <span>{readTime} min read</span>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center gap-3 mt-4">
-            <Button variant="outline" size="sm">
-              <Share2 className="mr-2 h-4 w-4" />
-              Share
-            </Button>
-            <Button variant="outline" size="sm">
-              <BookmarkPlus className="mr-2 h-4 w-4" />
-              Save
-            </Button>
-          </div>
-        </header>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3 mb-8">
+          <Button variant="outline" size="sm">
+            <Share2 className="mr-2 h-4 w-4" />
+            Share
+          </Button>
+          <Button variant="outline" size="sm">
+            <BookmarkPlus className="mr-2 h-4 w-4" />
+            Save
+          </Button>
+        </div>
 
         {/* Featured Image */}
         {featuredImage && (
@@ -188,32 +175,6 @@ export function BlogPost({
           </div>
         </section>
 
-        {/* Author Bio */}
-        <Card className="mb-12">
-          <CardHeader>
-            <h3 className="text-xl font-semibold">About the Author</h3>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-start gap-4">
-              {author.avatar && (
-                <img
-                  src={author.avatar}
-                  alt={author.name}
-                  className="w-16 h-16 rounded-full"
-                  loading="lazy"
-                />
-              )}
-              <div>
-                <h4 className="font-semibold text-lg">{author.name}</h4>
-                <p className="text-muted-foreground mb-2">{author.role}</p>
-                <p className="text-sm">
-                  {author.name} is a fitness industry expert with years of experience helping gym owners 
-                  optimize their operations and grow their businesses.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
@@ -248,6 +209,8 @@ export function BlogPost({
           </section>
         )}
       </article>
+      
+      <Footer />
     </>
   );
 }

@@ -8,10 +8,6 @@ interface BlogPost {
   slug: string;
   title: string;
   excerpt: string;
-  author: {
-    name: string;
-    role: string;
-  };
   publishedDate: string;
   readTime: number;
   category: string;
@@ -59,8 +55,8 @@ export function BlogGrid({
       "url": `${window.location.origin}/blog/${post.slug}`,
       "datePublished": new Date(post.publishedDate).toISOString(),
       "author": {
-        "@type": "Person",
-        "name": post.author.name
+        "@type": "Organization",
+        "name": "Rep Club"
       },
       "image": post.featuredImage
     }))
@@ -153,12 +149,8 @@ export function BlogGrid({
                       </div>
                     </div>
 
-                    {/* Author & Read More */}
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm">
-                        <span className="text-muted-foreground">By </span>
-                        <span className="font-medium">{post.author.name}</span>
-                      </div>
+                    {/* Read More */}
+                    <div className="flex justify-end">
                       <Link 
                         to={`/blog/${post.slug}`}
                         className="flex items-center gap-1 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
