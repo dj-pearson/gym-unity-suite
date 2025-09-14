@@ -39,7 +39,7 @@ export default function BlogPostPage() {
     queryKey: ['related-posts', postQuery.data?.category_id, slug],
     enabled: !!postQuery.data?.category_id && !!slug,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('blog_posts')
         .select('slug,title,excerpt,featured_image')
         .eq('category_id', postQuery.data?.category_id as string)
