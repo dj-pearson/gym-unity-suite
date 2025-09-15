@@ -82,99 +82,64 @@ export default function LandingPage() {
 
   const pricingPlans = [
     {
-      category: "Boutique Studio",
-      plans: [
-        {
-          name: "Starter",
-          price: 99,
-          interval: "month",
-          members: "Up to 200 members",
-          popular: false,
-          icon: Users,
-          features: [
-            "Essential class scheduling",
-            "Basic payment processing", 
-            "Mobile member app",
-            "Email support",
-            "Member management",
-            "Basic reporting"
-          ],
-          savings: "30% vs competitors"
-        },
-        {
-          name: "Professional", 
-          price: 299,
-          interval: "month",
-          members: "Up to 1,000 members",
-          popular: true,
-          icon: Building2,
-          features: [
-            "Everything in Starter",
-            "Advanced reporting & analytics",
-            "Marketing automation",
-            "Branded mobile app", 
-            "Priority support",
-            "Custom integrations"
-          ],
-          savings: "Best value"
-        },
-        {
-          name: "Premium",
-          price: 599, 
-          interval: "month",
-          members: "Unlimited members",
-          popular: false,
-          icon: Crown,
-          features: [
-            "Everything in Professional",
-            "Multi-location support",
-            "Complete custom branding",
-            "API access",
-            "Dedicated success manager",
-            "White-label options"
-          ],
-          savings: "Enterprise features"
-        }
-      ]
+      name: "Studio",
+      price: 149,
+      interval: "month",
+      members: "Up to 500 members",
+      team: "Up to 5 team members",
+      popular: false,
+      icon: Users,
+      features: [
+        "Complete member management",
+        "Class scheduling & booking",
+        "Mobile check-in system", 
+        "Automated billing & payments",
+        "Basic reporting & analytics",
+        "Email & SMS notifications",
+        "Member mobile app",
+        "Standard support"
+      ],
+      savings: "Perfect for single studios"
     },
     {
-      category: "Mid-Market Fitness",
-      plans: [
-        {
-          name: "Growth",
-          price: 199,
-          interval: "month", 
-          members: "Up to 500 members",
-          popular: false,
-          icon: BarChart3,
-          features: [
-            "Equipment management",
-            "Staff scheduling",
-            "Basic business intelligence",
-            "Member retention tools",
-            "Multi-location ready",
-            "Advanced reporting"
-          ],
-          savings: "Operational focus"
-        },
-        {
-          name: "Pro",
-          price: 399,
-          interval: "month",
-          members: "Up to 2,000 members", 
-          popular: true,
-          icon: Sparkles,
-          features: [
-            "Everything in Growth",
-            "Advanced retention tools",
-            "Corporate wellness features",
-            "Full multi-location support",
-            "Custom dashboards",
-            "Premium integrations"
-          ],
-          savings: "Most popular"
-        }
-      ]
+      name: "Professional", 
+      price: 349,
+      interval: "month",
+      members: "Up to 2,000 members",
+      team: "Up to 15 team members",
+      popular: true,
+      icon: Building2,
+      features: [
+        "Everything in Studio",
+        "Advanced analytics & reporting",
+        "Marketing automation tools",
+        "Equipment management",
+        "Staff scheduling & payroll",
+        "Multi-location support (up to 3)",
+        "Custom branding",
+        "Priority support"
+      ],
+      savings: "Most popular choice"
+    },
+    {
+      name: "Enterprise",
+      price: 649, 
+      interval: "month",
+      members: "Unlimited members",
+      team: "Unlimited team members",
+      popular: false,
+      icon: Crown,
+      features: [
+        "Everything in Professional",
+        "Unlimited locations",
+        "Advanced CRM & lead management",
+        "Custom integrations & API access",
+        "White-label solutions",
+        "Dedicated success manager",
+        "24/7 premium support",
+        "Custom training & onboarding"
+      ],
+      savings: "Scale without limits"
     }
   ];
 
@@ -210,20 +175,20 @@ export default function LandingPage() {
     "offers": [
       {
         "@type": "Offer",
-        "name": "Starter Plan",
-        "price": "99.00",
+        "name": "Studio Plan",
+        "price": "149.00",
         "priceCurrency": "USD"
       },
       {
         "@type": "Offer", 
         "name": "Professional Plan",
-        "price": "299.00",
+        "price": "349.00",
         "priceCurrency": "USD"
       },
       {
         "@type": "Offer",
-        "name": "Premium Plan", 
-        "price": "599.00",
+        "name": "Enterprise Plan", 
+        "price": "649.00",
         "priceCurrency": "USD"
       }
     ],
@@ -417,88 +382,77 @@ export default function LandingPage() {
           </p>
         </div>
 
-        {pricingPlans.map((category, categoryIndex) => (
-          <div key={categoryIndex} className="mb-16">
-            <div className="text-center mb-12">
-              <h3 className="text-2xl font-bold text-foreground mb-2">{category.category}</h3>
-              <p className="text-muted-foreground">
-                {category.category === "Boutique Studio" 
-                  ? "Perfect for specialty fitness studios and boutique operations" 
-                  : "Designed for established fitness centers with advanced needs"
-                }
-              </p>
-            </div>
+        <div className="grid gap-8 grid-cols-1 lg:grid-cols-3 max-w-6xl mx-auto">
+          {pricingPlans.map((plan, index) => (
+            <Card 
+              key={index} 
+              className={`gym-card relative ${plan.popular ? 'ring-2 ring-primary shadow-elevation-3 scale-105' : ''} hover:shadow-elevation-2 transition-all duration-300`}
+            >
+              {plan.popular && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-primary text-primary-foreground px-4 py-1">
+                    Most Popular
+                  </Badge>
+                </div>
+              )}
+              
+              <CardHeader className="text-center pb-8">
+                <div className="flex items-center justify-center mb-4">
+                  <div className={`p-3 rounded-xl ${plan.popular ? 'bg-gradient-primary' : 'bg-gradient-secondary'}`}>
+                    <plan.icon className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+                <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                <div className="mt-4">
+                  <div className="text-4xl font-bold text-foreground">
+                    ${plan.price}
+                    <span className="text-lg text-muted-foreground font-normal">/{plan.interval}</span>
+                  </div>
+                  <div className="mt-3 space-y-1">
+                    <p className="text-sm text-muted-foreground">{plan.members}</p>
+                    <p className="text-sm text-muted-foreground">{plan.team}</p>
+                  </div>
+                  <Badge variant="outline" className="mt-3 text-xs">
+                    {plan.savings}
+                  </Badge>
+                </div>
+              </CardHeader>
 
-            <div className={`grid gap-8 ${category.plans.length === 3 ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2'} max-w-6xl mx-auto`}>
-              {category.plans.map((plan, index) => (
-                <Card 
-                  key={index} 
-                  className={`gym-card relative ${plan.popular ? 'ring-2 ring-primary shadow-elevation-3 scale-105' : ''} hover:shadow-elevation-2 transition-all duration-300`}
-                >
-                  {plan.popular && (
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-primary text-primary-foreground px-4 py-1">
-                        Most Popular
-                      </Badge>
-                    </div>
-                  )}
-                  
-                  <CardHeader className="text-center pb-8">
-                    <div className="flex items-center justify-center mb-4">
-                      <div className={`p-3 rounded-xl ${plan.popular ? 'bg-gradient-primary' : 'bg-gradient-secondary'}`}>
-                        <plan.icon className="h-6 w-6 text-white" />
+              <CardContent className="space-y-6">
+                <ul className="space-y-3">
+                  {plan.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-center space-x-3">
+                      <div className="flex-shrink-0">
+                        <div className="w-5 h-5 bg-success/10 rounded-full flex items-center justify-center">
+                          <Check className="h-3 w-3 text-success" />
+                        </div>
                       </div>
-                    </div>
-                    <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                    <div className="mt-4">
-                      <div className="text-4xl font-bold text-foreground">
-                        ${plan.price}
-                        <span className="text-lg text-muted-foreground font-normal">/{plan.interval}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-2">{plan.members}</p>
-                      <Badge variant="outline" className="mt-2 text-xs">
-                        {plan.savings}
-                      </Badge>
-                    </div>
-                  </CardHeader>
+                      <span className="text-sm text-muted-foreground">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
 
-                  <CardContent className="space-y-6">
-                    <ul className="space-y-3">
-                      {plan.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-center space-x-3">
-                          <div className="flex-shrink-0">
-                            <div className="w-5 h-5 bg-success/10 rounded-full flex items-center justify-center">
-                              <Check className="h-3 w-3 text-success" />
-                            </div>
-                          </div>
-                          <span className="text-sm text-muted-foreground">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="pt-6">
-                      <OneTimePaymentButton
-                        amount={plan.price}
-                        description={`Rep Club ${plan.name} Plan - Monthly Subscription`}
-                        orderType="subscription_setup"
-                        metadata={{
-                          plan_name: plan.name,
-                          plan_category: category.category,
-                          member_limit: plan.members,
-                          billing_interval: plan.interval
-                        }}
-                        className="w-full"
-                        variant={plan.popular ? "default" : "outline"}
-                      >
-                        Get Started with {plan.name}
-                      </OneTimePaymentButton>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        ))}
+                <div className="pt-6">
+                  <OneTimePaymentButton
+                    amount={plan.price}
+                    description={`Rep Club ${plan.name} Plan - Monthly Subscription`}
+                    orderType="subscription_setup"
+                    metadata={{
+                      plan_name: plan.name,
+                      member_limit: plan.members,
+                      team_limit: plan.team,
+                      billing_interval: plan.interval
+                    }}
+                    className="w-full"
+                    variant={plan.popular ? "default" : "outline"}
+                  >
+                    Get Started with {plan.name}
+                  </OneTimePaymentButton>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
         {/* Enterprise Pricing */}
         <Card className="gym-card bg-gradient-hero text-white max-w-4xl mx-auto">
