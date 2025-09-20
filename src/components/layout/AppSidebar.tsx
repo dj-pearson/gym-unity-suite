@@ -74,7 +74,8 @@ const navigationGroups = [
       { name: 'Equipment', href: '/equipment', icon: Wrench, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Classes', href: '/classes', icon: Calendar, permission: PERMISSIONS.VIEW_CLASSES },
       { name: 'Personal Training', href: '/personal-training', icon: Weight, permission: PERMISSIONS.VIEW_CLASSES },
-      { name: 'Check-ins', href: '/checkins', icon: UserCheck, permission: PERMISSIONS.VIEW_CHECKINS }
+      { name: 'Check-ins', href: '/checkins', icon: UserCheck, permission: PERMISSIONS.VIEW_CHECKINS },
+      { name: 'Visitors & Guests', href: '/visitors', icon: Users, permission: PERMISSIONS.VIEW_MEMBERS }
     ]
   },
   {

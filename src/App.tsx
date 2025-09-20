@@ -42,6 +42,7 @@ import TabletCheckInPage from "./pages/TabletCheckInPage";
 import MobileDashboardPage from "./pages/MobileDashboardPage";
 import MobileCheckInPage from "./pages/MobileCheckInPage";
 import MobileWorkoutPage from "./pages/MobileWorkoutPage";
+import VisitorsPage from "./pages/VisitorsPage";
 import NotFound from "./pages/NotFound";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberClasses from "./pages/MemberClasses";
@@ -294,6 +295,14 @@ const AppRoutes = () => {
                 <ProtectedRoute permission={PERMISSIONS.VIEW_CHECKINS}>
                   <DashboardLayout>
                     <CheckInsPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/visitors" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
+                  <DashboardLayout>
+                    <VisitorsPage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />

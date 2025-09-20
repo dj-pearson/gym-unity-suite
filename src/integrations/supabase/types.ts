@@ -1209,6 +1209,113 @@ export type Database = {
           },
         ]
       }
+      guest_pass_types: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          includes_amenities: string[] | null
+          is_active: boolean | null
+          max_uses_per_member: number | null
+          name: string
+          organization_id: string
+          price: number
+          updated_at: string
+          validity_hours: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          includes_amenities?: string[] | null
+          is_active?: boolean | null
+          max_uses_per_member?: number | null
+          name: string
+          organization_id: string
+          price?: number
+          updated_at?: string
+          validity_hours?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          includes_amenities?: string[] | null
+          is_active?: boolean | null
+          max_uses_per_member?: number | null
+          name?: string
+          organization_id?: string
+          price?: number
+          updated_at?: string
+          validity_hours?: number
+        }
+        Relationships: []
+      }
+      guest_passes: {
+        Row: {
+          amount_paid: number
+          created_at: string
+          guest_email: string | null
+          guest_name: string
+          guest_phone: string | null
+          id: string
+          notes: string | null
+          organization_id: string
+          pass_type_id: string
+          payment_method: string | null
+          purchase_date: string
+          purchased_by: string | null
+          status: string
+          updated_at: string
+          used_at: string | null
+          valid_until: string
+        }
+        Insert: {
+          amount_paid: number
+          created_at?: string
+          guest_email?: string | null
+          guest_name: string
+          guest_phone?: string | null
+          id?: string
+          notes?: string | null
+          organization_id: string
+          pass_type_id: string
+          payment_method?: string | null
+          purchase_date?: string
+          purchased_by?: string | null
+          status?: string
+          updated_at?: string
+          used_at?: string | null
+          valid_until: string
+        }
+        Update: {
+          amount_paid?: number
+          created_at?: string
+          guest_email?: string | null
+          guest_name?: string
+          guest_phone?: string | null
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          pass_type_id?: string
+          payment_method?: string | null
+          purchase_date?: string
+          purchased_by?: string | null
+          status?: string
+          updated_at?: string
+          used_at?: string | null
+          valid_until?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_passes_pass_type_id_fkey"
+            columns: ["pass_type_id"]
+            isOneToOne: false
+            referencedRelation: "guest_pass_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       incident_reports: {
         Row: {
           actions_taken: string | null
@@ -1875,6 +1982,56 @@ export type Database = {
             columns: ["stage_id"]
             isOneToOne: false
             referencedRelation: "lead_stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      liability_waivers: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: string | null
+          organization_id: string
+          signature_data: string | null
+          signed_at: string
+          signee_email: string | null
+          signee_name: string
+          visitor_checkin_id: string | null
+          waiver_content: string
+          witness_staff_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          organization_id: string
+          signature_data?: string | null
+          signed_at?: string
+          signee_email?: string | null
+          signee_name: string
+          visitor_checkin_id?: string | null
+          waiver_content: string
+          witness_staff_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          organization_id?: string
+          signature_data?: string | null
+          signed_at?: string
+          signee_email?: string | null
+          signee_name?: string
+          visitor_checkin_id?: string | null
+          waiver_content?: string
+          witness_staff_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "liability_waivers_visitor_checkin_id_fkey"
+            columns: ["visitor_checkin_id"]
+            isOneToOne: false
+            referencedRelation: "visitor_checkins"
             referencedColumns: ["id"]
           },
         ]
@@ -5155,6 +5312,62 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      visitor_checkins: {
+        Row: {
+          accompanied_by: string | null
+          check_in_time: string
+          check_out_time: string | null
+          created_at: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          guest_pass_id: string | null
+          id: string
+          liability_waiver_signed: boolean | null
+          organization_id: string
+          purpose: string | null
+          visitor_email: string | null
+          visitor_name: string
+        }
+        Insert: {
+          accompanied_by?: string | null
+          check_in_time?: string
+          check_out_time?: string | null
+          created_at?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          guest_pass_id?: string | null
+          id?: string
+          liability_waiver_signed?: boolean | null
+          organization_id: string
+          purpose?: string | null
+          visitor_email?: string | null
+          visitor_name: string
+        }
+        Update: {
+          accompanied_by?: string | null
+          check_in_time?: string
+          check_out_time?: string | null
+          created_at?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          guest_pass_id?: string | null
+          id?: string
+          liability_waiver_signed?: boolean | null
+          organization_id?: string
+          purpose?: string | null
+          visitor_email?: string | null
+          visitor_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visitor_checkins_guest_pass_id_fkey"
+            columns: ["guest_pass_id"]
+            isOneToOne: false
+            referencedRelation: "guest_passes"
             referencedColumns: ["id"]
           },
         ]
