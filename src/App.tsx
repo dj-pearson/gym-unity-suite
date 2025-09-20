@@ -43,6 +43,7 @@ import SafetyInspectionsPage from "./pages/SafetyInspectionsPage";
 import ExpenseTrackingPage from "./pages/ExpenseTrackingPage";
 import DepartmentPLPage from "./pages/DepartmentPLPage";
 import StaffCertificationPage from "./pages/StaffCertificationPage";
+import TowelServicePage from "./pages/TowelServicePage";
 import TabletCheckInPage from "./pages/TabletCheckInPage";
 import MobileDashboardPage from "./pages/MobileDashboardPage";
 import MobileCheckInPage from "./pages/MobileCheckInPage";
@@ -494,6 +495,14 @@ const AppRoutes = () => {
                 <ProtectedRoute permission={PERMISSIONS.MANAGE_STAFF}>
                   <DashboardLayout>
                     <StaffCertificationPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/towel-service" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_RETAIL}>
+                  <DashboardLayout>
+                    <TowelServicePage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />

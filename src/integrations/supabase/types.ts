@@ -8222,6 +8222,198 @@ export type Database = {
         }
         Relationships: []
       }
+      towel_cleaning_logs: {
+        Row: {
+          batch_number: string | null
+          cleaning_date: string
+          cleaning_method: string
+          cleaning_status: string
+          cost: number | null
+          created_at: string
+          cycle_duration_minutes: number | null
+          detergent_used: string | null
+          id: string
+          next_cleaning_due: string | null
+          organization_id: string
+          quality_check_notes: string | null
+          quality_check_passed: boolean | null
+          quantity_cleaned: number
+          staff_assigned: string
+          temperature_celsius: number | null
+          towel_inventory_id: string
+          updated_at: string
+        }
+        Insert: {
+          batch_number?: string | null
+          cleaning_date?: string
+          cleaning_method?: string
+          cleaning_status?: string
+          cost?: number | null
+          created_at?: string
+          cycle_duration_minutes?: number | null
+          detergent_used?: string | null
+          id?: string
+          next_cleaning_due?: string | null
+          organization_id: string
+          quality_check_notes?: string | null
+          quality_check_passed?: boolean | null
+          quantity_cleaned?: number
+          staff_assigned: string
+          temperature_celsius?: number | null
+          towel_inventory_id: string
+          updated_at?: string
+        }
+        Update: {
+          batch_number?: string | null
+          cleaning_date?: string
+          cleaning_method?: string
+          cleaning_status?: string
+          cost?: number | null
+          created_at?: string
+          cycle_duration_minutes?: number | null
+          detergent_used?: string | null
+          id?: string
+          next_cleaning_due?: string | null
+          organization_id?: string
+          quality_check_notes?: string | null
+          quality_check_passed?: boolean | null
+          quantity_cleaned?: number
+          staff_assigned?: string
+          temperature_celsius?: number | null
+          towel_inventory_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      towel_inventory: {
+        Row: {
+          available_quantity: number
+          color: string
+          cost_per_towel: number | null
+          created_at: string
+          damaged_quantity: number
+          id: string
+          in_cleaning: number
+          min_stock_level: number | null
+          organization_id: string
+          rental_price: number
+          rented_quantity: number
+          replacement_cost: number | null
+          size: string
+          total_quantity: number
+          towel_type: string
+          updated_at: string
+        }
+        Insert: {
+          available_quantity?: number
+          color?: string
+          cost_per_towel?: number | null
+          created_at?: string
+          damaged_quantity?: number
+          id?: string
+          in_cleaning?: number
+          min_stock_level?: number | null
+          organization_id: string
+          rental_price?: number
+          rented_quantity?: number
+          replacement_cost?: number | null
+          size?: string
+          total_quantity?: number
+          towel_type?: string
+          updated_at?: string
+        }
+        Update: {
+          available_quantity?: number
+          color?: string
+          cost_per_towel?: number | null
+          created_at?: string
+          damaged_quantity?: number
+          id?: string
+          in_cleaning?: number
+          min_stock_level?: number | null
+          organization_id?: string
+          rental_price?: number
+          rented_quantity?: number
+          replacement_cost?: number | null
+          size?: string
+          total_quantity?: number
+          towel_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      towel_rentals: {
+        Row: {
+          created_at: string
+          damage_fee: number | null
+          id: string
+          late_fee: number | null
+          member_id: string
+          notes: string | null
+          organization_id: string
+          payment_method: string | null
+          payment_status: string
+          rental_date: string
+          rental_fee: number
+          rental_time: string
+          return_date: string | null
+          return_time: string | null
+          staff_in: string | null
+          staff_out: string
+          status: string
+          towel_condition_in: string | null
+          towel_condition_out: string | null
+          towel_inventory_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          damage_fee?: number | null
+          id?: string
+          late_fee?: number | null
+          member_id: string
+          notes?: string | null
+          organization_id: string
+          payment_method?: string | null
+          payment_status?: string
+          rental_date?: string
+          rental_fee?: number
+          rental_time?: string
+          return_date?: string | null
+          return_time?: string | null
+          staff_in?: string | null
+          staff_out: string
+          status?: string
+          towel_condition_in?: string | null
+          towel_condition_out?: string | null
+          towel_inventory_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          damage_fee?: number | null
+          id?: string
+          late_fee?: number | null
+          member_id?: string
+          notes?: string | null
+          organization_id?: string
+          payment_method?: string | null
+          payment_status?: string
+          rental_date?: string
+          rental_fee?: number
+          rental_time?: string
+          return_date?: string | null
+          return_time?: string | null
+          staff_in?: string | null
+          staff_out?: string
+          status?: string
+          towel_condition_in?: string | null
+          towel_condition_out?: string | null
+          towel_inventory_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       trainer_availability: {
         Row: {
           created_at: string

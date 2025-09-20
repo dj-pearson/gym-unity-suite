@@ -47,6 +47,7 @@ import {
   MapPin,
   Waves,
   Baby,
+  Bath,
   ShoppingCart
 } from 'lucide-react';
 
@@ -89,6 +90,7 @@ const navigationGroups = [
       { name: 'Pool Management', href: '/pool-management', icon: Waves, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Spa Management', href: '/spa-management', icon: Users, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Childcare', href: '/childcare', icon: Baby, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Towel Service', href: '/towel-service', icon: Bath, permission: PERMISSIONS.VIEW_RETAIL },
       { name: 'Pro Shop', href: '/pro-shop', icon: ShoppingCart, permission: PERMISSIONS.VIEW_RETAIL }
     ]
   },
