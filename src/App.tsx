@@ -41,6 +41,7 @@ import PersonalTrainingPage from "./pages/PersonalTrainingPage";
 import ProShopPage from "./pages/ProShopPage";
 import SafetyInspectionsPage from "./pages/SafetyInspectionsPage";
 import ExpenseTrackingPage from "./pages/ExpenseTrackingPage";
+import DepartmentPLPage from "./pages/DepartmentPLPage";
 import TabletCheckInPage from "./pages/TabletCheckInPage";
 import MobileDashboardPage from "./pages/MobileDashboardPage";
 import MobileCheckInPage from "./pages/MobileCheckInPage";
@@ -392,6 +393,14 @@ const AppRoutes = () => {
                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                   <DashboardLayout>
                     <ExpenseTrackingPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/department-pl" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_REPORTS}>
+                  <DashboardLayout>
+                    <DepartmentPLPage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />

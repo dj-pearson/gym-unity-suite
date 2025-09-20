@@ -124,15 +124,17 @@
 - **Implementation**: DONE
 
 ### Department P&L Reporting
-- **Status**: ❌ Not Started
+- **Status**: ✅ COMPLETED
 - **Impact**: HIGH - Multi-revenue stream tracking
-- **Components Needed**:
-  - Department cost allocation
-  - Revenue by service type
-  - Profitability analysis
-  - Comparative reporting
-- **Database Tables**: `department_revenues`, `cost_allocations`
-- **Implementation**: 2-3 days
+- **Components Completed**:
+  - ✅ Department cost allocation
+  - ✅ Revenue by service type
+  - ✅ Profitability analysis
+  - ✅ Comparative reporting
+  - ✅ Budget setting and variance tracking
+- **Database Tables**: `department_revenues`, `cost_allocations`, `department_budgets`
+- **Route**: `/department-pl`
+- **Implementation**: DONE
 
 ---
 

@@ -96,6 +96,7 @@ const navigationGroups = [
     items: [
       { name: 'Billing', href: '/billing', icon: CreditCard, permission: PERMISSIONS.VIEW_BILLING },
       { name: 'Expense Tracking', href: '/expense-tracking', icon: DollarSign, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Department P&L', href: '/department-pl', icon: TrendingUp, permission: PERMISSIONS.VIEW_REPORTS },
       { name: 'Reports', href: '/reports', icon: BarChart3, permission: PERMISSIONS.VIEW_REPORTS },
       { name: 'Blog Manager', href: '/blog/admin', icon: FileText, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Retail', href: '/retail', icon: Store, permission: PERMISSIONS.VIEW_RETAIL }

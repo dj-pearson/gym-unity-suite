@@ -1312,6 +1312,54 @@ export type Database = {
         }
         Relationships: []
       }
+      cost_allocations: {
+        Row: {
+          allocated_amount: number
+          allocation_basis: string
+          allocation_percentage: number | null
+          cost_category: string
+          created_at: string
+          created_by: string
+          department_name: string
+          id: string
+          notes: string | null
+          organization_id: string
+          period_end: string
+          period_start: string
+          updated_at: string
+        }
+        Insert: {
+          allocated_amount?: number
+          allocation_basis: string
+          allocation_percentage?: number | null
+          cost_category: string
+          created_at?: string
+          created_by: string
+          department_name: string
+          id?: string
+          notes?: string | null
+          organization_id: string
+          period_end: string
+          period_start: string
+          updated_at?: string
+        }
+        Update: {
+          allocated_amount?: number
+          allocation_basis?: string
+          allocation_percentage?: number | null
+          cost_category?: string
+          created_at?: string
+          created_by?: string
+          department_name?: string
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          period_end?: string
+          period_start?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       court_reservations: {
         Row: {
           additional_players: string[] | null
@@ -1431,6 +1479,93 @@ export type Database = {
           total_check_ins?: number
           total_members?: number
           total_revenue?: number
+        }
+        Relationships: []
+      }
+      department_budgets: {
+        Row: {
+          budget_month: number | null
+          budget_year: number
+          created_at: string
+          created_by: string
+          department_name: string
+          expense_budget: number | null
+          id: string
+          organization_id: string
+          profit_target: number | null
+          revenue_budget: number | null
+          updated_at: string
+        }
+        Insert: {
+          budget_month?: number | null
+          budget_year: number
+          created_at?: string
+          created_by: string
+          department_name: string
+          expense_budget?: number | null
+          id?: string
+          organization_id: string
+          profit_target?: number | null
+          revenue_budget?: number | null
+          updated_at?: string
+        }
+        Update: {
+          budget_month?: number | null
+          budget_year?: number
+          created_at?: string
+          created_by?: string
+          department_name?: string
+          expense_budget?: number | null
+          id?: string
+          organization_id?: string
+          profit_target?: number | null
+          revenue_budget?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      department_revenues: {
+        Row: {
+          average_transaction_value: number | null
+          created_at: string
+          created_by: string
+          department_name: string
+          id: string
+          organization_id: string
+          period_end: string
+          period_start: string
+          revenue_amount: number
+          revenue_source: string
+          transaction_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          average_transaction_value?: number | null
+          created_at?: string
+          created_by: string
+          department_name: string
+          id?: string
+          organization_id: string
+          period_end: string
+          period_start: string
+          revenue_amount?: number
+          revenue_source: string
+          transaction_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          average_transaction_value?: number | null
+          created_at?: string
+          created_by?: string
+          department_name?: string
+          id?: string
+          organization_id?: string
+          period_end?: string
+          period_start?: string
+          revenue_amount?: number
+          revenue_source?: string
+          transaction_count?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
