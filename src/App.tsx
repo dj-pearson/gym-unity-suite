@@ -40,6 +40,7 @@ import EquipmentPage from "./pages/EquipmentPage";
 import PersonalTrainingPage from "./pages/PersonalTrainingPage";
 import ProShopPage from "./pages/ProShopPage";
 import SafetyInspectionsPage from "./pages/SafetyInspectionsPage";
+import ExpenseTrackingPage from "./pages/ExpenseTrackingPage";
 import TabletCheckInPage from "./pages/TabletCheckInPage";
 import MobileDashboardPage from "./pages/MobileDashboardPage";
 import MobileCheckInPage from "./pages/MobileCheckInPage";
@@ -383,6 +384,14 @@ const AppRoutes = () => {
                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                   <DashboardLayout>
                     <EquipmentPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/expense-tracking" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                  <DashboardLayout>
+                    <ExpenseTrackingPage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />

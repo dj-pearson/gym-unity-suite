@@ -1620,6 +1620,171 @@ export type Database = {
         }
         Relationships: []
       }
+      expense_categories: {
+        Row: {
+          budget_amount: number | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          budget_amount?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          budget_amount?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      expense_vendors: {
+        Row: {
+          address: string | null
+          contact_person: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          organization_id: string
+          payment_terms: string | null
+          phone: string | null
+          tax_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          organization_id: string
+          payment_terms?: string | null
+          phone?: string | null
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          organization_id?: string
+          payment_terms?: string | null
+          phone?: string | null
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          approved_at: string | null
+          approved_by: string | null
+          category_id: string
+          check_number: string | null
+          created_at: string
+          created_by: string
+          description: string
+          expense_date: string
+          id: string
+          organization_id: string
+          payment_date: string | null
+          payment_method: string | null
+          payment_status: string | null
+          receipt_filename: string | null
+          receipt_url: string | null
+          recurring: boolean | null
+          recurring_frequency: string | null
+          reference_number: string | null
+          updated_at: string
+          vendor_id: string | null
+        }
+        Insert: {
+          amount: number
+          approved_at?: string | null
+          approved_by?: string | null
+          category_id: string
+          check_number?: string | null
+          created_at?: string
+          created_by: string
+          description: string
+          expense_date: string
+          id?: string
+          organization_id: string
+          payment_date?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          receipt_filename?: string | null
+          receipt_url?: string | null
+          recurring?: boolean | null
+          recurring_frequency?: string | null
+          reference_number?: string | null
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Update: {
+          amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
+          category_id?: string
+          check_number?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string
+          expense_date?: string
+          id?: string
+          organization_id?: string
+          payment_date?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          receipt_filename?: string | null
+          receipt_url?: string | null
+          recurring?: boolean | null
+          recurring_frequency?: string | null
+          reference_number?: string | null
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "expense_vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       facility_areas: {
         Row: {
           area_type: string
