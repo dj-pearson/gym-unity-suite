@@ -2365,6 +2365,68 @@ export type Database = {
           },
         ]
       }
+      lifeguard_schedules: {
+        Row: {
+          certification_expires: string | null
+          created_at: string
+          created_by: string
+          end_time: string
+          id: string
+          is_head_lifeguard: boolean | null
+          lifeguard_id: string
+          notes: string | null
+          organization_id: string
+          pool_id: string
+          scheduled_date: string
+          shift_type: string | null
+          start_time: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          certification_expires?: string | null
+          created_at?: string
+          created_by: string
+          end_time: string
+          id?: string
+          is_head_lifeguard?: boolean | null
+          lifeguard_id: string
+          notes?: string | null
+          organization_id: string
+          pool_id: string
+          scheduled_date: string
+          shift_type?: string | null
+          start_time: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          certification_expires?: string | null
+          created_at?: string
+          created_by?: string
+          end_time?: string
+          id?: string
+          is_head_lifeguard?: boolean | null
+          lifeguard_id?: string
+          notes?: string | null
+          organization_id?: string
+          pool_id?: string
+          scheduled_date?: string
+          shift_type?: string | null
+          start_time?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lifeguard_schedules_pool_id_fkey"
+            columns: ["pool_id"]
+            isOneToOne: false
+            referencedRelation: "pool_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           address: string | null
@@ -4732,6 +4794,264 @@ export type Database = {
           },
         ]
       }
+      pool_facilities: {
+        Row: {
+          amenities: string[] | null
+          capacity_max: number | null
+          created_at: string
+          depth_max: number | null
+          depth_min: number | null
+          description: string | null
+          has_diving_board: boolean | null
+          has_slides: boolean | null
+          id: string
+          is_available: boolean | null
+          is_closed_for_maintenance: boolean | null
+          is_heated: boolean | null
+          lane_count: number | null
+          length_meters: number | null
+          location_id: string | null
+          operating_hours_end: string | null
+          operating_hours_start: string | null
+          organization_id: string
+          pool_name: string
+          pool_type: string
+          safety_notes: string | null
+          temperature_target: number | null
+          updated_at: string
+          width_meters: number | null
+        }
+        Insert: {
+          amenities?: string[] | null
+          capacity_max?: number | null
+          created_at?: string
+          depth_max?: number | null
+          depth_min?: number | null
+          description?: string | null
+          has_diving_board?: boolean | null
+          has_slides?: boolean | null
+          id?: string
+          is_available?: boolean | null
+          is_closed_for_maintenance?: boolean | null
+          is_heated?: boolean | null
+          lane_count?: number | null
+          length_meters?: number | null
+          location_id?: string | null
+          operating_hours_end?: string | null
+          operating_hours_start?: string | null
+          organization_id: string
+          pool_name: string
+          pool_type?: string
+          safety_notes?: string | null
+          temperature_target?: number | null
+          updated_at?: string
+          width_meters?: number | null
+        }
+        Update: {
+          amenities?: string[] | null
+          capacity_max?: number | null
+          created_at?: string
+          depth_max?: number | null
+          depth_min?: number | null
+          description?: string | null
+          has_diving_board?: boolean | null
+          has_slides?: boolean | null
+          id?: string
+          is_available?: boolean | null
+          is_closed_for_maintenance?: boolean | null
+          is_heated?: boolean | null
+          lane_count?: number | null
+          length_meters?: number | null
+          location_id?: string | null
+          operating_hours_end?: string | null
+          operating_hours_start?: string | null
+          organization_id?: string
+          pool_name?: string
+          pool_type?: string
+          safety_notes?: string | null
+          temperature_target?: number | null
+          updated_at?: string
+          width_meters?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pool_facilities_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pool_lane_reservations: {
+        Row: {
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          checked_in_at: string | null
+          created_at: string
+          duration_minutes: number
+          end_time: string
+          hourly_rate: number
+          id: string
+          lane_number: number
+          member_id: string
+          organization_id: string
+          payment_method: string | null
+          payment_status: string | null
+          pool_id: string
+          purpose: string | null
+          reservation_date: string
+          special_equipment: string[] | null
+          special_requests: string | null
+          start_time: string
+          status: string
+          total_cost: number
+          updated_at: string
+        }
+        Insert: {
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          checked_in_at?: string | null
+          created_at?: string
+          duration_minutes?: number
+          end_time: string
+          hourly_rate: number
+          id?: string
+          lane_number: number
+          member_id: string
+          organization_id: string
+          payment_method?: string | null
+          payment_status?: string | null
+          pool_id: string
+          purpose?: string | null
+          reservation_date: string
+          special_equipment?: string[] | null
+          special_requests?: string | null
+          start_time: string
+          status?: string
+          total_cost: number
+          updated_at?: string
+        }
+        Update: {
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          checked_in_at?: string | null
+          created_at?: string
+          duration_minutes?: number
+          end_time?: string
+          hourly_rate?: number
+          id?: string
+          lane_number?: number
+          member_id?: string
+          organization_id?: string
+          payment_method?: string | null
+          payment_status?: string | null
+          pool_id?: string
+          purpose?: string | null
+          reservation_date?: string
+          special_equipment?: string[] | null
+          special_requests?: string | null
+          start_time?: string
+          status?: string
+          total_cost?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pool_lane_reservations_pool_id_fkey"
+            columns: ["pool_id"]
+            isOneToOne: false
+            referencedRelation: "pool_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pool_maintenance_logs: {
+        Row: {
+          actions_performed: string
+          actual_cost: number | null
+          actual_duration_minutes: number | null
+          chemicals_used: Json | null
+          cost_estimate: number | null
+          created_at: string
+          end_time: string | null
+          equipment_used: string[] | null
+          followup_due_date: string | null
+          followup_required: boolean | null
+          id: string
+          issues_found: string | null
+          maintenance_date: string
+          maintenance_status: string | null
+          maintenance_type: string
+          notes: string | null
+          organization_id: string
+          performed_by: string
+          pool_id: string
+          priority_level: string | null
+          scheduled_duration_minutes: number | null
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          actions_performed: string
+          actual_cost?: number | null
+          actual_duration_minutes?: number | null
+          chemicals_used?: Json | null
+          cost_estimate?: number | null
+          created_at?: string
+          end_time?: string | null
+          equipment_used?: string[] | null
+          followup_due_date?: string | null
+          followup_required?: boolean | null
+          id?: string
+          issues_found?: string | null
+          maintenance_date?: string
+          maintenance_status?: string | null
+          maintenance_type: string
+          notes?: string | null
+          organization_id: string
+          performed_by: string
+          pool_id: string
+          priority_level?: string | null
+          scheduled_duration_minutes?: number | null
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          actions_performed?: string
+          actual_cost?: number | null
+          actual_duration_minutes?: number | null
+          chemicals_used?: Json | null
+          cost_estimate?: number | null
+          created_at?: string
+          end_time?: string | null
+          equipment_used?: string[] | null
+          followup_due_date?: string | null
+          followup_required?: boolean | null
+          id?: string
+          issues_found?: string | null
+          maintenance_date?: string
+          maintenance_status?: string | null
+          maintenance_type?: string
+          notes?: string | null
+          organization_id?: string
+          performed_by?: string
+          pool_id?: string
+          priority_level?: string | null
+          scheduled_duration_minutes?: number | null
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pool_maintenance_logs_pool_id_fkey"
+            columns: ["pool_id"]
+            isOneToOne: false
+            referencedRelation: "pool_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           address_line1: string | null
@@ -5800,6 +6120,142 @@ export type Database = {
           },
         ]
       }
+      swim_lesson_enrollments: {
+        Row: {
+          created_at: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          enrolled_at: string
+          enrollment_status: string | null
+          id: string
+          lesson_id: string
+          member_id: string
+          notes: string | null
+          payment_amount: number
+          payment_status: string | null
+          special_needs: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          enrolled_at?: string
+          enrollment_status?: string | null
+          id?: string
+          lesson_id: string
+          member_id: string
+          notes?: string | null
+          payment_amount: number
+          payment_status?: string | null
+          special_needs?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          enrolled_at?: string
+          enrollment_status?: string | null
+          id?: string
+          lesson_id?: string
+          member_id?: string
+          notes?: string | null
+          payment_amount?: number
+          payment_status?: string | null
+          special_needs?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "swim_lesson_enrollments_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "swim_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      swim_lessons: {
+        Row: {
+          age_group: string | null
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          end_time: string
+          equipment_provided: string[] | null
+          id: string
+          instructor_id: string
+          lesson_date: string
+          lesson_fee: number
+          lesson_name: string
+          lesson_type: string
+          max_participants: number | null
+          organization_id: string
+          pool_id: string
+          recurring_schedule: string | null
+          requirements: string | null
+          skill_level: string
+          start_time: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          age_group?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          end_time: string
+          equipment_provided?: string[] | null
+          id?: string
+          instructor_id: string
+          lesson_date: string
+          lesson_fee: number
+          lesson_name: string
+          lesson_type?: string
+          max_participants?: number | null
+          organization_id: string
+          pool_id: string
+          recurring_schedule?: string | null
+          requirements?: string | null
+          skill_level?: string
+          start_time: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          age_group?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          end_time?: string
+          equipment_provided?: string[] | null
+          id?: string
+          instructor_id?: string
+          lesson_date?: string
+          lesson_fee?: number
+          lesson_name?: string
+          lesson_type?: string
+          max_participants?: number | null
+          organization_id?: string
+          pool_id?: string
+          recurring_schedule?: string | null
+          requirements?: string | null
+          skill_level?: string
+          start_time?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "swim_lessons_pool_id_fkey"
+            columns: ["pool_id"]
+            isOneToOne: false
+            referencedRelation: "pool_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       time_entries: {
         Row: {
           approved_at: string | null
@@ -6212,6 +6668,83 @@ export type Database = {
             columns: ["guest_pass_id"]
             isOneToOne: false
             referencedRelation: "guest_passes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      water_quality_logs: {
+        Row: {
+          action_required: string | null
+          actions_taken: string | null
+          alkalinity_ppm: number | null
+          bacteria_count: number | null
+          chemical_balance_ok: boolean | null
+          chlorine_ppm: number | null
+          clarity_rating: number | null
+          compliance_status: string | null
+          created_at: string
+          id: string
+          next_test_due: string | null
+          notes: string | null
+          organization_id: string
+          ph_level: number | null
+          pool_id: string
+          temperature_fahrenheit: number | null
+          test_date: string
+          test_time: string
+          tested_by: string
+          updated_at: string
+        }
+        Insert: {
+          action_required?: string | null
+          actions_taken?: string | null
+          alkalinity_ppm?: number | null
+          bacteria_count?: number | null
+          chemical_balance_ok?: boolean | null
+          chlorine_ppm?: number | null
+          clarity_rating?: number | null
+          compliance_status?: string | null
+          created_at?: string
+          id?: string
+          next_test_due?: string | null
+          notes?: string | null
+          organization_id: string
+          ph_level?: number | null
+          pool_id: string
+          temperature_fahrenheit?: number | null
+          test_date?: string
+          test_time?: string
+          tested_by: string
+          updated_at?: string
+        }
+        Update: {
+          action_required?: string | null
+          actions_taken?: string | null
+          alkalinity_ppm?: number | null
+          bacteria_count?: number | null
+          chemical_balance_ok?: boolean | null
+          chlorine_ppm?: number | null
+          clarity_rating?: number | null
+          compliance_status?: string | null
+          created_at?: string
+          id?: string
+          next_test_due?: string | null
+          notes?: string | null
+          organization_id?: string
+          ph_level?: number | null
+          pool_id?: string
+          temperature_fahrenheit?: number | null
+          test_date?: string
+          test_time?: string
+          tested_by?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "water_quality_logs_pool_id_fkey"
+            columns: ["pool_id"]
+            isOneToOne: false
+            referencedRelation: "pool_facilities"
             referencedColumns: ["id"]
           },
         ]

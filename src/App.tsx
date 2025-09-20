@@ -45,6 +45,8 @@ import MobileWorkoutPage from "./pages/MobileWorkoutPage";
 import VisitorsPage from "./pages/VisitorsPage";
 import LockersPage from "./pages/LockersPage";
 import IncidentsPage from "./pages/IncidentsPage";
+import CourtSportsPage from "./pages/CourtSportsPage";
+import PoolManagementPage from "./pages/PoolManagementPage";
 import NotFound from "./pages/NotFound";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberClasses from "./pages/MemberClasses";
@@ -321,6 +323,22 @@ const AppRoutes = () => {
                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                   <DashboardLayout>
                     <IncidentsPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/courts" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                  <DashboardLayout>
+                    <CourtSportsPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/pools" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                  <DashboardLayout>
+                    <PoolManagementPage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />
