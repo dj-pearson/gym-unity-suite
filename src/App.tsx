@@ -40,7 +40,6 @@ import EquipmentPage from "./pages/EquipmentPage";
 import PersonalTrainingPage from "./pages/PersonalTrainingPage";
 import ProShopPage from "./pages/ProShopPage";
 import SafetyInspectionsPage from "./pages/SafetyInspectionsPage";
-import SafetyInspectionsPage from "./pages/SafetyInspectionsPage";
 import TabletCheckInPage from "./pages/TabletCheckInPage";
 import MobileDashboardPage from "./pages/MobileDashboardPage";
 import MobileCheckInPage from "./pages/MobileCheckInPage";
