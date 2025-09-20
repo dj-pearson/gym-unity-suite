@@ -42,7 +42,8 @@ import {
   Wrench,
   Weight,
   FileText,
-  Lock
+  Lock,
+  AlertTriangle
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
@@ -77,7 +78,8 @@ const navigationGroups = [
       { name: 'Personal Training', href: '/personal-training', icon: Weight, permission: PERMISSIONS.VIEW_CLASSES },
       { name: 'Check-ins', href: '/checkins', icon: UserCheck, permission: PERMISSIONS.VIEW_CHECKINS },
       { name: 'Visitors & Guests', href: '/visitors', icon: Users, permission: PERMISSIONS.VIEW_MEMBERS },
-      { name: 'Lockers', href: '/lockers', icon: Lock, permission: PERMISSIONS.VIEW_SETTINGS }
+      { name: 'Lockers', href: '/lockers', icon: Lock, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Incidents', href: '/incidents', icon: AlertTriangle, permission: PERMISSIONS.VIEW_SETTINGS }
     ]
   },
   {

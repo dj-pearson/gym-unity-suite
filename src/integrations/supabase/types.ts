@@ -1316,6 +1316,124 @@ export type Database = {
           },
         ]
       }
+      incident_follow_ups: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          completed_by: string | null
+          completion_notes: string | null
+          created_at: string
+          due_date: string
+          id: string
+          incident_report_id: string
+          organization_id: string
+          priority: string
+          status: string
+          task_description: string
+          task_type: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_notes?: string | null
+          created_at?: string
+          due_date: string
+          id?: string
+          incident_report_id: string
+          organization_id: string
+          priority?: string
+          status?: string
+          task_description: string
+          task_type?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_notes?: string | null
+          created_at?: string
+          due_date?: string
+          id?: string
+          incident_report_id?: string
+          organization_id?: string
+          priority?: string
+          status?: string
+          task_description?: string
+          task_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incident_follow_ups_incident_report_id_fkey"
+            columns: ["incident_report_id"]
+            isOneToOne: false
+            referencedRelation: "incident_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      incident_investigations: {
+        Row: {
+          contributing_factors: string[] | null
+          created_at: string
+          documents: string[] | null
+          findings: string
+          id: string
+          incident_report_id: string
+          investigation_date: string
+          investigation_status: string
+          investigator_id: string
+          organization_id: string
+          photos: string[] | null
+          preventability: string | null
+          recommendations: string | null
+          updated_at: string
+        }
+        Insert: {
+          contributing_factors?: string[] | null
+          created_at?: string
+          documents?: string[] | null
+          findings: string
+          id?: string
+          incident_report_id: string
+          investigation_date?: string
+          investigation_status?: string
+          investigator_id: string
+          organization_id: string
+          photos?: string[] | null
+          preventability?: string | null
+          recommendations?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contributing_factors?: string[] | null
+          created_at?: string
+          documents?: string[] | null
+          findings?: string
+          id?: string
+          incident_report_id?: string
+          investigation_date?: string
+          investigation_status?: string
+          investigator_id?: string
+          organization_id?: string
+          photos?: string[] | null
+          preventability?: string | null
+          recommendations?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incident_investigations_incident_report_id_fkey"
+            columns: ["incident_report_id"]
+            isOneToOne: false
+            referencedRelation: "incident_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       incident_reports: {
         Row: {
           actions_taken: string | null
@@ -1449,6 +1567,77 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      insurance_claims: {
+        Row: {
+          adjuster_contact: string | null
+          adjuster_name: string | null
+          claim_amount: number | null
+          claim_notes: string | null
+          claim_number: string
+          claim_status: string
+          claim_type: string
+          created_at: string
+          documents: string[] | null
+          filed_date: string
+          id: string
+          incident_report_id: string
+          insurance_company: string
+          organization_id: string
+          policy_number: string | null
+          settlement_amount: number | null
+          settlement_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          adjuster_contact?: string | null
+          adjuster_name?: string | null
+          claim_amount?: number | null
+          claim_notes?: string | null
+          claim_number: string
+          claim_status?: string
+          claim_type?: string
+          created_at?: string
+          documents?: string[] | null
+          filed_date?: string
+          id?: string
+          incident_report_id: string
+          insurance_company: string
+          organization_id: string
+          policy_number?: string | null
+          settlement_amount?: number | null
+          settlement_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          adjuster_contact?: string | null
+          adjuster_name?: string | null
+          claim_amount?: number | null
+          claim_notes?: string | null
+          claim_number?: string
+          claim_status?: string
+          claim_type?: string
+          created_at?: string
+          documents?: string[] | null
+          filed_date?: string
+          id?: string
+          incident_report_id?: string
+          insurance_company?: string
+          organization_id?: string
+          policy_number?: string | null
+          settlement_amount?: number | null
+          settlement_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_claims_incident_report_id_fkey"
+            columns: ["incident_report_id"]
+            isOneToOne: false
+            referencedRelation: "incident_reports"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       kpi_metrics: {
         Row: {
