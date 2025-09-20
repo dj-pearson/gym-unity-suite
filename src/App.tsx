@@ -43,6 +43,7 @@ import MobileDashboardPage from "./pages/MobileDashboardPage";
 import MobileCheckInPage from "./pages/MobileCheckInPage";
 import MobileWorkoutPage from "./pages/MobileWorkoutPage";
 import VisitorsPage from "./pages/VisitorsPage";
+import LockersPage from "./pages/LockersPage";
 import NotFound from "./pages/NotFound";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberClasses from "./pages/MemberClasses";
@@ -303,6 +304,14 @@ const AppRoutes = () => {
                 <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
                   <DashboardLayout>
                     <VisitorsPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/lockers" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                  <DashboardLayout>
+                    <LockersPage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />

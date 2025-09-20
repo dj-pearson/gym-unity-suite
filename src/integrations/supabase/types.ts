@@ -2080,6 +2080,263 @@ export type Database = {
           },
         ]
       }
+      locker_access_log: {
+        Row: {
+          access_method: string | null
+          access_time: string
+          access_type: string
+          created_at: string
+          id: string
+          locker_id: string
+          member_id: string | null
+          notes: string | null
+          organization_id: string
+          staff_id: string | null
+        }
+        Insert: {
+          access_method?: string | null
+          access_time?: string
+          access_type?: string
+          created_at?: string
+          id?: string
+          locker_id: string
+          member_id?: string | null
+          notes?: string | null
+          organization_id: string
+          staff_id?: string | null
+        }
+        Update: {
+          access_method?: string | null
+          access_time?: string
+          access_type?: string
+          created_at?: string
+          id?: string
+          locker_id?: string
+          member_id?: string | null
+          notes?: string | null
+          organization_id?: string
+          staff_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locker_access_log_locker_id_fkey"
+            columns: ["locker_id"]
+            isOneToOne: false
+            referencedRelation: "lockers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locker_maintenance: {
+        Row: {
+          cost: number | null
+          created_at: string
+          follow_up_date: string | null
+          follow_up_required: boolean | null
+          id: string
+          issue_description: string | null
+          labor_time_minutes: number | null
+          locker_id: string
+          maintenance_date: string
+          maintenance_type: string
+          organization_id: string
+          parts_replaced: string[] | null
+          performed_by: string | null
+          photos: string[] | null
+          resolution_notes: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: string
+          issue_description?: string | null
+          labor_time_minutes?: number | null
+          locker_id: string
+          maintenance_date?: string
+          maintenance_type?: string
+          organization_id: string
+          parts_replaced?: string[] | null
+          performed_by?: string | null
+          photos?: string[] | null
+          resolution_notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: string
+          issue_description?: string | null
+          labor_time_minutes?: number | null
+          locker_id?: string
+          maintenance_date?: string
+          maintenance_type?: string
+          organization_id?: string
+          parts_replaced?: string[] | null
+          performed_by?: string | null
+          photos?: string[] | null
+          resolution_notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locker_maintenance_locker_id_fkey"
+            columns: ["locker_id"]
+            isOneToOne: false
+            referencedRelation: "lockers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locker_rentals: {
+        Row: {
+          auto_renew: boolean | null
+          created_at: string
+          deposit_paid: number | null
+          deposit_refunded: boolean | null
+          end_date: string | null
+          id: string
+          last_payment_date: string | null
+          locker_id: string
+          member_id: string
+          monthly_rate: number
+          next_payment_due: string | null
+          notes: string | null
+          organization_id: string
+          payment_method: string | null
+          rental_type: string
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          auto_renew?: boolean | null
+          created_at?: string
+          deposit_paid?: number | null
+          deposit_refunded?: boolean | null
+          end_date?: string | null
+          id?: string
+          last_payment_date?: string | null
+          locker_id: string
+          member_id: string
+          monthly_rate: number
+          next_payment_due?: string | null
+          notes?: string | null
+          organization_id: string
+          payment_method?: string | null
+          rental_type?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          auto_renew?: boolean | null
+          created_at?: string
+          deposit_paid?: number | null
+          deposit_refunded?: boolean | null
+          end_date?: string | null
+          id?: string
+          last_payment_date?: string | null
+          locker_id?: string
+          member_id?: string
+          monthly_rate?: number
+          next_payment_due?: string | null
+          notes?: string | null
+          organization_id?: string
+          payment_method?: string | null
+          rental_type?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locker_rentals_locker_id_fkey"
+            columns: ["locker_id"]
+            isOneToOne: false
+            referencedRelation: "lockers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lockers: {
+        Row: {
+          created_at: string
+          daily_rate: number | null
+          deposit_amount: number | null
+          has_lock: boolean | null
+          id: string
+          is_available: boolean | null
+          is_out_of_order: boolean | null
+          key_number: string | null
+          location_id: string | null
+          lock_combination: string | null
+          lock_type: string | null
+          locker_number: string
+          locker_type: string
+          maintenance_notes: string | null
+          monthly_rate: number | null
+          organization_id: string
+          size_category: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          daily_rate?: number | null
+          deposit_amount?: number | null
+          has_lock?: boolean | null
+          id?: string
+          is_available?: boolean | null
+          is_out_of_order?: boolean | null
+          key_number?: string | null
+          location_id?: string | null
+          lock_combination?: string | null
+          lock_type?: string | null
+          locker_number: string
+          locker_type?: string
+          maintenance_notes?: string | null
+          monthly_rate?: number | null
+          organization_id: string
+          size_category?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          daily_rate?: number | null
+          deposit_amount?: number | null
+          has_lock?: boolean | null
+          id?: string
+          is_available?: boolean | null
+          is_out_of_order?: boolean | null
+          key_number?: string | null
+          location_id?: string | null
+          lock_combination?: string | null
+          lock_type?: string | null
+          locker_number?: string
+          locker_type?: string
+          maintenance_notes?: string | null
+          monthly_rate?: number | null
+          organization_id?: string
+          size_category?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lockers_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       loyalty_points: {
         Row: {
           activity_type: string
