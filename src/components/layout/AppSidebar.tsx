@@ -83,7 +83,8 @@ const navigationGroups = [
       { name: 'Lockers', href: '/lockers', icon: Lock, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Incidents', href: '/incidents', icon: AlertTriangle, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Court Sports', href: '/courts', icon: MapPin, permission: PERMISSIONS.VIEW_SETTINGS },
-      { name: 'Pools & Aquatics', href: '/pools', icon: Waves, permission: PERMISSIONS.VIEW_SETTINGS }
+      { name: 'Pool Management', href: '/pool-management', icon: Waves, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Spa Management', href: '/spa-management', icon: Users, permission: PERMISSIONS.VIEW_SETTINGS }
     ]
   },
   {

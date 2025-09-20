@@ -5699,6 +5699,266 @@ export type Database = {
           },
         ]
       }
+      spa_appointments: {
+        Row: {
+          appointment_date: string
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          created_at: string
+          deposit_paid: number | null
+          duration_minutes: number
+          end_time: string
+          id: string
+          member_id: string
+          organization_id: string
+          payment_status: string | null
+          post_service_notes: string | null
+          preparation_notes: string | null
+          service_id: string
+          special_requests: string | null
+          start_time: string
+          status: string | null
+          therapist_id: string
+          total_price: number
+          updated_at: string
+        }
+        Insert: {
+          appointment_date: string
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          created_at?: string
+          deposit_paid?: number | null
+          duration_minutes: number
+          end_time: string
+          id?: string
+          member_id: string
+          organization_id: string
+          payment_status?: string | null
+          post_service_notes?: string | null
+          preparation_notes?: string | null
+          service_id: string
+          special_requests?: string | null
+          start_time: string
+          status?: string | null
+          therapist_id: string
+          total_price: number
+          updated_at?: string
+        }
+        Update: {
+          appointment_date?: string
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          created_at?: string
+          deposit_paid?: number | null
+          duration_minutes?: number
+          end_time?: string
+          id?: string
+          member_id?: string
+          organization_id?: string
+          payment_status?: string | null
+          post_service_notes?: string | null
+          preparation_notes?: string | null
+          service_id?: string
+          special_requests?: string | null
+          start_time?: string
+          status?: string | null
+          therapist_id?: string
+          total_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spa_appointments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "spa_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spa_inventory: {
+        Row: {
+          brand: string | null
+          cost_per_unit: number | null
+          created_at: string
+          current_stock: number | null
+          description: string | null
+          expiry_date: string | null
+          id: string
+          is_active: boolean | null
+          last_restock_date: string | null
+          maximum_stock: number | null
+          minimum_stock: number | null
+          organization_id: string
+          product_category: string
+          product_code: string | null
+          product_name: string
+          requires_certification: boolean | null
+          retail_price: number | null
+          storage_location: string | null
+          supplier_contact: string | null
+          supplier_name: string | null
+          unit_of_measurement: string | null
+          updated_at: string
+          usage_per_service: number | null
+        }
+        Insert: {
+          brand?: string | null
+          cost_per_unit?: number | null
+          created_at?: string
+          current_stock?: number | null
+          description?: string | null
+          expiry_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_restock_date?: string | null
+          maximum_stock?: number | null
+          minimum_stock?: number | null
+          organization_id: string
+          product_category?: string
+          product_code?: string | null
+          product_name: string
+          requires_certification?: boolean | null
+          retail_price?: number | null
+          storage_location?: string | null
+          supplier_contact?: string | null
+          supplier_name?: string | null
+          unit_of_measurement?: string | null
+          updated_at?: string
+          usage_per_service?: number | null
+        }
+        Update: {
+          brand?: string | null
+          cost_per_unit?: number | null
+          created_at?: string
+          current_stock?: number | null
+          description?: string | null
+          expiry_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_restock_date?: string | null
+          maximum_stock?: number | null
+          minimum_stock?: number | null
+          organization_id?: string
+          product_category?: string
+          product_code?: string | null
+          product_name?: string
+          requires_certification?: boolean | null
+          retail_price?: number | null
+          storage_location?: string | null
+          supplier_contact?: string | null
+          supplier_name?: string | null
+          unit_of_measurement?: string | null
+          updated_at?: string
+          usage_per_service?: number | null
+        }
+        Relationships: []
+      }
+      spa_service_packages: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          individual_price: number
+          is_active: boolean | null
+          max_validity_days: number | null
+          organization_id: string
+          package_name: string
+          package_price: number
+          savings_amount: number | null
+          service_ids: string[]
+          total_duration_minutes: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          individual_price: number
+          is_active?: boolean | null
+          max_validity_days?: number | null
+          organization_id: string
+          package_name: string
+          package_price: number
+          savings_amount?: number | null
+          service_ids: string[]
+          total_duration_minutes: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          individual_price?: number
+          is_active?: boolean | null
+          max_validity_days?: number | null
+          organization_id?: string
+          package_name?: string
+          package_price?: number
+          savings_amount?: number | null
+          service_ids?: string[]
+          total_duration_minutes?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      spa_services: {
+        Row: {
+          base_price: number
+          commission_rate: number | null
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          equipment_needed: string[] | null
+          id: string
+          is_active: boolean | null
+          max_advance_booking_days: number | null
+          min_advance_booking_hours: number | null
+          organization_id: string
+          requires_certification: string[] | null
+          service_category: string
+          service_name: string
+          updated_at: string
+        }
+        Insert: {
+          base_price: number
+          commission_rate?: number | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          equipment_needed?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          max_advance_booking_days?: number | null
+          min_advance_booking_hours?: number | null
+          organization_id: string
+          requires_certification?: string[] | null
+          service_category?: string
+          service_name: string
+          updated_at?: string
+        }
+        Update: {
+          base_price?: number
+          commission_rate?: number | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          equipment_needed?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          max_advance_booking_days?: number | null
+          min_advance_booking_hours?: number | null
+          organization_id?: string
+          requires_certification?: string[] | null
+          service_category?: string
+          service_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sports_courts: {
         Row: {
           court_number: string
@@ -6255,6 +6515,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      therapist_availability: {
+        Row: {
+          break_end: string | null
+          break_start: string | null
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_available: boolean | null
+          organization_id: string
+          specializations: string[] | null
+          start_time: string
+          therapist_id: string
+          updated_at: string
+        }
+        Insert: {
+          break_end?: string | null
+          break_start?: string | null
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_available?: boolean | null
+          organization_id: string
+          specializations?: string[] | null
+          start_time: string
+          therapist_id: string
+          updated_at?: string
+        }
+        Update: {
+          break_end?: string | null
+          break_start?: string | null
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_available?: boolean | null
+          organization_id?: string
+          specializations?: string[] | null
+          start_time?: string
+          therapist_id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       time_entries: {
         Row: {

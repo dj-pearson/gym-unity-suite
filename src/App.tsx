@@ -47,6 +47,7 @@ import LockersPage from "./pages/LockersPage";
 import IncidentsPage from "./pages/IncidentsPage";
 import CourtSportsPage from "./pages/CourtSportsPage";
 import PoolManagementPage from "./pages/PoolManagementPage";
+import SpaManagementPage from "./pages/SpaManagementPage";
 import NotFound from "./pages/NotFound";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberClasses from "./pages/MemberClasses";
@@ -335,13 +336,21 @@ const AppRoutes = () => {
                 </ProtectedRoute>
               } />
               
-              <Route path="/pools" element={
-                <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
-                  <DashboardLayout>
-                    <PoolManagementPage />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              } />
+               <Route path="/pool-management" element={
+                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                   <DashboardLayout>
+                     <PoolManagementPage />
+                   </DashboardLayout>
+                 </ProtectedRoute>
+               } />
+               
+               <Route path="/spa-management" element={
+                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                   <DashboardLayout>
+                     <SpaManagementPage />
+                   </DashboardLayout>
+                 </ProtectedRoute>
+               } />
               
               <Route path="/communication" element={
                 <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
