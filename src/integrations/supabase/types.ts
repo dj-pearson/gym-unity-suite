@@ -2231,6 +2231,69 @@ export type Database = {
           },
         ]
       }
+      inventory_items: {
+        Row: {
+          cost_per_unit: number | null
+          created_at: string
+          current_stock: number
+          id: string
+          last_count_date: string | null
+          last_restocked_at: string | null
+          location_id: string | null
+          max_stock_level: number | null
+          min_stock_level: number | null
+          organization_id: string
+          product_id: string
+          reorder_point: number | null
+          updated_at: string
+        }
+        Insert: {
+          cost_per_unit?: number | null
+          created_at?: string
+          current_stock?: number
+          id?: string
+          last_count_date?: string | null
+          last_restocked_at?: string | null
+          location_id?: string | null
+          max_stock_level?: number | null
+          min_stock_level?: number | null
+          organization_id: string
+          product_id: string
+          reorder_point?: number | null
+          updated_at?: string
+        }
+        Update: {
+          cost_per_unit?: number | null
+          created_at?: string
+          current_stock?: number
+          id?: string
+          last_count_date?: string | null
+          last_restocked_at?: string | null
+          location_id?: string | null
+          max_stock_level?: number | null
+          min_stock_level?: number | null
+          organization_id?: string
+          product_id?: string
+          reorder_point?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_items_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "retail_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       kpi_metrics: {
         Row: {
           created_at: string
@@ -5840,6 +5903,206 @@ export type Database = {
         }
         Relationships: []
       }
+      retail_products: {
+        Row: {
+          barcode: string | null
+          brand: string | null
+          category: string
+          cost_price: number | null
+          created_at: string
+          description: string | null
+          dimensions: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          name: string
+          organization_id: string
+          requires_age_verification: boolean | null
+          sale_price: number
+          sku: string
+          supplier: string | null
+          tax_rate: number | null
+          updated_at: string
+          weight_grams: number | null
+        }
+        Insert: {
+          barcode?: string | null
+          brand?: string | null
+          category?: string
+          cost_price?: number | null
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name: string
+          organization_id: string
+          requires_age_verification?: boolean | null
+          sale_price: number
+          sku: string
+          supplier?: string | null
+          tax_rate?: number | null
+          updated_at?: string
+          weight_grams?: number | null
+        }
+        Update: {
+          barcode?: string | null
+          brand?: string | null
+          category?: string
+          cost_price?: number | null
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name?: string
+          organization_id?: string
+          requires_age_verification?: boolean | null
+          sale_price?: number
+          sku?: string
+          supplier?: string | null
+          tax_rate?: number | null
+          updated_at?: string
+          weight_grams?: number | null
+        }
+        Relationships: []
+      }
+      retail_transaction_items: {
+        Row: {
+          created_at: string
+          discount_amount: number | null
+          id: string
+          line_total: number
+          product_id: string
+          quantity: number
+          tax_rate: number | null
+          transaction_id: string
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          discount_amount?: number | null
+          id?: string
+          line_total: number
+          product_id: string
+          quantity?: number
+          tax_rate?: number | null
+          transaction_id: string
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          discount_amount?: number | null
+          id?: string
+          line_total?: number
+          product_id?: string
+          quantity?: number
+          tax_rate?: number | null
+          transaction_id?: string
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retail_transaction_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "retail_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "retail_transaction_items_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "retail_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      retail_transactions: {
+        Row: {
+          amount_tendered: number | null
+          cashier_id: string
+          change_given: number | null
+          created_at: string
+          discount_amount: number | null
+          id: string
+          location_id: string | null
+          member_id: string | null
+          notes: string | null
+          organization_id: string
+          payment_method: string
+          payment_reference: string | null
+          status: string
+          subtotal: number
+          tax_amount: number
+          total_amount: number
+          transaction_date: string
+          transaction_number: string
+          updated_at: string
+          void_reason: string | null
+          voided_at: string | null
+          voided_by: string | null
+        }
+        Insert: {
+          amount_tendered?: number | null
+          cashier_id: string
+          change_given?: number | null
+          created_at?: string
+          discount_amount?: number | null
+          id?: string
+          location_id?: string | null
+          member_id?: string | null
+          notes?: string | null
+          organization_id: string
+          payment_method?: string
+          payment_reference?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          total_amount: number
+          transaction_date?: string
+          transaction_number: string
+          updated_at?: string
+          void_reason?: string | null
+          voided_at?: string | null
+          voided_by?: string | null
+        }
+        Update: {
+          amount_tendered?: number | null
+          cashier_id?: string
+          change_given?: number | null
+          created_at?: string
+          discount_amount?: number | null
+          id?: string
+          location_id?: string | null
+          member_id?: string | null
+          notes?: string | null
+          organization_id?: string
+          payment_method?: string
+          payment_reference?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          total_amount?: number
+          transaction_date?: string
+          transaction_number?: string
+          updated_at?: string
+          void_reason?: string | null
+          voided_at?: string | null
+          voided_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retail_transactions_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       retention_campaigns: {
         Row: {
           campaign_type: string
@@ -6686,6 +6949,66 @@ export type Database = {
             columns: ["staff_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_movements: {
+        Row: {
+          created_at: string
+          id: string
+          inventory_item_id: string
+          movement_date: string
+          movement_type: string
+          notes: string | null
+          organization_id: string
+          performed_by: string
+          quantity_change: number
+          reason: string | null
+          reference_number: string | null
+          transaction_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inventory_item_id: string
+          movement_date?: string
+          movement_type: string
+          notes?: string | null
+          organization_id: string
+          performed_by: string
+          quantity_change: number
+          reason?: string | null
+          reference_number?: string | null
+          transaction_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inventory_item_id?: string
+          movement_date?: string
+          movement_type?: string
+          notes?: string | null
+          organization_id?: string
+          performed_by?: string
+          quantity_change?: number
+          reason?: string | null
+          reference_number?: string | null
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "retail_transactions"
             referencedColumns: ["id"]
           },
         ]
@@ -7567,6 +7890,10 @@ export type Database = {
         Returns: string
       }
       generate_referral_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_transaction_number: {
         Args: Record<PropertyKey, never>
         Returns: string
       }

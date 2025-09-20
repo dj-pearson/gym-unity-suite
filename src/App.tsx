@@ -353,13 +353,21 @@ const AppRoutes = () => {
                  </ProtectedRoute>
                } />
                
-               <Route path="/childcare" element={
-                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
-                   <DashboardLayout>
-                     <ChildcarePage />
-                   </DashboardLayout>
-                 </ProtectedRoute>
-               } />
+              <Route path="/childcare" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                  <DashboardLayout>
+                    <ChildcarePage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/pro-shop" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_RETAIL}>
+                  <DashboardLayout>
+                    <ProShopPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
               
               <Route path="/communication" element={
                 <ProtectedRoute permission={PERMISSIONS.VIEW_MEMBERS}>
