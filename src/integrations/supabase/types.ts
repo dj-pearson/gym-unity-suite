@@ -279,6 +279,51 @@ export type Database = {
         }
         Relationships: []
       }
+      certification_requirements: {
+        Row: {
+          certification_name: string
+          cost_estimate: number | null
+          created_at: string
+          description: string | null
+          id: string
+          is_required: boolean | null
+          organization_id: string
+          renewal_notice_days: number | null
+          required_for_roles: string[] | null
+          training_provider: string | null
+          updated_at: string
+          validity_period_months: number
+        }
+        Insert: {
+          certification_name: string
+          cost_estimate?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_required?: boolean | null
+          organization_id: string
+          renewal_notice_days?: number | null
+          required_for_roles?: string[] | null
+          training_provider?: string | null
+          updated_at?: string
+          validity_period_months?: number
+        }
+        Update: {
+          certification_name?: string
+          cost_estimate?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_required?: boolean | null
+          organization_id?: string
+          renewal_notice_days?: number | null
+          required_for_roles?: string[] | null
+          training_provider?: string | null
+          updated_at?: string
+          validity_period_months?: number
+        }
+        Relationships: []
+      }
       check_ins: {
         Row: {
           checked_in_at: string
@@ -7388,6 +7433,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      staff_certifications: {
+        Row: {
+          certification_number: string | null
+          created_at: string
+          created_by: string
+          expiry_date: string
+          file_url: string | null
+          id: string
+          issued_date: string
+          issuing_authority: string | null
+          notes: string | null
+          organization_id: string
+          renewal_completed_at: string | null
+          renewal_cost: number | null
+          requirement_id: string
+          staff_id: string
+          updated_at: string
+          verification_status: string
+        }
+        Insert: {
+          certification_number?: string | null
+          created_at?: string
+          created_by: string
+          expiry_date: string
+          file_url?: string | null
+          id?: string
+          issued_date: string
+          issuing_authority?: string | null
+          notes?: string | null
+          organization_id: string
+          renewal_completed_at?: string | null
+          renewal_cost?: number | null
+          requirement_id: string
+          staff_id: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Update: {
+          certification_number?: string | null
+          created_at?: string
+          created_by?: string
+          expiry_date?: string
+          file_url?: string | null
+          id?: string
+          issued_date?: string
+          issuing_authority?: string | null
+          notes?: string | null
+          organization_id?: string
+          renewal_completed_at?: string | null
+          renewal_cost?: number | null
+          requirement_id?: string
+          staff_id?: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Relationships: []
       }
       staff_performance_analytics: {
         Row: {

@@ -42,6 +42,7 @@ import ProShopPage from "./pages/ProShopPage";
 import SafetyInspectionsPage from "./pages/SafetyInspectionsPage";
 import ExpenseTrackingPage from "./pages/ExpenseTrackingPage";
 import DepartmentPLPage from "./pages/DepartmentPLPage";
+import StaffCertificationPage from "./pages/StaffCertificationPage";
 import TabletCheckInPage from "./pages/TabletCheckInPage";
 import MobileDashboardPage from "./pages/MobileDashboardPage";
 import MobileCheckInPage from "./pages/MobileCheckInPage";
@@ -485,6 +486,14 @@ const AppRoutes = () => {
                       <h1 className="text-2xl font-bold mb-4">Settings</h1>
                       <p className="text-muted-foreground">Organization settings coming soon...</p>
                     </div>
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+
+              <Route path="/staff-certifications" element={
+                <ProtectedRoute permission={PERMISSIONS.MANAGE_STAFF}>
+                  <DashboardLayout>
+                    <StaffCertificationPage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />

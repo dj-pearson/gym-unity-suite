@@ -75,6 +75,7 @@ const navigationGroups = [
       { name: 'Membership Plans', href: '/membership-plans', icon: CreditCard },
       { name: 'Members', href: '/members', icon: Users, permission: PERMISSIONS.VIEW_MEMBERS },
       { name: 'Staff', href: '/staff', icon: Users, permission: PERMISSIONS.MANAGE_STAFF },
+      { name: 'Staff Certifications', href: '/staff-certifications', icon: Shield, permission: PERMISSIONS.MANAGE_STAFF },
       { name: 'Onboarding', href: '/onboarding', icon: UserCheck, permission: PERMISSIONS.VIEW_MEMBERS },
       { name: 'Communication', href: '/communication', icon: MessageSquare, permission: PERMISSIONS.VIEW_MEMBERS },
       { name: 'Equipment', href: '/equipment', icon: Wrench, permission: PERMISSIONS.VIEW_SETTINGS },
