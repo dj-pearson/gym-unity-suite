@@ -354,6 +354,458 @@ export type Database = {
           },
         ]
       }
+      child_profiles: {
+        Row: {
+          allergies: string | null
+          authorized_pickup_contacts: Json | null
+          child_first_name: string
+          child_last_name: string
+          created_at: string
+          date_of_birth: string
+          dietary_restrictions: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          gender: string | null
+          id: string
+          is_active: boolean | null
+          medical_conditions: string | null
+          organization_id: string
+          parent_member_id: string
+          photo_url: string | null
+          special_instructions: string | null
+          updated_at: string
+        }
+        Insert: {
+          allergies?: string | null
+          authorized_pickup_contacts?: Json | null
+          child_first_name: string
+          child_last_name: string
+          created_at?: string
+          date_of_birth: string
+          dietary_restrictions?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          gender?: string | null
+          id?: string
+          is_active?: boolean | null
+          medical_conditions?: string | null
+          organization_id: string
+          parent_member_id: string
+          photo_url?: string | null
+          special_instructions?: string | null
+          updated_at?: string
+        }
+        Update: {
+          allergies?: string | null
+          authorized_pickup_contacts?: Json | null
+          child_first_name?: string
+          child_last_name?: string
+          created_at?: string
+          date_of_birth?: string
+          dietary_restrictions?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          gender?: string | null
+          id?: string
+          is_active?: boolean | null
+          medical_conditions?: string | null
+          organization_id?: string
+          parent_member_id?: string
+          photo_url?: string | null
+          special_instructions?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      childcare_activities: {
+        Row: {
+          activity_date: string
+          activity_fee: number | null
+          activity_name: string
+          activity_type: string | null
+          age_group_max_months: number
+          age_group_min_months: number
+          assigned_staff: string[] | null
+          created_at: string
+          created_by: string
+          description: string | null
+          duration_minutes: number
+          end_time: string
+          equipment_needed: string[] | null
+          id: string
+          is_recurring: boolean | null
+          location_room: string | null
+          max_participants: number | null
+          organization_id: string
+          recurring_pattern: string | null
+          registration_deadline: string | null
+          requires_registration: boolean | null
+          staff_ratio_requirement: number | null
+          start_time: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          activity_date: string
+          activity_fee?: number | null
+          activity_name: string
+          activity_type?: string | null
+          age_group_max_months?: number
+          age_group_min_months?: number
+          assigned_staff?: string[] | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          duration_minutes: number
+          end_time: string
+          equipment_needed?: string[] | null
+          id?: string
+          is_recurring?: boolean | null
+          location_room?: string | null
+          max_participants?: number | null
+          organization_id: string
+          recurring_pattern?: string | null
+          registration_deadline?: string | null
+          requires_registration?: boolean | null
+          staff_ratio_requirement?: number | null
+          start_time: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activity_date?: string
+          activity_fee?: number | null
+          activity_name?: string
+          activity_type?: string | null
+          age_group_max_months?: number
+          age_group_min_months?: number
+          assigned_staff?: string[] | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          duration_minutes?: number
+          end_time?: string
+          equipment_needed?: string[] | null
+          id?: string
+          is_recurring?: boolean | null
+          location_room?: string | null
+          max_participants?: number | null
+          organization_id?: string
+          recurring_pattern?: string | null
+          registration_deadline?: string | null
+          requires_registration?: boolean | null
+          staff_ratio_requirement?: number | null
+          start_time?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      childcare_activity_registrations: {
+        Row: {
+          activity_id: string
+          attended: boolean | null
+          child_id: string
+          created_at: string
+          id: string
+          organization_id: string
+          parent_member_id: string
+          payment_status: string | null
+          registration_date: string
+          special_requests: string | null
+          updated_at: string
+        }
+        Insert: {
+          activity_id: string
+          attended?: boolean | null
+          child_id: string
+          created_at?: string
+          id?: string
+          organization_id: string
+          parent_member_id: string
+          payment_status?: string | null
+          registration_date?: string
+          special_requests?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activity_id?: string
+          attended?: boolean | null
+          child_id?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          parent_member_id?: string
+          payment_status?: string | null
+          registration_date?: string
+          special_requests?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "childcare_activity_registrations_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "childcare_activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "childcare_activity_registrations_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      childcare_checkins: {
+        Row: {
+          activities_participated: string[] | null
+          activity_id: string | null
+          authorized_pickup_person: string | null
+          check_in_time: string
+          check_out_time: string | null
+          checked_in_by: string
+          checked_out_by: string | null
+          child_condition_checkin: string | null
+          child_condition_checkout: string | null
+          child_id: string
+          created_at: string
+          diaper_changes: number | null
+          drop_off_notes: string | null
+          id: string
+          incident_description: string | null
+          incident_occurred: boolean | null
+          meals_eaten: string[] | null
+          mood_rating: number | null
+          nap_end_time: string | null
+          nap_start_time: string | null
+          organization_id: string
+          parent_member_id: string
+          pick_up_notes: string | null
+          pickup_person_id: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          activities_participated?: string[] | null
+          activity_id?: string | null
+          authorized_pickup_person?: string | null
+          check_in_time?: string
+          check_out_time?: string | null
+          checked_in_by: string
+          checked_out_by?: string | null
+          child_condition_checkin?: string | null
+          child_condition_checkout?: string | null
+          child_id: string
+          created_at?: string
+          diaper_changes?: number | null
+          drop_off_notes?: string | null
+          id?: string
+          incident_description?: string | null
+          incident_occurred?: boolean | null
+          meals_eaten?: string[] | null
+          mood_rating?: number | null
+          nap_end_time?: string | null
+          nap_start_time?: string | null
+          organization_id: string
+          parent_member_id: string
+          pick_up_notes?: string | null
+          pickup_person_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activities_participated?: string[] | null
+          activity_id?: string | null
+          authorized_pickup_person?: string | null
+          check_in_time?: string
+          check_out_time?: string | null
+          checked_in_by?: string
+          checked_out_by?: string | null
+          child_condition_checkin?: string | null
+          child_condition_checkout?: string | null
+          child_id?: string
+          created_at?: string
+          diaper_changes?: number | null
+          drop_off_notes?: string | null
+          id?: string
+          incident_description?: string | null
+          incident_occurred?: boolean | null
+          meals_eaten?: string[] | null
+          mood_rating?: number | null
+          nap_end_time?: string | null
+          nap_start_time?: string | null
+          organization_id?: string
+          parent_member_id?: string
+          pick_up_notes?: string | null
+          pickup_person_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "childcare_checkins_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "childcare_activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "childcare_checkins_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      childcare_daily_reports: {
+        Row: {
+          activities: Json | null
+          arrival_time: string | null
+          child_id: string
+          created_at: string
+          created_by: string
+          departure_time: string | null
+          diaper_changes: Json | null
+          id: string
+          incidents: Json | null
+          learning_milestones: string | null
+          meals: Json | null
+          mood_observations: string | null
+          naps: Json | null
+          organization_id: string
+          overall_rating: number | null
+          parent_communication: string | null
+          parent_signature_required: boolean | null
+          parent_signed_at: string | null
+          photos_taken: number | null
+          report_date: string
+          social_interactions: string | null
+          staff_notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          activities?: Json | null
+          arrival_time?: string | null
+          child_id: string
+          created_at?: string
+          created_by: string
+          departure_time?: string | null
+          diaper_changes?: Json | null
+          id?: string
+          incidents?: Json | null
+          learning_milestones?: string | null
+          meals?: Json | null
+          mood_observations?: string | null
+          naps?: Json | null
+          organization_id: string
+          overall_rating?: number | null
+          parent_communication?: string | null
+          parent_signature_required?: boolean | null
+          parent_signed_at?: string | null
+          photos_taken?: number | null
+          report_date?: string
+          social_interactions?: string | null
+          staff_notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activities?: Json | null
+          arrival_time?: string | null
+          child_id?: string
+          created_at?: string
+          created_by?: string
+          departure_time?: string | null
+          diaper_changes?: Json | null
+          id?: string
+          incidents?: Json | null
+          learning_milestones?: string | null
+          meals?: Json | null
+          mood_observations?: string | null
+          naps?: Json | null
+          organization_id?: string
+          overall_rating?: number | null
+          parent_communication?: string | null
+          parent_signature_required?: boolean | null
+          parent_signed_at?: string | null
+          photos_taken?: number | null
+          report_date?: string
+          social_interactions?: string | null
+          staff_notes?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "childcare_daily_reports_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      childcare_staff_schedules: {
+        Row: {
+          age_group_specialization: string[] | null
+          break_end: string | null
+          break_start: string | null
+          certifications: string[] | null
+          created_at: string
+          current_children_count: number | null
+          end_time: string
+          id: string
+          is_available: boolean | null
+          max_children_capacity: number | null
+          notes: string | null
+          organization_id: string
+          room_assignment: string | null
+          schedule_date: string
+          staff_id: string
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          age_group_specialization?: string[] | null
+          break_end?: string | null
+          break_start?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          current_children_count?: number | null
+          end_time: string
+          id?: string
+          is_available?: boolean | null
+          max_children_capacity?: number | null
+          notes?: string | null
+          organization_id: string
+          room_assignment?: string | null
+          schedule_date: string
+          staff_id: string
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          age_group_specialization?: string[] | null
+          break_end?: string | null
+          break_start?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          current_children_count?: number | null
+          end_time?: string
+          id?: string
+          is_available?: boolean | null
+          max_children_capacity?: number | null
+          notes?: string | null
+          organization_id?: string
+          room_assignment?: string | null
+          schedule_date?: string
+          staff_id?: string
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       class_analytics: {
         Row: {
           attendance: number
@@ -7098,6 +7550,10 @@ export type Database = {
       }
     }
     Functions: {
+      calculate_child_age_months: {
+        Args: { birth_date: string }
+        Returns: number
+      }
       create_class_reminder_notifications: {
         Args: Record<PropertyKey, never>
         Returns: undefined

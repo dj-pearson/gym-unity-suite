@@ -45,7 +45,8 @@ import {
   Lock,
   AlertTriangle,
   MapPin,
-  Waves
+  Waves,
+  Baby
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
@@ -84,7 +85,8 @@ const navigationGroups = [
       { name: 'Incidents', href: '/incidents', icon: AlertTriangle, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Court Sports', href: '/courts', icon: MapPin, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Pool Management', href: '/pool-management', icon: Waves, permission: PERMISSIONS.VIEW_SETTINGS },
-      { name: 'Spa Management', href: '/spa-management', icon: Users, permission: PERMISSIONS.VIEW_SETTINGS }
+      { name: 'Spa Management', href: '/spa-management', icon: Users, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Childcare', href: '/childcare', icon: Baby, permission: PERMISSIONS.VIEW_SETTINGS }
     ]
   },
   {

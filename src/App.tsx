@@ -48,6 +48,7 @@ import IncidentsPage from "./pages/IncidentsPage";
 import CourtSportsPage from "./pages/CourtSportsPage";
 import PoolManagementPage from "./pages/PoolManagementPage";
 import SpaManagementPage from "./pages/SpaManagementPage";
+import ChildcarePage from "./pages/ChildcarePage";
 import NotFound from "./pages/NotFound";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberClasses from "./pages/MemberClasses";
@@ -348,6 +349,14 @@ const AppRoutes = () => {
                  <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                    <DashboardLayout>
                      <SpaManagementPage />
+                   </DashboardLayout>
+                 </ProtectedRoute>
+               } />
+               
+               <Route path="/childcare" element={
+                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                   <DashboardLayout>
+                     <ChildcarePage />
                    </DashboardLayout>
                  </ProtectedRoute>
                } />
