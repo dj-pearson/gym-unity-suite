@@ -860,6 +860,83 @@ export type Database = {
         }
         Relationships: []
       }
+      court_reservations: {
+        Row: {
+          additional_players: string[] | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          checked_in_at: string | null
+          court_id: string
+          created_at: string
+          duration_minutes: number
+          end_time: string
+          hourly_rate: number
+          id: string
+          member_id: string
+          organization_id: string
+          payment_method: string | null
+          payment_status: string | null
+          reservation_date: string
+          special_requests: string | null
+          start_time: string
+          status: string
+          total_cost: number
+          updated_at: string
+        }
+        Insert: {
+          additional_players?: string[] | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          checked_in_at?: string | null
+          court_id: string
+          created_at?: string
+          duration_minutes?: number
+          end_time: string
+          hourly_rate: number
+          id?: string
+          member_id: string
+          organization_id: string
+          payment_method?: string | null
+          payment_status?: string | null
+          reservation_date: string
+          special_requests?: string | null
+          start_time: string
+          status?: string
+          total_cost: number
+          updated_at?: string
+        }
+        Update: {
+          additional_players?: string[] | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          checked_in_at?: string | null
+          court_id?: string
+          created_at?: string
+          duration_minutes?: number
+          end_time?: string
+          hourly_rate?: number
+          id?: string
+          member_id?: string
+          organization_id?: string
+          payment_method?: string | null
+          payment_status?: string | null
+          reservation_date?: string
+          special_requests?: string | null
+          start_time?: string
+          status?: string
+          total_cost?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "court_reservations_court_id_fkey"
+            columns: ["court_id"]
+            isOneToOne: false
+            referencedRelation: "sports_courts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_analytics_snapshots: {
         Row: {
           active_members: number
@@ -1027,6 +1104,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      equipment_checkout: {
+        Row: {
+          checked_in_at: string | null
+          checked_in_by: string | null
+          checked_out_at: string
+          checked_out_by: string | null
+          condition_in: string | null
+          condition_out: string | null
+          created_at: string
+          damage_fee: number | null
+          damage_notes: string | null
+          deposit_amount: number | null
+          due_back_at: string
+          equipment_item_id: string
+          id: string
+          member_id: string
+          organization_id: string
+          rental_fee: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          checked_in_at?: string | null
+          checked_in_by?: string | null
+          checked_out_at?: string
+          checked_out_by?: string | null
+          condition_in?: string | null
+          condition_out?: string | null
+          created_at?: string
+          damage_fee?: number | null
+          damage_notes?: string | null
+          deposit_amount?: number | null
+          due_back_at: string
+          equipment_item_id: string
+          id?: string
+          member_id: string
+          organization_id: string
+          rental_fee?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          checked_in_at?: string | null
+          checked_in_by?: string | null
+          checked_out_at?: string
+          checked_out_by?: string | null
+          condition_in?: string | null
+          condition_out?: string | null
+          created_at?: string
+          damage_fee?: number | null
+          damage_notes?: string | null
+          deposit_amount?: number | null
+          due_back_at?: string
+          equipment_item_id?: string
+          id?: string
+          member_id?: string
+          organization_id?: string
+          rental_fee?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       facility_areas: {
         Row: {
@@ -5239,6 +5379,154 @@ export type Database = {
           },
         ]
       }
+      sports_courts: {
+        Row: {
+          court_number: string
+          court_type: string
+          created_at: string
+          equipment_included: string[] | null
+          hourly_rate: number | null
+          id: string
+          is_available: boolean | null
+          is_indoor: boolean | null
+          is_out_of_order: boolean | null
+          lighting_available: boolean | null
+          location_id: string | null
+          maintenance_notes: string | null
+          max_players: number | null
+          organization_id: string
+          surface_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          court_number: string
+          court_type?: string
+          created_at?: string
+          equipment_included?: string[] | null
+          hourly_rate?: number | null
+          id?: string
+          is_available?: boolean | null
+          is_indoor?: boolean | null
+          is_out_of_order?: boolean | null
+          lighting_available?: boolean | null
+          location_id?: string | null
+          maintenance_notes?: string | null
+          max_players?: number | null
+          organization_id: string
+          surface_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          court_number?: string
+          court_type?: string
+          created_at?: string
+          equipment_included?: string[] | null
+          hourly_rate?: number | null
+          id?: string
+          is_available?: boolean | null
+          is_indoor?: boolean | null
+          is_out_of_order?: boolean | null
+          lighting_available?: boolean | null
+          location_id?: string | null
+          maintenance_notes?: string | null
+          max_players?: number | null
+          organization_id?: string
+          surface_type?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sports_courts_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sports_equipment: {
+        Row: {
+          brand: string | null
+          created_at: string
+          current_condition: string | null
+          deposit_required: number | null
+          description: string | null
+          equipment_code: string
+          equipment_type: string
+          id: string
+          is_available_for_rental: boolean | null
+          location_id: string | null
+          maintenance_notes: string | null
+          model: string | null
+          notes: string | null
+          organization_id: string
+          purchase_date: string | null
+          purchase_price: number | null
+          rental_rate_daily: number | null
+          rental_rate_hourly: number | null
+          size_specification: string | null
+          sport: string
+          total_rentals: number | null
+          updated_at: string
+        }
+        Insert: {
+          brand?: string | null
+          created_at?: string
+          current_condition?: string | null
+          deposit_required?: number | null
+          description?: string | null
+          equipment_code: string
+          equipment_type: string
+          id?: string
+          is_available_for_rental?: boolean | null
+          location_id?: string | null
+          maintenance_notes?: string | null
+          model?: string | null
+          notes?: string | null
+          organization_id: string
+          purchase_date?: string | null
+          purchase_price?: number | null
+          rental_rate_daily?: number | null
+          rental_rate_hourly?: number | null
+          size_specification?: string | null
+          sport: string
+          total_rentals?: number | null
+          updated_at?: string
+        }
+        Update: {
+          brand?: string | null
+          created_at?: string
+          current_condition?: string | null
+          deposit_required?: number | null
+          description?: string | null
+          equipment_code?: string
+          equipment_type?: string
+          id?: string
+          is_available_for_rental?: boolean | null
+          location_id?: string | null
+          maintenance_notes?: string | null
+          model?: string | null
+          notes?: string | null
+          organization_id?: string
+          purchase_date?: string | null
+          purchase_price?: number | null
+          rental_rate_daily?: number | null
+          rental_rate_hourly?: number | null
+          size_specification?: string | null
+          sport?: string
+          total_rentals?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sports_equipment_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       staff_performance_analytics: {
         Row: {
           average_class_utilization: number | null
@@ -5618,6 +5906,116 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tournament_participants: {
+        Row: {
+          created_at: string
+          id: string
+          member_id: string
+          partner_id: string | null
+          registration_date: string
+          seed_number: number | null
+          status: string
+          tournament_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          member_id: string
+          partner_id?: string | null
+          registration_date?: string
+          seed_number?: number | null
+          status?: string
+          tournament_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          member_id?: string
+          partner_id?: string | null
+          registration_date?: string
+          seed_number?: number | null
+          status?: string
+          tournament_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_participants_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournaments: {
+        Row: {
+          contact_info: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          entry_fee: number | null
+          id: string
+          max_participants: number | null
+          organization_id: string
+          prize_pool: number | null
+          registration_deadline: string | null
+          rules: string | null
+          runner_up_id: string | null
+          sport: string
+          status: string
+          tournament_end_date: string
+          tournament_name: string
+          tournament_start_date: string
+          tournament_type: string | null
+          updated_at: string
+          winner_id: string | null
+        }
+        Insert: {
+          contact_info?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          entry_fee?: number | null
+          id?: string
+          max_participants?: number | null
+          organization_id: string
+          prize_pool?: number | null
+          registration_deadline?: string | null
+          rules?: string | null
+          runner_up_id?: string | null
+          sport: string
+          status?: string
+          tournament_end_date: string
+          tournament_name: string
+          tournament_start_date: string
+          tournament_type?: string | null
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Update: {
+          contact_info?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          entry_fee?: number | null
+          id?: string
+          max_participants?: number | null
+          organization_id?: string
+          prize_pool?: number | null
+          registration_deadline?: string | null
+          rules?: string | null
+          runner_up_id?: string | null
+          sport?: string
+          status?: string
+          tournament_end_date?: string
+          tournament_name?: string
+          tournament_start_date?: string
+          tournament_type?: string | null
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Relationships: []
       }
       trainer_availability: {
         Row: {
