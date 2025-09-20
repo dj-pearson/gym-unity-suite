@@ -2127,6 +2127,129 @@ export type Database = {
           },
         ]
       }
+      inspection_checklist_items: {
+        Row: {
+          checklist_id: string
+          created_at: string
+          expected_condition: string | null
+          fail_criteria: string | null
+          id: string
+          inspection_method: string | null
+          is_critical: boolean | null
+          item_description: string
+          item_number: number
+          pass_criteria: string | null
+          updated_at: string
+        }
+        Insert: {
+          checklist_id: string
+          created_at?: string
+          expected_condition?: string | null
+          fail_criteria?: string | null
+          id?: string
+          inspection_method?: string | null
+          is_critical?: boolean | null
+          item_description: string
+          item_number: number
+          pass_criteria?: string | null
+          updated_at?: string
+        }
+        Update: {
+          checklist_id?: string
+          created_at?: string
+          expected_condition?: string | null
+          fail_criteria?: string | null
+          id?: string
+          inspection_method?: string | null
+          is_critical?: boolean | null
+          item_description?: string
+          item_number?: number
+          pass_criteria?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inspection_checklists: {
+        Row: {
+          checklist_name: string
+          created_at: string
+          created_by: string
+          description: string | null
+          equipment_type: string
+          frequency_days: number
+          id: string
+          is_active: boolean | null
+          organization_id: string
+          requires_certification: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          checklist_name: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          equipment_type: string
+          frequency_days?: number
+          id?: string
+          is_active?: boolean | null
+          organization_id: string
+          requires_certification?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          checklist_name?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          equipment_type?: string
+          frequency_days?: number
+          id?: string
+          is_active?: boolean | null
+          organization_id?: string
+          requires_certification?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inspection_results: {
+        Row: {
+          action_required: string | null
+          checklist_item_id: string
+          created_at: string
+          id: string
+          inspection_id: string
+          inspector_notes: string | null
+          measurements: Json | null
+          photo_urls: string[] | null
+          result_status: string
+          updated_at: string
+        }
+        Insert: {
+          action_required?: string | null
+          checklist_item_id: string
+          created_at?: string
+          id?: string
+          inspection_id: string
+          inspector_notes?: string | null
+          measurements?: Json | null
+          photo_urls?: string[] | null
+          result_status: string
+          updated_at?: string
+        }
+        Update: {
+          action_required?: string | null
+          checklist_item_id?: string
+          created_at?: string
+          id?: string
+          inspection_id?: string
+          inspector_notes?: string | null
+          measurements?: Json | null
+          photo_urls?: string[] | null
+          result_status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       instructor_availability: {
         Row: {
           created_at: string
@@ -6208,6 +6331,150 @@ export type Database = {
           total_revenue?: number
           transaction_count?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      safety_inspections: {
+        Row: {
+          actual_duration_minutes: number | null
+          checklist_id: string
+          completed_at: string | null
+          created_at: string
+          critical_failures: number | null
+          equipment_id: string
+          equipment_taken_offline: boolean | null
+          estimated_duration_minutes: number | null
+          failed_items: number | null
+          id: string
+          inspection_notes: string | null
+          inspector_id: string
+          next_inspection_date: string | null
+          organization_id: string
+          overall_status: string
+          passed_items: number | null
+          recommendations: string | null
+          requires_immediate_attention: boolean | null
+          scheduled_date: string
+          total_items: number | null
+          updated_at: string
+        }
+        Insert: {
+          actual_duration_minutes?: number | null
+          checklist_id: string
+          completed_at?: string | null
+          created_at?: string
+          critical_failures?: number | null
+          equipment_id: string
+          equipment_taken_offline?: boolean | null
+          estimated_duration_minutes?: number | null
+          failed_items?: number | null
+          id?: string
+          inspection_notes?: string | null
+          inspector_id: string
+          next_inspection_date?: string | null
+          organization_id: string
+          overall_status?: string
+          passed_items?: number | null
+          recommendations?: string | null
+          requires_immediate_attention?: boolean | null
+          scheduled_date: string
+          total_items?: number | null
+          updated_at?: string
+        }
+        Update: {
+          actual_duration_minutes?: number | null
+          checklist_id?: string
+          completed_at?: string | null
+          created_at?: string
+          critical_failures?: number | null
+          equipment_id?: string
+          equipment_taken_offline?: boolean | null
+          estimated_duration_minutes?: number | null
+          failed_items?: number | null
+          id?: string
+          inspection_notes?: string | null
+          inspector_id?: string
+          next_inspection_date?: string | null
+          organization_id?: string
+          overall_status?: string
+          passed_items?: number | null
+          recommendations?: string | null
+          requires_immediate_attention?: boolean | null
+          scheduled_date?: string
+          total_items?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      safety_violations: {
+        Row: {
+          assigned_to: string | null
+          compliance_impact: string | null
+          corrective_action_required: string | null
+          created_at: string
+          created_by: string
+          description: string
+          equipment_id: string
+          follow_up_date: string | null
+          follow_up_required: boolean | null
+          id: string
+          immediate_action_taken: string | null
+          inspection_id: string
+          organization_id: string
+          photo_documentation: string[] | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          severity_level: string
+          status: string
+          target_resolution_date: string | null
+          updated_at: string
+          violation_type: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          compliance_impact?: string | null
+          corrective_action_required?: string | null
+          created_at?: string
+          created_by: string
+          description: string
+          equipment_id: string
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: string
+          immediate_action_taken?: string | null
+          inspection_id: string
+          organization_id: string
+          photo_documentation?: string[] | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          severity_level: string
+          status?: string
+          target_resolution_date?: string | null
+          updated_at?: string
+          violation_type: string
+        }
+        Update: {
+          assigned_to?: string | null
+          compliance_impact?: string | null
+          corrective_action_required?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string
+          equipment_id?: string
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          id?: string
+          immediate_action_taken?: string | null
+          inspection_id?: string
+          organization_id?: string
+          photo_documentation?: string[] | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          severity_level?: string
+          status?: string
+          target_resolution_date?: string | null
+          updated_at?: string
+          violation_type?: string
         }
         Relationships: []
       }
