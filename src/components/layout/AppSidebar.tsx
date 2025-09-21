@@ -45,6 +45,7 @@ import {
   Lock,
   AlertTriangle,
   MapPin,
+  Building2,
   Waves,
   Baby,
   Bath,

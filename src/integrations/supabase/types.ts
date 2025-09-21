@@ -234,6 +234,57 @@ export type Database = {
         }
         Relationships: []
       }
+      bulk_member_operations: {
+        Row: {
+          completed_at: string | null
+          corporate_account_id: string | null
+          created_at: string
+          error_log: Json | null
+          failed_members: number | null
+          id: string
+          initiated_by: string
+          operation_data: Json | null
+          operation_type: string
+          organization_id: string
+          processed_members: number | null
+          started_at: string | null
+          status: string
+          total_members: number | null
+        }
+        Insert: {
+          completed_at?: string | null
+          corporate_account_id?: string | null
+          created_at?: string
+          error_log?: Json | null
+          failed_members?: number | null
+          id?: string
+          initiated_by: string
+          operation_data?: Json | null
+          operation_type: string
+          organization_id: string
+          processed_members?: number | null
+          started_at?: string | null
+          status?: string
+          total_members?: number | null
+        }
+        Update: {
+          completed_at?: string | null
+          corporate_account_id?: string | null
+          created_at?: string
+          error_log?: Json | null
+          failed_members?: number | null
+          id?: string
+          initiated_by?: string
+          operation_data?: Json | null
+          operation_type?: string
+          organization_id?: string
+          processed_members?: number | null
+          started_at?: string | null
+          status?: string
+          total_members?: number | null
+        }
+        Relationships: []
+      }
       campaign_executions: {
         Row: {
           campaign_id: string
@@ -1354,6 +1405,324 @@ export type Database = {
           template_type?: string
           updated_at?: string
           variables?: Json | null
+        }
+        Relationships: []
+      }
+      corporate_accounts: {
+        Row: {
+          account_manager_id: string | null
+          auto_billing: boolean | null
+          billing_address: string | null
+          billing_cycle: string
+          company_name: string
+          contact_email: string
+          contact_person: string
+          contact_phone: string | null
+          contract_end_date: string | null
+          contract_start_date: string
+          created_at: string
+          discount_percentage: number | null
+          id: string
+          monthly_rate_per_member: number
+          organization_id: string
+          payment_terms: string | null
+          setup_fee: number | null
+          special_terms: string | null
+          status: string
+          tax_id: string | null
+          total_member_allocation: number
+          updated_at: string
+          used_member_allocation: number
+        }
+        Insert: {
+          account_manager_id?: string | null
+          auto_billing?: boolean | null
+          billing_address?: string | null
+          billing_cycle?: string
+          company_name: string
+          contact_email: string
+          contact_person: string
+          contact_phone?: string | null
+          contract_end_date?: string | null
+          contract_start_date: string
+          created_at?: string
+          discount_percentage?: number | null
+          id?: string
+          monthly_rate_per_member: number
+          organization_id: string
+          payment_terms?: string | null
+          setup_fee?: number | null
+          special_terms?: string | null
+          status?: string
+          tax_id?: string | null
+          total_member_allocation?: number
+          updated_at?: string
+          used_member_allocation?: number
+        }
+        Update: {
+          account_manager_id?: string | null
+          auto_billing?: boolean | null
+          billing_address?: string | null
+          billing_cycle?: string
+          company_name?: string
+          contact_email?: string
+          contact_person?: string
+          contact_phone?: string | null
+          contract_end_date?: string | null
+          contract_start_date?: string
+          created_at?: string
+          discount_percentage?: number | null
+          id?: string
+          monthly_rate_per_member?: number
+          organization_id?: string
+          payment_terms?: string | null
+          setup_fee?: number | null
+          special_terms?: string | null
+          status?: string
+          tax_id?: string | null
+          total_member_allocation?: number
+          updated_at?: string
+          used_member_allocation?: number
+        }
+        Relationships: []
+      }
+      corporate_invoice_items: {
+        Row: {
+          billing_period_end: string | null
+          billing_period_start: string | null
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          item_type: string
+          member_id: string | null
+          quantity: number | null
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          billing_period_end?: string | null
+          billing_period_start?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          item_type: string
+          member_id?: string | null
+          quantity?: number | null
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          billing_period_end?: string | null
+          billing_period_start?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          item_type?: string
+          member_id?: string | null
+          quantity?: number | null
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: []
+      }
+      corporate_invoices: {
+        Row: {
+          additional_charges: number | null
+          base_amount: number
+          billing_period_end: string
+          billing_period_start: string
+          corporate_account_id: string
+          created_at: string
+          created_by: string
+          discount_amount: number | null
+          id: string
+          invoice_number: string
+          late_fee: number | null
+          member_count: number
+          notes: string | null
+          organization_id: string
+          payment_due_date: string | null
+          payment_method: string | null
+          payment_received_date: string | null
+          payment_reference: string | null
+          sent_at: string | null
+          status: string
+          tax_amount: number | null
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          additional_charges?: number | null
+          base_amount?: number
+          billing_period_end: string
+          billing_period_start: string
+          corporate_account_id: string
+          created_at?: string
+          created_by: string
+          discount_amount?: number | null
+          id?: string
+          invoice_number: string
+          late_fee?: number | null
+          member_count?: number
+          notes?: string | null
+          organization_id: string
+          payment_due_date?: string | null
+          payment_method?: string | null
+          payment_received_date?: string | null
+          payment_reference?: string | null
+          sent_at?: string | null
+          status?: string
+          tax_amount?: number | null
+          total_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          additional_charges?: number | null
+          base_amount?: number
+          billing_period_end?: string
+          billing_period_start?: string
+          corporate_account_id?: string
+          created_at?: string
+          created_by?: string
+          discount_amount?: number | null
+          id?: string
+          invoice_number?: string
+          late_fee?: number | null
+          member_count?: number
+          notes?: string | null
+          organization_id?: string
+          payment_due_date?: string | null
+          payment_method?: string | null
+          payment_received_date?: string | null
+          payment_reference?: string | null
+          sent_at?: string | null
+          status?: string
+          tax_amount?: number | null
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      corporate_members: {
+        Row: {
+          billing_responsibility: string | null
+          corporate_account_id: string
+          corporate_plan_id: string | null
+          created_at: string
+          department: string | null
+          employee_contribution: number | null
+          employee_id: string | null
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          job_title: string | null
+          manager_member_id: string | null
+          member_id: string
+          notes: string | null
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          billing_responsibility?: string | null
+          corporate_account_id: string
+          corporate_plan_id?: string | null
+          created_at?: string
+          department?: string | null
+          employee_contribution?: number | null
+          employee_id?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          job_title?: string | null
+          manager_member_id?: string | null
+          member_id: string
+          notes?: string | null
+          start_date?: string
+          updated_at?: string
+        }
+        Update: {
+          billing_responsibility?: string | null
+          corporate_account_id?: string
+          corporate_plan_id?: string | null
+          created_at?: string
+          department?: string | null
+          employee_contribution?: number | null
+          employee_id?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          job_title?: string | null
+          manager_member_id?: string | null
+          member_id?: string
+          notes?: string | null
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      corporate_membership_plans: {
+        Row: {
+          access_level: string
+          class_booking_priority: boolean | null
+          corporate_account_id: string
+          created_at: string
+          description: string | null
+          excluded_services: Json | null
+          guest_privileges: number | null
+          id: string
+          included_services: Json | null
+          is_active: boolean | null
+          locker_included: boolean | null
+          monthly_rate: number
+          organization_id: string
+          parking_included: boolean | null
+          personal_training_discount: number | null
+          plan_name: string
+          retail_discount: number | null
+          updated_at: string
+        }
+        Insert: {
+          access_level?: string
+          class_booking_priority?: boolean | null
+          corporate_account_id: string
+          created_at?: string
+          description?: string | null
+          excluded_services?: Json | null
+          guest_privileges?: number | null
+          id?: string
+          included_services?: Json | null
+          is_active?: boolean | null
+          locker_included?: boolean | null
+          monthly_rate: number
+          organization_id: string
+          parking_included?: boolean | null
+          personal_training_discount?: number | null
+          plan_name: string
+          retail_discount?: number | null
+          updated_at?: string
+        }
+        Update: {
+          access_level?: string
+          class_booking_priority?: boolean | null
+          corporate_account_id?: string
+          created_at?: string
+          description?: string | null
+          excluded_services?: Json | null
+          guest_privileges?: number | null
+          id?: string
+          included_services?: Json | null
+          is_active?: boolean | null
+          locker_included?: boolean | null
+          monthly_rate?: number
+          organization_id?: string
+          parking_included?: boolean | null
+          personal_training_discount?: number | null
+          plan_name?: string
+          retail_discount?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -9095,6 +9464,10 @@ export type Database = {
       create_class_reminder_notifications: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      generate_corporate_invoice_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       generate_member_barcode: {
         Args: Record<PropertyKey, never>
