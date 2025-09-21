@@ -27,6 +27,7 @@ import ReportsPage from "./pages/ReportsPage";
 import { CRMPage } from "./pages/CRMPage";
 import { LeadsPage } from "./pages/LeadsPage";
 import CommissionsPage from "./pages/CommissionsPage";
+import CorporatePage from "./pages/CorporatePage";
 import ReferralsPage from "./pages/ReferralsPage";
 import AttributionPage from "./pages/AttributionPage";
 import StaffPage from "./pages/StaffPage";
@@ -292,6 +293,14 @@ const AppRoutes = () => {
                 <ProtectedRoute permission={PERMISSIONS.VIEW_CRM}>
                   <DashboardLayout>
                     <AttributionPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/corporate" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_CORPORATE}>
+                  <DashboardLayout>
+                    <CorporatePage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />

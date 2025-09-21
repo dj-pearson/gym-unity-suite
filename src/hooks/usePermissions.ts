@@ -49,6 +49,13 @@ export const PERMISSIONS = {
   PROCESS_SALES: { roles: ['owner', 'manager', 'staff'] },
   MANAGE_INVENTORY: { roles: ['owner', 'manager'] },
   
+  // Corporate Management
+  VIEW_CORPORATE: { roles: ['owner', 'manager', 'staff'] },
+  CREATE_CORPORATE_ACCOUNTS: { roles: ['owner', 'manager', 'staff'] },
+  EDIT_CORPORATE_ACCOUNTS: { roles: ['owner', 'manager', 'staff'] },
+  DELETE_CORPORATE_ACCOUNTS: { roles: ['owner', 'manager'] },
+  MANAGE_CORPORATE_BILLING: { roles: ['owner', 'manager'] },
+
   // Settings & Configuration
   VIEW_SETTINGS: { roles: ['owner', 'manager'] },
   EDIT_ORGANIZATION: { roles: ['owner'] },
