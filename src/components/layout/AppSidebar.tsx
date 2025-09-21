@@ -48,7 +48,8 @@ import {
   Waves,
   Baby,
   Bath,
-  ShoppingCart
+  ShoppingCart,
+  Building
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
@@ -91,7 +92,8 @@ const navigationGroups = [
       { name: 'Spa Management', href: '/spa-management', icon: Users, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Childcare', href: '/childcare', icon: Baby, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Towel Service', href: '/towel-service', icon: Bath, permission: PERMISSIONS.VIEW_RETAIL },
-      { name: 'Pro Shop', href: '/pro-shop', icon: ShoppingCart, permission: PERMISSIONS.VIEW_RETAIL }
+      { name: 'Pro Shop', href: '/pro-shop', icon: ShoppingCart, permission: PERMISSIONS.VIEW_RETAIL },
+      { name: 'Multi-Location', href: '/multi-location', icon: Building, permission: PERMISSIONS.VIEW_SETTINGS }
     ]
   },
   {

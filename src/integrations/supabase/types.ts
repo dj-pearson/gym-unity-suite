@@ -1482,6 +1482,137 @@ export type Database = {
           },
         ]
       }
+      cross_location_assignments: {
+        Row: {
+          assignment_type: string
+          created_at: string
+          created_by: string
+          end_date: string | null
+          hourly_rate: number | null
+          id: string
+          is_active: boolean | null
+          location_id: string
+          organization_id: string
+          permissions: Json | null
+          staff_id: string
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          assignment_type?: string
+          created_at?: string
+          created_by: string
+          end_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean | null
+          location_id: string
+          organization_id: string
+          permissions?: Json | null
+          staff_id: string
+          start_date?: string
+          updated_at?: string
+        }
+        Update: {
+          assignment_type?: string
+          created_at?: string
+          created_by?: string
+          end_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean | null
+          location_id?: string
+          organization_id?: string
+          permissions?: Json | null
+          staff_id?: string
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cross_location_assignments_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cross_location_transfers: {
+        Row: {
+          approval_required: boolean | null
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          effective_date: string
+          entity_id: string
+          from_location_id: string
+          id: string
+          initiated_by: string
+          organization_id: string
+          reason: string | null
+          status: string
+          to_location_id: string
+          transfer_date: string
+          transfer_fee: number | null
+          transfer_type: string
+          updated_at: string
+        }
+        Insert: {
+          approval_required?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          effective_date?: string
+          entity_id: string
+          from_location_id: string
+          id?: string
+          initiated_by: string
+          organization_id: string
+          reason?: string | null
+          status?: string
+          to_location_id: string
+          transfer_date?: string
+          transfer_fee?: number | null
+          transfer_type: string
+          updated_at?: string
+        }
+        Update: {
+          approval_required?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          effective_date?: string
+          entity_id?: string
+          from_location_id?: string
+          id?: string
+          initiated_by?: string
+          organization_id?: string
+          reason?: string | null
+          status?: string
+          to_location_id?: string
+          transfer_date?: string
+          transfer_fee?: number | null
+          transfer_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cross_location_transfers_from_location_id_fkey"
+            columns: ["from_location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cross_location_transfers_to_location_id_fkey"
+            columns: ["to_location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_analytics_snapshots: {
         Row: {
           active_members: number
@@ -3410,37 +3541,201 @@ export type Database = {
           },
         ]
       }
+      location_analytics: {
+        Row: {
+          active_members: number | null
+          analytics_date: string
+          cancelled_members: number | null
+          classes_held: number | null
+          created_at: string
+          daily_checkins: number | null
+          equipment_maintenance_requests: number | null
+          id: string
+          location_id: string
+          new_members: number | null
+          organization_id: string
+          peak_hour_checkins: number | null
+          revenue_classes: number | null
+          revenue_memberships: number | null
+          revenue_personal_training: number | null
+          revenue_retail: number | null
+          revenue_total: number | null
+          staff_hours_worked: number | null
+          total_members: number | null
+          updated_at: string
+        }
+        Insert: {
+          active_members?: number | null
+          analytics_date?: string
+          cancelled_members?: number | null
+          classes_held?: number | null
+          created_at?: string
+          daily_checkins?: number | null
+          equipment_maintenance_requests?: number | null
+          id?: string
+          location_id: string
+          new_members?: number | null
+          organization_id: string
+          peak_hour_checkins?: number | null
+          revenue_classes?: number | null
+          revenue_memberships?: number | null
+          revenue_personal_training?: number | null
+          revenue_retail?: number | null
+          revenue_total?: number | null
+          staff_hours_worked?: number | null
+          total_members?: number | null
+          updated_at?: string
+        }
+        Update: {
+          active_members?: number | null
+          analytics_date?: string
+          cancelled_members?: number | null
+          classes_held?: number | null
+          created_at?: string
+          daily_checkins?: number | null
+          equipment_maintenance_requests?: number | null
+          id?: string
+          location_id?: string
+          new_members?: number | null
+          organization_id?: string
+          peak_hour_checkins?: number | null
+          revenue_classes?: number | null
+          revenue_memberships?: number | null
+          revenue_personal_training?: number | null
+          revenue_retail?: number | null
+          revenue_total?: number | null
+          staff_hours_worked?: number | null
+          total_members?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_analytics_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      location_hierarchies: {
+        Row: {
+          child_location_id: string
+          created_at: string
+          hierarchy_type: string
+          id: string
+          is_active: boolean | null
+          organization_id: string
+          parent_location_id: string | null
+          relationship_end_date: string | null
+          relationship_start_date: string
+          updated_at: string
+        }
+        Insert: {
+          child_location_id: string
+          created_at?: string
+          hierarchy_type?: string
+          id?: string
+          is_active?: boolean | null
+          organization_id: string
+          parent_location_id?: string | null
+          relationship_end_date?: string | null
+          relationship_start_date?: string
+          updated_at?: string
+        }
+        Update: {
+          child_location_id?: string
+          created_at?: string
+          hierarchy_type?: string
+          id?: string
+          is_active?: boolean | null
+          organization_id?: string
+          parent_location_id?: string | null
+          relationship_end_date?: string | null
+          relationship_start_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_hierarchies_child_location_id_fkey"
+            columns: ["child_location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "location_hierarchies_parent_location_id_fkey"
+            columns: ["parent_location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           address: string | null
+          amenities: Json | null
           created_at: string
+          district: string | null
           email: string | null
           id: string
+          is_headquarters: boolean | null
+          location_code: string | null
+          manager_id: string | null
+          max_capacity: number | null
           name: string
+          operating_hours: Json | null
           organization_id: string
+          parking_spaces: number | null
           phone: string | null
+          region: string | null
+          square_footage: number | null
+          status: string | null
           timezone: string | null
           updated_at: string
         }
         Insert: {
           address?: string | null
+          amenities?: Json | null
           created_at?: string
+          district?: string | null
           email?: string | null
           id?: string
+          is_headquarters?: boolean | null
+          location_code?: string | null
+          manager_id?: string | null
+          max_capacity?: number | null
           name: string
+          operating_hours?: Json | null
           organization_id: string
+          parking_spaces?: number | null
           phone?: string | null
+          region?: string | null
+          square_footage?: number | null
+          status?: string | null
           timezone?: string | null
           updated_at?: string
         }
         Update: {
           address?: string | null
+          amenities?: Json | null
           created_at?: string
+          district?: string | null
           email?: string | null
           id?: string
+          is_headquarters?: boolean | null
+          location_code?: string | null
+          manager_id?: string | null
+          max_capacity?: number | null
           name?: string
+          operating_hours?: Json | null
           organization_id?: string
+          parking_spaces?: number | null
           phone?: string | null
+          region?: string | null
+          square_footage?: number | null
+          status?: string | null
           timezone?: string | null
           updated_at?: string
         }
@@ -4578,6 +4873,65 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      member_location_access: {
+        Row: {
+          access_end_date: string | null
+          access_start_date: string
+          access_type: string
+          additional_fee: number | null
+          created_at: string
+          granted_by: string
+          id: string
+          is_active: boolean | null
+          location_id: string
+          member_id: string
+          organization_id: string
+          updated_at: string
+          visit_limit: number | null
+          visits_used: number | null
+        }
+        Insert: {
+          access_end_date?: string | null
+          access_start_date?: string
+          access_type?: string
+          additional_fee?: number | null
+          created_at?: string
+          granted_by: string
+          id?: string
+          is_active?: boolean | null
+          location_id: string
+          member_id: string
+          organization_id: string
+          updated_at?: string
+          visit_limit?: number | null
+          visits_used?: number | null
+        }
+        Update: {
+          access_end_date?: string | null
+          access_start_date?: string
+          access_type?: string
+          additional_fee?: number | null
+          created_at?: string
+          granted_by?: string
+          id?: string
+          is_active?: boolean | null
+          location_id?: string
+          member_id?: string
+          organization_id?: string
+          updated_at?: string
+          visit_limit?: number | null
+          visits_used?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_location_access_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       member_messages: {
         Row: {

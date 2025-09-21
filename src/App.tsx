@@ -44,6 +44,7 @@ import ExpenseTrackingPage from "./pages/ExpenseTrackingPage";
 import DepartmentPLPage from "./pages/DepartmentPLPage";
 import StaffCertificationPage from "./pages/StaffCertificationPage";
 import TowelServicePage from "./pages/TowelServicePage";
+import MultiLocationPage from "./pages/MultiLocationPage";
 import TabletCheckInPage from "./pages/TabletCheckInPage";
 import MobileDashboardPage from "./pages/MobileDashboardPage";
 import MobileCheckInPage from "./pages/MobileCheckInPage";
@@ -503,6 +504,14 @@ const AppRoutes = () => {
                 <ProtectedRoute permission={PERMISSIONS.VIEW_RETAIL}>
                   <DashboardLayout>
                     <TowelServicePage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/multi-location" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                  <DashboardLayout>
+                    <MultiLocationPage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />
