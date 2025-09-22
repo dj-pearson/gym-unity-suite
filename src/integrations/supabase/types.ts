@@ -6758,6 +6758,72 @@ export type Database = {
           },
         ]
       }
+      pool_maintenance_schedules: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          equipment_needed: Json | null
+          estimated_duration_minutes: number | null
+          frequency_days: number
+          id: string
+          is_active: boolean | null
+          last_completed_date: string | null
+          maintenance_type: string
+          next_due_date: string
+          organization_id: string
+          pool_id: string
+          priority: string
+          requires_pool_closure: boolean | null
+          safety_requirements: Json | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          equipment_needed?: Json | null
+          estimated_duration_minutes?: number | null
+          frequency_days?: number
+          id?: string
+          is_active?: boolean | null
+          last_completed_date?: string | null
+          maintenance_type: string
+          next_due_date: string
+          organization_id: string
+          pool_id: string
+          priority?: string
+          requires_pool_closure?: boolean | null
+          safety_requirements?: Json | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          equipment_needed?: Json | null
+          estimated_duration_minutes?: number | null
+          frequency_days?: number
+          id?: string
+          is_active?: boolean | null
+          last_completed_date?: string | null
+          maintenance_type?: string
+          next_due_date?: string
+          organization_id?: string
+          pool_id?: string
+          priority?: string
+          requires_pool_closure?: boolean | null
+          safety_requirements?: Json | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pos_products: {
         Row: {
           barcode: string | null
@@ -9073,6 +9139,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tournament_matches: {
+        Row: {
+          completed_at: string | null
+          court_id: string | null
+          created_at: string
+          id: string
+          match_number: number
+          notes: string | null
+          player1_id: string | null
+          player2_id: string | null
+          round_number: number
+          scheduled_at: string | null
+          score: string | null
+          started_at: string | null
+          status: string
+          tournament_id: string
+          updated_at: string
+          winner_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          court_id?: string | null
+          created_at?: string
+          id?: string
+          match_number: number
+          notes?: string | null
+          player1_id?: string | null
+          player2_id?: string | null
+          round_number: number
+          scheduled_at?: string | null
+          score?: string | null
+          started_at?: string | null
+          status?: string
+          tournament_id: string
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          court_id?: string | null
+          created_at?: string
+          id?: string
+          match_number?: number
+          notes?: string | null
+          player1_id?: string | null
+          player2_id?: string | null
+          round_number?: number
+          scheduled_at?: string | null
+          score?: string | null
+          started_at?: string | null
+          status?: string
+          tournament_id?: string
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Relationships: []
       }
       tournament_participants: {
         Row: {

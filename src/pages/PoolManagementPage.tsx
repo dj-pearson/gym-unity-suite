@@ -4,6 +4,7 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PoolFacilitiesManager } from '@/components/pools/PoolFacilitiesManager';
 import { PoolLaneReservationManager } from '@/components/pools/PoolLaneReservationManager';
+import PoolMaintenanceScheduler from '@/components/pools/PoolMaintenanceScheduler';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Waves, Calendar, GraduationCap, Shield, Droplets, Wrench } from 'lucide-react';
 

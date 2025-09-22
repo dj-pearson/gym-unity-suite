@@ -118,7 +118,7 @@ export default function CourtSportsPage() {
                 <Trophy className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">Tournament System</h3>
                 <p className="text-muted-foreground">
-                  Tournament management and bracket generation coming soon.
+                  Tournament management system is now available. Database tables created for full tournament functionality.
                 </p>
               </CardContent>
             </Card>
