@@ -6758,6 +6758,147 @@ export type Database = {
           },
         ]
       }
+      pos_products: {
+        Row: {
+          barcode: string | null
+          category: string
+          cost: number | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          low_stock_threshold: number | null
+          name: string
+          organization_id: string
+          price: number
+          stock_quantity: number | null
+          updated_at: string
+        }
+        Insert: {
+          barcode?: string | null
+          category?: string
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          low_stock_threshold?: number | null
+          name: string
+          organization_id: string
+          price: number
+          stock_quantity?: number | null
+          updated_at?: string
+        }
+        Update: {
+          barcode?: string | null
+          category?: string
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          low_stock_threshold?: number | null
+          name?: string
+          organization_id?: string
+          price?: number
+          stock_quantity?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pos_sale_items: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          quantity: number
+          sale_id: string
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          quantity?: number
+          sale_id: string
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          quantity?: number
+          sale_id?: string
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pos_sale_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "pos_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pos_sale_items_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "pos_sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pos_sales: {
+        Row: {
+          cashier_id: string
+          created_at: string
+          customer_id: string | null
+          discount_amount: number | null
+          id: string
+          location_id: string | null
+          organization_id: string
+          payment_method: string
+          payment_status: string
+          sale_number: string
+          subtotal: number
+          tax_amount: number
+          total_amount: number
+        }
+        Insert: {
+          cashier_id: string
+          created_at?: string
+          customer_id?: string | null
+          discount_amount?: number | null
+          id?: string
+          location_id?: string | null
+          organization_id: string
+          payment_method?: string
+          payment_status?: string
+          sale_number: string
+          subtotal?: number
+          tax_amount?: number
+          total_amount: number
+        }
+        Update: {
+          cashier_id?: string
+          created_at?: string
+          customer_id?: string | null
+          discount_amount?: number | null
+          id?: string
+          location_id?: string | null
+          organization_id?: string
+          payment_method?: string
+          payment_status?: string
+          sale_number?: string
+          subtotal?: number
+          tax_amount?: number
+          total_amount?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address_line1: string | null
@@ -9572,6 +9713,10 @@ export type Database = {
         Returns: string
       }
       generate_member_card_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_pos_sale_number: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
