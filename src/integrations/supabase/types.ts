@@ -7749,6 +7749,104 @@ export type Database = {
           },
         ]
       }
+      sms_campaign_recipients: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          delivered_at: string | null
+          error_message: string | null
+          id: string
+          recipient_id: string
+          recipient_name: string | null
+          recipient_phone: string
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          recipient_id: string
+          recipient_name?: string | null
+          recipient_phone: string
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          recipient_id?: string
+          recipient_name?: string | null
+          recipient_phone?: string
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_campaign_recipients_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "sms_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sms_campaigns: {
+        Row: {
+          campaign_name: string
+          created_at: string
+          created_by: string
+          delivery_count: number | null
+          failure_count: number | null
+          id: string
+          message_content: string
+          organization_id: string
+          recipient_count: number | null
+          recipient_type: string
+          scheduled_at: string | null
+          sent_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          campaign_name: string
+          created_at?: string
+          created_by: string
+          delivery_count?: number | null
+          failure_count?: number | null
+          id?: string
+          message_content: string
+          organization_id: string
+          recipient_count?: number | null
+          recipient_type: string
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          campaign_name?: string
+          created_at?: string
+          created_by?: string
+          delivery_count?: number | null
+          failure_count?: number | null
+          id?: string
+          message_content?: string
+          organization_id?: string
+          recipient_count?: number | null
+          recipient_type?: string
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       spa_appointments: {
         Row: {
           appointment_date: string
