@@ -210,7 +210,7 @@ export const RoleTestingPanel: React.FC = () => {
                   </div>
                   <div className="text-sm font-medium">{account.name}</div>
                   <div className="text-xs text-muted-foreground">{account.email}</div>
-                  <div className="text-xs text-muted-foreground">Password: test123</div>
+                  <div className="text-xs text-muted-foreground">Password: [Contact Admin]</div>
                 </div>
               );
             })}
