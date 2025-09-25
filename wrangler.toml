@@ -1,0 +1,23 @@
+name = "gym-unity-suite"
+compatibility_date = "2024-09-25"
+
+[build]
+command = "npm run build"
+cwd = "."
+watch_dir = "src"
+
+[site]
+bucket = "./dist"
+
+[build.upload]
+format = "service-worker"
+
+[[build.upload.rules]]
+type = "ESModule"
+globs = ["**/*.js"]
+
+[env.production]
+name = "gym-unity-suite"
+
+[env.preview]
+name = "gym-unity-suite-preview"
