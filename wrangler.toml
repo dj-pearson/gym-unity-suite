@@ -1,20 +1,11 @@
 name = "gym-unity-suite"
 compatibility_date = "2024-09-25"
 
+# Cloudflare Pages configuration
+pages_build_output_dir = "dist"
+
 [build]
 command = "npm run build"
-cwd = "."
-watch_dir = "src"
-
-[site]
-bucket = "./dist"
-
-[build.upload]
-format = "service-worker"
-
-[[build.upload.rules]]
-type = "ESModule"
-globs = ["**/*.js"]
 
 [env.production]
 name = "gym-unity-suite"
