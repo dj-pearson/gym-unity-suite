@@ -40,11 +40,11 @@ export interface AIResponse {
 // Available AI models configuration
 export const AI_MODELS: Record<string, AIModel> = {
   // Claude Models (Primary)
-  'claude-sonnet-4': {
-    id: 'claude-sonnet-4',
+  'claude-sonnet-4-0': {
+    id: 'claude-sonnet-4-0',
     name: 'Claude 4 Sonnet',
     provider: 'claude',
-    description: 'Latest Claude 4 Sonnet (alias) with superior reasoning',
+    description: 'Claude Sonnet 4 (alias) — auto-tracks latest 4.0 series',
     contextLength: 200000,
     costPer1kTokens: 0.003,
     capabilities: ['text', 'analysis', 'code', 'reasoning'],
@@ -91,7 +91,7 @@ export const AI_MODELS: Record<string, AIModel> = {
 
 export class AIService {
   private static instance: AIService;
-  private defaultModel: string = 'claude-sonnet-4';
+  private defaultModel: string = 'claude-sonnet-4-0';
 
   private constructor() {}
 
