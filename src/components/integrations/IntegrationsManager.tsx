@@ -32,12 +32,13 @@ import { format } from 'date-fns';
 interface Integration {
   id: string;
   name: string;
-  type: string;
+  integration_type: string; // Changed from 'type' to match database
   status: 'active' | 'inactive' | 'error';
   config: Record<string, any>;
-  last_sync?: string;
+  last_sync_at?: string; // Changed to match database column
   created_at: string;
   updated_at: string;
+  organization_id: string;
 }
 
 interface WebhookEndpoint {
@@ -46,20 +47,28 @@ interface WebhookEndpoint {
   url: string;
   events: string[];
   status: 'active' | 'inactive';
-  secret?: string;
-  last_triggered?: string;
+  secret_key?: string; // Changed to match database
+  retry_count: number;
+  timeout_seconds: number;
+  last_triggered_at?: string; // Changed to match database
   created_at: string;
+  updated_at: string;
+  organization_id: string;
 }
 
 interface APIKey {
   id: string;
   name: string;
   key_preview: string;
+  key_hash: string;
   permissions: string[];
-  last_used?: string;
+  last_used_at?: string;
   expires_at?: string;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'revoked';
+  created_by: string;
   created_at: string;
+  updated_at: string;
+  organization_id: string;
 }
 
 const INTEGRATION_TYPES = [
@@ -126,57 +135,55 @@ export default function IntegrationsManager() {
 
   const fetchData = async () => {
     try {
-      // In a real implementation, these would be proper tables
-      // For now, we'll use mock data
-      const mockIntegrations: Integration[] = [
-        {
-          id: '1',
-          name: 'Stripe Payment Gateway',
-          type: 'stripe',
-          status: 'active',
-          config: { publishable_key: 'pk_test_...' },
-          last_sync: new Date(Date.now() - 3600000).toISOString(),
-          created_at: new Date(Date.now() - 86400000 * 7).toISOString(),
-          updated_at: new Date(Date.now() - 3600000).toISOString()
-        },
-        {
-          id: '2',
-          name: 'Mailchimp Email Lists',
-          type: 'mailchimp',
-          status: 'inactive',
-          config: { api_key: 'hidden', list_id: 'abc123' },
-          created_at: new Date(Date.now() - 86400000 * 14).toISOString(),
-          updated_at: new Date(Date.now() - 86400000 * 3).toISOString()
-        }
-      ];
+      setLoading(true);
+      
+      // Fetch real integrations from database
+      const { data: integrationsData, error: integrationsError } = await supabase
+        .from('integrations')
+        .select('*')
+        .eq('organization_id', profile.organization_id)
+        .order('created_at', { ascending: false });
 
-      const mockWebhooks: WebhookEndpoint[] = [
-        {
-          id: '1',
-          name: 'Member Activity Sync',
-          url: 'https://api.partner.com/webhooks/members',
-          events: ['member.created', 'member.updated', 'checkin.created'],
-          status: 'active',
-          last_triggered: new Date(Date.now() - 1800000).toISOString(),
-          created_at: new Date(Date.now() - 86400000 * 5).toISOString()
-        }
-      ];
+      if (integrationsError) throw integrationsError;
 
-      const mockAPIKeys: APIKey[] = [
-        {
-          id: '1',
-          name: 'Mobile App API',
-          key_preview: 'rg_live_4f4e...',
-          permissions: ['read:members', 'write:checkins'],
-          last_used: new Date(Date.now() - 900000).toISOString(),
-          status: 'active',
-          created_at: new Date(Date.now() - 86400000 * 10).toISOString()
-        }
-      ];
+      // Fetch webhook endpoints
+      const { data: webhooksData, error: webhooksError } = await supabase
+        .from('webhook_endpoints')
+        .select('*')
+        .eq('organization_id', profile.organization_id)
+        .order('created_at', { ascending: false });
 
-      setIntegrations(mockIntegrations);
-      setWebhooks(mockWebhooks);
-      setApiKeys(mockAPIKeys);
+      if (webhooksError) throw webhooksError;
+
+      // Fetch API keys
+      const { data: apiKeysData, error: apiKeysError } = await supabase
+        .from('api_keys')
+        .select('*')
+        .eq('organization_id', profile.organization_id)
+        .order('created_at', { ascending: false });
+
+      if (apiKeysError) throw apiKeysError;
+
+      // Map database responses to typed interfaces with proper casting  
+      const typedIntegrations: Integration[] = (integrationsData || []).map(item => ({
+        ...item,
+        status: item.status as 'active' | 'inactive' | 'error',
+        config: (item.config || {}) as Record<string, any>
+      }));
+
+      const typedWebhooks: WebhookEndpoint[] = (webhooksData || []).map(item => ({
+        ...item,
+        status: item.status as 'active' | 'inactive'
+      }));
+
+      const typedApiKeys: APIKey[] = (apiKeysData || []).map(item => ({
+        ...item,
+        status: item.status as 'active' | 'inactive' | 'revoked'
+      }));
+
+      setIntegrations(typedIntegrations);
+      setWebhooks(typedWebhooks);
+      setApiKeys(typedApiKeys);
     } catch (error) {
       console.error('Error fetching integrations data:', error);
       toast({
@@ -190,55 +197,127 @@ export default function IntegrationsManager() {
   };
 
   const handleAddIntegration = async () => {
-    // In a real implementation, this would save to the database
-    const newIntegration: Integration = {
-      id: Date.now().toString(),
-      name: integrationForm.name,
-      type: integrationForm.type,
-      status: 'inactive',
-      config: integrationForm.config,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
+    if (!integrationForm.name || !integrationForm.type) {
+      toast({
+        title: "Validation Error", 
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
 
-    setIntegrations(prev => [...prev, newIntegration]);
-    setShowAddIntegration(false);
-    setIntegrationForm({ name: '', type: '', config: {} });
-    
-    toast({
-      title: "Integration Added",
-      description: "Integration has been configured successfully"
-    });
+    try {
+      const { data, error } = await supabase
+        .from('integrations')
+        .insert({
+          organization_id: profile.organization_id,
+          name: integrationForm.name,
+          integration_type: integrationForm.type,
+          status: 'inactive',
+          config: integrationForm.config
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newIntegration: Integration = {
+        ...data,
+        status: data.status as 'active' | 'inactive' | 'error',
+        config: (data.config || {}) as Record<string, any>
+      };
+
+      setIntegrations(prev => [...prev, newIntegration]);
+      setShowAddIntegration(false);
+      setIntegrationForm({ name: '', type: '', config: {} });
+      
+      toast({
+        title: "Integration Added",
+        description: "Integration has been configured successfully"
+      });
+    } catch (error) {
+      console.error('Error adding integration:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add integration",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleToggleIntegration = async (id: string, currentStatus: string) => {
     const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
     
-    setIntegrations(prev => prev.map(integration => 
-      integration.id === id 
-        ? { ...integration, status: newStatus as 'active' | 'inactive' | 'error' }
-        : integration
-    ));
+    try {
+      const { error } = await supabase
+        .from('integrations')
+        .update({ status: newStatus })
+        .eq('id', id);
 
-    toast({
-      title: newStatus === 'active' ? "Integration Enabled" : "Integration Disabled",
-      description: `Integration has been ${newStatus === 'active' ? 'enabled' : 'disabled'}`
-    });
+      if (error) throw error;
+
+      setIntegrations(prev => prev.map(integration => 
+        integration.id === id 
+          ? { ...integration, status: newStatus as 'active' | 'inactive' | 'error' }
+          : integration
+      ));
+
+      toast({
+        title: newStatus === 'active' ? "Integration Enabled" : "Integration Disabled",
+        description: `Integration has been ${newStatus === 'active' ? 'enabled' : 'disabled'}`
+      });
+    } catch (error) {
+      console.error('Error toggling integration:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update integration status",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleTestIntegration = async (integration: Integration) => {
-    toast({
-      title: "Testing Integration",
-      description: "Running connection test..."
-    });
+    try {
+      // Log the integration test activity
+      const { error: logError } = await supabase
+        .from('integration_logs')
+        .insert({
+          organization_id: profile.organization_id,
+          integration_id: integration.id,
+          event_type: 'integration.test',
+          details: { integration_name: integration.name, integration_type: integration.integration_type },
+          status: 'success'
+        });
 
-    // Simulate test
-    setTimeout(() => {
+      if (logError) console.error('Error logging integration test:', logError);
+
+      // Update last_sync_at timestamp
+      const { error: updateError } = await supabase
+        .from('integrations')
+        .update({ last_sync_at: new Date().toISOString() })
+        .eq('id', integration.id);
+
+      if (updateError) throw updateError;
+
+      // Update local state
+      setIntegrations(prev => prev.map(int => 
+        int.id === integration.id 
+          ? { ...int, last_sync_at: new Date().toISOString() }
+          : int
+      ));
+
       toast({
         title: "Test Successful",
         description: "Integration is working correctly"
       });
-    }, 2000);
+    } catch (error) {
+      console.error('Error testing integration:', error);
+      toast({
+        title: "Test Failed",
+        description: "Integration test failed",
+        variant: "destructive"
+      });
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -356,7 +435,7 @@ export default function IntegrationsManager() {
 
           <div className="grid gap-4">
             {integrations.map((integration) => {
-              const typeInfo = getIntegrationType(integration.type);
+              const typeInfo = getIntegrationType(integration.integration_type);
               
               return (
                 <Card key={integration.id}>
@@ -381,8 +460,8 @@ export default function IntegrationsManager() {
                   <CardContent>
                     <div className="flex items-center justify-between">
                       <div className="text-sm text-muted-foreground">
-                        {integration.last_sync ? (
-                          <span>Last sync: {format(new Date(integration.last_sync), 'MMM d, h:mm a')}</span>
+                        {integration.last_sync_at ? (
+                          <span>Last sync: {format(new Date(integration.last_sync_at), 'MMM d, h:mm a')}</span>
                         ) : (
                           <span>Never synced</span>
                         )}
@@ -441,9 +520,9 @@ export default function IntegrationsManager() {
                         ))}
                       </div>
                     </div>
-                    {webhook.last_triggered && (
+                    {webhook.last_triggered_at && (
                       <div className="text-sm text-muted-foreground">
-                        Last triggered: {format(new Date(webhook.last_triggered), 'MMM d, h:mm a')}
+                        Last triggered: {format(new Date(webhook.last_triggered_at), 'MMM d, h:mm a')}
                       </div>
                     )}
                   </div>
@@ -503,7 +582,7 @@ export default function IntegrationsManager() {
                     </div>
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>
-                        Last used: {apiKey.last_used ? format(new Date(apiKey.last_used), 'MMM d, h:mm a') : 'Never'}
+                        Last used: {apiKey.last_used_at ? format(new Date(apiKey.last_used_at), 'MMM d, h:mm a') : 'Never'}
                       </span>
                       {apiKey.expires_at && (
                         <span>

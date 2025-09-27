@@ -40,13 +40,15 @@ interface WebhookEndpoint {
 
 interface WebhookLog {
   id: string;
-  endpoint_id: string;
+  webhook_endpoint_id: string; // Changed to match database
   event_type: string;
   status: 'success' | 'failed' | 'retry';
   response_code?: number;
   response_body?: string;
   attempt_count: number;
+  payload?: Record<string, any>;
   created_at: string;
+  organization_id: string;
 }
 
 const AVAILABLE_EVENTS = [
@@ -89,68 +91,41 @@ export default function WebhookManager() {
 
   const fetchData = async () => {
     try {
-      // Mock data for webhook endpoints
-      const mockEndpoints: WebhookEndpoint[] = [
-        {
-          id: '1',
-          name: 'Member Activity Sync',
-          url: 'https://api.partner.com/webhooks/members',
-          events: ['member.created', 'member.updated', 'checkin.created'],
-          status: 'active',
-          secret: 'wh_secret_123...',
-          retry_count: 3,
-          timeout_seconds: 30,
-          created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-          updated_at: new Date(Date.now() - 86400000).toISOString()
-        },
-        {
-          id: '2',
-          name: 'Payment Notifications',
-          url: 'https://accounting.system.com/gym-payments',
-          events: ['payment.completed', 'payment.failed', 'membership.expired'],
-          status: 'active',
-          retry_count: 5,
-          timeout_seconds: 15,
-          created_at: new Date(Date.now() - 86400000 * 10).toISOString(),
-          updated_at: new Date(Date.now() - 3600000).toISOString()
-        }
-      ];
+      setLoading(true);
+      
+      // Fetch webhook endpoints from database
+      const { data: endpointsData, error: endpointsError } = await supabase
+        .from('webhook_endpoints')
+        .select('*')
+        .eq('organization_id', profile.organization_id)
+        .order('created_at', { ascending: false });
 
-      // Mock webhook logs
-      const mockLogs: WebhookLog[] = [
-        {
-          id: '1',
-          endpoint_id: '1',
-          event_type: 'checkin.created',
-          status: 'success',
-          response_code: 200,
-          response_body: '{"status": "received"}',
-          attempt_count: 1,
-          created_at: new Date(Date.now() - 1800000).toISOString()
-        },
-        {
-          id: '2',
-          endpoint_id: '2',
-          event_type: 'payment.completed',
-          status: 'failed',
-          response_code: 503,
-          response_body: '{"error": "Service temporarily unavailable"}',
-          attempt_count: 3,
-          created_at: new Date(Date.now() - 3600000).toISOString()
-        },
-        {
-          id: '3',
-          endpoint_id: '1',
-          event_type: 'member.created',
-          status: 'success',
-          response_code: 201,
-          attempt_count: 1,
-          created_at: new Date(Date.now() - 7200000).toISOString()
-        }
-      ];
+      if (endpointsError) throw endpointsError;
 
-      setEndpoints(mockEndpoints);
-      setLogs(mockLogs);
+      // Fetch webhook logs
+      const { data: logsData, error: logsError } = await supabase
+        .from('webhook_logs')
+        .select('*')
+        .eq('organization_id', profile.organization_id)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (logsError) throw logsError;
+
+      // Type cast the data properly
+      const typedEndpoints = (endpointsData || []).map(item => ({
+        ...item,
+        status: item.status as 'active' | 'inactive'
+      }));
+
+      const typedLogs: WebhookLog[] = (logsData || []).map(item => ({
+        ...item,
+        status: item.status as 'success' | 'failed' | 'retry',
+        payload: (item.payload || {}) as Record<string, any>
+      }));
+
+      setEndpoints(typedEndpoints);
+      setLogs(typedLogs);
     } catch (error) {
       console.error('Error fetching webhook data:', error);
       toast({
@@ -173,57 +148,105 @@ export default function WebhookManager() {
       return;
     }
 
-    const newEndpoint: WebhookEndpoint = {
-      id: Date.now().toString(),
-      ...endpointForm,
-      status: 'active',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
+    try {
+      const { data, error } = await supabase
+        .from('webhook_endpoints')
+        .insert({
+          organization_id: profile.organization_id,
+          name: endpointForm.name,
+          url: endpointForm.url,
+          events: endpointForm.events,
+          secret_key: endpointForm.secret || null,
+          retry_count: endpointForm.retry_count,
+          timeout_seconds: endpointForm.timeout_seconds,
+          status: 'active'
+        })
+        .select()
+        .single();
 
-    setEndpoints(prev => [...prev, newEndpoint]);
-    setShowAddEndpoint(false);
-    setEndpointForm({
-      name: '',
-      url: '',
-      events: [],
-      secret: '',
-      retry_count: 3,
-      timeout_seconds: 30
-    });
+      if (error) throw error;
 
-    toast({
-      title: "Webhook Created",
-      description: "Webhook endpoint has been created successfully"
-    });
+      const newEndpoint: WebhookEndpoint = {
+        ...data,
+        status: data.status as 'active' | 'inactive'
+      };
+
+      setEndpoints(prev => [newEndpoint, ...prev]);
+      setShowAddEndpoint(false);
+      setEndpointForm({
+        name: '',
+        url: '',
+        events: [],
+        secret: '',
+        retry_count: 3,
+        timeout_seconds: 30
+      });
+
+      toast({
+        title: "Webhook Created",
+        description: "Webhook endpoint has been created successfully"
+      });
+    } catch (error) {
+      console.error('Error creating webhook:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create webhook endpoint",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleTestEndpoint = async (endpoint: WebhookEndpoint) => {
     setTestingEndpoint(endpoint.id);
     
     try {
-      // Simulate webhook test
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Add test log entry
+      // Create a test log entry in the database
+      const { data, error } = await supabase
+        .from('webhook_logs')
+        .insert({
+          organization_id: profile.organization_id,
+          webhook_endpoint_id: endpoint.id,
+          event_type: 'test.ping',
+          status: 'success',
+          response_code: 200,
+          response_body: JSON.stringify({ test: 'success', timestamp: new Date().toISOString() }),
+          attempt_count: 1,
+          payload: { test_mode: true }
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Update last_triggered_at
+      const { error: updateError } = await supabase
+        .from('webhook_endpoints')
+        .update({ last_triggered_at: new Date().toISOString() })
+        .eq('id', endpoint.id);
+
+      if (updateError) console.error('Error updating last triggered:', updateError);
+
       const testLog: WebhookLog = {
-        id: Date.now().toString(),
-        endpoint_id: endpoint.id,
-        event_type: 'test.ping',
-        status: 'success',
-        response_code: 200,
-        response_body: '{"test": "success", "timestamp": "' + new Date().toISOString() + '"}',
-        attempt_count: 1,
-        created_at: new Date().toISOString()
+        ...data,
+        status: data.status as 'success' | 'failed' | 'retry',
+        payload: (data.payload || {}) as Record<string, any>
       };
 
       setLogs(prev => [testLog, ...prev]);
+
+      // Update local endpoint state
+      setEndpoints(prev => prev.map(e => 
+        e.id === endpoint.id 
+          ? { ...e, last_triggered_at: new Date().toISOString() }
+          : e
+      ));
 
       toast({
         title: "Test Successful",
         description: "Webhook endpoint responded successfully"
       });
     } catch (error) {
+      console.error('Error testing endpoint:', error);
       toast({
         title: "Test Failed",
         description: "Webhook endpoint did not respond correctly",
@@ -234,27 +257,64 @@ export default function WebhookManager() {
     }
   };
 
-  const handleToggleEndpoint = (id: string) => {
-    setEndpoints(prev => prev.map(endpoint => 
-      endpoint.id === id 
-        ? { ...endpoint, status: endpoint.status === 'active' ? 'inactive' : 'active' }
-        : endpoint
-    ));
+  const handleToggleEndpoint = async (id: string) => {
+    try {
+      const endpoint = endpoints.find(e => e.id === id);
+      if (!endpoint) return;
 
-    toast({
-      title: "Endpoint Updated",
-      description: "Webhook endpoint status has been updated"
-    });
+      const newStatus = endpoint.status === 'active' ? 'inactive' : 'active';
+      
+      const { error } = await supabase
+        .from('webhook_endpoints')
+        .update({ status: newStatus })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setEndpoints(prev => prev.map(endpoint => 
+        endpoint.id === id 
+          ? { ...endpoint, status: newStatus as 'active' | 'inactive' }
+          : endpoint
+      ));
+
+      toast({
+        title: "Endpoint Updated",
+        description: "Webhook endpoint status has been updated"
+      });
+    } catch (error) {
+      console.error('Error toggling endpoint:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update endpoint status",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleDeleteEndpoint = (id: string) => {
-    setEndpoints(prev => prev.filter(endpoint => endpoint.id !== id));
-    setLogs(prev => prev.filter(log => log.endpoint_id !== id));
+  const handleDeleteEndpoint = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('webhook_endpoints')
+        .delete()
+        .eq('id', id);
 
-    toast({
-      title: "Endpoint Deleted",
-      description: "Webhook endpoint has been deleted"
-    });
+      if (error) throw error;
+
+      setEndpoints(prev => prev.filter(endpoint => endpoint.id !== id));
+      setLogs(prev => prev.filter(log => log.webhook_endpoint_id !== id));
+
+      toast({
+        title: "Endpoint Deleted",
+        description: "Webhook endpoint has been deleted"
+      });
+    } catch (error) {
+      console.error('Error deleting endpoint:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete webhook endpoint",
+        variant: "destructive"
+      });
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -271,7 +331,7 @@ export default function WebhookManager() {
   };
 
   const getEndpointLogs = (endpointId: string) => {
-    return logs.filter(log => log.endpoint_id === endpointId).slice(0, 5);
+    return logs.filter(log => log.webhook_endpoint_id === endpointId).slice(0, 5);
   };
 
   if (loading) {
