@@ -215,7 +215,7 @@ export function AppSidebar() {
                           className={cn(
                             "w-full transition-smooth",
                             itemIsActive 
-                              ? "bg-gradient-primary text-white shadow-glow font-medium" 
+                              ? "bg-primary text-primary-foreground font-medium" 
                               : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                           )}
                           onClick={() => navigate(item.href)}
