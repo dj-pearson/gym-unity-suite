@@ -97,6 +97,51 @@ export type Database = {
           },
         ]
       }
+      api_keys: {
+        Row: {
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          key_hash: string
+          key_preview: string
+          last_used_at: string | null
+          name: string
+          organization_id: string
+          permissions: string[]
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          key_hash: string
+          key_preview: string
+          last_used_at?: string | null
+          name: string
+          organization_id: string
+          permissions?: string[]
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          key_hash?: string
+          key_preview?: string
+          last_used_at?: string | null
+          name?: string
+          organization_id?: string
+          permissions?: string[]
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blog_categories: {
         Row: {
           created_at: string
@@ -3207,6 +3252,90 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      integration_logs: {
+        Row: {
+          api_key_id: string | null
+          created_at: string
+          details: Json | null
+          event_type: string
+          id: string
+          integration_id: string | null
+          organization_id: string
+          status: string
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string
+          details?: Json | null
+          event_type: string
+          id?: string
+          integration_id?: string | null
+          organization_id: string
+          status: string
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string
+          details?: Json | null
+          event_type?: string
+          id?: string
+          integration_id?: string | null
+          organization_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_integration_logs_api_key"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_integration_logs_integration"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "integrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integrations: {
+        Row: {
+          config: Json | null
+          created_at: string
+          id: string
+          integration_type: string
+          last_sync_at: string | null
+          name: string
+          organization_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json | null
+          created_at?: string
+          id?: string
+          integration_type: string
+          last_sync_at?: string | null
+          name: string
+          organization_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json | null
+          created_at?: string
+          id?: string
+          integration_type?: string
+          last_sync_at?: string | null
+          name?: string
+          organization_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       inventory_items: {
         Row: {
@@ -9780,6 +9909,98 @@ export type Database = {
             columns: ["pool_id"]
             isOneToOne: false
             referencedRelation: "pool_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhook_endpoints: {
+        Row: {
+          created_at: string
+          events: string[]
+          id: string
+          last_triggered_at: string | null
+          name: string
+          organization_id: string
+          retry_count: number
+          secret_key: string | null
+          status: string
+          timeout_seconds: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          events?: string[]
+          id?: string
+          last_triggered_at?: string | null
+          name: string
+          organization_id: string
+          retry_count?: number
+          secret_key?: string | null
+          status?: string
+          timeout_seconds?: number
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          events?: string[]
+          id?: string
+          last_triggered_at?: string | null
+          name?: string
+          organization_id?: string
+          retry_count?: number
+          secret_key?: string | null
+          status?: string
+          timeout_seconds?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      webhook_logs: {
+        Row: {
+          attempt_count: number
+          created_at: string
+          event_type: string
+          id: string
+          organization_id: string
+          payload: Json | null
+          response_body: string | null
+          response_code: number | null
+          status: string
+          webhook_endpoint_id: string
+        }
+        Insert: {
+          attempt_count?: number
+          created_at?: string
+          event_type: string
+          id?: string
+          organization_id: string
+          payload?: Json | null
+          response_body?: string | null
+          response_code?: number | null
+          status: string
+          webhook_endpoint_id: string
+        }
+        Update: {
+          attempt_count?: number
+          created_at?: string
+          event_type?: string
+          id?: string
+          organization_id?: string
+          payload?: Json | null
+          response_body?: string | null
+          response_code?: number | null
+          status?: string
+          webhook_endpoint_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_webhook_logs_endpoint"
+            columns: ["webhook_endpoint_id"]
+            isOneToOne: false
+            referencedRelation: "webhook_endpoints"
             referencedColumns: ["id"]
           },
         ]
