@@ -61,6 +61,7 @@ export const PERMISSIONS = {
   EDIT_ORGANIZATION: { roles: ['owner'] },
   MANAGE_STAFF: { roles: ['owner', 'manager'] },
   MANAGE_LOCATIONS: { roles: ['owner'] },
+  MANAGE_SYSTEM: { roles: ['owner'] }
 } as const;
 
 export const usePermissions = () => {
