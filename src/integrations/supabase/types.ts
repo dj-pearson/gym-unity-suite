@@ -163,6 +163,9 @@ export type Database = {
           excerpt: string | null
           featured_image: string | null
           id: string
+          meta_description: string | null
+          meta_keywords: string | null
+          meta_title: string | null
           published_at: string | null
           read_time: number | null
           slug: string
@@ -178,6 +181,9 @@ export type Database = {
           excerpt?: string | null
           featured_image?: string | null
           id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          meta_title?: string | null
           published_at?: string | null
           read_time?: number | null
           slug: string
@@ -193,6 +199,9 @@ export type Database = {
           excerpt?: string | null
           featured_image?: string | null
           id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          meta_title?: string | null
           published_at?: string | null
           read_time?: number | null
           slug?: string
