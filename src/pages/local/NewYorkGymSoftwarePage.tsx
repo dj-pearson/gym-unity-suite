@@ -167,7 +167,7 @@ export default function NewYorkGymSoftwarePage() {
         {/* Navigation */}
         <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Logo size="md" showText={true} linkToHome={true} />
+            <Logo size="md" linkToHome={true} />
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4" />

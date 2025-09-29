@@ -18,12 +18,12 @@ const sizeMap = {
 export function Logo({ 
   className = '', 
   size = 'md', 
-  showText = true, 
+  showText = false, 
   linkToHome = true,
   onClick 
 }: LogoProps) {
   const logoElement = (
-    <div className={`flex items-center space-x-3 ${className}`}>
+    <div className={`flex items-center ${showText ? 'space-x-3' : ''} ${className}`}>
       <img 
         src="/assets/repclub-logo.png" 
         alt="Rep Club Logo"
