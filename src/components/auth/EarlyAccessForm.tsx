@@ -51,7 +51,7 @@ export function EarlyAccessForm({ onSuccess }: EarlyAccessFormProps) {
 
       const { error } = await supabase
         .from('early_access_requests')
-        .insert([{
+        .insert({
           name: validatedData.name,
           email: validatedData.email,
           company: validatedData.company || null,
@@ -60,7 +60,7 @@ export function EarlyAccessForm({ onSuccess }: EarlyAccessFormProps) {
           current_members: validatedData.currentMembers,
           message: validatedData.message || null,
           status: 'pending'
-        }]);
+        });
 
       if (error) {
         if (error.code === '23505') { // Unique violation

@@ -2168,6 +2168,48 @@ export type Database = {
         }
         Relationships: []
       }
+      early_access_requests: {
+        Row: {
+          business_type: string
+          company: string | null
+          created_at: string
+          current_members: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          business_type: string
+          company?: string | null
+          created_at?: string
+          current_members: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          business_type?: string
+          company?: string | null
+          created_at?: string
+          current_members?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_templates: {
         Row: {
           content: string
