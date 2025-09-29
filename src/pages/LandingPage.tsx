@@ -208,8 +208,7 @@ export default function LandingPage() {
     ]
   };
 
-  return (
-    <>
+  return (<>
       <SEOHead
         title="Gym Management Software | All-in-One Fitness Management System - Rep Club"
         description="#1 gym management software for fitness studios, gyms & boutique fitness centers. Complete member management, class scheduling, billing automation & analytics. Try free today!"
@@ -597,7 +596,6 @@ export default function LandingPage() {
       </section>
 
       <Footer />
-    </div>
-    </>
+    </div></>
   );
 }

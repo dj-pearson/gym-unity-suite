@@ -134,8 +134,7 @@ const HomeRoute = () => {
 };
 
 const App = () => {
-  return (
-    <HelmetProvider>
+  return (<HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <TooltipProvider>
@@ -147,8 +146,7 @@ const App = () => {
           </TooltipProvider>
         </AuthProvider>
       </QueryClientProvider>
-    </HelmetProvider>
-  );
+    </HelmetProvider>);
 };
 
 // Separate component for routes to ensure proper React context
@@ -166,19 +164,18 @@ const AppRoutes = () => {
     }
   }, []);
 
-  return (
-    <Routes>
-              {/* Home Route - Landing page or Dashboard */}
-              <Route path="/" element={<HomeRoute />} />
-              
-              {/* Public Routes */}
-              <Route path="/auth" element={
-                <PublicRoute>
-                  <AuthPage />
-                </PublicRoute>
-              } />
-              
-              <Route path="/blog" element={<BlogPage />} />
+  return (<Routes>
+      {/* Home Route - Landing page or Dashboard */}
+      <Route path="/" element={<HomeRoute />} />
+      
+      {/* Public Routes */}
+      <Route path="/auth" element={
+        <PublicRoute>
+          <AuthPage />
+        </PublicRoute>
+      } />
+      
+      <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/blog/best-gym-management-software-2025" element={<BestGymSoftwareBlogPost />} />
               <Route path="/blog/admin" element={
@@ -546,10 +543,9 @@ const AppRoutes = () => {
               <Route path="/compare/mindbody-alternative" element={<MindbodyAlternativePage />} />
               <Route path="/local/new-york-gym-software" element={<NewYorkGymSoftwarePage />} />
               
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-  );
+      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>);
 };
 
 export default App;
