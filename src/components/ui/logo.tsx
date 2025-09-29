@@ -25,9 +25,10 @@ export function Logo({
   const logoElement = (
     <div className={`flex items-center ${showText ? 'space-x-3' : ''} ${className}`}>
       <img 
-        src="/assets/repclub-logo.png" 
+        src="/RepClub-Logo.png" 
         alt="Rep Club Logo"
         className={`${sizeMap[size]} w-auto object-contain`}
+        translate="no"
       />
       {showText && (
         <div className="flex flex-col">
