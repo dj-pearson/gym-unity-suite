@@ -16,10 +16,10 @@ interface SEOHeadProps {
 }
 
 export function SEOHead({
-  title = 'Rep Club - Elite Fitness Management Platform',
-  description = 'Premium fitness management solutions for discerning professionals. Elite member management, luxury class scheduling, and sophisticated analytics for boutique studios and fitness centers.',
-  keywords = 'fitness management software, gym management system, boutique fitness, class scheduling, member management, fitness analytics, luxury gym software, premium fitness platform',
-  image = 'https://lovable.dev/opengraph-image-p98pqg.png',
+  title = 'Gym Management Software | All-in-One Fitness Management System - Rep Club',
+  description = '#1 gym management software for fitness studios, gyms & boutique fitness centers. Complete member management, class scheduling, billing automation & analytics. Try free today!',
+  keywords = 'gym management software, fitness management system, gym scheduling software, fitness studio management, gym billing software, fitness business software, gym CRM, fitness analytics, member management software',
+  image = 'https://repclub.app/assets/og-image.jpg',
   url,
   type = 'website',
   author = 'Rep Club',

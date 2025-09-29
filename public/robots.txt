@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 Crawl-delay: 1
 
-# Block sensitive paths
+# Block sensitive/private paths
 Disallow: /admin/
 Disallow: /dashboard/
 Disallow: /auth/
@@ -10,11 +10,31 @@ Disallow: /mobile/
 Disallow: /tablet/
 Disallow: /private/
 Disallow: /api/
+Disallow: /payment/
+Disallow: /checkout/
 
-# Allow important paths
+# Allow all SEO-important paths
+Allow: /
 Allow: /blog/
 Allow: /features/
+Allow: /solutions/
+Allow: /compare/
+Allow: /local/
+Allow: /resources/
 Allow: /pricing/
+Allow: /about/
+Allow: /contact/
+Allow: /demo/
 
-# Sitemap location
+# Block duplicate content
+Disallow: /*?*
+Disallow: /*.json$
+Disallow: /*.xml$ 
+Allow: /sitemap.xml
+Allow: /sitemap-*.xml
+
+# Sitemap locations
 Sitemap: https://repclub.app/sitemap.xml
+Sitemap: https://repclub.app/sitemap-blog.xml
+Sitemap: https://repclub.app/sitemap-features.xml
+Sitemap: https://repclub.app/sitemap-local.xml

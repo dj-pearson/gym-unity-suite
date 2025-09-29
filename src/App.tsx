@@ -66,6 +66,11 @@ import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import BlogAdminPage from "./pages/admin/BlogAdminPage";
 import AIControlPage from "./pages/AIControlPage";
+import FeaturesPage from "./pages/FeaturesPage";
+import SchedulingPage from "./pages/features/SchedulingPage";
+import MindbodyAlternativePage from "./pages/compare/MindbodyAlternativePage";
+import NewYorkGymSoftwarePage from "./pages/local/NewYorkGymSoftwarePage";
+import BestGymSoftwareBlogPost from "./pages/blog/BestGymSoftware2025";
 import { MemberLayout } from "./components/layout/MemberLayout";
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -175,6 +180,7 @@ const AppRoutes = () => {
               
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
+              <Route path="/blog/best-gym-management-software-2025" element={<BestGymSoftwareBlogPost />} />
               <Route path="/blog/admin" element={
                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                   <DashboardLayout>
@@ -533,6 +539,12 @@ const AppRoutes = () => {
                   </DashboardLayout>
                 </ProtectedRoute>
               } />
+              
+              {/* SEO & Marketing Pages */}
+              <Route path="/features" element={<FeaturesPage />} />
+              <Route path="/features/scheduling" element={<SchedulingPage />} />
+              <Route path="/compare/mindbody-alternative" element={<MindbodyAlternativePage />} />
+              <Route path="/local/new-york-gym-software" element={<NewYorkGymSoftwarePage />} />
               
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

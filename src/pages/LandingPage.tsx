@@ -211,9 +211,9 @@ export default function LandingPage() {
   return (
     <>
       <SEOHead
-        title="Rep Club - Elite Fitness Management Platform"
-        description="Premium fitness management solutions for discerning professionals. Elite member management, luxury class scheduling, and sophisticated analytics for boutique studios and fitness centers."
-        keywords="fitness management software, gym management system, boutique fitness, class scheduling, member management, fitness analytics, luxury gym software, premium fitness platform, fitness business software"
+        title="Gym Management Software | All-in-One Fitness Management System - Rep Club"
+        description="#1 gym management software for fitness studios, gyms & boutique fitness centers. Complete member management, class scheduling, billing automation & analytics. Try free today!"
+        keywords="gym management software, fitness management system, gym scheduling software, fitness studio management, gym billing software, fitness business software, gym CRM, fitness analytics, member management software, all-in-one gym software"
         structuredData={structuredData}
       />
       <div className="min-h-screen bg-gradient-subtle">
@@ -293,15 +293,15 @@ export default function LandingPage() {
               </Badge>
             </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
-              Elevate Your 
+              #1 Gym Management 
               <br />
               <span className="relative text-gradient-primary">
-                Fitness Experience
+                Software
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-              Premium management solutions for discerning fitness professionals. Be among the first to experience 
-              the future of gym management when we launch November 1st.
+              All-in-one fitness management system for gyms, studios & fitness centers. Automate scheduling, 
+              billing, member management & more. Launching November 1st - join the waitlist!
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <Button 
@@ -329,9 +329,10 @@ export default function LandingPage() {
       {/* Features Grid - separate section with standard background */}
       <section id="features" className="container mx-auto px-4 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Everything You Need to Manage Your Gym</h2>
+          <h2 className="text-4xl font-bold mb-4">Complete Gym Management Software Features</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Powerful features designed specifically for fitness businesses of all sizes
+            All-in-one fitness management system with member management, class scheduling, billing automation, 
+            and analytics designed for gyms, yoga studios, and fitness centers
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
