@@ -113,7 +113,7 @@ export function EarlyAccessForm({ onSuccess }: EarlyAccessFormProps) {
             Thank you for your interest in Rep Club. We'll review your request and be in touch soon with early access details.
           </p>
           <Badge className="bg-primary/10 text-primary border-primary/20">
-            Launching November 1st, 2024
+            Launching November 1st, 2025
           </Badge>
         </CardContent>
       </Card>
@@ -126,7 +126,7 @@ export function EarlyAccessForm({ onSuccess }: EarlyAccessFormProps) {
         <div className="flex items-center justify-center gap-2 mb-2">
           <Calendar className="w-5 h-5 text-primary" />
           <Badge className="bg-primary/10 text-primary border-primary/20">
-            Launching November 1st, 2024
+            Launching November 1st, 2025
           </Badge>
         </div>
         <CardTitle className="text-2xl">Request Early Access</CardTitle>

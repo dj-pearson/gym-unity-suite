@@ -289,7 +289,7 @@ export default function LandingPage() {
             </Badge>
             <div className="mb-4">
               <Badge className="bg-primary/20 text-primary border-primary/30 backdrop-blur-sm">
-                🚀 Launching November 1st, 2024
+                🚀 Launching November 1st, 2025
               </Badge>
             </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight drop-shadow-lg">

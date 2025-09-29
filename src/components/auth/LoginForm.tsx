@@ -138,7 +138,7 @@ export const LoginForm: React.FC = () => {
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Calendar className="w-8 h-8 text-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold mb-2">Launching November 1st, 2024</h3>
+                    <h3 className="text-lg font-semibold mb-2">Launching November 1st, 2025</h3>
                     <p className="text-sm text-muted-foreground mb-4">
                       New registrations are currently closed as we prepare for our exciting launch. 
                       Request early access to be among the first to experience Rep Club.
