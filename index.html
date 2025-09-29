@@ -47,9 +47,125 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#6366f1" />
-    <meta name=\"msapplication-TileColor\" content=\"#6366f1\" />
+    <meta name="msapplication-TileColor" content="#6366f1" />
     
-    <!-- Structured Data for Organization & Software Application -->\n    <script type=\"application/ld+json\">\n    {\n      \"@context\": \"https://schema.org\",\n      \"@graph\": [\n        {\n          \"@type\": \"Organization\",\n          \"@id\": \"https://repclub.app/#organization\",\n          \"name\": \"Rep Club\",\n          \"alternateName\": \"Rep Club Fitness Management\",\n          \"url\": \"https://repclub.app/\",\n          \"logo\": {\n            \"@type\": \"ImageObject\",\n            \"@id\": \"https://repclub.app/#logo\",\n            \"url\": \"https://repclub.app/assets/logo.png\",\n            \"contentUrl\": \"https://repclub.app/assets/logo.png\",\n            \"width\": 512,\n            \"height\": 512,\n            \"caption\": \"Rep Club Logo\"\n          },\n          \"sameAs\": [\n            \"https://twitter.com/RepClubFitness\",\n            \"https://linkedin.com/company/repclub\",\n            \"https://facebook.com/RepClubFitness\"\n          ],\n          \"contactPoint\": {\n            \"@type\": \"ContactPoint\",\n            \"telephone\": \"+1-800-REP-CLUB\",\n            \"contactType\": \"customer service\",\n            \"areaServed\": \"US\",\n            \"availableLanguage\": \"English\"\n          }\n        },\n        {\n          \"@type\": \"SoftwareApplication\",\n          \"@id\": \"https://repclub.app/#software\",\n          \"name\": \"Rep Club - Gym Management Software\",\n          \"description\": \"All-in-one gym management software for fitness studios, gyms, and boutique fitness centers. Complete member management, class scheduling, billing automation, and analytics.\",\n          \"url\": \"https://repclub.app/\",\n          \"applicationCategory\": \"BusinessApplication\",\n          \"applicationSubCategory\": \"Fitness Management Software\",\n          \"operatingSystem\": \"Web Browser, iOS, Android\",\n          \"softwareVersion\": \"2.0\",\n          \"releaseNotes\": \"Enhanced AI features, improved mobile experience, advanced analytics\",\n          \"screenshot\": \"https://repclub.app/assets/dashboard-screenshot.jpg\",\n          \"featureList\": [\n            \"Member Management System\",\n            \"Class Scheduling & Booking\",\n            \"Automated Billing & Payments\", \n            \"Real-time Analytics & Reporting\",\n            \"Mobile Check-in System\",\n            \"Staff Management & Payroll\",\n            \"Equipment Management\",\n            \"Marketing Automation\",\n            \"Multi-location Support\"\n          ],\n          \"offers\": [\n            {\n              \"@type\": \"Offer\",\n              \"name\": \"Studio Plan\",\n              \"price\": \"149.00\",\n              \"priceCurrency\": \"USD\",\n              \"priceValidUntil\": \"2025-12-31\",\n              \"availability\": \"https://schema.org/InStock\",\n              \"validFrom\": \"2024-11-01\"\n            },\n            {\n              \"@type\": \"Offer\",\n              \"name\": \"Professional Plan\",\n              \"price\": \"349.00\",\n              \"priceCurrency\": \"USD\",\n              \"priceValidUntil\": \"2025-12-31\",\n              \"availability\": \"https://schema.org/InStock\",\n              \"validFrom\": \"2024-11-01\"\n            },\n            {\n              \"@type\": \"Offer\",\n              \"name\": \"Enterprise Plan\",\n              \"price\": \"649.00\",\n              \"priceCurrency\": \"USD\",\n              \"priceValidUntil\": \"2025-12-31\",\n              \"availability\": \"https://schema.org/InStock\",\n              \"validFrom\": \"2024-11-01\"\n            }\n          ],\n          \"provider\": {\n            \"@id\": \"https://repclub.app/#organization\"\n          },\n          \"publisher\": {\n            \"@id\": \"https://repclub.app/#organization\"\n          },\n          \"aggregateRating\": {\n            \"@type\": \"AggregateRating\",\n            \"ratingValue\": \"4.9\",\n            \"reviewCount\": \"247\",\n            \"bestRating\": \"5\",\n            \"worstRating\": \"1\"\n          }\n        },\n        {\n          \"@type\": \"WebSite\",\n          \"@id\": \"https://repclub.app/#website\",\n          \"url\": \"https://repclub.app/\",\n          \"name\": \"Rep Club - Gym Management Software\",\n          \"description\": \"#1 gym management software for fitness studios and gyms. Complete business management solution.\",\n          \"publisher\": {\n            \"@id\": \"https://repclub.app/#organization\"\n          },\n          \"potentialAction\": {\n            \"@type\": \"SearchAction\",\n            \"target\": \"https://repclub.app/search?q={search_term_string}\",\n            \"query-input\": \"required name=search_term_string\"\n          }\n        }\n      ]\n    }\n    </script>\n  </head>
+    <!-- Structured Data for Organization & Software Application -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://repclub.app/#organization",
+          "name": "Rep Club",
+          "alternateName": "Rep Club Fitness Management",
+          "url": "https://repclub.app/",
+          "logo": {
+            "@type": "ImageObject",
+            "@id": "https://repclub.app/#logo",
+            "url": "https://repclub.app/assets/logo.png",
+            "contentUrl": "https://repclub.app/assets/logo.png",
+            "width": 512,
+            "height": 512,
+            "caption": "Rep Club Logo"
+          },
+          "sameAs": [
+            "https://twitter.com/RepClubFitness",
+            "https://linkedin.com/company/repclub",
+            "https://facebook.com/RepClubFitness"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+1-800-REP-CLUB",
+            "contactType": "customer service",
+            "areaServed": "US",
+            "availableLanguage": "English"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://repclub.app/#software",
+          "name": "Rep Club - Gym Management Software",
+          "description": "All-in-one gym management software for fitness studios, gyms, and boutique fitness centers. Complete member management, class scheduling, billing automation, and analytics.",
+          "url": "https://repclub.app/",
+          "applicationCategory": "BusinessApplication",
+          "applicationSubCategory": "Fitness Management Software",
+          "operatingSystem": "Web Browser, iOS, Android",
+          "softwareVersion": "2.0",
+          "releaseNotes": "Enhanced AI features, improved mobile experience, advanced analytics",
+          "screenshot": "https://repclub.app/assets/dashboard-screenshot.jpg",
+          "featureList": [
+            "Member Management System",
+            "Class Scheduling & Booking",
+            "Automated Billing & Payments", 
+            "Real-time Analytics & Reporting",
+            "Mobile Check-in System",
+            "Staff Management & Payroll",
+            "Equipment Management",
+            "Marketing Automation",
+            "Multi-location Support"
+          ],
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Studio Plan",
+              "price": "149.00",
+              "priceCurrency": "USD",
+              "priceValidUntil": "2025-12-31",
+              "availability": "https://schema.org/InStock",
+              "validFrom": "2024-11-01"
+            },
+            {
+              "@type": "Offer",
+              "name": "Professional Plan",
+              "price": "349.00",
+              "priceCurrency": "USD",
+              "priceValidUntil": "2025-12-31",
+              "availability": "https://schema.org/InStock",
+              "validFrom": "2024-11-01"
+            },
+            {
+              "@type": "Offer",
+              "name": "Enterprise Plan",
+              "price": "649.00",
+              "priceCurrency": "USD",
+              "priceValidUntil": "2025-12-31",
+              "availability": "https://schema.org/InStock",
+              "validFrom": "2024-11-01"
+            }
+          ],
+          "provider": {
+            "@id": "https://repclub.app/#organization"
+          },
+          "publisher": {
+            "@id": "https://repclub.app/#organization"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "247",
+            "bestRating": "5",
+            "worstRating": "1"
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://repclub.app/#website",
+          "url": "https://repclub.app/",
+          "name": "Rep Club - Gym Management Software",
+          "description": "#1 gym management software for fitness studios and gyms. Complete business management solution.",
+          "publisher": {
+            "@id": "https://repclub.app/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://repclub.app/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>\n  </head>
 
   <body>
     <div id="root"></div>

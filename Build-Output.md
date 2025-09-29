@@ -1,51 +1,62 @@
-2025-09-25T20:37:53.269204Z	Cloning repository...
-2025-09-25T20:37:54.707316Z	From https://github.com/dj-pearson/gym-unity-suite
-2025-09-25T20:37:54.707828Z	 * branch            75ee4782b927b5a510c03b3831037bd0a831f7d9 -> FETCH_HEAD
-2025-09-25T20:37:54.707955Z	
-2025-09-25T20:37:54.821172Z	HEAD is now at 75ee478 Remove unused build commands and environment configurations from wrangler.toml
-2025-09-25T20:37:54.821698Z	
-2025-09-25T20:37:54.898923Z	
-2025-09-25T20:37:54.899634Z	Using v2 root directory strategy
-2025-09-25T20:37:54.921653Z	Success: Finished cloning repository files
-2025-09-25T20:37:56.733126Z	Checking for configuration in a Wrangler configuration file (BETA)
-2025-09-25T20:37:56.734176Z	
-2025-09-25T20:37:56.735439Z	Found wrangler.toml file. Reading build configuration...
-2025-09-25T20:37:56.7419Z	pages_build_output_dir: dist
-2025-09-25T20:37:56.742054Z	Build environment variables: (none found)
-2025-09-25T20:37:57.850171Z	Successfully read wrangler.toml file.
-2025-09-25T20:37:57.916294Z	Found a .tool-versions file in user-specified root directory. Installing dependencies.
-2025-09-25T20:37:58.444345Z	bun 1.2.15 is already installed
-2025-09-25T20:37:58.544252Z	dart-sass-embedded 1.62.1 is already installed
-2025-09-25T20:37:58.644326Z	golang 1.24.3 is already installed
-2025-09-25T20:37:58.744531Z	hugo extended_0.147.7 is already installed
-2025-09-25T20:37:59.83371Z	Trying to update node-build... ok
-2025-09-25T20:37:59.932365Z	To follow progress, use 'tail -f /tmp/node-build.20250925203759.741.log' or pass --verbose
-2025-09-25T20:38:00.033577Z	Downloading node-v18.20.8-linux-x64.tar.gz...
-2025-09-25T20:38:00.289076Z	-> https://nodejs.org/dist/v18.20.8/node-v18.20.8-linux-x64.tar.gz
-2025-09-25T20:38:02.114329Z	
-2025-09-25T20:38:02.114677Z	WARNING: node-v18.20.8-linux-x64 is in LTS Maintenance mode and nearing its end of life.
-2025-09-25T20:38:02.114837Z	It only receives *critical* security updates, *critical* bug fixes and documentation updates.
-2025-09-25T20:38:02.11501Z	
-2025-09-25T20:38:02.115146Z	Installing node-v18.20.8-linux-x64...
-2025-09-25T20:38:02.492025Z	Installed node-v18.20.8-linux-x64 to /opt/buildhome/.asdf/installs/nodejs/18.20.8
-2025-09-25T20:38:02.492333Z	
-2025-09-25T20:38:03.269382Z	python 3.13.3 is already installed
-2025-09-25T20:38:03.293082Z	python 2.7.18 is already installed
-2025-09-25T20:38:03.401029Z	ruby 3.4.4 is already installed
-2025-09-25T20:38:03.415177Z	Detected the following tools from environment: nodejs@18.20.8, npm@10.9.2, bun@1.2.15
-2025-09-25T20:38:03.415424Z	Installing nodejs 18.20.8
-2025-09-25T20:38:03.47635Z	nodejs 18.20.8 is already installed
-2025-09-25T20:38:03.804445Z	Installing project dependencies: bun install --frozen-lockfile
-2025-09-25T20:38:04.018832Z	[0.06ms] ".env"
-2025-09-25T20:38:04.020253Z	bun install v1.2.15 (df017990)
-2025-09-25T20:38:04.024132Z	Resolving dependencies
-2025-09-25T20:38:04.473062Z	Resolved, downloaded and extracted [298]
-2025-09-25T20:38:04.474855Z	error: lockfile had changes, but lockfile is frozen
-2025-09-25T20:38:04.47503Z	note: try re-running without --frozen-lockfile and commit the updated lockfile
-2025-09-25T20:38:04.486035Z	Error: Exit with error code: 1
-2025-09-25T20:38:04.486516Z	    at ChildProcess.<anonymous> (/snapshot/dist/run-build.js)
-2025-09-25T20:38:04.486795Z	    at Object.onceWrapper (node:events:652:26)
-2025-09-25T20:38:04.486917Z	    at ChildProcess.emit (node:events:537:28)
-2025-09-25T20:38:04.487023Z	    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
-2025-09-25T20:38:04.495577Z	Failed: build command exited with code: 1
-2025-09-25T20:38:07.04274Z	Failed: error occurred while running build command
+2025-09-29T17:41:24.077724Z	Cloning repository...
+2025-09-29T17:41:25.486586Z	From https://github.com/dj-pearson/gym-unity-suite
+2025-09-29T17:41:25.487114Z	 * branch            f1e2ed7412b3c66c6e772221b0286306f0b101ab -> FETCH_HEAD
+2025-09-29T17:41:25.487243Z	
+2025-09-29T17:41:25.600759Z	HEAD is now at f1e2ed7 Add Scheduling and New York Gym Software pages with structured data, features, testimonials, and FAQs
+2025-09-29T17:41:25.601231Z	
+2025-09-29T17:41:25.684235Z	
+2025-09-29T17:41:25.684706Z	Using v2 root directory strategy
+2025-09-29T17:41:25.708959Z	Success: Finished cloning repository files
+2025-09-29T17:41:27.501664Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-09-29T17:41:27.502395Z	
+2025-09-29T17:41:27.503716Z	Found wrangler.toml file. Reading build configuration...
+2025-09-29T17:41:27.509699Z	pages_build_output_dir: dist
+2025-09-29T17:41:27.509976Z	Build environment variables: (none found)
+2025-09-29T17:41:28.626897Z	Successfully read wrangler.toml file.
+2025-09-29T17:41:28.70364Z	Detected the following tools from environment: nodejs@18.20.8, npm@10.9.2
+2025-09-29T17:41:28.704183Z	Installing nodejs 18.20.8
+2025-09-29T17:41:29.766986Z	Trying to update node-build... ok
+2025-09-29T17:41:29.868113Z	To follow progress, use 'tail -f /tmp/node-build.20250929174129.494.log' or pass --verbose
+2025-09-29T17:41:29.973779Z	Downloading node-v18.20.8-linux-x64.tar.gz...
+2025-09-29T17:41:30.23769Z	-> https://nodejs.org/dist/v18.20.8/node-v18.20.8-linux-x64.tar.gz
+2025-09-29T17:41:31.853461Z	
+2025-09-29T17:41:31.853758Z	WARNING: node-v18.20.8-linux-x64 is in LTS Maintenance mode and nearing its end of life.
+2025-09-29T17:41:31.853907Z	It only receives *critical* security updates, *critical* bug fixes and documentation updates.
+2025-09-29T17:41:31.85403Z	
+2025-09-29T17:41:31.854176Z	Installing node-v18.20.8-linux-x64...
+2025-09-29T17:41:32.243666Z	Installed node-v18.20.8-linux-x64 to /opt/buildhome/.asdf/installs/nodejs/18.20.8
+2025-09-29T17:41:32.243987Z	
+2025-09-29T17:41:33.277601Z	Installing project dependencies: npm clean-install --progress=false
+2025-09-29T17:41:42.14947Z	
+2025-09-29T17:41:42.149829Z	added 449 packages in 9s
+2025-09-29T17:41:42.168338Z	Executing user command: npm run build
+2025-09-29T17:41:42.587536Z	
+2025-09-29T17:41:42.587788Z	> vite_react_shadcn_ts@0.0.0 build
+2025-09-29T17:41:42.588314Z	> vite build
+2025-09-29T17:41:42.58844Z	
+2025-09-29T17:41:42.878529Z	[36mvite v5.4.19 [32mbuilding for production...[36m[39m
+2025-09-29T17:41:42.938189Z	[32m✓[39m 0 modules transformed.
+2025-09-29T17:41:42.946132Z	[31mx[39m Build failed in 40ms
+2025-09-29T17:41:42.946615Z	[31merror during build:
+2025-09-29T17:41:42.946821Z	[31m[vite:build-html] Unable to parse HTML; parse5 error code unexpected-character-in-unquoted-attribute-value
+2025-09-29T17:41:42.946958Z	 at /opt/buildhome/repo/index.html:50:17
+2025-09-29T17:41:42.947078Z	48 |      <meta name="mobile-web-app-capable" content="yes" />
+2025-09-29T17:41:42.947242Z	49 |      <meta name="theme-color" content="#6366f1" />
+2025-09-29T17:41:42.947348Z	50 |      <meta name=\"msapplication-TileColor\" content=\"#6366f1\" />
+2025-09-29T17:41:42.947475Z	   |                  ^
+2025-09-29T17:41:42.947596Z	51 |      
+2025-09-29T17:41:42.947751Z	52 |      <!-- Structured Data for Organization & Software Application -->\n    <script type=\"application/ld+json\">\n    {\n      \"@context\": \"https://schema.org\",\n      \"@graph\": [\n        {\n          \"@type\": \"Organization\",\n          \"@id\": \"https://repclub.app/#organization\",\n          \"name\": \"Rep Club\",\n          \"alternateName\": \"Rep Club Fitness Management\",\n          \"url\": \"https://repclub.app/\",\n          \"logo\": {\n            \"@type\": \"ImageObject\",\n            \"@id\": \"https://repclub.app/#logo\",\n            \"url\": \"https://repclub.app/assets/logo.png\",\n            \"contentUrl\": \"https://repclub.app/assets/logo.png\",\n            \"width\": 512,\n            \"height\": 512,\n            \"caption\": \"Rep Club Logo\"\n          },\n          \"sameAs\": [\n            \"https://twitter.com/RepClubFitness\",\n            \"https://linkedin.com/company/repclub\",\n            \"https://facebook.com/RepClubFitness\"\n          ],\n          \"contactPoint\": {\n            \"@type\": \"ContactPoint\",\n            \"telephone\": \"+1-800-REP-CLUB\",\n            \"contactType\": \"customer service\",\n            \"areaServed\": \"US\",\n            \"availableLanguage\": \"English\"\n          }\n        },\n        {\n          \"@type\": \"SoftwareApplication\",\n          \"@id\": \"https://repclub.app/#software\",\n          \"name\": \"Rep Club - Gym Management Software\",\n          \"description\": \"All-in-one gym management software for fitness studios, gyms, and boutique fitness centers. Complete member management, class scheduling, billing automation, and analytics.\",\n          \"url\": \"https://repclub.app/\",\n          \"applicationCategory\": \"BusinessApplication\",\n          \"applicationSubCategory\": \"Fitness Management Software\",\n          \"operatingSystem\": \"Web Browser, iOS, Android\",\n          \"softwareVersion\": \"2.0\",\n          \"releaseNotes\": \"Enhanced AI features, improved mobile experience, advanced analytics\",\n          \"screenshot\": \"https://repclub.app/assets/dashboard-screenshot.jpg\",\n          \"featureList\": [\n            \"Member Management System\",\n            \"Class Scheduling & Booking\",\n            \"Automated Billing & Payments\", \n            \"Real-time Analytics & Reporting\",\n            \"Mobile Check-in System\",\n            \"Staff Management & Payroll\",\n            \"Equipment Management\",\n            \"Marketing Automation\",\n            \"Multi-location Support\"\n          ],\n          \"offers\": [\n            {\n              \"@type\": \"Offer\",\n              \"name\": \"Studio Plan\",\n              \"price\": \"149.00\",\n              \"priceCurrency\": \"USD\",\n              \"priceValidUntil\": \"2025-12-31\",\n              \"availability\": \"https://schema.org/InStock\",\n              \"validFrom\": \"2024-11-01\"\n            },\n            {\n              \"@type\": \"Offer\",\n              \"name\": \"Professional Plan\",\n              \"price\": \"349.00\",\n              \"priceCurrency\": \"USD\",\n              \"priceValidUntil\": \"2025-12-31\",\n              \"availability\": \"https://schema.org/InStock\",\n              \"validFrom\": \"2024-11-01\"\n            },\n            {\n              \"@type\": \"Offer\",\n              \"name\": \"Enterprise Plan\",\n              \"price\": \"649.00\",\n              \"priceCurrency\": \"USD\",\n              \"priceValidUntil\": \"2025-12-31\",\n              \"availability\": \"https://schema.org/InStock\",\n              \"validFrom\": \"2024-11-01\"\n            }\n          ],\n          \"provider\": {\n            \"@id\": \"https://repclub.app/#organization\"\n          },\n          \"publisher\": {\n            \"@id\": \"https://repclub.app/#organization\"\n          },\n          \"aggregateRating\": {\n            \"@type\": \"AggregateRating\",\n            \"ratingValue\": \"4.9\",\n            \"reviewCount\": \"247\",\n            \"bestRating\": \"5\",\n            \"worstRating\": \"1\"\n          }\n        },\n        {\n          \"@type\": \"WebSite\",\n          \"@id\": \"https://repclub.app/#website\",\n          \"url\": \"https://repclub.app/\",\n          \"name\": \"Rep Club - Gym Management Software\",\n          \"description\": \"#1 gym management software for fitness studios and gyms. Complete business management solution.\",\n          \"publisher\": {\n            \"@id\": \"https://repclub.app/#organization\"\n          },\n          \"potentialAction\": {\n            \"@type\": \"SearchAction\",\n            \"target\": \"https://repclub.app/search?q={search_term_string}\",\n            \"query-input\": \"required name=search_term_string\"\n          }\n        }\n      ]\n    }\n    </script>\n  </head>[31m
+2025-09-29T17:41:42.947966Z	file: [36m/opt/buildhome/repo/index.html[31m
+2025-09-29T17:41:42.948053Z	    at handleParseError (file:///opt/buildhome/repo/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:35172:9)
+2025-09-29T17:41:42.948158Z	    at Parser.onParseError (file:///opt/buildhome/repo/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:35097:7)
+2025-09-29T17:41:42.948266Z	    at Tokenizer._err (file:///opt/buildhome/repo/node_modules/vite/dist/node/chunks/dep-D-7KCb9p.js:1155:89)
+2025-09-29T17:41:42.948351Z	    at Tokenizer._stateAttributeValueUnquoted (file:///opt/buildhome/repo/node_modules/vite/dist/node/chunks/dep-D-7KCb9p.js:2717:22)
+2025-09-29T17:41:42.948436Z	    at Tokenizer._callState (file:///opt/buildhome/repo/node_modules/vite/dist/node/chunks/dep-D-7KCb9p.js:1662:22)
+2025-09-29T17:41:42.948495Z	    at Tokenizer._runParsingLoop (file:///opt/buildhome/repo/node_modules/vite/dist/node/chunks/dep-D-7KCb9p.js:1179:22)
+2025-09-29T17:41:42.948561Z	    at Tokenizer.write (file:///opt/buildhome/repo/node_modules/vite/dist/node/chunks/dep-D-7KCb9p.js:1204:14)
+2025-09-29T17:41:42.948677Z	    at Parser.parse (file:///opt/buildhome/repo/node_modules/vite/dist/node/chunks/dep-D-7KCb9p.js:4886:26)
+2025-09-29T17:41:42.948781Z	    at parse (file:///opt/buildhome/repo/node_modules/vite/dist/node/chunks/dep-D-7KCb9p.js:7957:19)
+2025-09-29T17:41:42.948881Z	    at traverseHtml (file:///opt/buildhome/repo/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:35092:15)[39m
+2025-09-29T17:41:42.963428Z	Failed: Error while executing user command. Exited with error code: 1
+2025-09-29T17:41:42.973035Z	Failed: build command exited with code: 1
+2025-09-29T17:41:44.18248Z	Failed: error occurred while running build command
