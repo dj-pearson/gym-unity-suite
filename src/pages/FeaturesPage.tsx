@@ -19,6 +19,7 @@ import {
   Building2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Logo } from '@/components/ui/logo';
 
 const features = [
   {
@@ -148,7 +149,7 @@ export default function FeaturesPage() {
         <title>Gym Management Software Features | Complete Feature List - Rep Club</title>
         <meta name="description" content="Comprehensive gym management software features including class scheduling, automated billing, member management, CRM, analytics & reporting. See all Rep Club features." />
         <meta name="keywords" content="gym management software features, fitness software features, gym scheduling software, gym billing software, gym CRM, member management system" />
-        <link rel="canonical" href="https://repclub.app/features/" />
+        <link rel="canonical" href="https://repclub.net/features/" />
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
         </script>
@@ -158,13 +159,7 @@ export default function FeaturesPage() {
         {/* Navigation */}
         <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Button 
-              variant="ghost"
-              onClick={() => navigate('/')}
-              className="text-foreground hover:text-primary font-medium"
-            >
-              ← Back to Home
-            </Button>
+            <Logo size="md" showText={true} linkToHome={true} />
             <Button 
               onClick={() => navigate('/auth')}
               className="bg-gradient-primary hover:opacity-90"

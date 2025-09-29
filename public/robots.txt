@@ -34,7 +34,7 @@ Allow: /sitemap.xml
 Allow: /sitemap-*.xml
 
 # Sitemap locations
-Sitemap: https://repclub.app/sitemap.xml
-Sitemap: https://repclub.app/sitemap-blog.xml
-Sitemap: https://repclub.app/sitemap-features.xml
-Sitemap: https://repclub.app/sitemap-local.xml
+Sitemap: https://repclub.net/sitemap.xml
+Sitemap: https://repclub.net/sitemap-blog.xml
+Sitemap: https://repclub.net/sitemap-features.xml
+Sitemap: https://repclub.net/sitemap-local.xml

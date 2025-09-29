@@ -18,6 +18,7 @@ import {
   Shield
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Logo } from '@/components/ui/logo';
 
 const schedulingFeatures = [
   {
@@ -95,7 +96,7 @@ export default function SchedulingPage() {
     "@type": "SoftwareApplication",
     "name": "Rep Club Gym Scheduling Software",
     "description": "Advanced gym and fitness class scheduling software with real-time booking, automated waitlists, and mobile-first design. Perfect for gyms, yoga studios, and fitness centers.",
-    "url": "https://repclub.app/features/scheduling",
+    "url": "https://repclub.net/features/scheduling",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web Browser, iOS, Android",
     "featureList": schedulingFeatures.map(f => f.title),
@@ -145,7 +146,7 @@ export default function SchedulingPage() {
         <title>Gym Scheduling Software | Class Booking System for Fitness Centers - Rep Club</title>
         <meta name="description" content="Advanced gym scheduling software with real-time class booking, automated waitlists & mobile optimization. Perfect for gyms, yoga studios & fitness centers. Try free!" />
         <meta name="keywords" content="gym scheduling software, fitness class booking system, gym class scheduling, fitness studio booking software, yoga class scheduling, gym booking app" />
-        <link rel="canonical" href="https://repclub.app/features/scheduling" />
+        <link rel="canonical" href="https://repclub.net/features/scheduling" />
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
         </script>
@@ -158,19 +159,22 @@ export default function SchedulingPage() {
         {/* Navigation */}
         <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Button 
-              variant="ghost"
-              onClick={() => navigate('/features')}
-              className="text-foreground hover:text-primary font-medium"
-            >
-              ← Back to Features
-            </Button>
-            <Button 
-              onClick={() => navigate('/auth')}
-              className="bg-gradient-primary hover:opacity-90"
-            >
-              Start Free Trial
-            </Button>
+            <Logo size="md" showText={true} linkToHome={true} />
+            <div className="flex items-center space-x-4">
+              <Button 
+                variant="ghost"
+                onClick={() => navigate('/features')}
+                className="text-foreground hover:text-primary font-medium"
+              >
+                ← Features
+              </Button>
+              <Button 
+                onClick={() => navigate('/auth')}
+                className="bg-gradient-primary hover:opacity-90"
+              >
+                Start Free Trial
+              </Button>
+            </div>
           </div>
         </nav>
 

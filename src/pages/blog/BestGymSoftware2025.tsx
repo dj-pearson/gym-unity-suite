@@ -8,7 +8,7 @@ const publishedDate = "2025-09-29T10:00:00Z";
 const readTime = 12;
 const category = "Software Reviews";
 const tags = ["Gym Management Software", "Fitness Technology", "Business Software", "Gym Operations"];
-const featuredImage = "https://repclub.app/assets/blog/best-gym-software-2025.jpg";
+const featuredImage = "https://repclub.net/assets/blog/best-gym-software-2025.jpg";
 
 const content = `
 <h2>What is Gym Management Software?</h2>
@@ -332,13 +332,13 @@ const relatedPosts = [
     slug: 'gym-scheduling-software-guide',
     title: 'Complete Guide to Gym Scheduling Software',
     excerpt: 'Everything you need to know about choosing the right class scheduling system for your fitness center.',
-    featuredImage: 'https://repclub.app/assets/blog/gym-scheduling-guide.jpg'
+    featuredImage: 'https://repclub.net/assets/blog/gym-scheduling-guide.jpg'
   },
   {
     slug: 'mindbody-vs-rep-club-comparison',
     title: 'Mindbody vs Rep Club: Complete Comparison 2025',
     excerpt: 'Detailed comparison of features, pricing, and user experience between Mindbody and Rep Club.',
-    featuredImage: 'https://repclub.app/assets/blog/mindbody-vs-repclub.jpg'
+    featuredImage: 'https://repclub.net/assets/blog/mindbody-vs-repclub.jpg'
   }
 ];
 

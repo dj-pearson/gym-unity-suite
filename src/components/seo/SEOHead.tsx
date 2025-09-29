@@ -19,7 +19,7 @@ export function SEOHead({
   title = 'Gym Management Software | All-in-One Fitness Management System - Rep Club',
   description = '#1 gym management software for fitness studios, gyms & boutique fitness centers. Complete member management, class scheduling, billing automation & analytics. Try free today!',
   keywords = 'gym management software, fitness management system, gym scheduling software, fitness studio management, gym billing software, fitness business software, gym CRM, fitness analytics, member management software',
-  image = 'https://repclub.app/assets/og-image.jpg',
+  image = 'https://repclub.net/assets/og-image.jpg',
   url,
   type = 'website',
   author = 'Rep Club',
@@ -38,7 +38,7 @@ export function SEOHead({
     "@type": "SoftwareApplication",
     "name": "Rep Club",
     "description": description,
-    "url": "https://repclub.app",
+    "url": "https://repclub.net",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web Browser",
     "offers": {
@@ -53,8 +53,8 @@ export function SEOHead({
     "provider": {
       "@type": "Organization",
       "name": "Rep Club",
-      "url": "https://repclub.app",
-      "logo": "https://repclub.app/logo.png",
+      "url": "https://repclub.net",
+      "logo": "https://repclub.net/logo.png",
       "sameAs": [
         "https://twitter.com/repclub",
         "https://linkedin.com/company/repclub"

@@ -24,7 +24,6 @@ import {
   CreditCard, 
   Settings, 
   LogOut,
-  Dumbbell,
   UserCheck,
   BarChart3,
   Store,
@@ -150,14 +149,11 @@ export function AppSidebar() {
     <Sidebar className="border-sidebar-border bg-sidebar" collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border p-4">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-lg flex-shrink-0">
-            <Dumbbell className="w-6 h-6 text-white" />
+          <div className="flex-shrink-0">
+            <Logo size="md" showText={!collapsed} linkToHome={true} />
           </div>
           {!collapsed && (
             <div className="min-w-0 flex-1">
-              <h1 className="text-lg font-bold text-sidebar-foreground truncate">
-                {organization?.name || 'Rep Club'}
-              </h1>
               <p className="text-xs text-sidebar-foreground/60 capitalize truncate">
                 {profile?.role} Portal
               </p>

@@ -5,7 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { Loader2, Dumbbell, Mail, QrCode, Home, ArrowLeft, Calendar, ArrowRight } from 'lucide-react';
+import { Loader2, Mail, QrCode, Home, ArrowLeft, Calendar, ArrowRight } from 'lucide-react';
+import { Logo } from '@/components/ui/logo';
 import { BarcodeLogin } from './BarcodeLogin';
 import { useNavigate } from 'react-router-dom';
 import { RoleTestingPanel } from './RoleTestingPanel';
@@ -55,12 +56,12 @@ export const LoginForm: React.FC = () => {
         </div>
 
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-xl mb-4 shadow-glow">
-            <Dumbbell className="w-8 h-8 text-white" />
+          <div className="flex justify-center mb-4">
+            <Logo size="lg" showText={false} linkToHome={false} />
           </div>
-          <h1 className="text-3xl font-bold text-gradient-hero mb-2">Gym Unity Suite</h1>
+          <h1 className="text-3xl font-bold text-gradient-hero mb-2">Rep Club</h1>
           <p className="text-muted-foreground">
-            Complete gym management platform
+            Elite Fitness Management Platform
           </p>
         </div>
 

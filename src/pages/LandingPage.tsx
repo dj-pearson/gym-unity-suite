@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { Footer } from '@/components/layout/Footer';
 import { 
-  Dumbbell, 
   Users, 
   Calendar, 
   CreditCard, 
@@ -26,6 +25,7 @@ import { useNavigate } from 'react-router-dom';
 import { InteractiveHeroBackground } from '@/components/backgrounds/InteractiveHeroBackground';
 import OneTimePaymentButton from '@/components/membership/OneTimePaymentButton';
 import { EarlyAccessForm } from '@/components/auth/EarlyAccessForm';
+import { Logo } from '@/components/ui/logo';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -220,15 +220,7 @@ export default function LandingPage() {
       {/* Navigation - stays on top, separate from parallax */}
       <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 relative">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-lg">
-              <Dumbbell className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Rep Club</h1>
-              <p className="text-xs text-muted-foreground">Elite Fitness Management</p>
-            </div>
-          </div>
+          <Logo size="md" showText={true} linkToHome={true} />
           
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">

@@ -16,6 +16,7 @@ import {
   Clock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Logo } from '@/components/ui/logo';
 
 const localStats = [
   { label: 'NYC Gyms Served', value: '150+' },
@@ -153,7 +154,7 @@ export default function NewYorkGymSoftwarePage() {
         <title>New York Gym Management Software | NYC Fitness Centers - Rep Club</title>
         <meta name="description" content="Leading gym management software for New York City fitness centers. Trusted by 150+ NYC gyms across Manhattan, Brooklyn, Queens & more. Mobile-first design perfect for NYC." />
         <meta name="keywords" content="New York gym software, NYC fitness management, Manhattan gym management, Brooklyn fitness software, Queens gym system, gym software NYC" />
-        <link rel="canonical" href="https://repclub.app/local/new-york-gym-software" />
+        <link rel="canonical" href="https://repclub.net/local/new-york-gym-software" />
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
         </script>
@@ -166,13 +167,7 @@ export default function NewYorkGymSoftwarePage() {
         {/* Navigation */}
         <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Button 
-              variant="ghost"
-              onClick={() => navigate('/local')}
-              className="text-foreground hover:text-primary font-medium"
-            >
-              ← Back to Locations
-            </Button>
+            <Logo size="md" showText={true} linkToHome={true} />
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4" />

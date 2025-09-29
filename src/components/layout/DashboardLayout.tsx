@@ -9,10 +9,10 @@ import {
 } from '@/components/ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import { 
-  Dumbbell,
   LogOut,
   Menu
 } from 'lucide-react';
+import { Logo } from '@/components/ui/logo';
 import { useNavigate } from 'react-router-dom';
 
 interface DashboardLayoutProps {
@@ -58,8 +58,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
               
               {/* Mobile header content */}
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className="flex items-center justify-center w-8 h-8 bg-gradient-primary rounded-lg flex-shrink-0 lg:hidden">
-                  <Dumbbell className="w-5 h-5 text-white" />
+                <div className="flex-shrink-0 lg:hidden">
+                  <Logo size="sm" showText={false} linkToHome={true} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h1 className="text-lg font-bold text-foreground truncate">

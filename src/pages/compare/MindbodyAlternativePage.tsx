@@ -17,6 +17,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Logo } from '@/components/ui/logo';
 
 const comparisonFeatures = [
   { category: 'Pricing & Value', features: [
@@ -139,7 +140,7 @@ export default function MindbodyAlternativePage() {
     "@type": "WebPage",
     "name": "Mindbody Alternative - Better Gym Management Software",
     "description": "Rep Club is the modern Mindbody alternative. Save $3,000+ annually with better features, faster performance, and no hidden fees. Switch today!",
-    "url": "https://repclub.app/compare/mindbody-alternative",
+    "url": "https://repclub.net/compare/mindbody-alternative",
     "mainEntity": {
       "@type": "SoftwareApplication",
       "name": "Rep Club - Mindbody Alternative",
@@ -184,7 +185,7 @@ export default function MindbodyAlternativePage() {
         <title>Mindbody Alternative | Better Gym Management Software - Rep Club</title>
         <meta name="description" content="Rep Club is the modern Mindbody alternative. Save $3,000+ annually with better features, faster performance, and no hidden fees. Free migration & setup!" />
         <meta name="keywords" content="mindbody alternative, gym management software, fitness software, mindbody competitor, gym booking software, fitness management system" />
-        <link rel="canonical" href="https://repclub.app/compare/mindbody-alternative" />
+        <link rel="canonical" href="https://repclub.net/compare/mindbody-alternative" />
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
         </script>
@@ -197,13 +198,7 @@ export default function MindbodyAlternativePage() {
         {/* Navigation */}
         <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Button 
-              variant="ghost"
-              onClick={() => navigate('/compare')}
-              className="text-foreground hover:text-primary font-medium"
-            >
-              ← Back to Compare
-            </Button>
+            <Logo size="md" showText={true} linkToHome={true} />
             <Button 
               onClick={() => navigate('/auth')}
               className="bg-gradient-primary hover:opacity-90"
