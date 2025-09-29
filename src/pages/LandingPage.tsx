@@ -208,15 +208,12 @@ export default function LandingPage() {
     ]
   };
 
-  return (<>
-      <SEOHead
+  return (<><SEOHead
         title="Gym Management Software | All-in-One Fitness Management System - Rep Club"
         description="#1 gym management software for fitness studios, gyms & boutique fitness centers. Complete member management, class scheduling, billing automation & analytics. Try free today!"
         keywords="gym management software, fitness management system, gym scheduling software, fitness studio management, gym billing software, fitness business software, gym CRM, fitness analytics, member management software, all-in-one gym software"
         structuredData={structuredData}
-      />
-      <div className="min-h-screen bg-gradient-subtle">
-      {/* Navigation - stays on top, separate from parallax */}
+      /><div className="min-h-screen bg-gradient-subtle">{/* Navigation - stays on top, separate from parallax */}
       <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 relative">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Logo size="md" linkToHome={true} />
@@ -268,10 +265,7 @@ export default function LandingPage() {
             </Button>
           </div>
         </div>
-      </nav>
-
-      {/* Parallax background with hero content only */}
-      <InteractiveHeroBackground className="relative w-full z-0">
+      </nav>{/* Parallax background with hero content only */}<InteractiveHeroBackground className="relative w-full z-0">
         {/* Hero Section - integrated into parallax */}
         <section className="relative container mx-auto px-4 py-20 text-center flex items-center min-h-[80vh] z-10">
           <div className="relative z-10 max-w-4xl mx-auto">
