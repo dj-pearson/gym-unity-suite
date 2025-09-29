@@ -1,6 +1,7 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+// Toasts/Tooltips temporarily disabled to resolve React runtime issue
+// import { Toaster } from "@/components/ui/toaster";
+// import { Toaster as Sonner } from "@/components/ui/sonner";
+// import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -134,19 +135,17 @@ const HomeRoute = () => {
 };
 
 const App = () => {
-  return (<HelmetProvider>
+  return (
+    <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <TooltipProvider>
-            <Router>
-              <Toaster />
-              <Sonner />
-              <AppRoutes />
-            </Router>
-          </TooltipProvider>
+          <Router>
+            <AppRoutes />
+          </Router>
         </AuthProvider>
       </QueryClientProvider>
-    </HelmetProvider>);
+    </HelmetProvider>
+  );
 };
 
 // Separate component for routes to ensure proper React context
