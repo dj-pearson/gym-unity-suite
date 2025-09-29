@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { Loader2, Dumbbell, Mail, QrCode, Home, ArrowLeft } from 'lucide-react';
+import { Loader2, Dumbbell, Mail, QrCode, Home, ArrowLeft, Calendar, ArrowRight } from 'lucide-react';
 import { BarcodeLogin } from './BarcodeLogin';
 import { useNavigate } from 'react-router-dom';
 import { RoleTestingPanel } from './RoleTestingPanel';
@@ -133,52 +133,25 @@ export const LoginForm: React.FC = () => {
               </TabsContent>
               
               <TabsContent value="signup" className="space-y-4">
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
+                <div className="text-center space-y-4">
+                  <div className="p-6 bg-muted/50 rounded-lg border border-border">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Calendar className="w-8 h-8 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">Launching November 1st, 2025</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      New registrations are currently closed as we prepare for our exciting launch. 
+                      Request early access to be among the first to experience Rep Club.
+                    </p>
+                    <Button 
+                      onClick={() => navigate('/#early-access')}
+                      className="bg-gradient-primary hover:opacity-90 transition-smooth"
+                    >
+                      Request Early Access
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      placeholder="Create a password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirm Password</Label>
-                    <Input
-                      id="confirm-password"
-                      type="password"
-                      placeholder="Confirm your password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  {password !== confirmPassword && confirmPassword && (
-                    <p className="text-sm text-destructive">Passwords do not match</p>
-                  )}
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-gradient-secondary hover:opacity-90 transition-smooth"
-                    disabled={isLoading || password !== confirmPassword}
-                  >
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Create Account
-                  </Button>
-                </form>
+                </div>
               </TabsContent>
               
               {user && (

@@ -25,6 +25,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { InteractiveHeroBackground } from '@/components/backgrounds/InteractiveHeroBackground';
 import OneTimePaymentButton from '@/components/membership/OneTimePaymentButton';
+import { EarlyAccessForm } from '@/components/auth/EarlyAccessForm';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -245,10 +246,12 @@ export default function LandingPage() {
               Blog
             </Button>
             <Button 
-              onClick={() => navigate('/auth')}
+              onClick={() => {
+                document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="bg-gradient-primary hover:opacity-90 shadow-md"
             >
-              Get Started
+              Request Early Access
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -265,10 +268,12 @@ export default function LandingPage() {
             </Button>
             <Button 
               size="sm"
-              onClick={() => navigate('/auth')}
+              onClick={() => {
+                document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="bg-gradient-primary hover:opacity-90"
             >
-              Get Started
+              Request Early Access
             </Button>
           </div>
         </div>
@@ -282,6 +287,11 @@ export default function LandingPage() {
             <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
               Elite Fitness Management Platform
             </Badge>
+            <div className="mb-4">
+              <Badge className="bg-primary/20 text-primary border-primary/30 backdrop-blur-sm">
+                🚀 Launching November 1st, 2025
+              </Badge>
+            </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
               Elevate Your 
               <br />
@@ -290,16 +300,18 @@ export default function LandingPage() {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-              Premium management solutions for discerning fitness professionals. From exclusive boutiques 
-              to luxury fitness clubs, Rep Club delivers unparalleled sophistication and performance.
+              Premium management solutions for discerning fitness professionals. Be among the first to experience 
+              the future of gym management when we launch November 1st.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <Button 
                 size="lg" 
-                onClick={() => navigate('/auth')}
+                onClick={() => {
+                  document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow hover:shadow-elevation-3 transition-all duration-300"
               >
-                Start Free Trial
+                Request Early Access
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button 
@@ -453,6 +465,21 @@ export default function LandingPage() {
             </Card>
           ))}
         </div>
+
+        {/* Early Access Section */}
+        <section id="early-access" className="mt-20 text-center">
+          <div className="mb-12">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+              🎯 Early Access Program
+            </Badge>
+            <h2 className="text-3xl font-bold mb-4">Join the Elite Preview</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Get exclusive early access to Rep Club before our November 1st launch. Limited spots available for founding members.
+            </p>
+          </div>
+          
+          <EarlyAccessForm />
+        </section>
 
         {/* Enterprise Pricing */}
         <Card className="gym-card bg-gradient-hero text-white max-w-4xl mx-auto">

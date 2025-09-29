@@ -50,7 +50,8 @@ import {
   Baby,
   Bath,
   ShoppingCart,
-  Building
+  Building,
+  Brain
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
@@ -111,6 +112,7 @@ const navigationGroups = [
   {
     title: 'Configuration',
     items: [
+      { name: 'AI Control', href: '/ai-control', icon: Brain, permission: PERMISSIONS.MANAGE_SYSTEM },
       { name: 'Integrations', href: '/integrations', icon: Zap, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Security', href: '/security', icon: Shield, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Advanced', href: '/advanced', icon: Rocket, permission: PERMISSIONS.VIEW_SETTINGS },
@@ -213,7 +215,7 @@ export function AppSidebar() {
                           className={cn(
                             "w-full transition-smooth",
                             itemIsActive 
-                              ? "bg-gradient-primary text-white shadow-glow font-medium" 
+                              ? "bg-primary text-primary-foreground font-medium" 
                               : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                           )}
                           onClick={() => navigate(item.href)}

@@ -65,6 +65,7 @@ import MemberNotifications from "./pages/MemberNotifications";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import BlogAdminPage from "./pages/admin/BlogAdminPage";
+import AIControlPage from "./pages/AIControlPage";
 import { MemberLayout } from "./components/layout/MemberLayout";
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -521,6 +522,14 @@ const AppRoutes = () => {
                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                   <DashboardLayout>
                     <MultiLocationPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/ai-control" element={
+                <ProtectedRoute permission={PERMISSIONS.MANAGE_SYSTEM}>
+                  <DashboardLayout>
+                    <AIControlPage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />
