@@ -59,6 +59,7 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
           transform: `translateY(${scrollY}px) scale(${scale})`,
           opacity: opacity,
           willChange: 'transform',
+          contentVisibility: 'auto',
         }}
       />
       
