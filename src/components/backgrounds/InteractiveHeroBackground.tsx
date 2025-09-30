@@ -44,7 +44,7 @@ export const InteractiveHeroBackground: React.FC<InteractiveHeroBackgroundProps>
     >
       {/* Multi-layer parallax background */}
       <ParallaxBackground
-        imageSrc="/assets/Hero-Background.png"
+        imageSrc="/assets/Hero-Background.webp"
         speed={0.3}
         scale={1.15}
         opacity={0.8}
