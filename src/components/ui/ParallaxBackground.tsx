@@ -18,6 +18,13 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
   const backgroundRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [showEffects, setShowEffects] = useState(false);
+
+  useEffect(() => {
+    // Defer non-critical effects until after initial paint
+    const timer = setTimeout(() => setShowEffects(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,43 +58,50 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
         willChange: 'transform',
       }}
     >
-      {/* Main parallax background */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-75 ease-out"
+      {/* Optimized img element for LCP - loads with high priority */}
+      <img
+        src={imageSrc}
+        alt="Hero background"
+        className="absolute inset-0 w-full h-full object-cover"
         style={{
-          backgroundImage: `url(${imageSrc})`,
           transform: `translateY(${scrollY}px) scale(${scale})`,
           opacity: opacity,
           willChange: 'transform',
-          contentVisibility: 'auto',
         }}
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
       />
       
-      {/* Additional animated overlay for more depth */}
-      <div
-        className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/30"
-        style={{
-          transform: `translateY(${scrollY * 0.3}px)`,
-          willChange: 'transform',
-        }}
-      />
-      
-      {/* Floating particles effect */}
-      <div className="absolute inset-0">
-        {Array.from({ length: 15 }, (_, i) => (
+      {/* Additional animated overlay for more depth - defer for performance */}
+      {showEffects && (
+        <>
           <div
-            key={i}
-            className="absolute w-1 h-1 bg-white/20 rounded-full animate-pulse"
+            className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/30"
             style={{
-              left: `${(i * 7 + 10) % 100}%`,
-              top: `${(i * 11 + 15) % 100}%`,
-              animationDelay: `${i * 0.5}s`,
-              transform: `translateY(${scrollY * (0.2 + (i % 5) * 0.1)}px)`,
+              transform: `translateY(${scrollY * 0.3}px)`,
               willChange: 'transform',
             }}
           />
-        ))}
-      </div>
+          
+          {/* Floating particles effect - defer for performance */}
+          <div className="absolute inset-0">
+            {Array.from({ length: 15 }, (_, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 bg-white/20 rounded-full animate-pulse"
+                style={{
+                  left: `${(i * 7 + 10) % 100}%`,
+                  top: `${(i * 11 + 15) % 100}%`,
+                  animationDelay: `${i * 0.5}s`,
+                  transform: `translateY(${scrollY * (0.2 + (i % 5) * 0.1)}px)`,
+                  willChange: 'transform',
+                }}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };
