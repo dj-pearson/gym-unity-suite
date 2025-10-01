@@ -26,6 +26,20 @@ export default defineConfig(({ mode }) => ({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
         },
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'assets/[name]-[hash][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
+        },
+      },
+    },
+    cssMinify: 'lightningcss',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
       },
     },
   },
