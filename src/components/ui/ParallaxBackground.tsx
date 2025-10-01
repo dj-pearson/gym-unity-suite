@@ -19,14 +19,22 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [showEffects, setShowEffects] = useState(false);
+  const [enhanceImage, setEnhanceImage] = useState(false);
 
   useEffect(() => {
-    // Defer non-critical effects until after initial paint
-    const timer = setTimeout(() => setShowEffects(true), 100);
-    return () => clearTimeout(timer);
+    // Defer ALL effects until after LCP has painted
+    const effectsTimer = setTimeout(() => setShowEffects(true), 200);
+    const enhanceTimer = setTimeout(() => setEnhanceImage(true), 50);
+    
+    return () => {
+      clearTimeout(effectsTimer);
+      clearTimeout(enhanceTimer);
+    };
   }, []);
 
   useEffect(() => {
+    if (!enhanceImage) return; // Don't attach scroll until image is enhanced
+    
     const handleScroll = () => {
       if (backgroundRef.current) {
         const rect = backgroundRef.current.getBoundingClientRect();
@@ -43,30 +51,30 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
       }
     };
 
-    // Add scroll listener
+    // Add scroll listener only after image is enhanced
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // Initial call
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [speed]);
+  }, [speed, enhanceImage]);
 
   return (
     <div
       ref={backgroundRef}
       className={`absolute inset-0 overflow-hidden ${className}`}
-      style={{
-        willChange: 'transform',
-      }}
     >
-      {/* Optimized img element for LCP - loads with high priority */}
+      {/* Critical LCP image - pure CSS, no JS for fastest paint */}
       <img
         src={imageSrc}
         alt="Hero background"
         className="absolute inset-0 w-full h-full object-cover"
-        style={{
+        style={enhanceImage ? {
           transform: `translateY(${scrollY}px) scale(${scale})`,
           opacity: opacity,
-          willChange: 'transform',
+          willChange: scrollY !== 0 ? 'transform' : 'auto',
+        } : {
+          transform: `scale(${scale})`,
+          opacity: opacity,
         }}
         loading="eager"
         fetchPriority="high"
@@ -80,7 +88,6 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
             className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/30"
             style={{
               transform: `translateY(${scrollY * 0.3}px)`,
-              willChange: 'transform',
             }}
           />
           
@@ -95,7 +102,6 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
                   top: `${(i * 11 + 15) % 100}%`,
                   animationDelay: `${i * 0.5}s`,
                   transform: `translateY(${scrollY * (0.2 + (i % 5) * 0.1)}px)`,
-                  willChange: 'transform',
                 }}
               />
             ))}
