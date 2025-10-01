@@ -307,9 +307,9 @@ export default function LandingPage() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button 
-                variant="outline" 
+                variant="secondary" 
                 size="lg"
-                className="px-8 py-4 text-lg border-white/30 text-white hover:bg-white/10 transition-all duration-300"
+                className="px-8 py-4 text-lg bg-white/95 text-foreground border-white/30 hover:bg-white transition-all duration-300"
               >
                 Watch Demo
               </Button>
@@ -586,9 +586,9 @@ export default function LandingPage() {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button 
-              variant="outline" 
+              variant="secondary" 
               size="lg"
-              className="px-8 py-4 text-lg border-white/20 text-white hover:bg-white/10"
+              className="px-8 py-4 text-lg bg-white/95 text-foreground border-white/30 hover:bg-white"
             >
               Contact Sales
             </Button>
