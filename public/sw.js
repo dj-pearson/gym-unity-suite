@@ -22,38 +22,28 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Fetch event - serve from cache when offline
+// Fetch event - stale-while-revalidate for faster responses
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version or fetch from network
-        if (response) {
-          return response;
-        }
-        
-        return fetch(event.request).then((response) => {
-          // Check if valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.match(event.request).then((cachedResponse) => {
+        const fetchPromise = fetch(event.request).then((networkResponse) => {
+          // Cache valid responses
+          if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+            cache.put(event.request, networkResponse.clone());
           }
-
-          // Clone the response
-          const responseToCache = response.clone();
-
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-
-          return response;
+          return networkResponse;
         }).catch(() => {
           // Return offline fallback for navigation requests
           if (event.request.mode === 'navigate') {
-            return caches.match('/');
+            return cache.match('/');
           }
         });
-      })
+
+        // Return cached response immediately if available, then update cache
+        return cachedResponse || fetchPromise;
+      });
+    })
   );
 });
 
