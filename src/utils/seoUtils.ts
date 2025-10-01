@@ -120,7 +120,11 @@ export const generateStructuredData = {
 
 export const generateCanonicalUrl = (path?: string): string => {
   const baseUrl = 'https://repclub.app';
-  if (!path) return window.location.href;
+  if (!path) {
+    // Always use canonical domain to avoid conflicts between domains
+    const pathname = window.location.pathname + window.location.search + window.location.hash;
+    return `${baseUrl}${pathname}`;
+  }
   return `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
 };
 
