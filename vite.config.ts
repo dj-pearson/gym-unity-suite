@@ -60,7 +60,6 @@ export default defineConfig(({ mode }) => ({
         chunkFileNames: 'assets/[name]-[hash].js',
       },
     },
-    cssMinify: 'lightningcss',
     minify: 'terser',
     terserOptions: {
       compress: {
