@@ -220,7 +220,7 @@ export default function LandingPage() {
         {/* Navigation - stays on top, separate from parallax */}
         <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 relative">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Logo size="lg" linkToHome={true} />
+            <Logo size="xl" linkToHome={true} className="h-20" />
             
             {/* Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
