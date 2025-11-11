@@ -30,6 +30,15 @@ import { Logo } from '@/components/ui/logo';
 export default function LandingPage() {
   const navigate = useNavigate();
 
+  // Auto-scroll to pricing section if /pricing route
+  React.useEffect(() => {
+    if (window.location.hash.includes('/pricing')) {
+      setTimeout(() => {
+        document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, []);
+
   const features = [
     {
       icon: Users,

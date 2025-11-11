@@ -537,6 +537,7 @@ const AppRoutes = () => {
               } />
               
               {/* SEO & Marketing Pages */}
+              <Route path="/pricing" element={<LandingPage />} />
               <Route path="/features" element={<FeaturesPage />} />
               <Route path="/features/scheduling" element={<SchedulingPage />} />
               <Route path="/compare/mindbody-alternative" element={<MindbodyAlternativePage />} />
