@@ -3,8 +3,9 @@
 // import { Toaster as Sonner } from "@/components/ui/sonner";
 // import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { CustomDomainProvider } from "@/contexts/CustomDomainContext";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PERMISSIONS } from "@/hooks/usePermissions";
@@ -139,9 +140,11 @@ const App = () => {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <Router>
-            <AppRoutes />
-          </Router>
+          <CustomDomainProvider>
+            <Router>
+              <AppRoutes />
+            </Router>
+          </CustomDomainProvider>
         </AuthProvider>
       </QueryClientProvider>
     </HelmetProvider>
