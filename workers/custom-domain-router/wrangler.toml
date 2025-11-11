@@ -1,0 +1,30 @@
+name = "gym-unity-custom-domain-router"
+main = "index.ts"
+compatibility_date = "2024-09-25"
+
+# Worker routes - add your custom domains here
+routes = [
+  { pattern = "*/*", custom_domain = true }
+]
+
+# Environment variables
+[vars]
+DEFAULT_ORIGIN = "gym-unity.app"
+
+# Secrets (set these using: wrangler secret put <SECRET_NAME>)
+# SUPABASE_URL - Your Supabase project URL
+# SUPABASE_ANON_KEY - Your Supabase anonymous key
+
+# For production
+[env.production]
+name = "gym-unity-custom-domain-router-production"
+routes = [
+  { pattern = "*/*", custom_domain = true }
+]
+
+# For staging
+[env.staging]
+name = "gym-unity-custom-domain-router-staging"
+routes = [
+  { pattern = "*/*", custom_domain = true }
+]
