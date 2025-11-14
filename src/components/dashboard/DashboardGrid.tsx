@@ -50,10 +50,12 @@ function SortableWidget({
   widget,
   stats,
   onRemove,
+  dataTour,
 }: {
   widget: WidgetConfig;
   stats?: any;
   onRemove: () => void;
+  dataTour?: string;
 }) {
   const {
     attributes,
@@ -74,6 +76,7 @@ function SortableWidget({
       ref={setNodeRef}
       style={style}
       className={getWidgetGridColumns(widget.size)}
+      data-tour={dataTour}
     >
       <DashboardWidget
         widget={widget}
@@ -151,7 +154,7 @@ export function DashboardGrid({
         <div className="flex items-center gap-3">
           <Sheet open={customizeOpen} onOpenChange={setCustomizeOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2" data-tour="dashboard-customize">
                 <Settings className="h-4 w-4" />
                 Customize Dashboard
               </Button>
@@ -247,13 +250,14 @@ export function DashboardGrid({
           onDragCancel={handleDragCancel}
         >
           <SortableContext items={widgets.map((w) => w.id)} strategy={rectSortingStrategy}>
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-12 gap-6" data-tour="dashboard-widgets">
               {widgets.map((widget) => (
                 <SortableWidget
                   key={widget.id}
                   widget={widget}
                   stats={stats}
                   onRemove={() => onRemove(widget.id)}
+                  dataTour={widget.type === 'quick-actions' ? 'quick-actions' : undefined}
                 />
               ))}
             </div>
