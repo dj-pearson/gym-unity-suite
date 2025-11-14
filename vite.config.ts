@@ -26,18 +26,33 @@ export default defineConfig(({ mode }) => ({
         manualChunks: (id) => {
           // Split vendor chunks for better caching and parallel loading
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'react-vendor';
+            // Core React libraries
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react';
             }
+            if (id.includes('react-router')) {
+              return 'vendor-react';
+            }
+            // UI component libraries (Radix UI)
             if (id.includes('@radix-ui')) {
-              return 'ui-vendor';
+              return 'vendor-ui';
             }
-            if (id.includes('recharts') || id.includes('date-fns')) {
-              return 'charts-vendor';
+            // Data & state management
+            if (id.includes('@tanstack/react-query')) {
+              return 'vendor-data';
             }
-            if (id.includes('@supabase') || id.includes('@tanstack')) {
-              return 'data-vendor';
+            if (id.includes('@supabase/supabase-js')) {
+              return 'vendor-data';
             }
+            // Charts & visualization
+            if (id.includes('recharts')) {
+              return 'charts';
+            }
+            // Calendar & date utilities
+            if (id.includes('react-big-calendar') || id.includes('date-fns')) {
+              return 'calendar';
+            }
+            // Remaining vendor code
             return 'vendor';
           }
           // Split large component directories

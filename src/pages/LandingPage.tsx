@@ -177,52 +177,47 @@ export default function LandingPage() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "Rep Club",
-    "description": "Premium fitness management solutions for discerning professionals. Elite member management, luxury class scheduling, and sophisticated analytics.",
-    "url": "https://repclub.app",
+    "name": "Gym Unity Suite",
+    "description": "All-in-one gym management software for boutique fitness studios. Complete member management, class scheduling, billing automation, CRM & sales pipeline, and branded mobile apps.",
+    "url": "https://gymunitysuite.com",
     "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Web Browser",
-    "offers": [
-      {
-        "@type": "Offer",
-        "name": "Studio Plan",
-        "price": "149.00",
-        "priceCurrency": "USD"
-      },
-      {
-        "@type": "Offer", 
-        "name": "Professional Plan",
-        "price": "349.00",
-        "priceCurrency": "USD"
-      },
-      {
-        "@type": "Offer",
-        "name": "Enterprise Plan", 
-        "price": "649.00",
-        "priceCurrency": "USD"
-      }
-    ],
+    "operatingSystem": "Web Browser, iOS, Android",
+    "offers": {
+      "@type": "AggregateOffer",
+      "lowPrice": "149",
+      "highPrice": "649",
+      "priceCurrency": "USD",
+      "priceValidUntil": "2026-12-31",
+      "availability": "https://schema.org/InStock"
+    },
     "provider": {
       "@type": "Organization",
-      "name": "Rep Club",
-      "url": "https://repclub.app"
+      "name": "Gym Unity Suite",
+      "url": "https://gymunitysuite.com"
     },
     "featureList": [
       "Member Management",
-      "Class Scheduling",
-      "Check-in System", 
-      "Billing & Payments",
-      "Analytics & Reports",
-      "Mobile-First Design"
-    ]
+      "Class Scheduling & Booking",
+      "CRM & Sales Pipeline",
+      "Automated Billing",
+      "Branded Mobile App",
+      "Real-time Analytics"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "127",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
   };
 
   return (
     <>
       <SEOHead
-        title="Gym Management Software | All-in-One Fitness Management System - Rep Club"
-        description="#1 gym management software for fitness studios, gyms & boutique fitness centers. Complete member management, class scheduling, billing automation & analytics. Try free today!"
-        keywords="gym management software, fitness management system, gym scheduling software, fitness studio management, gym billing software, fitness business software, gym CRM, fitness analytics, member management software, all-in-one gym software"
+        title="Gym Management Software for Small Studios | Gym Unity Suite"
+        description="All-in-one gym management software for boutique fitness studios. Member management, automated billing, CRM, and branded mobile app. Try free for 30 days."
+        keywords="gym management software, fitness studio software, boutique gym software, yoga studio software, gym CRM, gym billing software, gym membership software, affordable gym software, small gym software"
         structuredData={structuredData}
       />
       <div className="min-h-screen bg-gradient-subtle">
