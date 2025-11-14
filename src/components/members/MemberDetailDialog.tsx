@@ -7,14 +7,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  User, 
-  Users, 
-  FileText, 
-  Activity, 
-  Phone, 
-  Mail, 
-  MapPin, 
+import { usePresence } from '@/hooks/usePresence';
+import { PresenceIndicator } from '@/components/PresenceIndicator';
+import {
+  User,
+  Users,
+  FileText,
+  Activity,
+  Phone,
+  Mail,
+  MapPin,
   Calendar,
   Clock,
   TrendingUp,
@@ -82,6 +84,9 @@ export function MemberDetailDialog({ member, isOpen, onClose }: MemberDetailDial
   const [attendance, setAttendance] = useState<AttendanceStats | null>(null);
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Track who else is viewing this member
+  const { viewers } = usePresence('member', member?.id, isOpen);
 
   useEffect(() => {
     if (member && isOpen) {
@@ -228,10 +233,12 @@ export function MemberDetailDialog({ member, isOpen, onClose }: MemberDetailDial
                 {getMemberInitials(member)}
               </AvatarFallback>
             </Avatar>
-            <div>
+            <div className="flex-1">
               <h2 className="text-xl font-bold">{getMemberName(member)}</h2>
               <p className="text-sm text-muted-foreground">{member.email}</p>
             </div>
+            {/* Show who else is viewing this member */}
+            <PresenceIndicator viewers={viewers} size="sm" maxVisible={3} />
           </DialogTitle>
         </DialogHeader>
 
