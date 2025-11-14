@@ -76,8 +76,10 @@ const FeaturesPage = lazy(() => import("./pages/FeaturesPage"));
 const SchedulingPage = lazy(() => import("./pages/features/SchedulingPage"));
 const MindbodyAlternativePage = lazy(() => import("./pages/compare/MindbodyAlternativePage"));
 const GlofoxAlternativePage = lazy(() => import("./pages/compare/GlofoxAlternativePage"));
+const ZenPlannerAlternativePage = lazy(() => import("./pages/compare/ZenPlannerAlternativePage"));
 const YogaStudiosPage = lazy(() => import("./pages/solutions/YogaStudiosPage"));
 const CrossFitGymsPage = lazy(() => import("./pages/solutions/CrossFitGymsPage"));
+const MartialArtsSchoolsPage = lazy(() => import("./pages/solutions/MartialArtsSchoolsPage"));
 const NewYorkGymSoftwarePage = lazy(() => import("./pages/local/NewYorkGymSoftwarePage"));
 const BestGymSoftwareBlogPost = lazy(() => import("./pages/blog/BestGymSoftware2025"));
 
@@ -559,10 +561,12 @@ const AppRoutes = () => {
               {/* Solution Pages */}
               <Route path="/solutions/yoga-studios" element={<YogaStudiosPage />} />
               <Route path="/solutions/crossfit-gyms" element={<CrossFitGymsPage />} />
+              <Route path="/solutions/martial-arts-schools" element={<MartialArtsSchoolsPage />} />
 
               {/* Comparison Pages */}
               <Route path="/compare/mindbody-alternative" element={<MindbodyAlternativePage />} />
               <Route path="/compare/glofox-alternative" element={<GlofoxAlternativePage />} />
+              <Route path="/compare/zen-planner-alternative" element={<ZenPlannerAlternativePage />} />
 
               {/* Local SEO Pages */}
               <Route path="/local/new-york-gym-software" element={<NewYorkGymSoftwarePage />} />
