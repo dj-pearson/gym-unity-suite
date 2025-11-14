@@ -75,6 +75,9 @@ const AIControlPage = lazy(() => import("./pages/AIControlPage"));
 const FeaturesPage = lazy(() => import("./pages/FeaturesPage"));
 const SchedulingPage = lazy(() => import("./pages/features/SchedulingPage"));
 const MindbodyAlternativePage = lazy(() => import("./pages/compare/MindbodyAlternativePage"));
+const GlofoxAlternativePage = lazy(() => import("./pages/compare/GlofoxAlternativePage"));
+const YogaStudiosPage = lazy(() => import("./pages/solutions/YogaStudiosPage"));
+const CrossFitGymsPage = lazy(() => import("./pages/solutions/CrossFitGymsPage"));
 const NewYorkGymSoftwarePage = lazy(() => import("./pages/local/NewYorkGymSoftwarePage"));
 const BestGymSoftwareBlogPost = lazy(() => import("./pages/blog/BestGymSoftware2025"));
 
@@ -552,7 +555,16 @@ const AppRoutes = () => {
               <Route path="/pricing" element={<LandingPage />} />
               <Route path="/features" element={<FeaturesPage />} />
               <Route path="/features/scheduling" element={<SchedulingPage />} />
+
+              {/* Solution Pages */}
+              <Route path="/solutions/yoga-studios" element={<YogaStudiosPage />} />
+              <Route path="/solutions/crossfit-gyms" element={<CrossFitGymsPage />} />
+
+              {/* Comparison Pages */}
               <Route path="/compare/mindbody-alternative" element={<MindbodyAlternativePage />} />
+              <Route path="/compare/glofox-alternative" element={<GlofoxAlternativePage />} />
+
+              {/* Local SEO Pages */}
               <Route path="/local/new-york-gym-software" element={<NewYorkGymSoftwarePage />} />
               
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
