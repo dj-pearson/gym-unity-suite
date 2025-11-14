@@ -11,11 +11,14 @@ import { AppSidebar } from './AppSidebar';
 import {
   LogOut,
   Menu,
-  Search
+  Search,
+  Bell
 } from 'lucide-react';
 import { Logo } from '@/components/ui/logo';
 import { useNavigate } from 'react-router-dom';
 import { CommandPalette, useCommandPalette } from '@/components/CommandPalette';
+import { NotificationCenter, NotificationBadge } from '@/components/NotificationCenter';
+import { Popover, PopoverTrigger } from '@/components/ui/popover';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -42,6 +45,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { open, setOpen } = useCommandPalette();
+  const [notificationsOpen, setNotificationsOpen] = React.useState(false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -71,8 +75,30 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                 </div>
               </div>
 
-              {/* Command palette trigger */}
+              {/* Command palette trigger & Notifications */}
               <div className="flex items-center gap-2">
+                {/* Notifications */}
+                <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="relative h-9 w-9"
+                    >
+                      <Bell className="h-4 w-4" />
+                      <NotificationBadge
+                        organizationId={profile?.organization_id}
+                        userId={profile?.id}
+                      />
+                    </Button>
+                  </PopoverTrigger>
+                  <NotificationCenter
+                    open={notificationsOpen}
+                    onOpenChange={setNotificationsOpen}
+                  />
+                </Popover>
+
+                {/* Command Palette */}
                 <Button
                   variant="outline"
                   onClick={() => setOpen(true)}
