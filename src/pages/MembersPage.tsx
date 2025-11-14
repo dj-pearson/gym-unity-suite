@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { 
-  Search, 
-  Plus, 
-  Users, 
+import {
+  Search,
+  Plus,
+  Users,
   Filter,
   MoreVertical,
   Mail,
@@ -19,109 +18,35 @@ import {
   FileText,
   Users2
 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 import { MemberDetailDialog } from '@/components/members/MemberDetailDialog';
-
-interface Member {
-  id: string;
-  email: string;
-  first_name?: string;
-  last_name?: string;
-  phone?: string;
-  avatar_url?: string;
-  created_at: string;
-  parent_member_id?: string;
-  relationship_type?: string;
-  family_notes?: string;
-  membership?: {
-    status: string;
-    plan: {
-      name: string;
-      price: number;
-    };
-  };
-}
+import { VirtualList } from '@/components/ui/VirtualList';
+import { useMembers, type Member } from '@/hooks/useMembers';
 
 export default function MembersPage() {
   const { profile } = useAuth();
-  const { toast } = useToast();
-  const [members, setMembers] = useState<Member[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
-  useEffect(() => {
-    fetchMembers();
-  }, [profile?.organization_id]);
+  // Use React Query for data fetching with automatic caching
+  const { data: members = [], isLoading: loading } = useMembers(profile?.organization_id);
 
-  const fetchMembers = async () => {
-    if (!profile?.organization_id) return;
+  // Memoize filtered members to avoid recalculation on every render
+  const filteredMembers = useMemo(() => {
+    return members.filter(member =>
+      `${member.first_name || ''} ${member.last_name || ''} ${member.email}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+  }, [members, searchTerm]);
 
-    try {
-      setLoading(true);
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-          id,
-          email,
-          first_name,
-          last_name,
-          phone,
-          avatar_url,
-          created_at,
-          parent_member_id,
-          relationship_type,
-          family_notes,
-          memberships (
-            status,
-            membership_plans (
-              name,
-              price
-            )
-          )
-        `)
-        .eq('organization_id', profile.organization_id)
-        .eq('role', 'member')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        toast({
-          title: "Error fetching members",
-          description: error.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Transform the data to match our interface
-      const transformedMembers = data.map(member => ({
-        ...member,
-        membership: member.memberships?.[0] ? {
-          status: member.memberships[0].status,
-          plan: member.memberships[0].membership_plans
-        } : undefined
-      }));
-
-      setMembers(transformedMembers);
-    } catch (error) {
-      console.error('Error fetching members:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch members",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filteredMembers = members.filter(member =>
-    `${member.first_name} ${member.last_name} ${member.email}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
+  // Memoize stats calculations to avoid recalculation on every render
+  const stats = useMemo(() => ({
+    total: members.length,
+    active: members.filter(m => m.membership?.status === 'active').length,
+    pastDue: members.filter(m => m.membership?.status === 'past_due').length,
+    noMembership: members.filter(m => !m.membership).length,
+  }), [members]);
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -135,24 +60,25 @@ export default function MembersPage() {
     return statusConfig[status as keyof typeof statusConfig] || statusConfig.inactive;
   };
 
-  const getMemberInitials = (member: Member) => {
+  // Memoize helper functions to prevent recreation on every render
+  const getMemberInitials = useCallback((member: Member) => {
     if (member.first_name && member.last_name) {
       return `${member.first_name[0]}${member.last_name[0]}`.toUpperCase();
     }
     return member.email[0].toUpperCase();
-  };
+  }, []);
 
-  const getMemberName = (member: Member) => {
+  const getMemberName = useCallback((member: Member) => {
     if (member.first_name && member.last_name) {
       return `${member.first_name} ${member.last_name}`;
     }
     return member.email;
-  };
+  }, []);
 
-  const handleMemberClick = (member: Member) => {
+  const handleMemberClick = useCallback((member: Member) => {
     setSelectedMember(member);
     setIsDetailDialogOpen(true);
-  };
+  }, []);
 
   if (loading) {
     return (
@@ -188,35 +114,29 @@ export default function MembersPage() {
         </Button>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Using memoized stats to avoid recalculation */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="gym-card">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-foreground">{members.length}</div>
+            <div className="text-2xl font-bold text-foreground">{stats.total}</div>
             <div className="text-sm text-muted-foreground">Total Members</div>
           </CardContent>
         </Card>
         <Card className="gym-card">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-success">
-              {members.filter(m => m.membership?.status === 'active').length}
-            </div>
+            <div className="text-2xl font-bold text-success">{stats.active}</div>
             <div className="text-sm text-muted-foreground">Active Memberships</div>
           </CardContent>
         </Card>
         <Card className="gym-card">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-warning">
-              {members.filter(m => m.membership?.status === 'past_due').length}
-            </div>
+            <div className="text-2xl font-bold text-warning">{stats.pastDue}</div>
             <div className="text-sm text-muted-foreground">Past Due</div>
           </CardContent>
         </Card>
         <Card className="gym-card">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-secondary">
-              {members.filter(m => !m.membership).length}
-            </div>
+            <div className="text-2xl font-bold text-secondary">{stats.noMembership}</div>
             <div className="text-sm text-muted-foreground">No Membership</div>
           </CardContent>
         </Card>
@@ -260,94 +180,99 @@ export default function MembersPage() {
               )}
             </div>
           ) : (
-            <div className="space-y-4">
-              {filteredMembers.map((member) => {
-                const statusBadge = member.membership ? 
-                  getStatusBadge(member.membership.status) : 
-                  { label: 'No Membership', variant: 'outline' as const };
-                
-                return (
-                  <div
-                    key={member.id}
-                    className="flex items-center justify-between p-4 border border-border rounded-lg hover:shadow-elevation-1 transition-smooth cursor-pointer"
-                    onClick={() => handleMemberClick(member)}
-                  >
-                    <div className="flex items-center space-x-4 flex-1">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={member.avatar_url} />
-                        <AvatarFallback className="bg-gradient-secondary text-white">
-                          {getMemberInitials(member)}
-                        </AvatarFallback>
-                      </Avatar>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-3">
-                          <h3 className="font-medium text-foreground truncate">
-                            {getMemberName(member)}
-                          </h3>
-                          <Badge variant={statusBadge.variant}>
-                            {statusBadge.label}
-                          </Badge>
-                          {member.parent_member_id && (
-                            <Badge variant="outline" className="text-xs">
-                              <Users2 className="w-3 h-3 mr-1" />
-                              Family
+            <div className="h-[600px]">
+              <VirtualList
+                items={filteredMembers}
+                estimateSize={120}
+                overscan={5}
+                itemKey={(member) => member.id}
+                renderItem={(member) => {
+                  const statusBadge = member.membership ?
+                    getStatusBadge(member.membership.status) :
+                    { label: 'No Membership', variant: 'outline' as const };
+
+                  return (
+                    <div
+                      className="flex items-center justify-between p-4 mb-4 border border-border rounded-lg hover:shadow-elevation-1 transition-smooth cursor-pointer"
+                      onClick={() => handleMemberClick(member)}
+                    >
+                      <div className="flex items-center space-x-4 flex-1">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={member.avatar_url} />
+                          <AvatarFallback className="bg-gradient-secondary text-white">
+                            {getMemberInitials(member)}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-3">
+                            <h3 className="font-medium text-foreground truncate">
+                              {getMemberName(member)}
+                            </h3>
+                            <Badge variant={statusBadge.variant}>
+                              {statusBadge.label}
                             </Badge>
-                          )}
-                        </div>
-                        
-                        <div className="flex items-center space-x-4 mt-1 text-sm text-muted-foreground">
-                          <div className="flex items-center space-x-1">
-                            <Mail className="h-3 w-3" />
-                            <span className="truncate">{member.email}</span>
+                            {member.parent_member_id && (
+                              <Badge variant="outline" className="text-xs">
+                                <Users2 className="w-3 h-3 mr-1" />
+                                Family
+                              </Badge>
+                            )}
                           </div>
-                          {member.phone && (
+
+                          <div className="flex items-center space-x-4 mt-1 text-sm text-muted-foreground">
                             <div className="flex items-center space-x-1">
-                              <Phone className="h-3 w-3" />
-                              <span>{member.phone}</span>
+                              <Mail className="h-3 w-3" />
+                              <span className="truncate">{member.email}</span>
+                            </div>
+                            {member.phone && (
+                              <div className="flex items-center space-x-1">
+                                <Phone className="h-3 w-3" />
+                                <span>{member.phone}</span>
+                              </div>
+                            )}
+                            <div className="flex items-center space-x-1">
+                              <Calendar className="h-3 w-3" />
+                              <span>
+                                Joined {new Date(member.created_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+
+                          {member.membership && (
+                            <div className="text-sm text-muted-foreground mt-1">
+                              {member.membership.plan.name} - ${member.membership.plan.price}/month
                             </div>
                           )}
-                          <div className="flex items-center space-x-1">
-                            <Calendar className="h-3 w-3" />
-                            <span>
-                              Joined {new Date(member.created_at).toLocaleDateString()}
-                            </span>
-                          </div>
                         </div>
-                        
-                        {member.membership && (
-                          <div className="text-sm text-muted-foreground mt-1">
-                            {member.membership.plan.name} - ${member.membership.plan.price}/month
-                          </div>
-                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMemberClick(member);
+                          }}
+                        >
+                          <UserCheck className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Handle more actions
+                          }}
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleMemberClick(member);
-                        }}
-                      >
-                        <UserCheck className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // Handle more actions
-                        }}
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                }}
+              />
             </div>
           )}
         </CardContent>

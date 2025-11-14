@@ -1,39 +1,89 @@
 {
-  "name": "RepClub - Gym Management Platform",
-  "short_name": "RepClub",
-  "description": "Comprehensive gym management platform for members and staff",
+  "name": "Gym Unity Suite - Complete Gym Management Platform",
+  "short_name": "Gym Unity",
+  "description": "Comprehensive B2B SaaS gym management platform for members, staff, and administrators. Manage memberships, check-ins, classes, payments, and more with offline support.",
   "start_url": "/",
+  "id": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#0f172a",
+  "theme_color": "#667eea",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en-US",
-  "categories": ["fitness", "health", "productivity"],
+  "dir": "ltr",
+  "categories": ["fitness", "health", "productivity", "business"],
   "icons": [
     {
       "src": "/favicon.ico",
-      "sizes": "16x16",
+      "sizes": "16x16 32x32",
       "type": "image/x-icon"
+    },
+    {
+      "src": "/RepClub-Logo.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/RepClub-Logo.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/RepClub-Logo.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/RepClub-Logo.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/RepClub-Logo.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/RepClub-Logo.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/RepClub-Logo.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/RepClub-Logo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/RepClub-Logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/RepClub-Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
     {
       "name": "Check In",
       "short_name": "Check In",
-      "description": "Quick check-in to the gym",
+      "description": "Quick member check-in",
       "url": "/member/checkin",
       "icons": [
         {
@@ -44,10 +94,10 @@
       ]
     },
     {
-      "name": "Book Classes",
-      "short_name": "Classes",
-      "description": "View and book fitness classes",
-      "url": "/member/classes",
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your dashboard",
+      "url": "/dashboard",
       "icons": [
         {
           "src": "/RepClub-Logo.png",
@@ -57,10 +107,23 @@
       ]
     },
     {
-      "name": "Profile",
-      "short_name": "Profile",
-      "description": "View your member profile",
-      "url": "/member/profile",
+      "name": "Members",
+      "short_name": "Members",
+      "description": "Manage members",
+      "url": "/members",
+      "icons": [
+        {
+          "src": "/RepClub-Logo.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Classes",
+      "short_name": "Classes",
+      "description": "View and manage fitness classes",
+      "url": "/classes",
       "icons": [
         {
           "src": "/RepClub-Logo.png",
@@ -75,7 +138,37 @@
       "src": "/RepClub-Logo.png",
       "sizes": "540x720",
       "type": "image/png",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "Dashboard view on mobile"
+    },
+    {
+      "src": "/RepClub-Logo.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard view on desktop"
     }
-  ]
+  ],
+  "prefer_related_applications": false,
+  "protocol_handlers": [],
+  "file_handlers": [],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "iarc_rating_id": "",
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  "display_override": ["window-controls-overlay", "standalone"],
+  "handle_links": "auto"
 }
