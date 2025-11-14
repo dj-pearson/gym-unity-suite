@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { CommandPalette, useCommandPalette } from '@/components/CommandPalette';
 import { NotificationCenter, NotificationBadge } from '@/components/NotificationCenter';
 import { Popover, PopoverTrigger } from '@/components/ui/popover';
+import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -135,6 +136,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
 
       {/* Command Palette - Global search and navigation */}
       <CommandPalette open={open} onOpenChange={setOpen} />
+
+      {/* PWA Install Prompt - Shows when app can be installed */}
+      <PWAInstallPrompt />
     </SidebarProvider>
   );
 };
