@@ -48,8 +48,6 @@ export function VirtualList<T>({
     getScrollElement: () => parentRef.current,
     estimateSize: () => estimateSize,
     overscan,
-    // Enable smooth scrolling
-    enableSmoothScroll: true,
   });
 
   return (

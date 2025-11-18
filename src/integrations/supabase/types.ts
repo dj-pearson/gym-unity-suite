@@ -10095,42 +10095,15 @@ export type Database = {
         Args: { birth_date: string }
         Returns: number
       }
-      create_class_reminder_notifications: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      generate_corporate_invoice_number: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_member_barcode: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_member_card_number: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_pos_sale_number: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_referral_code: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_transaction_number: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      get_user_organization_id: {
-        Args: { user_id: string }
-        Returns: string
-      }
-      recalculate_lead_scores: {
-        Args: { org_id: string }
-        Returns: undefined
-      }
+      create_class_reminder_notifications: { Args: never; Returns: undefined }
+      generate_corporate_invoice_number: { Args: never; Returns: string }
+      generate_member_barcode: { Args: never; Returns: string }
+      generate_member_card_number: { Args: never; Returns: string }
+      generate_pos_sale_number: { Args: never; Returns: string }
+      generate_referral_code: { Args: never; Returns: string }
+      generate_transaction_number: { Args: never; Returns: string }
+      get_user_organization_id: { Args: { user_id: string }; Returns: string }
+      recalculate_lead_scores: { Args: { org_id: string }; Returns: undefined }
       setup_default_lead_stages: {
         Args: { org_id: string }
         Returns: undefined
