@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { type OnboardingTourType, getRecommendedToursForRole } from '@/lib/onboardingSteps';
 
 export interface OnboardingState {
@@ -70,9 +70,10 @@ export function useOnboarding() {
 
       let loadedState: OnboardingState | null = null;
 
-      if (data?.onboarding_state) {
+      const profileData = data as any;
+      if (profileData?.onboarding_state) {
         // Parse state from profile
-        loadedState = data.onboarding_state as OnboardingState;
+        loadedState = profileData.onboarding_state as OnboardingState;
       } else {
         // Try local storage fallback
         const localState = localStorage.getItem(STORAGE_KEY);
@@ -117,7 +118,7 @@ export function useOnboarding() {
         // Save to Supabase
         const { error } = await supabase
           .from('profiles')
-          .update({ onboarding_state: newState })
+          .update({ onboarding_state: newState } as any)
           .eq('id', profile.id);
 
         if (error) throw error;
