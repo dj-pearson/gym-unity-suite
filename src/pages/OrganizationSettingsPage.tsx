@@ -95,6 +95,8 @@ export default function OrganizationSettingsPage() {
       if (orgError) throw orgError;
       
       if (orgData) {
+        // @ts-ignore - TypeScript types may not include all fields
+        const org = orgData as any;
         setOrganization(orgData);
         setOrgForm({
           name: orgData.name || '',
@@ -102,8 +104,8 @@ export default function OrganizationSettingsPage() {
           primary_color: orgData.primary_color || '#2563eb',
           secondary_color: orgData.secondary_color || '#f97316'
         });
-        setCustomDomain(orgData.custom_domain || '');
-        setShowDNSInstructions(!!orgData.custom_domain && !orgData.custom_domain_verified);
+        setCustomDomain(org.custom_domain || '');
+        setShowDNSInstructions(!!org.custom_domain && !org.custom_domain_verified);
       }
 
     } catch (error) {
