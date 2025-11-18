@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import {
   getDefaultWidgetsForRole,
@@ -65,9 +65,10 @@ export function useDashboardPreferences() {
 
       let widgetIds: string[] = [];
 
-      if (data?.dashboard_preferences) {
+      const profileData = data as any;
+      if (profileData?.dashboard_preferences) {
         // Parse preferences from profile
-        const prefs = data.dashboard_preferences as DashboardPreferences;
+        const prefs = profileData.dashboard_preferences as DashboardPreferences;
         widgetIds = prefs.widgets || [];
       } else {
         // Try local storage fallback
@@ -118,7 +119,7 @@ export function useDashboardPreferences() {
         // Save to Supabase
         const { error } = await supabase
           .from('profiles')
-          .update({ dashboard_preferences: prefs })
+          .update({ dashboard_preferences: prefs } as any)
           .eq('id', profile.id);
 
         if (error) throw error;
