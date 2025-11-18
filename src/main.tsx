@@ -1,29 +1,19 @@
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
 
-// Sanitize: remove any stray literal "\\n" text nodes injected before React mounts
-;(() => {
-  try {
-    const nodes = Array.from(document.body.childNodes);
-    for (const n of nodes) {
-      if (n.nodeType === Node.TEXT_NODE && n.textContent) {
-        const cleaned = n.textContent.replace(/\\n/g, "").trim();
-        if (cleaned.length === 0) {
-          document.body.removeChild(n);
-        } else if (cleaned !== n.textContent) {
-          n.textContent = cleaned;
-        }
-      }
-    }
-  } catch (e) {
-    // no-op
-  }
-})();
+// Standard React 18 entrypoint with StrictMode
+const container = document.getElementById('root');
 
-// Ensure proper hash-based routing for SPA
-if (window.location.pathname !== '/' && !window.location.hash) {
-  window.location.replace('/#' + window.location.pathname + window.location.search)
+if (container) {
+  const root = createRoot(container);
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+} else {
+  // Fallback in case #root is missing
+  console.error('Root element with id "root" not found');
 }
-
-createRoot(document.getElementById("root")!).render(<App />);
