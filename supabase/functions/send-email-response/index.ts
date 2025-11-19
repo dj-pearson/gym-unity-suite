@@ -32,17 +32,10 @@ serve(async (req) => {
       );
     }
 
-    // Get message and thread info
+    // Get message info
     const { data: message, error: messageError } = await supabaseClient
       .from('email_messages')
-      .select(`
-        *,
-        thread:email_threads(
-          id,
-          domain,
-          smtp:smtp_settings(*)
-        )
-      `)
+      .select('*')
       .eq('id', messageId)
       .single();
 
@@ -50,14 +43,6 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'Message not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const smtpSettings = message.thread?.smtp?.[0];
-    if (!smtpSettings) {
-      return new Response(
-        JSON.stringify({ error: 'SMTP settings not configured for this thread' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -70,21 +55,39 @@ serve(async (req) => {
       );
     }
 
-    // Send email via SMTP
+    // Get SMTP settings from Supabase secrets (Amazon SES)
+    const smtpEndpoint = Deno.env.get('AMAZON_SMTP_ENDPOINT');
+    const smtpUsername = Deno.env.get('AMAZON_SMTP_USER_NAME');
+    const smtpPassword = Deno.env.get('AMAZON_SMTP_PASSWORD');
+
+    if (!smtpEndpoint || !smtpUsername || !smtpPassword) {
+      return new Response(
+        JSON.stringify({ error: 'SMTP settings not configured in Supabase secrets' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Parse SMTP endpoint to get host and port
+    const endpointParts = smtpEndpoint.split(':');
+    const smtpHost = endpointParts[0];
+    const smtpPort = endpointParts[1] ? parseInt(endpointParts[1]) : 587;
+
+    // Send email via Amazon SES SMTP
     const client = new SMTPClient({
       connection: {
-        hostname: smtpSettings.smtp_host,
-        port: smtpSettings.smtp_port,
-        tls: smtpSettings.use_tls,
+        hostname: smtpHost,
+        port: smtpPort,
+        tls: true,
         auth: {
-          username: smtpSettings.smtp_username,
-          password: smtpSettings.smtp_password,
+          username: smtpUsername,
+          password: smtpPassword,
         },
       },
     });
 
+    // Use the original "to" email as the "from" address for the reply
     await client.send({
-      from: `${smtpSettings.from_name || 'Support'} <${smtpSettings.from_email}>`,
+      from: message.to_email,
       to: message.from_email,
       subject: `Re: ${message.subject}`,
       content: responseBody,

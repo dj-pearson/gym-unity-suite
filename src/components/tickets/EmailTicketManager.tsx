@@ -20,7 +20,6 @@ import {
 import { EmailThreadList } from './EmailThreadList';
 import { EmailMessageList } from './EmailMessageList';
 import { EmailMessageDetail } from './EmailMessageDetail';
-import { SMTPSettingsDialog } from './SMTPSettingsDialog';
 import { toast } from 'sonner';
 
 export default function EmailTicketManager() {
@@ -35,9 +34,7 @@ export default function EmailTicketManager() {
     closedTickets: 0,
     disregardedTickets: 0
   });
-  const [showSMTPDialog, setShowSMTPDialog] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState('');
-  const [currentThreadHasSMTP, setCurrentThreadHasSMTP] = useState(false);
 
   useEffect(() => {
     if (profile?.organization_id) {
@@ -50,7 +47,6 @@ export default function EmailTicketManager() {
   useEffect(() => {
     if (activeThread) {
       fetchMessages(activeThread);
-      checkSMTPSettings(activeThread);
     }
   }, [activeThread]);
 
@@ -60,18 +56,7 @@ export default function EmailTicketManager() {
     setWebhookUrl(url);
   };
 
-  const checkSMTPSettings = async (threadId: string) => {
-    const { data, error } = await supabase
-      .from('smtp_settings')
-      .select('id')
-      .eq('thread_id', threadId)
-      .single();
-
-    setCurrentThreadHasSMTP(!!data);
-  };
-
   const fetchThreads = async () => {
-    // Fetch threads with SMTP status
     const { data: threadsData, error: threadsError } = await supabase
       .from('email_threads')
       .select('*')
@@ -84,22 +69,9 @@ export default function EmailTicketManager() {
       return;
     }
 
-    // Check SMTP settings for each thread
-    const threadsWithSMTP = await Promise.all(
-      (threadsData || []).map(async (thread) => {
-        const { data: smtp } = await supabase
-          .from('smtp_settings')
-          .select('id')
-          .eq('thread_id', thread.id)
-          .single();
-        
-        return { ...thread, has_smtp: !!smtp };
-      })
-    );
-
-    setThreads(threadsWithSMTP);
-    if (threadsWithSMTP && threadsWithSMTP.length > 0 && !activeThread) {
-      setActiveThread(threadsWithSMTP[0].id);
+    setThreads(threadsData || []);
+    if (threadsData && threadsData.length > 0 && !activeThread) {
+      setActiveThread(threadsData[0].id);
     }
   };
 
@@ -176,12 +148,8 @@ export default function EmailTicketManager() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Email Ticket System</h2>
-          <p className="text-muted-foreground">Manage incoming support emails</p>
+          <p className="text-muted-foreground">Manage incoming support emails via Amazon SES</p>
         </div>
-        <Button onClick={() => setShowSMTPDialog(true)} variant="outline">
-          <Settings className="w-4 h-4 mr-2" />
-          SMTP Settings
-        </Button>
       </div>
 
       {/* Webhook URL Card */}
@@ -192,7 +160,7 @@ export default function EmailTicketManager() {
             Webhook URL for Make.com
           </CardTitle>
           <CardDescription>
-            Use this URL in your Make.com HTTP request module
+            Use this URL in your Make.com HTTP request module. SMTP is configured via Supabase secrets.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -247,25 +215,6 @@ export default function EmailTicketManager() {
         </Card>
       </div>
 
-      {/* SMTP Warning Alert */}
-      {activeThread && !currentThreadHasSMTP && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>SMTP Not Configured</AlertTitle>
-          <AlertDescription className="flex items-center justify-between">
-            <span>You need to configure SMTP settings for this thread to send email replies.</span>
-            <Button 
-              onClick={() => setShowSMTPDialog(true)} 
-              variant="outline" 
-              size="sm"
-              className="ml-4"
-            >
-              Configure Now
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
-
       {/* Main Content */}
       <div className="grid gap-4 md:grid-cols-12">
         {/* Thread List */}
@@ -300,20 +249,6 @@ export default function EmailTicketManager() {
           )}
         </div>
       </div>
-
-      {showSMTPDialog && activeThread && (
-        <SMTPSettingsDialog 
-          threadId={activeThread}
-          open={showSMTPDialog}
-          onOpenChange={(open) => {
-            setShowSMTPDialog(open);
-            if (!open) {
-              checkSMTPSettings(activeThread);
-              fetchThreads();
-            }
-          }}
-        />
-      )}
     </div>
   );
 }
