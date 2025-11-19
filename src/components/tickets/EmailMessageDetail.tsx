@@ -106,7 +106,7 @@ export function EmailMessageDetail({ messageId, onUpdateStatus, onAssignMember, 
 
       if (error) throw error;
 
-      toast.success('Reply sent successfully');
+      toast.success('Reply sent successfully via Amazon SES');
       setReplyBody('');
       fetchResponses();
     } catch (error: any) {
@@ -114,6 +114,15 @@ export function EmailMessageDetail({ messageId, onUpdateStatus, onAssignMember, 
       toast.error(error.message || 'Failed to send reply');
     } finally {
       setSending(false);
+    }
+  };
+
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'open': return 'default';
+      case 'closed': return 'secondary';
+      case 'disregarded': return 'outline';
+      default: return 'default';
     }
   };
 
@@ -141,6 +150,11 @@ export function EmailMessageDetail({ messageId, onUpdateStatus, onAssignMember, 
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
                 <span>{format(new Date(message.received_date), 'PPpp')}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant={getStatusBadgeVariant(message.status)}>
+                  {message.status}
+                </Badge>
               </div>
             </div>
           </div>
@@ -189,7 +203,7 @@ export function EmailMessageDetail({ messageId, onUpdateStatus, onAssignMember, 
         </div>
 
         {/* Message Body */}
-        <div className="border rounded-lg p-4">
+        <div className="border rounded-lg p-4 bg-muted/30">
           <ScrollArea className="h-[200px]">
             <div className="whitespace-pre-wrap text-sm">{message.body}</div>
           </ScrollArea>
@@ -198,37 +212,54 @@ export function EmailMessageDetail({ messageId, onUpdateStatus, onAssignMember, 
         {/* Previous Responses */}
         {responses.length > 0 && (
           <div className="space-y-2">
-            <h4 className="font-medium text-sm">Previous Responses</h4>
-            {responses.map((response) => (
-              <div key={response.id} className="border rounded-lg p-3 bg-muted/50">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium">
-                    {response.sender?.first_name} {response.sender?.last_name}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {format(new Date(response.sent_at), 'MMM d, h:mm a')}
-                  </span>
-                </div>
-                <div className="text-sm whitespace-pre-wrap">{response.response_body}</div>
+            <h4 className="font-medium text-sm">Response History</h4>
+            <ScrollArea className="max-h-[200px]">
+              <div className="space-y-2">
+                {responses.map((response) => (
+                  <div key={response.id} className="border rounded-lg p-3 bg-muted/50">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium">
+                        {response.sender?.first_name} {response.sender?.last_name}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {format(new Date(response.sent_at), 'MMM d, h:mm a')}
+                      </span>
+                    </div>
+                    <div className="text-sm whitespace-pre-wrap">{response.response_body}</div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </ScrollArea>
           </div>
         )}
 
         {/* Reply Form */}
-        <div className="space-y-2">
-          <h4 className="font-medium text-sm">Send Reply</h4>
-          <Textarea
-            placeholder="Type your reply..."
-            value={replyBody}
-            onChange={(e) => setReplyBody(e.target.value)}
-            rows={4}
-          />
-          <Button onClick={handleSendReply} disabled={sending || !replyBody.trim()}>
-            <Send className="w-4 h-4 mr-2" />
-            {sending ? 'Sending...' : 'Send Reply'}
-          </Button>
-        </div>
+        {message.status === 'open' && (
+          <div className="space-y-2 pt-2 border-t">
+            <h4 className="font-medium text-sm">Send Reply via Amazon SES</h4>
+            <Textarea
+              placeholder="Type your reply..."
+              value={replyBody}
+              onChange={(e) => setReplyBody(e.target.value)}
+              rows={4}
+              className="resize-none"
+            />
+            <Button 
+              onClick={handleSendReply} 
+              disabled={sending || !replyBody.trim()}
+              className="w-full sm:w-auto"
+            >
+              <Send className="w-4 h-4 mr-2" />
+              {sending ? 'Sending...' : 'Send Reply'}
+            </Button>
+          </div>
+        )}
+        
+        {message.status !== 'open' && (
+          <div className="text-sm text-muted-foreground text-center p-4 border rounded-lg bg-muted/30">
+            This ticket is {message.status}. Reopen it to send replies.
+          </div>
+        )}
       </CardContent>
     </Card>
   );

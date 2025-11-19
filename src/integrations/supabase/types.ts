@@ -8405,56 +8405,6 @@ export type Database = {
         }
         Relationships: []
       }
-      smtp_settings: {
-        Row: {
-          created_at: string | null
-          from_email: string
-          from_name: string | null
-          id: string
-          smtp_host: string
-          smtp_password: string
-          smtp_port: number
-          smtp_username: string
-          thread_id: string
-          updated_at: string | null
-          use_tls: boolean | null
-        }
-        Insert: {
-          created_at?: string | null
-          from_email: string
-          from_name?: string | null
-          id?: string
-          smtp_host: string
-          smtp_password: string
-          smtp_port?: number
-          smtp_username: string
-          thread_id: string
-          updated_at?: string | null
-          use_tls?: boolean | null
-        }
-        Update: {
-          created_at?: string | null
-          from_email?: string
-          from_name?: string | null
-          id?: string
-          smtp_host?: string
-          smtp_password?: string
-          smtp_port?: number
-          smtp_username?: string
-          thread_id?: string
-          updated_at?: string | null
-          use_tls?: boolean | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "smtp_settings_thread_id_fkey"
-            columns: ["thread_id"]
-            isOneToOne: true
-            referencedRelation: "email_threads"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       spa_appointments: {
         Row: {
           appointment_date: string
