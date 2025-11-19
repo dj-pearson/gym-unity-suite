@@ -82,6 +82,7 @@ const CrossFitGymsPage = lazy(() => import("./pages/solutions/CrossFitGymsPage")
 const MartialArtsSchoolsPage = lazy(() => import("./pages/solutions/MartialArtsSchoolsPage"));
 const NewYorkGymSoftwarePage = lazy(() => import("./pages/local/NewYorkGymSoftwarePage"));
 const BestGymSoftwareBlogPost = lazy(() => import("./pages/blog/BestGymSoftware2025"));
+const TicketsPage = lazy(() => import("./pages/TicketsPage"));
 
 // Loading component for suspense fallback
 const PageLoader = () => (
@@ -490,6 +491,14 @@ const AppRoutes = () => {
                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                   <DashboardLayout>
                     <IntegrationsPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/tickets" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                  <DashboardLayout>
+                    <TicketsPage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />

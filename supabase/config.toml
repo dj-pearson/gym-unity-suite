@@ -2,3 +2,9 @@ project_id = "nerqstezuygviutluslt"
 
 [functions.setup-new-user]
 verify_jwt = false
+
+[functions.receive-email]
+verify_jwt = false
+
+[functions.send-email-response]
+verify_jwt = true
