@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { 
   Mail, 
   Inbox, 
@@ -13,7 +14,8 @@ import {
   Send,
   Settings,
   Users,
-  MoreVertical
+  MoreVertical,
+  AlertCircle
 } from 'lucide-react';
 import { EmailThreadList } from './EmailThreadList';
 import { EmailMessageList } from './EmailMessageList';
@@ -35,6 +37,7 @@ export default function EmailTicketManager() {
   });
   const [showSMTPDialog, setShowSMTPDialog] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState('');
+  const [currentThreadHasSMTP, setCurrentThreadHasSMTP] = useState(false);
 
   useEffect(() => {
     if (profile?.organization_id) {
@@ -47,6 +50,7 @@ export default function EmailTicketManager() {
   useEffect(() => {
     if (activeThread) {
       fetchMessages(activeThread);
+      checkSMTPSettings(activeThread);
     }
   }, [activeThread]);
 
@@ -56,21 +60,46 @@ export default function EmailTicketManager() {
     setWebhookUrl(url);
   };
 
-  const fetchThreads = async () => {
+  const checkSMTPSettings = async (threadId: string) => {
     const { data, error } = await supabase
+      .from('smtp_settings')
+      .select('id')
+      .eq('thread_id', threadId)
+      .single();
+
+    setCurrentThreadHasSMTP(!!data);
+  };
+
+  const fetchThreads = async () => {
+    // Fetch threads with SMTP status
+    const { data: threadsData, error: threadsError } = await supabase
       .from('email_threads')
       .select('*')
       .eq('organization_id', profile.organization_id)
       .order('updated_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching threads:', error);
+    if (threadsError) {
+      console.error('Error fetching threads:', threadsError);
       toast.error('Failed to load email threads');
-    } else {
-      setThreads(data || []);
-      if (data && data.length > 0 && !activeThread) {
-        setActiveThread(data[0].id);
-      }
+      return;
+    }
+
+    // Check SMTP settings for each thread
+    const threadsWithSMTP = await Promise.all(
+      (threadsData || []).map(async (thread) => {
+        const { data: smtp } = await supabase
+          .from('smtp_settings')
+          .select('id')
+          .eq('thread_id', thread.id)
+          .single();
+        
+        return { ...thread, has_smtp: !!smtp };
+      })
+    );
+
+    setThreads(threadsWithSMTP);
+    if (threadsWithSMTP && threadsWithSMTP.length > 0 && !activeThread) {
+      setActiveThread(threadsWithSMTP[0].id);
     }
   };
 
@@ -218,6 +247,25 @@ export default function EmailTicketManager() {
         </Card>
       </div>
 
+      {/* SMTP Warning Alert */}
+      {activeThread && !currentThreadHasSMTP && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>SMTP Not Configured</AlertTitle>
+          <AlertDescription className="flex items-center justify-between">
+            <span>You need to configure SMTP settings for this thread to send email replies.</span>
+            <Button 
+              onClick={() => setShowSMTPDialog(true)} 
+              variant="outline" 
+              size="sm"
+              className="ml-4"
+            >
+              Configure Now
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Main Content */}
       <div className="grid gap-4 md:grid-cols-12">
         {/* Thread List */}
@@ -257,7 +305,13 @@ export default function EmailTicketManager() {
         <SMTPSettingsDialog 
           threadId={activeThread}
           open={showSMTPDialog}
-          onOpenChange={setShowSMTPDialog}
+          onOpenChange={(open) => {
+            setShowSMTPDialog(open);
+            if (!open) {
+              checkSMTPSettings(activeThread);
+              fetchThreads();
+            }
+          }}
         />
       )}
     </div>
