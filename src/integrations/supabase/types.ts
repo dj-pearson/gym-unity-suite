@@ -2210,6 +2210,139 @@ export type Database = {
         }
         Relationships: []
       }
+      email_messages: {
+        Row: {
+          assigned_to: string | null
+          body: string | null
+          created_at: string | null
+          external_id: string
+          from_email: string
+          from_name: string | null
+          id: string
+          received_date: string
+          status: string | null
+          subject: string | null
+          thread_id: string
+          to_email: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          body?: string | null
+          created_at?: string | null
+          external_id: string
+          from_email: string
+          from_name?: string | null
+          id?: string
+          received_date: string
+          status?: string | null
+          subject?: string | null
+          thread_id: string
+          to_email: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          body?: string | null
+          created_at?: string | null
+          external_id?: string
+          from_email?: string
+          from_name?: string | null
+          id?: string
+          received_date?: string
+          status?: string | null
+          subject?: string | null
+          thread_id?: string
+          to_email?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_messages_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "email_messages_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "email_messages_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "email_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_responses: {
+        Row: {
+          created_at: string | null
+          id: string
+          message_id: string
+          response_body: string
+          sent_at: string | null
+          sent_by: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message_id: string
+          response_body: string
+          sent_at?: string | null
+          sent_by: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message_id?: string
+          response_body?: string
+          sent_at?: string | null
+          sent_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_responses_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "email_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_responses_sent_by_fkey"
+            columns: ["sent_by"]
+            isOneToOne: false
+            referencedRelation: "member_attendance_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "email_responses_sent_by_fkey"
+            columns: ["sent_by"]
+            isOneToOne: false
+            referencedRelation: "member_engagement_summary"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "email_responses_sent_by_fkey"
+            columns: ["sent_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_templates: {
         Row: {
           content: string
@@ -2248,6 +2381,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      email_threads: {
+        Row: {
+          created_at: string | null
+          display_name: string
+          domain: string
+          id: string
+          is_active: boolean | null
+          organization_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_name: string
+          domain: string
+          id?: string
+          is_active?: boolean | null
+          organization_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_name?: string
+          domain?: string
+          id?: string
+          is_active?: boolean | null
+          organization_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_threads_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       equipment: {
         Row: {
@@ -8233,6 +8404,56 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      smtp_settings: {
+        Row: {
+          created_at: string | null
+          from_email: string
+          from_name: string | null
+          id: string
+          smtp_host: string
+          smtp_password: string
+          smtp_port: number
+          smtp_username: string
+          thread_id: string
+          updated_at: string | null
+          use_tls: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          from_email: string
+          from_name?: string | null
+          id?: string
+          smtp_host: string
+          smtp_password: string
+          smtp_port?: number
+          smtp_username: string
+          thread_id: string
+          updated_at?: string | null
+          use_tls?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          from_email?: string
+          from_name?: string | null
+          id?: string
+          smtp_host?: string
+          smtp_password?: string
+          smtp_port?: number
+          smtp_username?: string
+          thread_id?: string
+          updated_at?: string | null
+          use_tls?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smtp_settings_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: true
+            referencedRelation: "email_threads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       spa_appointments: {
         Row: {
