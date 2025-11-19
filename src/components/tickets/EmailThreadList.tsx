@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Mail } from 'lucide-react';
+import { Mail, AlertCircle } from 'lucide-react';
 
 interface EmailThreadListProps {
   threads: any[];
@@ -33,11 +33,19 @@ export function EmailThreadList({ threads, activeThread, onSelectThread }: Email
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-medium truncate">{thread.display_name}</span>
-                  {thread.is_active && (
-                    <Badge variant="secondary" className="ml-2">
-                      Active
-                    </Badge>
-                  )}
+                  <div className="flex items-center gap-1">
+                    {!thread.has_smtp && (
+                      <Badge variant="destructive" className="ml-2 text-xs">
+                        <AlertCircle className="w-3 h-3 mr-1" />
+                        No SMTP
+                      </Badge>
+                    )}
+                    {thread.is_active && (
+                      <Badge variant="secondary" className="ml-2">
+                        Active
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 <div className="text-xs opacity-70">{thread.domain}</div>
               </button>
