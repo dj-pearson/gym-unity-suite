@@ -1,9 +1,69 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+const sendNotificationEmail = async (ticketData: any) => {
+  try {
+    const smtpEndpoint = Deno.env.get('AMAZON_SMTP_ENDPOINT');
+    const smtpUsername = Deno.env.get('AMAZON_SMTP_USER_NAME');
+    const smtpPassword = Deno.env.get('AMAZON_SMTP_PASSWORD');
+
+    if (!smtpEndpoint || !smtpUsername || !smtpPassword) {
+      console.error('SMTP credentials not configured');
+      return;
+    }
+
+    const endpointParts = smtpEndpoint.split(':');
+    const smtpHost = endpointParts[0];
+    const smtpPort = endpointParts[1] ? parseInt(endpointParts[1]) : 587;
+
+    const client = new SMTPClient({
+      connection: {
+        hostname: smtpHost,
+        port: smtpPort,
+        tls: true,
+        auth: {
+          username: smtpUsername,
+          password: smtpPassword,
+        },
+      },
+    });
+
+    const emailBody = `
+New Support Ticket Created
+
+From: ${ticketData.from_name || 'Unknown'} (${ticketData.from_email})
+To: ${ticketData.to_email}
+Subject: ${ticketData.subject}
+Received: ${new Date(ticketData.received_date).toLocaleString()}
+External ID: ${ticketData.external_id}
+
+Message:
+${ticketData.body}
+
+---
+Thread: ${ticketData.domain}
+Status: ${ticketData.status}
+    `.trim();
+
+    await client.send({
+      from: ticketData.to_email,
+      to: 'pearsonperformance@gmail.com',
+      subject: `Ticket Created: ${ticketData.subject}`,
+      content: emailBody,
+      html: emailBody.replace(/\n/g, '<br>'),
+    });
+
+    await client.close();
+    console.log('Notification email sent successfully');
+  } catch (error) {
+    console.error('Error sending notification email:', error);
+  }
 };
 
 serve(async (req) => {
@@ -106,6 +166,12 @@ serve(async (req) => {
     }
 
     console.log('Email message created:', message);
+
+    // Send notification email (non-blocking)
+    sendNotificationEmail({
+      ...message,
+      domain: domain
+    }).catch(err => console.error('Notification email failed:', err));
 
     return new Response(
       JSON.stringify({ success: true, message: 'Email received', data: message }),
