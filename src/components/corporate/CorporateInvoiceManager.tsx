@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, FileText, DollarSign, Calendar } from "lucide-react";
+import { getSemanticStatusColor } from "@/lib/colorUtils";
 
 interface CorporateInvoice {
   id: string;
@@ -195,15 +196,6 @@ export function CorporateInvoiceManager() {
     generateInvoice.mutate();
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid': return 'bg-success text-success-foreground';
-      case 'sent': return 'bg-primary text-primary-foreground';
-      case 'overdue': return 'bg-destructive text-destructive-foreground';
-      default: return 'bg-muted text-muted-foreground';
-    }
-  };
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -327,7 +319,7 @@ export function CorporateInvoiceManager() {
                         {invoice.payment_due_date ? new Date(invoice.payment_due_date).toLocaleDateString() : '-'}
                       </TableCell>
                       <TableCell>
-                        <Badge className={getStatusColor(invoice.status)}>
+                        <Badge className={getSemanticStatusColor(invoice.status)}>
                           {invoice.status}
                         </Badge>
                       </TableCell>

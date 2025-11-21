@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, FileText, Send, DollarSign, Edit, Trash2, Eye } from 'lucide-react';
+import { getStatusBadgeVariant } from '@/lib/colorUtils';
 
 interface SalesQuote {
   id: string;
@@ -320,17 +321,6 @@ export default function SalesQuotesManager() {
     setDialogOpen(true);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'accepted': return 'default';
-      case 'sent': return 'secondary';
-      case 'draft': return 'outline';
-      case 'expired': return 'destructive';
-      case 'rejected': return 'destructive';
-      default: return 'secondary';
-    }
-  };
-
   if (loading) return <div className="text-center py-8">Loading quotes...</div>;
 
   const totalQuotes = quotes.length;
@@ -607,7 +597,7 @@ export default function SalesQuotesManager() {
                         {quote.line_items?.length || 0} items
                       </p>
                     </div>
-                    <Badge variant={getStatusColor(quote.status)}>
+                    <Badge variant={getStatusBadgeVariant(quote.status)}>
                       {quote.status}
                     </Badge>
                     {quote.status === 'draft' && (
