@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Upload, FileText, AlertCircle, CheckCircle } from "lucide-react";
+import { getSemanticStatusColor } from "@/lib/colorUtils";
 
 interface BulkOperation {
   id: string;
@@ -186,15 +187,6 @@ export function BulkMemberOperations() {
     startBulkOperation.mutate({});
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'bg-success text-success-foreground';
-      case 'processing': return 'bg-warning text-warning-foreground';
-      case 'failed': return 'bg-destructive text-destructive-foreground';
-      default: return 'bg-muted text-muted-foreground';
-    }
-  };
-
   const getOperationIcon = (type: string) => {
     switch (type) {
       case 'bulk_add': return <Users className="h-4 w-4" />;
@@ -313,7 +305,7 @@ jane@example.com,Jane,Smith,555-5678,EMP002,HR,Manager"
                         </CardDescription>
                       </div>
                     </div>
-                    <Badge className={getStatusColor(operation.status)}>
+                    <Badge className={getSemanticStatusColor(operation.status)}>
                       {operation.status}
                     </Badge>
                   </div>

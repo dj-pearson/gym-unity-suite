@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Building2, Users, DollarSign } from "lucide-react";
+import { getSemanticStatusColor } from "@/lib/colorUtils";
 
 interface CorporateAccount {
   id: string;
@@ -141,15 +142,6 @@ export function CorporateAccountManager() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     saveMutation.mutate(formData);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-success text-success-foreground';
-      case 'suspended': return 'bg-warning text-warning-foreground';
-      case 'cancelled': return 'bg-destructive text-destructive-foreground';
-      default: return 'bg-muted text-muted-foreground';
-    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -317,7 +309,7 @@ export function CorporateAccountManager() {
                   </CardTitle>
                   <CardDescription>{account.contact_person}</CardDescription>
                 </div>
-                <Badge className={getStatusColor(account.status)}>
+                <Badge className={getSemanticStatusColor(account.status)}>
                   {account.status}
                 </Badge>
               </div>

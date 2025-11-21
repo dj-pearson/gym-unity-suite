@@ -14,6 +14,7 @@ import * as z from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { getStatusBadgeVariant } from '@/lib/colorUtils';
 import { 
   Plus,
   FileText,
@@ -215,16 +216,6 @@ export function InvoiceGenerator() {
 
   const getTotalAmount = () => {
     return lineItems.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid': return 'default';
-      case 'pending': return 'secondary';
-      case 'overdue': return 'destructive';
-      case 'draft': return 'outline';
-      default: return 'outline';
-    }
   };
 
   const handleSendInvoice = async (invoiceId: string) => {
@@ -468,7 +459,7 @@ export function InvoiceGenerator() {
                   <CardTitle className="flex items-center gap-3">
                     <FileText className="w-5 h-5" />
                     {invoice.invoice_number}
-                    <Badge variant={getStatusColor(invoice.status)}>
+                    <Badge variant={getStatusBadgeVariant(invoice.status)}>
                       {invoice.status}
                     </Badge>
                   </CardTitle>
