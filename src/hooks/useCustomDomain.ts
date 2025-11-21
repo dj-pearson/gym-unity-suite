@@ -29,7 +29,8 @@ export const useCustomDomain = () => {
           'gym-unity.app',
           'gym-unity.com',
           'lovable.app',
-          'lovable.dev'
+          'lovable.dev',
+          'lovableproject.com'
         ];
 
         const isDefaultDomain = defaultDomains.some(domain =>
