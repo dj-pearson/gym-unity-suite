@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { getStatusColor } from '@/lib/colorUtils';
 import { 
   Dumbbell, 
   MapPin, 
@@ -243,19 +244,6 @@ export default function EquipmentResourceBooking() {
       minute: '2-digit',
       hour12: true
     });
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return 'bg-success/10 text-success border-success/20';
-      case 'completed':
-        return 'bg-primary/10 text-primary border-primary/20';
-      case 'cancelled':
-        return 'bg-destructive/10 text-destructive border-destructive/20';
-      default:
-        return 'bg-muted/10 text-muted-foreground border-muted/20';
-    }
   };
 
   const filteredBookings = bookings.filter(booking => {

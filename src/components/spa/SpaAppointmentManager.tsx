@@ -14,6 +14,7 @@ import { Calendar, Clock, DollarSign, Plus, Edit2, X, CheckCircle } from "lucide
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
+import { getStatusBgColor, getPaymentStatusColor } from "@/lib/colorUtils";
 
 interface SpaAppointment {
   id: string;
@@ -165,26 +166,6 @@ export function SpaAppointmentManager() {
     updateAppointmentMutation.mutate({ id: appointmentId, status });
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "confirmed": return "bg-blue-500";
-      case "in_progress": return "bg-yellow-500";
-      case "completed": return "bg-green-500";
-      case "cancelled": return "bg-red-500";
-      case "no_show": return "bg-gray-500";
-      default: return "bg-gray-300";
-    }
-  };
-
-  const getPaymentStatusColor = (status: string) => {
-    switch (status) {
-      case "paid": return "bg-green-500";
-      case "partial": return "bg-yellow-500";
-      case "refunded": return "bg-blue-500";
-      default: return "bg-gray-300";
-    }
-  };
-
   if (isLoading) {
     return <div>Loading appointments...</div>;
   }
@@ -270,7 +251,7 @@ export function SpaAppointmentManager() {
                     <TableCell>{appointment.duration_minutes}m</TableCell>
                     <TableCell>${appointment.total_price}</TableCell>
                     <TableCell>
-                      <Badge className={`text-white ${getStatusColor(appointment.status)}`}>
+                      <Badge className={`text-white ${getStatusBgColor(appointment.status)}`}>
                         {appointment.status.replace("_", " ").toUpperCase()}
                       </Badge>
                     </TableCell>

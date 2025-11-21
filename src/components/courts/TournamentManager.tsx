@@ -13,6 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Trophy, Plus, Edit, Trash2, Users, Calendar, DollarSign, Medal, UserPlus } from 'lucide-react';
 import { format } from 'date-fns';
+import { getStatusColor } from '@/lib/colorUtils';
 
 interface Tournament {
   id: string;
@@ -359,17 +360,6 @@ export default function TournamentManager() {
     setSelectedTournament(tournament);
     fetchParticipants(tournament.id);
     fetchMatches(tournament.id);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'registration_open': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'registration_closed': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-      case 'in_progress': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-      case 'completed': return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
-    }
   };
 
   const sports = ['Tennis', 'Pickleball', 'Racquetball', 'Squash', 'Badminton', 'Table Tennis', 'Other'];

@@ -14,6 +14,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Database } from '@/integrations/supabase/types';
 import { format } from 'date-fns';
+import { getStatusBadgeVariant } from '@/lib/colorUtils';
 
 type Membership = Database['public']['Tables']['memberships']['Row'];
 type MembershipPlan = Database['public']['Tables']['membership_plans']['Row'];
@@ -140,21 +141,6 @@ export function MembershipInfo({ memberId }: MembershipInfoProps) {
   const { membership, subscriber } = membershipInfo;
   const plan = membership.membership_plans;
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'default';
-      case 'suspended':
-        return 'secondary';
-      case 'cancelled':
-        return 'destructive';
-      case 'expired':
-        return 'outline';
-      default:
-        return 'secondary';
-    }
-  };
-
   const getBillingStatus = () => {
     if (!subscriber) return null;
     
@@ -183,7 +169,7 @@ export function MembershipInfo({ memberId }: MembershipInfoProps) {
               <Shield className="w-5 h-5" />
               Current Membership
             </span>
-            <Badge variant={getStatusColor(membership.status)}>
+            <Badge variant={getStatusBadgeVariant(membership.status)}>
               {membership.status}
             </Badge>
           </CardTitle>

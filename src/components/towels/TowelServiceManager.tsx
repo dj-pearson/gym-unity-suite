@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Bath, Plus, Search, RefreshCw, AlertCircle } from "lucide-react";
+import { getStatusBgColor, getPaymentStatusColor } from "@/lib/colorUtils";
 
 interface TowelInventory {
   id: string;
@@ -161,26 +162,6 @@ export function TowelServiceManager() {
     },
   });
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active": return "bg-yellow-500";
-      case "returned": return "bg-green-500";
-      case "overdue": return "bg-red-500";
-      case "lost": return "bg-gray-500";
-      case "damaged": return "bg-orange-500";
-      default: return "bg-gray-400";
-    }
-  };
-
-  const getPaymentStatusColor = (status: string) => {
-    switch (status) {
-      case "paid": return "bg-green-500";
-      case "pending": return "bg-yellow-500";
-      case "overdue": return "bg-red-500";
-      default: return "bg-gray-400";
-    }
-  };
-
   if (inventoryLoading || rentalsLoading) {
     return <div className="flex items-center justify-center p-8">Loading towel service data...</div>;
   }
@@ -318,7 +299,7 @@ export function TowelServiceManager() {
                     <div className="flex items-center gap-3">
                       <div className="text-right">
                         <div className="font-semibold">${rental.rental_fee}</div>
-                        <Badge className={getPaymentStatusColor(rental.payment_status)}>
+                        <Badge className={`${getPaymentStatusColor(rental.payment_status)} text-white`}>
                           {rental.payment_status}
                         </Badge>
                       </div>

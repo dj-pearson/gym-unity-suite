@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Plus, Receipt, DollarSign, TrendingUp, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
+import { getSemanticStatusColor } from '@/lib/colorUtils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import ExpenseForm from './ExpenseForm';
 import VendorManager from './VendorManager';
@@ -58,15 +59,6 @@ const ExpenseManager = () => {
     },
     enabled: !!profile?.organization_id,
   });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid': return 'bg-success text-success-foreground';
-      case 'pending': return 'bg-warning text-warning-foreground';
-      case 'overdue': return 'bg-destructive text-destructive-foreground';
-      default: return 'bg-muted text-muted-foreground';
-    }
-  };
 
   if (isLoading) {
     return <div className="p-6">Loading expenses...</div>;
@@ -182,7 +174,7 @@ const ExpenseManager = () => {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <h4 className="font-medium">{expense.description}</h4>
-                          <Badge className={getStatusColor(expense.payment_status)}>
+                          <Badge className={getSemanticStatusColor(expense.payment_status)}>
                             {expense.payment_status}
                           </Badge>
                         </div>
