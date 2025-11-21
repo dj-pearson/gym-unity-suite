@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Calendar, Clock, MapPin, User, Edit, Trash2 } from 'lucide-react';
+import { getStatusBadgeVariant } from '@/lib/colorUtils';
 
 interface FacilityTour {
   id: string;
@@ -250,16 +251,6 @@ export default function ToursSchedulingManager() {
     setEditingTour(null);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'default';
-      case 'scheduled': return 'secondary';
-      case 'cancelled': return 'destructive';
-      case 'no_show': return 'outline';
-      default: return 'secondary';
-    }
-  };
-
   if (loading) return <div className="text-center py-8">Loading tours...</div>;
 
   const totalTours = tours.length;
@@ -463,7 +454,7 @@ export default function ToursSchedulingManager() {
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <Badge variant={getStatusColor(tour.status)}>
+                    <Badge variant={getStatusBadgeVariant(tour.status)}>
                       {tour.status}
                     </Badge>
                     {tour.status === 'scheduled' && (

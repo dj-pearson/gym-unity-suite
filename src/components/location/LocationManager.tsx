@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Plus, MapPin, Users, Activity, Settings, Building2 } from 'lucide-react';
+import { getStatusBgColor } from '@/lib/colorUtils';
 
 interface Location {
   id: string;
@@ -161,16 +162,6 @@ export function LocationManager() {
     };
 
     saveMutation.mutate(submissionData);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-500';
-      case 'under_construction': return 'bg-yellow-500';
-      case 'closed': return 'bg-red-500';
-      case 'maintenance': return 'bg-orange-500';
-      default: return 'bg-gray-500';
-    }
   };
 
   const getLocationStats = (locationId: string) => {
@@ -350,7 +341,7 @@ export function LocationManager() {
                       <Badge variant="secondary">HQ</Badge>
                     )}
                   </div>
-                  <Badge className={getStatusColor(location.status)} variant="outline">
+                  <Badge className={`${getStatusBgColor(location.status)} text-white`} variant="outline">
                     {location.status}
                   </Badge>
                 </div>
