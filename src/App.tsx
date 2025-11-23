@@ -10,6 +10,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PERMISSIONS } from "@/hooks/usePermissions";
 import { HelmetProvider } from 'react-helmet-async';
+import { Button } from '@/components/ui/button';
 import { queryClient } from '@/lib/queryClient';
 import React, { useEffect, lazy, Suspense } from 'react';
 import { MemberLayout } from "./components/layout/MemberLayout";
@@ -164,6 +165,43 @@ const App = () => {
   );
 };
 
+// Application-wide error boundary to prevent blank screens on runtime errors
+class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error?: Error }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: undefined };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    // Log to console so we can debug issues without a white screen
+    console.error('App error boundary caught an error', error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="max-w-md text-center space-y-4">
+            <h1 className="text-2xl font-bold text-foreground">Something went wrong</h1>
+            <p className="text-sm text-muted-foreground">
+              {this.state.error?.message || 'An unexpected error occurred while loading the app.'}
+            </p>
+            <Button variant="outline" onClick={() => window.location.reload()}>
+              Reload
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 // Separate component for routes to ensure proper React context
 const AppRoutes = () => {
   // Register service worker for PWA functionality
@@ -180,8 +218,9 @@ const AppRoutes = () => {
   }, []);
 
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
+    <AppErrorBoundary>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
       {/* Home Route - Landing page or Dashboard */}
       <Route path="/" element={<HomeRoute />} />
       
@@ -583,7 +622,8 @@ const AppRoutes = () => {
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
       </Routes>
-    </Suspense>
+      </Suspense>
+    </AppErrorBoundary>
   );
 };
 
