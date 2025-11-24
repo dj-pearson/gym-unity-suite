@@ -4,10 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { Footer } from '@/components/layout/Footer';
-import { 
-  Users, 
-  Calendar, 
-  CreditCard, 
+import {
+  Users,
+  Calendar,
+  CreditCard,
   BarChart3,
   UserCheck,
   Smartphone,
@@ -26,9 +26,40 @@ import { InteractiveHeroBackground } from '@/components/backgrounds/InteractiveH
 import OneTimePaymentButton from '@/components/membership/OneTimePaymentButton';
 import { EarlyAccessForm } from '@/components/auth/EarlyAccessForm';
 import { Logo } from '@/components/ui/logo';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const heroContainerRef = React.useRef(null);
+
+  useGSAP(() => {
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    tl.from(".hero-badge", {
+      y: -20,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.2
+    })
+      .from(".hero-title", {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        skewY: 2
+      }, "-=0.4")
+      .from(".hero-description", {
+        y: 30,
+        opacity: 0,
+        duration: 0.8
+      }, "-=0.6")
+      .from(".hero-buttons", {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        scale: 0.95
+      }, "-=0.6");
+  }, { scope: heroContainerRef });
 
   // Auto-scroll to pricing section if /pricing route
   React.useEffect(() => {
@@ -102,7 +133,7 @@ export default function LandingPage() {
       features: [
         "Complete member management",
         "Class scheduling & booking",
-        "Mobile check-in system", 
+        "Mobile check-in system",
         "Automated billing & payments",
         "Basic reporting & analytics",
         "Email & SMS notifications",
@@ -112,7 +143,7 @@ export default function LandingPage() {
       savings: "Perfect for single studios"
     },
     {
-      name: "Professional", 
+      name: "Professional",
       price: 349,
       interval: "month",
       members: "Up to 2,000 members",
@@ -133,7 +164,7 @@ export default function LandingPage() {
     },
     {
       name: "Enterprise",
-      price: 649, 
+      price: 649,
       interval: "month",
       members: "Unlimited members",
       team: "Unlimited team members",
@@ -225,7 +256,7 @@ export default function LandingPage() {
         <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 relative">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <Logo size="xl" linkToHome={true} />
-            
+
             {/* Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-foreground hover:text-primary transition-colors font-medium">
@@ -234,14 +265,14 @@ export default function LandingPage() {
               <a href="#pricing" className="text-foreground hover:text-primary transition-colors font-medium">
                 Pricing
               </a>
-              <Button 
+              <Button
                 variant="ghost"
                 onClick={() => navigate('/blog')}
                 className="text-foreground hover:text-primary font-medium"
               >
                 Blog
               </Button>
-              <Button 
+              <Button
                 onClick={() => {
                   document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
                 }}
@@ -251,10 +282,10 @@ export default function LandingPage() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
-            
+
             {/* Mobile Navigation */}
             <div className="md:hidden flex items-center space-x-2">
-              <Button 
+              <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/blog')}
@@ -262,7 +293,7 @@ export default function LandingPage() {
               >
                 Blog
               </Button>
-              <Button 
+              <Button
                 size="sm"
                 onClick={() => {
                   document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
@@ -277,330 +308,333 @@ export default function LandingPage() {
 
         {/* Parallax background with hero content only */}
         <InteractiveHeroBackground className="relative w-full z-0">
-        {/* Hero Section - integrated into parallax */}
-        <section className="relative container mx-auto px-4 py-20 text-center flex items-center min-h-[80vh] z-10">
-          <div className="relative z-10 max-w-4xl mx-auto">
-            <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
-              Elite Fitness Management Platform
-            </Badge>
-            <div className="mb-4">
-              <Badge className="bg-primary/20 text-primary border-primary/30 backdrop-blur-sm">
-                🚀 Launching November 1st, 2025
-              </Badge>
-            </div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
-              #1 Gym Management 
-              <br />
-              <span className="relative text-gradient-primary">
-                Software
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-              All-in-one fitness management system for gyms, studios & fitness centers. Automate scheduling, 
-              billing, member management & more. Launching November 1st - join the waitlist!
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <Button 
-                size="lg" 
-                onClick={() => {
-                  document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow hover:shadow-elevation-3 transition-all duration-300"
-              >
-                Request Early Access
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button 
-                variant="secondary" 
-                size="lg"
-                className="px-8 py-4 text-lg bg-white/95 text-foreground border-white/30 hover:bg-white transition-all duration-300"
-              >
-                Watch Demo
-              </Button>
-            </div>
-          </div>
-        </section>
-      </InteractiveHeroBackground>
-
-      {/* Features Grid - separate section with standard background */}
-      <section id="features" className="container mx-auto px-4 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Complete Gym Management Software Features</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            All-in-one fitness management system with member management, class scheduling, billing automation, 
-            and analytics designed for gyms, yoga studios, and fitness centers
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <Card key={index} className="gym-card group hover:shadow-elevation-3 transition-all duration-300">
-              <CardHeader>
-                <div className="flex items-center space-x-4">
-                  <div className="p-3 bg-gradient-primary rounded-lg group-hover:scale-110 transition-transform">
-                    <feature.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">{feature.title}</CardTitle>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base">
-                  {feature.description}
-                </CardDescription>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="bg-muted/50 py-20">
-        <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Why Choose Rep Club?</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Crafted by elite fitness professionals for the most discerning standards
-          </p>
-        </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {benefits.map((benefit, index) => (
-              <div key={index} className="text-center group">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-secondary rounded-xl mb-6 group-hover:scale-110 transition-transform">
-                  <benefit.icon className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">{benefit.title}</h3>
-                <p className="text-muted-foreground">{benefit.description}</p>
+          {/* Hero Section - integrated into parallax */}
+          <section ref={heroContainerRef} className="relative container mx-auto px-4 py-20 text-center flex items-center min-h-[80vh] z-10">
+            <div className="relative z-10 max-w-4xl mx-auto">
+              <div className="hero-badge">
+                <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
+                  Elite Fitness Management Platform
+                </Badge>
               </div>
+              <div className="mb-4 hero-badge">
+                <Badge className="bg-primary/20 text-primary border-primary/30 backdrop-blur-sm">
+                  🚀 Launching November 1st, 2025
+                </Badge>
+              </div>
+              <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
+                #1 Gym Management
+                <br />
+                <span className="relative text-gradient-primary">
+                  Software
+                </span>
+              </h1>
+              <p className="hero-description text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+                All-in-one fitness management system for gyms, studios & fitness centers. Automate scheduling,
+                billing, member management & more. Launching November 1st - join the waitlist!
+              </p>
+              <div className="hero-buttons flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow hover:shadow-elevation-3 transition-all duration-300"
+                >
+                  Request Early Access
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="px-8 py-4 text-lg bg-white/95 text-foreground border-white/30 hover:bg-white transition-all duration-300"
+                >
+                  Watch Demo
+                </Button>
+              </div>
+            </div>
+          </section>
+        </InteractiveHeroBackground>
+
+        {/* Features Grid - separate section with standard background */}
+        <section id="features" className="container mx-auto px-4 py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4">Complete Gym Management Software Features</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              All-in-one fitness management system with member management, class scheduling, billing automation,
+              and analytics designed for gyms, yoga studios, and fitness centers
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <Card key={index} className="gym-card group hover:shadow-elevation-3 transition-all duration-300">
+                <CardHeader>
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-gradient-primary rounded-lg group-hover:scale-110 transition-transform">
+                      <feature.icon className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg">{feature.title}</CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-base">
+                    {feature.description}
+                  </CardDescription>
+                </CardContent>
+              </Card>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="container mx-auto px-4 py-20">
-        <div className="text-center mb-16">
-          <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-            Transparent Pricing
-          </Badge>
-          <h2 className="text-4xl font-bold mb-4">Choose Your Rep Club Plan</h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Premium fitness management solutions with transparent, value-based pricing. 
-            No hidden fees, no surprises - just elite software for discerning professionals.
-          </p>
-        </div>
-
-        <div className="grid gap-8 grid-cols-1 lg:grid-cols-3 max-w-6xl mx-auto">
-          {pricingPlans.map((plan, index) => (
-            <Card 
-              key={index} 
-              className={`gym-card relative ${plan.popular ? 'ring-2 ring-primary shadow-elevation-3 scale-105' : ''} hover:shadow-elevation-2 transition-all duration-300`}
-            >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-primary text-primary-foreground px-4 py-1">
-                    Most Popular
-                  </Badge>
-                </div>
-              )}
-              
-              <CardHeader className="text-center pb-8">
-                <div className="flex items-center justify-center mb-4">
-                  <div className={`p-3 rounded-xl ${plan.popular ? 'bg-gradient-primary' : 'bg-gradient-secondary'}`}>
-                    <plan.icon className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-                <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                <div className="mt-4">
-                  <div className="text-4xl font-bold text-foreground">
-                    ${plan.price}
-                    <span className="text-lg text-muted-foreground font-normal">/{plan.interval}</span>
-                  </div>
-                  <div className="mt-3 space-y-1">
-                    <p className="text-sm text-muted-foreground">{plan.members}</p>
-                    <p className="text-sm text-muted-foreground">{plan.team}</p>
-                  </div>
-                  <Badge variant="outline" className="mt-3 text-xs">
-                    {plan.savings}
-                  </Badge>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-6">
-                <ul className="space-y-3">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center space-x-3">
-                      <div className="flex-shrink-0">
-                        <div className="w-5 h-5 bg-success/10 rounded-full flex items-center justify-center">
-                          <Check className="h-3 w-3 text-success" />
-                        </div>
-                      </div>
-                      <span className="text-sm text-muted-foreground">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="pt-6">
-                  <OneTimePaymentButton
-                    amount={plan.price}
-                    description={`Rep Club ${plan.name} Plan - Monthly Subscription`}
-                    orderType="subscription_setup"
-                    metadata={{
-                      plan_name: plan.name,
-                      member_limit: plan.members,
-                      team_limit: plan.team,
-                      billing_interval: plan.interval
-                    }}
-                    className="w-full"
-                    variant={plan.popular ? "default" : "outline"}
-                  >
-                    Get Started with {plan.name}
-                  </OneTimePaymentButton>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Early Access Section */}
-        <section id="early-access" className="mt-20 text-center">
-          <div className="mb-12">
-            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-              🎯 Early Access Program
-            </Badge>
-            <h2 className="text-3xl font-bold mb-4">Join the Elite Preview</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Get exclusive early access to Rep Club before our November 1st launch. Limited spots available for founding members.
-            </p>
-          </div>
-          
-          <EarlyAccessForm />
         </section>
 
-        {/* Enterprise Pricing */}
-        <Card className="gym-card bg-gradient-hero text-white max-w-4xl mx-auto">
-          <CardHeader className="text-center">
-            <div className="flex items-center justify-center mb-4">
-              <div className="p-4 bg-white/10 rounded-xl backdrop-blur-sm">
-                <Building2 className="h-8 w-8 text-white" />
-              </div>
-            </div>
-            <CardTitle className="text-3xl font-bold">Enterprise Solutions</CardTitle>
-            <CardDescription className="text-white/80 text-lg mt-4">
-              Custom solutions for large chains and franchises with 10+ locations
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold">$2,000+</div>
-                <div className="text-sm opacity-80">Starting monthly</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold">$150-300</div>
-                <div className="text-sm opacity-80">Per location</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold">Volume</div>
-                <div className="text-sm opacity-80">Discounts available</div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-8">
-              <div className="flex items-center space-x-2">
-                <Check className="h-4 w-4 text-success" />
-                <span>Implementation & training included</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Check className="h-4 w-4 text-success" />
-                <span>SLA agreements</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Check className="h-4 w-4 text-success" />
-                <span>Dedicated enterprise support</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Check className="h-4 w-4 text-success" />
-                <span>Custom integrations</span>
-              </div>
+        {/* Benefits Section */}
+        <section className="bg-muted/50 py-20">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold mb-4">Why Choose Rep Club?</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Crafted by elite fitness professionals for the most discerning standards
+              </p>
             </div>
 
-            <Button 
-              variant="secondary" 
-              size="lg"
-              className="px-8"
-              onClick={() => navigate('/contact')}
-            >
-              Contact Enterprise Sales
-            </Button>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* Testimonials */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Trusted by Fitness Professionals</h2>
-          <p className="text-xl text-muted-foreground">
-            See what gym owners are saying about our platform
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <Card key={index} className="gym-card">
-              <CardContent className="p-6">
-                <div className="flex items-center mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                  ))}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {benefits.map((benefit, index) => (
+                <div key={index} className="text-center group">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-secondary rounded-xl mb-6 group-hover:scale-110 transition-transform">
+                    <benefit.icon className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">{benefit.title}</h3>
+                  <p className="text-muted-foreground">{benefit.description}</p>
                 </div>
-                <blockquote className="text-foreground mb-4 italic">
-                  "{testimonial.content}"
-                </blockquote>
-                <div>
-                  <div className="font-semibold text-foreground">{testimonial.name}</div>
-                  <div className="text-sm text-muted-foreground">{testimonial.role}</div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-gradient-hero py-20 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-4">
-            Ready to Transform Your Gym?
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join the elite community of fitness professionals already using Rep Club. 
-            Experience excellence today - no credit card required.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Button 
-              size="lg" 
-              onClick={() => navigate('/auth')}
-              variant="secondary"
-              className="px-8 py-4 text-lg shadow-elevation-2"
-            >
-              Start Free Trial
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button 
-              variant="secondary" 
-              size="lg"
-              className="px-8 py-4 text-lg bg-white/95 text-foreground border-white/30 hover:bg-white"
-            >
-              Contact Sales
-            </Button>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <Footer />
-    </div></>
+        {/* Pricing Section */}
+        <section id="pricing" className="container mx-auto px-4 py-20">
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+              Transparent Pricing
+            </Badge>
+            <h2 className="text-4xl font-bold mb-4">Choose Your Rep Club Plan</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Premium fitness management solutions with transparent, value-based pricing.
+              No hidden fees, no surprises - just elite software for discerning professionals.
+            </p>
+          </div>
+
+          <div className="grid gap-8 grid-cols-1 lg:grid-cols-3 max-w-6xl mx-auto">
+            {pricingPlans.map((plan, index) => (
+              <Card
+                key={index}
+                className={`gym-card relative ${plan.popular ? 'ring-2 ring-primary shadow-elevation-3 scale-105' : ''} hover:shadow-elevation-2 transition-all duration-300`}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-primary text-primary-foreground px-4 py-1">
+                      Most Popular
+                    </Badge>
+                  </div>
+                )}
+
+                <CardHeader className="text-center pb-8">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className={`p-3 rounded-xl ${plan.popular ? 'bg-gradient-primary' : 'bg-gradient-secondary'}`}>
+                      <plan.icon className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                  <div className="mt-4">
+                    <div className="text-4xl font-bold text-foreground">
+                      ${plan.price}
+                      <span className="text-lg text-muted-foreground font-normal">/{plan.interval}</span>
+                    </div>
+                    <div className="mt-3 space-y-1">
+                      <p className="text-sm text-muted-foreground">{plan.members}</p>
+                      <p className="text-sm text-muted-foreground">{plan.team}</p>
+                    </div>
+                    <Badge variant="outline" className="mt-3 text-xs">
+                      {plan.savings}
+                    </Badge>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-6">
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-center space-x-3">
+                        <div className="flex-shrink-0">
+                          <div className="w-5 h-5 bg-success/10 rounded-full flex items-center justify-center">
+                            <Check className="h-3 w-3 text-success" />
+                          </div>
+                        </div>
+                        <span className="text-sm text-muted-foreground">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="pt-6">
+                    <OneTimePaymentButton
+                      amount={plan.price}
+                      description={`Rep Club ${plan.name} Plan - Monthly Subscription`}
+                      orderType="subscription_setup"
+                      metadata={{
+                        plan_name: plan.name,
+                        member_limit: plan.members,
+                        team_limit: plan.team,
+                        billing_interval: plan.interval
+                      }}
+                      className="w-full"
+                      variant={plan.popular ? "default" : "outline"}
+                    >
+                      Get Started with {plan.name}
+                    </OneTimePaymentButton>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Early Access Section */}
+          <section id="early-access" className="mt-20 text-center">
+            <div className="mb-12">
+              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+                🎯 Early Access Program
+              </Badge>
+              <h2 className="text-3xl font-bold mb-4">Join the Elite Preview</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Get exclusive early access to Rep Club before our November 1st launch. Limited spots available for founding members.
+              </p>
+            </div>
+
+            <EarlyAccessForm />
+          </section>
+
+          {/* Enterprise Pricing */}
+          <Card className="gym-card bg-gradient-hero text-white max-w-4xl mx-auto">
+            <CardHeader className="text-center">
+              <div className="flex items-center justify-center mb-4">
+                <div className="p-4 bg-white/10 rounded-xl backdrop-blur-sm">
+                  <Building2 className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <CardTitle className="text-3xl font-bold">Enterprise Solutions</CardTitle>
+              <CardDescription className="text-white/80 text-lg mt-4">
+                Custom solutions for large chains and franchises with 10+ locations
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                  <div className="text-2xl font-bold">$2,000+</div>
+                  <div className="text-sm opacity-80">Starting monthly</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                  <div className="text-2xl font-bold">$150-300</div>
+                  <div className="text-sm opacity-80">Per location</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                  <div className="text-2xl font-bold">Volume</div>
+                  <div className="text-sm opacity-80">Discounts available</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-8">
+                <div className="flex items-center space-x-2">
+                  <Check className="h-4 w-4 text-success" />
+                  <span>Implementation & training included</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Check className="h-4 w-4 text-success" />
+                  <span>SLA agreements</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Check className="h-4 w-4 text-success" />
+                  <span>Dedicated enterprise support</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Check className="h-4 w-4 text-success" />
+                  <span>Custom integrations</span>
+                </div>
+              </div>
+
+              <Button
+                variant="secondary"
+                size="lg"
+                className="px-8"
+                onClick={() => navigate('/contact')}
+              >
+                Contact Enterprise Sales
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Testimonials */}
+        <section className="container mx-auto px-4 py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4">Trusted by Fitness Professionals</h2>
+            <p className="text-xl text-muted-foreground">
+              See what gym owners are saying about our platform
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="gym-card">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 fill-primary text-primary" />
+                    ))}
+                  </div>
+                  <blockquote className="text-foreground mb-4 italic">
+                    "{testimonial.content}"
+                  </blockquote>
+                  <div>
+                    <div className="font-semibold text-foreground">{testimonial.name}</div>
+                    <div className="text-sm text-muted-foreground">{testimonial.role}</div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="bg-gradient-hero py-20 text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-4xl font-bold mb-4">
+              Ready to Transform Your Gym?
+            </h2>
+            <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+              Join the elite community of fitness professionals already using Rep Club.
+              Experience excellence today - no credit card required.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <Button
+                size="lg"
+                onClick={() => navigate('/auth')}
+                variant="secondary"
+                className="px-8 py-4 text-lg shadow-elevation-2"
+              >
+                Start Free Trial
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                className="px-8 py-4 text-lg bg-white/95 text-foreground border-white/30 hover:bg-white"
+              >
+                Contact Sales
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        <Footer />
+      </div>
+    </>
   );
 }
