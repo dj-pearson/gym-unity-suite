@@ -55,6 +55,7 @@ import {
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
+// Reorganized for better UX - most common items first, specialized services grouped
 const navigationGroups = [
   {
     title: 'Overview',
@@ -63,60 +64,69 @@ const navigationGroups = [
     ]
   },
   {
+    title: 'Core Operations',
+    items: [
+      { name: 'Members', href: '/members', icon: Users, permission: PERMISSIONS.VIEW_MEMBERS },
+      { name: 'Classes', href: '/classes', icon: Calendar, permission: PERMISSIONS.VIEW_CLASSES },
+      { name: 'Check-ins', href: '/checkins', icon: UserCheck, permission: PERMISSIONS.VIEW_CHECKINS },
+      { name: 'Staff', href: '/staff', icon: Users, permission: PERMISSIONS.MANAGE_STAFF },
+      { name: 'Personal Training', href: '/personal-training', icon: Weight, permission: PERMISSIONS.VIEW_CLASSES },
+      { name: 'Membership Plans', href: '/membership-plans', icon: CreditCard }
+    ]
+  },
+  {
     title: 'Sales & Marketing',
     items: [
       { name: 'CRM', href: '/crm', icon: Phone, permission: PERMISSIONS.VIEW_CRM },
       { name: 'Leads Pipeline', href: '/leads', icon: TrendingUp, permission: PERMISSIONS.VIEW_CRM },
       { name: 'Marketing', href: '/marketing', icon: Mail, permission: PERMISSIONS.VIEW_REPORTS },
-      { name: 'Commissions', href: '/commissions', icon: DollarSign, permission: PERMISSIONS.VIEW_CRM },
       { name: 'Referrals', href: '/referrals', icon: Share2, permission: PERMISSIONS.VIEW_CRM },
-      { name: 'Lead Attribution', href: '/attribution', icon: UserX, permission: PERMISSIONS.VIEW_CRM }
+      { name: 'Commissions', href: '/commissions', icon: DollarSign, permission: PERMISSIONS.VIEW_CRM }
     ]
   },
   {
-    title: 'Operations',
-    items: [
-      { name: 'Membership Plans', href: '/membership-plans', icon: CreditCard },
-      { name: 'Members', href: '/members', icon: Users, permission: PERMISSIONS.VIEW_MEMBERS },
-      { name: 'Staff', href: '/staff', icon: Users, permission: PERMISSIONS.MANAGE_STAFF },
-      { name: 'Staff Certifications', href: '/staff-certifications', icon: Shield, permission: PERMISSIONS.MANAGE_STAFF },
-      { name: 'Onboarding', href: '/onboarding', icon: UserCheck, permission: PERMISSIONS.VIEW_MEMBERS },
-      { name: 'Communication', href: '/communication', icon: MessageSquare, permission: PERMISSIONS.VIEW_MEMBERS },
-      { name: 'Equipment', href: '/equipment', icon: Wrench, permission: PERMISSIONS.VIEW_SETTINGS },
-      { name: 'Classes', href: '/classes', icon: Calendar, permission: PERMISSIONS.VIEW_CLASSES },
-      { name: 'Personal Training', href: '/personal-training', icon: Weight, permission: PERMISSIONS.VIEW_CLASSES },
-      { name: 'Check-ins', href: '/checkins', icon: UserCheck, permission: PERMISSIONS.VIEW_CHECKINS },
-      { name: 'Visitors & Guests', href: '/visitors', icon: Users, permission: PERMISSIONS.VIEW_MEMBERS },
-      { name: 'Lockers', href: '/lockers', icon: Lock, permission: PERMISSIONS.VIEW_SETTINGS },
-      { name: 'Incidents', href: '/incidents', icon: AlertTriangle, permission: PERMISSIONS.VIEW_SETTINGS },
-      { name: 'Court Sports', href: '/courts', icon: MapPin, permission: PERMISSIONS.VIEW_SETTINGS },
-      { name: 'Pool Management', href: '/pool-management', icon: Waves, permission: PERMISSIONS.VIEW_SETTINGS },
-      { name: 'Spa Management', href: '/spa-management', icon: Users, permission: PERMISSIONS.VIEW_SETTINGS },
-      { name: 'Childcare', href: '/childcare', icon: Baby, permission: PERMISSIONS.VIEW_SETTINGS },
-      { name: 'Towel Service', href: '/towel-service', icon: Bath, permission: PERMISSIONS.VIEW_RETAIL },
-      { name: 'Pro Shop', href: '/pro-shop', icon: ShoppingCart, permission: PERMISSIONS.VIEW_RETAIL },
-      { name: 'Multi-Location', href: '/multi-location', icon: Building, permission: PERMISSIONS.VIEW_SETTINGS }
-    ]
-  },
-  {
-    title: 'Business',
+    title: 'Finance',
     items: [
       { name: 'Billing', href: '/billing', icon: CreditCard, permission: PERMISSIONS.VIEW_BILLING },
+      { name: 'Reports', href: '/reports', icon: BarChart3, permission: PERMISSIONS.VIEW_REPORTS },
       { name: 'Expense Tracking', href: '/expense-tracking', icon: DollarSign, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Department P&L', href: '/department-pl', icon: TrendingUp, permission: PERMISSIONS.VIEW_REPORTS },
-      { name: 'Reports', href: '/reports', icon: BarChart3, permission: PERMISSIONS.VIEW_REPORTS },
-      { name: 'Blog Manager', href: '/blog/admin', icon: FileText, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Retail', href: '/retail', icon: Store, permission: PERMISSIONS.VIEW_RETAIL }
     ]
   },
   {
-    title: 'Configuration',
+    title: 'Facilities & Services',
     items: [
-      { name: 'AI Control', href: '/ai-control', icon: Brain, permission: PERMISSIONS.MANAGE_SYSTEM },
+      { name: 'Equipment', href: '/equipment', icon: Wrench, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Pro Shop', href: '/pro-shop', icon: ShoppingCart, permission: PERMISSIONS.VIEW_RETAIL },
+      { name: 'Lockers', href: '/lockers', icon: Lock, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Court Sports', href: '/courts', icon: MapPin, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Pool Management', href: '/pool-management', icon: Waves, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Spa Management', href: '/spa-management', icon: Users, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Childcare', href: '/childcare', icon: Baby, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Towel Service', href: '/towel-service', icon: Bath, permission: PERMISSIONS.VIEW_RETAIL }
+    ]
+  },
+  {
+    title: 'Administration',
+    items: [
+      { name: 'Communication', href: '/communication', icon: MessageSquare, permission: PERMISSIONS.VIEW_MEMBERS },
+      { name: 'Visitors & Guests', href: '/visitors', icon: Users, permission: PERMISSIONS.VIEW_MEMBERS },
+      { name: 'Onboarding', href: '/onboarding', icon: UserCheck, permission: PERMISSIONS.VIEW_MEMBERS },
+      { name: 'Staff Certifications', href: '/staff-certifications', icon: Shield, permission: PERMISSIONS.MANAGE_STAFF },
+      { name: 'Incidents', href: '/incidents', icon: AlertTriangle, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Multi-Location', href: '/multi-location', icon: Building, permission: PERMISSIONS.VIEW_SETTINGS }
+    ]
+  },
+  {
+    title: 'Settings',
+    items: [
+      { name: 'Settings', href: '/settings', icon: Settings, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Integrations', href: '/integrations', icon: Zap, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Security', href: '/security', icon: Shield, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'AI Control', href: '/ai-control', icon: Brain, permission: PERMISSIONS.MANAGE_SYSTEM },
       { name: 'Advanced', href: '/advanced', icon: Rocket, permission: PERMISSIONS.VIEW_SETTINGS },
-      { name: 'Settings', href: '/settings', icon: Settings, permission: PERMISSIONS.VIEW_SETTINGS }
+      { name: 'Blog Manager', href: '/blog/admin', icon: FileText, permission: PERMISSIONS.VIEW_SETTINGS }
     ]
   }
 ];
@@ -127,7 +137,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
   const navigate = useNavigate();
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(['Overview', 'Sales & Marketing', 'Operations']);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(['Overview', 'Core Operations']);
   
   const collapsed = state === 'collapsed';
 
