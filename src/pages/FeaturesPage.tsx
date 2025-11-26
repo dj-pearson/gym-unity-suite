@@ -160,11 +160,11 @@ export default function FeaturesPage() {
         <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <Logo size="md" linkToHome={true} />
-            <Button 
-              onClick={() => navigate('/auth')}
+            <Button
+              onClick={() => navigate('/#early-access')}
               className="bg-gradient-primary hover:opacity-90"
             >
-              Start Free Trial
+              Request Early Access
             </Button>
           </div>
         </nav>
@@ -183,21 +183,21 @@ export default function FeaturesPage() {
               member management to advanced analytics - all integrated in one powerful platform.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <Button 
-                size="lg" 
-                onClick={() => navigate('/auth')}
+              <Button
+                size="lg"
+                onClick={() => navigate('/#early-access')}
                 className="bg-gradient-primary hover:opacity-90 px-8 py-4"
               >
-                Start Free Trial
+                Request Early Access
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="lg"
-                onClick={() => navigate('/demo')}
+                onClick={() => navigate('/auth')}
                 className="px-8 py-4"
               >
-                Watch Demo
+                Sign In
               </Button>
             </div>
           </div>
@@ -337,25 +337,26 @@ export default function FeaturesPage() {
               Ready to Experience All These Features?
             </h2>
             <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-              Start your free trial today and see how Rep Club's comprehensive feature set 
-              can transform your fitness business operations.
+              Join the waitlist for early access and be among the first to experience
+              Rep Club's comprehensive feature set when we launch November 1st.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <Button 
-                size="lg" 
-                onClick={() => navigate('/auth')}
+              <Button
+                size="lg"
+                onClick={() => navigate('/#early-access')}
                 variant="secondary"
                 className="px-8 py-4 text-lg shadow-elevation-2"
               >
-                Start Free Trial
+                Request Early Access
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="lg"
+                onClick={() => navigate('/auth')}
                 className="px-8 py-4 text-lg border-white/20 text-white hover:bg-white/10"
               >
-                Schedule Demo
+                Sign In
               </Button>
             </div>
           </div>

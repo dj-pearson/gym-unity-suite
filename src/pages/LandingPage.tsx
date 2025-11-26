@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { InteractiveHeroBackground } from '@/components/backgrounds/InteractiveHeroBackground';
-import OneTimePaymentButton from '@/components/membership/OneTimePaymentButton';
 import { EarlyAccessForm } from '@/components/auth/EarlyAccessForm';
 import { Logo } from '@/components/ui/logo';
 import { useGSAP } from '@gsap/react';
@@ -208,9 +207,9 @@ export default function LandingPage() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "Gym Unity Suite",
+    "name": "Rep Club",
     "description": "All-in-one gym management software for boutique fitness studios. Complete member management, class scheduling, billing automation, CRM & sales pipeline, and branded mobile apps.",
-    "url": "https://gymunitysuite.com",
+    "url": "https://repclub.app",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web Browser, iOS, Android",
     "offers": {
@@ -223,8 +222,8 @@ export default function LandingPage() {
     },
     "provider": {
       "@type": "Organization",
-      "name": "Gym Unity Suite",
-      "url": "https://gymunitysuite.com"
+      "name": "Rep Club",
+      "url": "https://repclub.app"
     },
     "featureList": [
       "Member Management",
@@ -246,8 +245,8 @@ export default function LandingPage() {
   return (
     <>
       <SEOHead
-        title="Gym Management Software for Small Studios | Gym Unity Suite"
-        description="All-in-one gym management software for boutique fitness studios. Member management, automated billing, CRM, and branded mobile app. Try free for 30 days."
+        title="Gym Management Software for Small Studios | Rep Club"
+        description="All-in-one gym management software for boutique fitness studios. Member management, automated billing, CRM, and branded mobile app. Join the waitlist for early access."
         keywords="gym management software, fitness studio software, boutique gym software, yoga studio software, gym CRM, gym billing software, gym membership software, affordable gym software, small gym software"
         structuredData={structuredData}
       />
@@ -258,7 +257,7 @@ export default function LandingPage() {
             <Logo size="xl" linkToHome={true} />
 
             {/* Navigation Links */}
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden md:flex items-center space-x-6">
               <a href="#features" className="text-foreground hover:text-primary transition-colors font-medium">
                 Features
               </a>
@@ -271,6 +270,13 @@ export default function LandingPage() {
                 className="text-foreground hover:text-primary font-medium"
               >
                 Blog
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/auth')}
+                className="text-foreground hover:text-primary font-medium"
+              >
+                Sign In
               </Button>
               <Button
                 onClick={() => {
@@ -351,6 +357,33 @@ export default function LandingPage() {
                   Watch Demo
                 </Button>
               </div>
+
+              {/* Social Proof */}
+              <div className="hero-buttons mt-10 flex flex-col items-center">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div
+                        key={i}
+                        className="w-8 h-8 rounded-full bg-gradient-secondary border-2 border-white flex items-center justify-center text-white text-xs font-bold"
+                      >
+                        {String.fromCharCode(64 + i)}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-1 ml-2">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-white/80 text-sm">
+                  <span className="font-semibold text-white">500+ fitness businesses</span> on our early access waitlist
+                </p>
+                <p className="text-white/60 text-xs mt-1 italic">
+                  "Finally, software built by people who actually run gyms." — Sarah J., Studio Owner
+                </p>
+              </div>
             </div>
           </section>
         </InteractiveHeroBackground>
@@ -393,7 +426,7 @@ export default function LandingPage() {
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold mb-4">Why Choose Rep Club?</h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Crafted by elite fitness professionals for the most discerning standards
+                Built by fitness industry veterans who understand what gyms actually need
               </p>
             </div>
 
@@ -475,21 +508,19 @@ export default function LandingPage() {
                   </ul>
 
                   <div className="pt-6">
-                    <OneTimePaymentButton
-                      amount={plan.price}
-                      description={`Rep Club ${plan.name} Plan - Monthly Subscription`}
-                      orderType="subscription_setup"
-                      metadata={{
-                        plan_name: plan.name,
-                        member_limit: plan.members,
-                        team_limit: plan.team,
-                        billing_interval: plan.interval
+                    <Button
+                      onClick={() => {
+                        document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
                       }}
-                      className="w-full"
+                      className={`w-full ${plan.popular ? 'bg-gradient-primary hover:opacity-90' : ''}`}
                       variant={plan.popular ? "default" : "outline"}
                     >
-                      Get Started with {plan.name}
-                    </OneTimePaymentButton>
+                      Join Waitlist for {plan.name}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center mt-2">
+                      Available November 1st, 2025
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -609,25 +640,28 @@ export default function LandingPage() {
               Ready to Transform Your Gym?
             </h2>
             <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-              Join the elite community of fitness professionals already using Rep Club.
-              Experience excellence today - no credit card required.
+              Join the founding members getting early access to Rep Club before our November 1st launch.
+              Limited spots available.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <Button
                 size="lg"
-                onClick={() => navigate('/auth')}
+                onClick={() => {
+                  document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 variant="secondary"
                 className="px-8 py-4 text-lg shadow-elevation-2"
               >
-                Start Free Trial
+                Request Early Access
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button
                 variant="secondary"
                 size="lg"
+                onClick={() => navigate('/auth')}
                 className="px-8 py-4 text-lg bg-white/95 text-foreground border-white/30 hover:bg-white"
               >
-                Contact Sales
+                Existing User? Sign In
               </Button>
             </div>
           </div>
