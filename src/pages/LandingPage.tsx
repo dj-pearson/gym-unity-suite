@@ -539,6 +539,30 @@ export default function LandingPage() {
             ))}
           </div>
 
+          {/* Trust Badges */}
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-green-600" />
+              <span className="text-sm font-medium">256-bit SSL Encryption</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-blue-600" />
+              <span className="text-sm font-medium">Powered by Stripe</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-purple-600" />
+              <span className="text-sm font-medium">SOC 2 Compliant</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="w-5 h-5 text-orange-600" />
+              <span className="text-sm font-medium">99.9% Uptime SLA</span>
+            </div>
+          </div>
+
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            Cancel anytime. No long-term contracts. 30-day money-back guarantee.
+          </p>
+
           {/* Early Access Section */}
           <section id="early-access" className="mt-20 text-center">
             <div className="mb-12">
@@ -614,6 +638,140 @@ export default function LandingPage() {
           </Card>
         </section>
 
+        {/* Member App Showcase */}
+        <section className="bg-muted/50 py-20">
+          <div className="container mx-auto px-4">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+                  Member Experience
+                </Badge>
+                <h2 className="text-4xl font-bold mb-4">
+                  Your Members Will Love It Too
+                </h2>
+                <p className="text-xl text-muted-foreground mb-8">
+                  Rep Club isn't just for gym owners. Give your members a premium mobile experience
+                  with easy class booking, digital check-in, and workout tracking.
+                </p>
+
+                <div className="space-y-4">
+                  {[
+                    { title: 'QR Code Check-in', desc: 'Members scan to check in - no front desk needed' },
+                    { title: 'Easy Class Booking', desc: 'Browse and book classes in seconds from any device' },
+                    { title: 'Workout Tracking', desc: 'Log workouts and track progress over time' },
+                    { title: 'Digital Member Card', desc: 'No more plastic cards - everything on their phone' },
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{feature.title}</p>
+                        <p className="text-sm text-muted-foreground">{feature.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  className="mt-8 bg-gradient-primary hover:opacity-90"
+                  onClick={() => {
+                    document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  Get Early Access
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Mobile App Mockup */}
+              <div className="relative flex justify-center">
+                <div className="relative">
+                  {/* Phone frame */}
+                  <div className="w-72 h-[580px] bg-gradient-to-b from-card to-muted rounded-[3rem] p-3 shadow-elevation-3 border border-border">
+                    <div className="w-full h-full bg-background rounded-[2.5rem] overflow-hidden">
+                      {/* Status bar */}
+                      <div className="h-8 bg-primary/5 flex items-center justify-center">
+                        <div className="w-20 h-1 bg-foreground/20 rounded-full" />
+                      </div>
+                      {/* App content mockup */}
+                      <div className="p-4 space-y-4">
+                        <div className="text-center">
+                          <div className="w-16 h-16 bg-gradient-primary rounded-2xl mx-auto mb-2 flex items-center justify-center">
+                            <span className="text-white font-bold text-xl">RC</span>
+                          </div>
+                          <p className="font-semibold">Welcome back, Sarah!</p>
+                          <p className="text-xs text-muted-foreground">FlexCore Fitness</p>
+                        </div>
+
+                        {/* Quick actions */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="bg-primary/10 rounded-xl p-3 text-center">
+                            <UserCheck className="w-6 h-6 text-primary mx-auto mb-1" />
+                            <p className="text-xs font-medium">Check In</p>
+                          </div>
+                          <div className="bg-muted rounded-xl p-3 text-center">
+                            <Calendar className="w-6 h-6 text-muted-foreground mx-auto mb-1" />
+                            <p className="text-xs font-medium">Book Class</p>
+                          </div>
+                        </div>
+
+                        {/* Upcoming class */}
+                        <div className="bg-muted/50 rounded-xl p-3">
+                          <p className="text-xs text-muted-foreground mb-1">NEXT CLASS</p>
+                          <p className="font-medium text-sm">HIIT Training</p>
+                          <p className="text-xs text-muted-foreground">Today at 6:00 PM • Studio A</p>
+                        </div>
+
+                        {/* Stats */}
+                        <div className="grid grid-cols-3 gap-2 text-center">
+                          <div>
+                            <p className="text-lg font-bold text-primary">12</p>
+                            <p className="text-xs text-muted-foreground">This Month</p>
+                          </div>
+                          <div>
+                            <p className="text-lg font-bold">🔥 8</p>
+                            <p className="text-xs text-muted-foreground">Day Streak</p>
+                          </div>
+                          <div>
+                            <p className="text-lg font-bold text-primary">Gold</p>
+                            <p className="text-xs text-muted-foreground">Status</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Floating badges */}
+                  <div className="absolute -left-4 top-20 bg-card rounded-lg p-3 shadow-elevation-2 border border-border">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                        <Check className="w-4 h-4 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium">Checked In!</p>
+                        <p className="text-xs text-muted-foreground">2 sec ago</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="absolute -right-4 bottom-32 bg-card rounded-lg p-3 shadow-elevation-2 border border-border">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <Calendar className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium">Class Booked</p>
+                        <p className="text-xs text-muted-foreground">Yoga Flow</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Testimonials */}
         <section className="container mx-auto px-4 py-20">
           <div className="text-center mb-16">
@@ -642,6 +800,64 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="container mx-auto px-4 py-20">
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+              FAQ
+            </Badge>
+            <h2 className="text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Got questions? We've got answers.
+            </p>
+          </div>
+
+          <div className="max-w-3xl mx-auto space-y-4">
+            {[
+              {
+                q: "When does Rep Club launch?",
+                a: "Rep Club officially launches November 1st, 2025. Join our early access waitlist to be among the first to use the platform and get special founding member pricing."
+              },
+              {
+                q: "Can I migrate my data from another gym software?",
+                a: "Yes! We offer free data migration assistance for all Professional and Enterprise plans. Our team will help you transfer members, classes, and billing information seamlessly."
+              },
+              {
+                q: "Is there a free trial?",
+                a: "Absolutely. All plans come with a 30-day free trial, no credit card required. You'll have full access to test all features before committing."
+              },
+              {
+                q: "Do my members need to download an app?",
+                a: "No app download required! Rep Club works as a Progressive Web App (PWA) that members can access from any browser. They can also add it to their home screen for an app-like experience."
+              },
+              {
+                q: "What payment processors do you support?",
+                a: "We use Stripe for all payment processing, which supports credit cards, debit cards, and ACH bank transfers. We handle PCI compliance so you don't have to worry about security."
+              },
+              {
+                q: "Can I cancel anytime?",
+                a: "Yes, you can cancel your subscription at any time with no penalties. We offer a 30-day money-back guarantee if you're not satisfied."
+              }
+            ].map((faq, i) => (
+              <Card key={i} className="gym-card">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-lg mb-2">{faq.q}</h3>
+                  <p className="text-muted-foreground">{faq.a}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <p className="text-muted-foreground mb-4">
+              Still have questions?
+            </p>
+            <Button variant="outline" onClick={() => window.location.href = 'mailto:hello@repclub.app'}>
+              Contact Support
+            </Button>
           </div>
         </section>
 
