@@ -128,14 +128,14 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <span className="text-muted-foreground/60 cursor-default">
-                  Privacy Policy <span className="text-xs">(Coming Soon)</span>
-                </span>
+                <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Privacy Policy
+                </Link>
               </li>
               <li>
-                <span className="text-muted-foreground/60 cursor-default">
-                  Terms of Service <span className="text-xs">(Coming Soon)</span>
-                </span>
+                <Link to="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Terms of Service
+                </Link>
               </li>
             </ul>
           </div>
