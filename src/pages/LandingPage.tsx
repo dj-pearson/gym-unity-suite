@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { Footer } from '@/components/layout/Footer';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Users,
   Calendar,
@@ -19,7 +26,9 @@ import {
   Check,
   Building2,
   Crown,
-  Sparkles
+  Sparkles,
+  Play,
+  X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { InteractiveHeroBackground } from '@/components/backgrounds/InteractiveHeroBackground';
@@ -31,6 +40,7 @@ import gsap from 'gsap';
 export default function LandingPage() {
   const navigate = useNavigate();
   const heroContainerRef = React.useRef(null);
+  const [showDemoModal, setShowDemoModal] = useState(false);
 
   useGSAP(() => {
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -290,14 +300,14 @@ export default function LandingPage() {
             </div>
 
             {/* Mobile Navigation */}
-            <div className="md:hidden flex items-center space-x-2">
+            <div className="md:hidden flex items-center space-x-1">
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/blog')}
+                onClick={() => navigate('/auth')}
                 className="text-foreground hover:text-primary"
               >
-                Blog
+                Sign In
               </Button>
               <Button
                 size="sm"
@@ -306,7 +316,7 @@ export default function LandingPage() {
                 }}
                 className="bg-gradient-primary hover:opacity-90"
               >
-                Request Early Access
+                Early Access
               </Button>
             </div>
           </div>
@@ -352,8 +362,10 @@ export default function LandingPage() {
                 <Button
                   variant="secondary"
                   size="lg"
+                  onClick={() => setShowDemoModal(true)}
                   className="px-8 py-4 text-lg bg-white/95 text-foreground border-white/30 hover:bg-white transition-all duration-300"
                 >
+                  <Play className="mr-2 h-5 w-5" />
                   Watch Demo
                 </Button>
               </div>
@@ -669,6 +681,62 @@ export default function LandingPage() {
 
         <Footer />
       </div>
+
+      {/* Demo Video Modal */}
+      <Dialog open={showDemoModal} onOpenChange={setShowDemoModal}>
+        <DialogContent className="max-w-4xl p-0 overflow-hidden">
+          <DialogHeader className="p-6 pb-0">
+            <DialogTitle className="text-2xl">See Rep Club in Action</DialogTitle>
+            <DialogDescription>
+              Watch how Rep Club streamlines gym management from member check-in to billing automation
+            </DialogDescription>
+          </DialogHeader>
+          <div className="p-6">
+            {/* Video placeholder - replace with actual video embed */}
+            <div className="aspect-video bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-border">
+              <div className="text-center space-y-4">
+                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                  <Play className="w-10 h-10 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-1">Demo Video Coming Soon</h3>
+                  <p className="text-muted-foreground text-sm max-w-md">
+                    We're putting the finishing touches on our product demo.
+                    Request early access to be the first to see it!
+                  </p>
+                </div>
+                <Button
+                  onClick={() => {
+                    setShowDemoModal(false);
+                    setTimeout(() => {
+                      document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
+                  className="bg-gradient-primary hover:opacity-90"
+                >
+                  Request Early Access Instead
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Feature highlights */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+              {[
+                { icon: Users, label: 'Member Management' },
+                { icon: Calendar, label: 'Class Scheduling' },
+                { icon: CreditCard, label: 'Automated Billing' },
+                { icon: BarChart3, label: 'Analytics Dashboard' },
+              ].map((feature, i) => (
+                <div key={i} className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
+                  <feature.icon className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium">{feature.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
