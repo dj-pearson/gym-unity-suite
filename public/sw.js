@@ -8,7 +8,7 @@ const PRECACHE_URLS = [
   '/',
   '/offline.html',
   '/manifest.json',
-  '/RepClub-Logo.png'
+  '/RepClub-Icon.png'
 ];
 
 // Install event - precache essential resources
@@ -337,8 +337,8 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'Gym Unity Suite';
   const options = {
     body: data.body || 'You have a new notification',
-    icon: '/RepClub-Logo.png',
-    badge: '/RepClub-Logo.png',
+    icon: '/RepClub-Icon.png',
+    badge: '/RepClub-Icon.png',
     tag: data.tag || 'notification',
     data: data,
     vibrate: [200, 100, 200],
