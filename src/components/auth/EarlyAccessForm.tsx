@@ -103,18 +103,61 @@ export function EarlyAccessForm({ onSuccess }: EarlyAccessFormProps) {
 
   if (isSubmitted) {
     return (
-      <Card className="gym-card max-w-md mx-auto">
-        <CardContent className="text-center p-8">
-          <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-success" />
+      <Card className="gym-card max-w-2xl mx-auto">
+        <CardContent className="p-8">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-10 h-10 text-success" />
+            </div>
+            <h3 className="text-2xl font-bold mb-2">You're on the List!</h3>
+            <p className="text-muted-foreground">
+              Welcome to the Rep Club founding members community. Here's what happens next:
+            </p>
           </div>
-          <h3 className="text-xl font-semibold mb-2">Request Submitted!</h3>
-          <p className="text-muted-foreground mb-4">
-            Thank you for your interest in Rep Club. We'll review your request and be in touch soon with early access details.
-          </p>
-          <Badge className="bg-primary/10 text-primary border-primary/20">
-            Launching November 1st, 2025
-          </Badge>
+
+          {/* Timeline */}
+          <div className="space-y-4 mb-8">
+            {[
+              { step: '1', title: 'Confirmation Email', desc: 'Check your inbox for a welcome email with more details', done: true },
+              { step: '2', title: 'Early Access Invite', desc: 'We\'ll send your login credentials before November 1st', done: false },
+              { step: '3', title: 'Onboarding Call', desc: 'Optional 1-on-1 setup assistance with our team', done: false },
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-4">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  item.done ? 'bg-success text-white' : 'bg-muted text-muted-foreground'
+                }`}>
+                  {item.done ? <CheckCircle className="w-4 h-4" /> : item.step}
+                </div>
+                <div>
+                  <p className="font-medium">{item.title}</p>
+                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Benefits reminder */}
+          <div className="bg-muted/50 rounded-lg p-4 mb-6">
+            <p className="font-medium mb-2">🎁 Your Founding Member Benefits:</p>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• Priority onboarding support</li>
+              <li>• Exclusive founding member pricing (locked in forever)</li>
+              <li>• Direct line to our product team for feedback</li>
+              <li>• Early access to new features</li>
+            </ul>
+          </div>
+
+          <div className="text-center">
+            <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
+              Launching November 1st, 2025
+            </Badge>
+            <p className="text-sm text-muted-foreground">
+              Questions? Email us at{' '}
+              <a href="mailto:hello@repclub.app" className="text-primary hover:underline">
+                hello@repclub.app
+              </a>
+            </p>
+          </div>
         </CardContent>
       </Card>
     );

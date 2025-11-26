@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
+import { GettingStartedWidget } from '@/components/dashboard/GettingStartedWidget';
 import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 
 interface DashboardStats {
@@ -186,6 +187,9 @@ export default function Dashboard() {
           </p>
         </div>
       </div>
+
+      {/* Getting Started Guide for new users */}
+      <GettingStartedWidget />
 
       {/* Personalized Dashboard Grid */}
       <DashboardGrid
