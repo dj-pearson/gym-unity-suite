@@ -54,23 +54,23 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+                <a href="/#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
                   Pricing
+                </a>
+              </li>
+              <li>
+                <Link to="/features/scheduling" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Class Scheduling
                 </Link>
               </li>
               <li>
-                <Link to="/integrations" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Integrations
+                <Link to="/solutions/yoga-studios" className="text-muted-foreground hover:text-foreground transition-colors">
+                  For Yoga Studios
                 </Link>
               </li>
               <li>
-                <Link to="/mobile" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Mobile App
-                </Link>
-              </li>
-              <li>
-                <Link to="/api" className="text-muted-foreground hover:text-foreground transition-colors">
-                  API
+                <Link to="/solutions/crossfit-gyms" className="text-muted-foreground hover:text-foreground transition-colors">
+                  For CrossFit Gyms
                 </Link>
               </li>
             </ul>
@@ -86,24 +86,24 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/help" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Help Center
+                <Link to="/compare/mindbody-alternative" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Mindbody Alternative
                 </Link>
               </li>
               <li>
-                <Link to="/tutorials" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Tutorials
+                <Link to="/compare/glofox-alternative" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Glofox Alternative
                 </Link>
               </li>
               <li>
-                <Link to="/webinars" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Webinars
+                <Link to="/compare/zen-planner-alternative" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Zen Planner Alternative
                 </Link>
               </li>
               <li>
-                <Link to="/case-studies" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Case Studies
-                </Link>
+                <a href="/#early-access" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Request Early Access
+                </a>
               </li>
             </ul>
           </div>
@@ -113,18 +113,18 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Company</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">
-                  About Us
+                <a href="mailto:hello@repclub.app" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Contact Us
+                </a>
+              </li>
+              <li>
+                <Link to="/auth" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Sign In
                 </Link>
               </li>
               <li>
-                <Link to="/careers" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Contact
+                <Link to="/local/new-york-gym-software" className="text-muted-foreground hover:text-foreground transition-colors">
+                  NYC Gym Software
                 </Link>
               </li>
               <li>

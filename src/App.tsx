@@ -84,6 +84,8 @@ const MartialArtsSchoolsPage = lazy(() => import("./pages/solutions/MartialArtsS
 const NewYorkGymSoftwarePage = lazy(() => import("./pages/local/NewYorkGymSoftwarePage"));
 const BestGymSoftwareBlogPost = lazy(() => import("./pages/blog/BestGymSoftware2025"));
 const TicketsPage = lazy(() => import("./pages/TicketsPage"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
 
 // Loading component for suspense fallback
 const PageLoader = () => (
@@ -618,7 +620,11 @@ const AppRoutes = () => {
 
               {/* Local SEO Pages */}
               <Route path="/local/new-york-gym-software" element={<NewYorkGymSoftwarePage />} />
-              
+
+              {/* Legal Pages */}
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
       </Routes>
