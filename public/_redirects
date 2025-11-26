@@ -1,8 +1,5 @@
-# SPA fallback for client-side routing
-/* /index.html 200
-
-# API routes (if you have any backend APIs)
-/api/* https://your-api-domain.com/api/:splat 200
+# Cloudflare Pages automatically handles SPA routing
+# No explicit fallback needed - CF Pages serves index.html for unknown routes
 
 # Redirect old URLs (example)
 # /old-path /new-path 301
