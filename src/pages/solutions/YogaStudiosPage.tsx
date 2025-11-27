@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { SEO } from '@/components/seo';
+import { SEO, FAQSection, yogaStudioFAQs } from '@/components/seo';
 import { Footer } from '@/components/layout/Footer';
 import {
   Calendar,
@@ -302,6 +302,14 @@ export default function YogaStudiosPage() {
             </p>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection
+          title="Yoga Studio Software FAQ"
+          subtitle="Common questions about managing your yoga studio with Gym Unity Suite"
+          faqs={yogaStudioFAQs}
+          className="bg-background"
+        />
 
         <Footer />
       </div>

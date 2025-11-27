@@ -150,6 +150,12 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://gymunitysuite.com/blog/gym-member-retention-guide</loc>
+    <lastmod>2025-11-27T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
   
   <!-- Resource Pages -->
   <url>

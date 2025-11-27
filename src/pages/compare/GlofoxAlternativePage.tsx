@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { SEO, createFAQSchema } from '@/components/seo';
+import { SEO, FAQSection, glofoxAlternativeFAQs } from '@/components/seo';
 import { Footer } from '@/components/layout/Footer';
 import {
   Check,
@@ -492,6 +492,14 @@ export default function GlofoxAlternativePage() {
             </p>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection
+          title="Glofox Alternative FAQ"
+          subtitle="Common questions about switching from Glofox to Gym Unity Suite"
+          faqs={glofoxAlternativeFAQs}
+          className="bg-muted/30"
+        />
 
         <Footer />
       </div>
