@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { SEO } from '@/components/seo';
+import { SEO, FAQSection, crossfitFAQs } from '@/components/seo';
 import { Footer } from '@/components/layout/Footer';
 import {
   Calendar,
@@ -304,6 +304,14 @@ export default function CrossFitGymsPage() {
             </p>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection
+          title="CrossFit Box Software FAQ"
+          subtitle="Common questions about managing your CrossFit affiliate with Gym Unity Suite"
+          faqs={crossfitFAQs}
+          className="bg-background"
+        />
 
         <Footer />
       </div>

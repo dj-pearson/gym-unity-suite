@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Logo } from '@/components/ui/logo';
+import { FAQSection, mindbodyAlternativeFAQs } from '@/components/seo';
 
 const comparisonFeatures = [
   { category: 'Pricing & Value', features: [
@@ -485,65 +486,13 @@ export default function MindbodyAlternativePage() {
           </div>
         </section>
 
-        {/* FAQ Section */}
-        <section className="container mx-auto px-4 py-20">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
-            <p className="text-xl text-muted-foreground">
-              Common questions about switching from Mindbody to Rep Club.
-            </p>
-          </div>
-          
-          <div className="max-w-3xl mx-auto space-y-6">
-            <Card className="gym-card">
-              <CardHeader>
-                <CardTitle>How much can I save switching from Mindbody to Rep Club?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Most gyms save $3,000-$5,000 annually by switching to Rep Club. This includes savings from 
-                  no setup fees, lower monthly costs, and elimination of Mindbody's 2.5% transaction fees.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="gym-card">
-              <CardHeader>
-                <CardTitle>Is Rep Club easier to use than Mindbody?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Yes, Rep Club features a modern, intuitive interface that's 3x faster than Mindbody. 
-                  It's built mobile-first and designed for today's gym owners and members.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="gym-card">
-              <CardHeader>
-                <CardTitle>How long does it take to switch from Mindbody?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  We provide free data migration and setup assistance. Most gyms complete their switch 
-                  within 1-2 weeks with our dedicated onboarding team.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="gym-card">
-              <CardHeader>
-                <CardTitle>Will I lose my member data when switching?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  No, we handle complete data migration including member profiles, payment history, 
-                  class schedules, and more. Your data is safely transferred with zero downtime.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
+        {/* FAQ Section with Schema Markup */}
+        <FAQSection
+          title="Mindbody Alternative FAQ"
+          subtitle="Common questions about switching from Mindbody to Gym Unity Suite"
+          faqs={mindbodyAlternativeFAQs}
+          className="bg-background"
+        />
 
         {/* CTA Section */}
         <section className="bg-gradient-hero py-20 text-white">

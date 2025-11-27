@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { SEO } from '@/components/seo';
+import { SEO, FAQSection, zenPlannerAlternativeFAQs } from '@/components/seo';
 import { Footer } from '@/components/layout/Footer';
 import {
   Check,
@@ -512,6 +512,14 @@ export default function ZenPlannerAlternativePage() {
             </p>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection
+          title="Zen Planner Alternative FAQ"
+          subtitle="Common questions about switching from Zen Planner to Gym Unity Suite"
+          faqs={zenPlannerAlternativeFAQs}
+          className="bg-muted/30"
+        />
 
         <Footer />
       </div>
