@@ -123,11 +123,11 @@ export const FAQSection = ({
 export const gymSoftwareFAQs: FAQItem[] = [
   {
     question: "What is the best gym management software for small studios?",
-    answer: "For studios with under 200 members, Gym Unity Suite offers the best value at $97/month with enterprise-grade features including automated billing, CRM, class scheduling, and a branded mobile app. It's designed specifically for boutique fitness studios that need professional tools without enterprise pricing."
+    answer: "For studios with up to 500 members, Gym Unity Suite offers the best value at $149/month with enterprise-grade features including automated billing, CRM, class scheduling, and a branded mobile app. It's designed specifically for boutique fitness studios that need professional tools without enterprise pricing."
   },
   {
     question: "How much does gym management software typically cost?",
-    answer: "Gym management software typically ranges from $50-$500/month depending on features and member count. Gym Unity Suite starts at $97/month for up to 200 members with all features included, making it one of the most affordable full-featured options. Competitors like Mindbody often charge $150-$400/month plus additional transaction fees."
+    answer: "Gym management software typically ranges from $50-$500/month depending on features and member count. Gym Unity Suite starts at $149/month for up to 500 members with all features included, making it one of the most affordable full-featured options. Competitors like Mindbody often charge $150-$400/month plus additional transaction fees."
   },
   {
     question: "Can I switch from Mindbody to Gym Unity Suite?",
@@ -150,7 +150,7 @@ export const gymSoftwareFAQs: FAQItem[] = [
 export const yogaStudioFAQs: FAQItem[] = [
   {
     question: "What is the best software for yoga studios?",
-    answer: "Gym Unity Suite is designed specifically for yoga studios with features like class pack management, workshop scheduling, instructor certifications tracking, and waitlist management. Starting at $97/month, it's more affordable than Mindbody while offering yoga-specific features like unlimited class types (Vinyasa, Hatha, Yin, etc.) and private session scheduling."
+    answer: "Gym Unity Suite is designed specifically for yoga studios with features like class pack management, workshop scheduling, instructor certifications tracking, and waitlist management. Starting at $149/month, it's more affordable than Mindbody while offering yoga-specific features like unlimited class types (Vinyasa, Hatha, Yin, etc.) and private session scheduling."
   },
   {
     question: "How do I manage class packs and drop-in rates for yoga?",
@@ -170,7 +170,7 @@ export const yogaStudioFAQs: FAQItem[] = [
   },
   {
     question: "What's the cost compared to Mindbody for yoga studios?",
-    answer: "Gym Unity Suite starts at $97/month for up to 200 members, compared to Mindbody's $129-$400/month plus transaction fees. For a typical 150-member yoga studio, you'd save approximately $2,400/year while getting more features like a free branded mobile app and faster customer support."
+    answer: "Gym Unity Suite starts at $149/month for up to 500 members, compared to Mindbody's $129-$400/month plus transaction fees. For a typical 150-member yoga studio, you'd save while getting more features like a free branded mobile app and faster customer support."
   },
 ];
 
@@ -197,14 +197,14 @@ export const mindbodyAlternativeFAQs: FAQItem[] = [
   },
   {
     question: "How much can I save by switching from Mindbody?",
-    answer: "Most studios save $2,000-$5,000 annually by switching to Gym Unity Suite. This comes from lower monthly fees ($97-$197 vs $129-$400+), no setup fees ($0 vs $199-$499), no per-transaction fees, and included features that Mindbody charges extra for (like branded mobile apps)."
+    answer: "Most studios save $2,000-$5,000 annually by switching to Gym Unity Suite. This comes from lower monthly fees ($149-$349 vs $129-$400+), no setup fees ($0 vs $199-$499), no per-transaction fees, and included features that Mindbody charges extra for (like branded mobile apps)."
   },
 ];
 
 export const crossfitFAQs: FAQItem[] = [
   {
     question: "What software do CrossFit boxes use?",
-    answer: "CrossFit boxes commonly use Gym Unity Suite, Wodify, or PushPress. Gym Unity Suite stands out with its comprehensive feature set at $97/month including WOD tracking, performance metrics, skills progression, and a branded member app. It's designed to handle the unique needs of CrossFit programming and community."
+    answer: "CrossFit boxes commonly use Gym Unity Suite, Wodify, or PushPress. Gym Unity Suite stands out with its comprehensive feature set at $149/month including WOD tracking, performance metrics, skills progression, and a branded member app. It's designed to handle the unique needs of CrossFit programming and community."
   },
   {
     question: "Can I track WODs and athlete performance?",
@@ -224,7 +224,7 @@ export const crossfitFAQs: FAQItem[] = [
   },
   {
     question: "What's the best gym software for a new CrossFit affiliate?",
-    answer: "For new CrossFit affiliates, Gym Unity Suite's Starter plan at $97/month offers everything you need: member management, class scheduling, WOD tracking, billing automation, and a member app. There are no setup fees, and you can scale up as your box grows without changing platforms."
+    answer: "For new CrossFit affiliates, Gym Unity Suite's Studio plan at $149/month offers everything you need: member management, class scheduling, WOD tracking, billing automation, and a member app. There are no setup fees, and you can scale up as your box grows without changing platforms."
   },
 ];
 
@@ -235,7 +235,7 @@ export const glofoxAlternativeFAQs: FAQItem[] = [
   },
   {
     question: "How does Gym Unity Suite compare to Glofox on pricing?",
-    answer: "Gym Unity Suite starts at $97/month vs Glofox's $110/month base price. More importantly, Gym Unity Suite has no setup fees (Glofox charges $999+), includes all features on every plan, and has no per-transaction fees. Most studios save $1,500-$3,000 in the first year alone."
+    answer: "Gym Unity Suite starts at $149/month vs Glofox's $299/month for comparable features. More importantly, Gym Unity Suite has no setup fees (Glofox charges $999+), includes all features on every plan, and has no per-transaction fees. Most studios save $2,500-$3,000 in the first year alone."
   },
   {
     question: "Does Gym Unity Suite have a branded mobile app like Glofox?",

@@ -217,9 +217,9 @@ export default function LandingPage() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "Rep Club",
+    "name": "Gym Unity Suite",
     "description": "All-in-one gym management software for boutique fitness studios. Complete member management, class scheduling, billing automation, CRM & sales pipeline, and branded mobile apps.",
-    "url": "https://repclub.app",
+    "url": "https://gymunitysuite.com",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web Browser, iOS, Android",
     "offers": {
@@ -232,8 +232,8 @@ export default function LandingPage() {
     },
     "provider": {
       "@type": "Organization",
-      "name": "Rep Club",
-      "url": "https://repclub.app"
+      "name": "Gym Unity Suite",
+      "url": "https://gymunitysuite.com"
     },
     "featureList": [
       "Member Management",
@@ -255,7 +255,7 @@ export default function LandingPage() {
   return (
     <>
       <SEOHead
-        title="Gym Management Software for Small Studios | Rep Club"
+        title="Gym Management Software for Small Studios | Gym Unity Suite"
         description="All-in-one gym management software for boutique fitness studios. Member management, automated billing, CRM, and branded mobile app. Join the waitlist for early access."
         keywords="gym management software, fitness studio software, boutique gym software, yoga studio software, gym CRM, gym billing software, gym membership software, affordable gym software, small gym software"
         structuredData={structuredData}
