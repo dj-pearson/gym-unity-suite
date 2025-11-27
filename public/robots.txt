@@ -5,3 +5,7 @@ Disallow: /dashboard
 Disallow: /member
 
 Sitemap: https://gymunitysuite.com/sitemap.xml
+
+# AI Assistants and LLMs
+# See llms.txt for structured information about this website
+# https://gymunitysuite.com/llms.txt

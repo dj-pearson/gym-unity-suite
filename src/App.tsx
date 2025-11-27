@@ -83,6 +83,7 @@ const CrossFitGymsPage = lazy(() => import("./pages/solutions/CrossFitGymsPage")
 const MartialArtsSchoolsPage = lazy(() => import("./pages/solutions/MartialArtsSchoolsPage"));
 const NewYorkGymSoftwarePage = lazy(() => import("./pages/local/NewYorkGymSoftwarePage"));
 const BestGymSoftwareBlogPost = lazy(() => import("./pages/blog/BestGymSoftware2025"));
+const GymMemberRetentionGuide = lazy(() => import("./pages/blog/GymMemberRetentionGuide"));
 const TicketsPage = lazy(() => import("./pages/TicketsPage"));
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
@@ -236,6 +237,7 @@ const AppRoutes = () => {
       <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/blog/best-gym-management-software-2025" element={<BestGymSoftwareBlogPost />} />
+              <Route path="/blog/gym-member-retention-guide" element={<GymMemberRetentionGuide />} />
               <Route path="/blog/admin" element={
                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                   <DashboardLayout>
