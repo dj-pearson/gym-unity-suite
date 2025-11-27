@@ -228,4 +228,58 @@ export const crossfitFAQs: FAQItem[] = [
   },
 ];
 
+export const glofoxAlternativeFAQs: FAQItem[] = [
+  {
+    question: "Why should I consider switching from Glofox?",
+    answer: "Common reasons studios switch from Glofox include: limited CRM and sales pipeline features, high setup costs ($999+), restricted customization on lower tiers, and slower support response times. Gym Unity Suite offers built-in CRM with lead scoring, $0 setup fees, full customization on all plans, and <2 hour support response."
+  },
+  {
+    question: "How does Gym Unity Suite compare to Glofox on pricing?",
+    answer: "Gym Unity Suite starts at $97/month vs Glofox's $110/month base price. More importantly, Gym Unity Suite has no setup fees (Glofox charges $999+), includes all features on every plan, and has no per-transaction fees. Most studios save $1,500-$3,000 in the first year alone."
+  },
+  {
+    question: "Does Gym Unity Suite have a branded mobile app like Glofox?",
+    answer: "Yes, Gym Unity Suite includes a fully white-labeled mobile app on all plans at no extra cost. Your members can download it from the App Store or Google Play with your studio's branding, colors, and logo. Glofox charges extra for advanced app customization."
+  },
+  {
+    question: "Can I migrate my data from Glofox to Gym Unity Suite?",
+    answer: "Yes, Gym Unity Suite offers free data migration from Glofox. We transfer all member data, class schedules, membership plans, and billing information. The migration typically takes 3-5 business days with dedicated support throughout the process."
+  },
+  {
+    question: "What CRM features does Gym Unity Suite have that Glofox doesn't?",
+    answer: "Gym Unity Suite includes a full CRM with sales pipeline management, automated lead nurturing, lead scoring based on engagement, conversion analytics, and marketing automation. Glofox has basic lead capture but lacks the sophisticated sales tools that help convert more prospects into members."
+  },
+  {
+    question: "Is the support better with Gym Unity Suite vs Glofox?",
+    answer: "Yes, Gym Unity Suite offers 24/7 support with <2 hour response times on all plans, including phone support. Glofox typically has 24-48 hour response times, and phone support is only available on higher-tier Business+ plans."
+  },
+];
+
+export const zenPlannerAlternativeFAQs: FAQItem[] = [
+  {
+    question: "Why are studios switching from Zen Planner?",
+    answer: "Studios switch from Zen Planner due to: dated user interface, 12-month contract requirements, extra fees for branded mobile apps ($50/mo), basic marketing automation, and lack of modern CRM features. Gym Unity Suite offers a modern interface, month-to-month billing, included branded app, and advanced marketing tools."
+  },
+  {
+    question: "How much can I save switching from Zen Planner?",
+    answer: "For a typical 150-member studio, you'd save approximately $68/month ($816/year) on base fees, plus $50/month ($600/year) on mobile app fees. Combined with no contract lock-in and better retention tools, most studios see $1,500-$2,000 annual savings."
+  },
+  {
+    question: "Does Gym Unity Suite work for CrossFit boxes like Zen Planner?",
+    answer: "Yes, Gym Unity Suite is excellent for CrossFit boxes with WOD tracking, performance logging, competition management, and workout history. Unlike Zen Planner, the branded mobile app is included at no extra cost, and athletes can log scores directly from their phones."
+  },
+  {
+    question: "Can I get out of my Zen Planner contract?",
+    answer: "We recommend checking your Zen Planner contract terms for cancellation options. Once you're ready to switch, Gym Unity Suite offers free data migration and onboarding support. Many studios run both systems briefly during transition to ensure a smooth switch."
+  },
+  {
+    question: "What about Zen Planner's WOD/workout tracking features?",
+    answer: "Gym Unity Suite includes comprehensive workout tracking comparable to Zen Planner's, including WOD programming, score logging, personal records, and performance analytics. The key difference is our modern mobile app experience and included branded app (vs Zen Planner's $50/mo add-on)."
+  },
+  {
+    question: "Is Gym Unity Suite easier to use than Zen Planner?",
+    answer: "Yes, Gym Unity Suite features a modern, intuitive interface designed for today's gym owners. Tasks that take multiple clicks in Zen Planner can be done faster, and the mobile experience is significantly better for both staff and members."
+  },
+];
+
 export default FAQSection;
