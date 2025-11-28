@@ -29,6 +29,7 @@ import StaffDetailDialog from '@/components/staff/StaffDetailDialog';
 import ScheduleManager from '@/components/staff/ScheduleManager';
 import PayrollManager from '@/components/staff/PayrollManager';
 import { usePermissions } from '@/hooks/usePermissions';
+import ImportButton from '@/components/imports/ImportButton';
 
 interface StaffMember {
   id: string;
@@ -210,13 +211,16 @@ export default function StaffPage() {
         </div>
         <div className="flex items-center space-x-2">
           {canManageStaff && (
-            <Button 
-              className="bg-gradient-secondary hover:opacity-90"
-              onClick={() => setShowStaffForm(true)}
-            >
-              <UserPlus className="mr-2 h-4 w-4" />
-              Add Staff Member
-            </Button>
+            <>
+              <ImportButton module="staff" onImportComplete={fetchStaff} />
+              <Button
+                className="bg-gradient-secondary hover:opacity-90"
+                onClick={() => setShowStaffForm(true)}
+              >
+                <UserPlus className="mr-2 h-4 w-4" />
+                Add Staff Member
+              </Button>
+            </>
           )}
         </div>
       </div>
