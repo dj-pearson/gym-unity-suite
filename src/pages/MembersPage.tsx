@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Search,
   Plus,
@@ -21,15 +22,22 @@ import {
 import { MemberDetailDialog } from '@/components/members/MemberDetailDialog';
 import { VirtualList } from '@/components/ui/VirtualList';
 import { useMembers, type Member } from '@/hooks/useMembers';
+import ImportButton from '@/components/imports/ImportButton';
 
 export default function MembersPage() {
   const { profile } = useAuth();
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
   // Use React Query for data fetching with automatic caching
   const { data: members = [], isLoading: loading } = useMembers(profile?.organization_id);
+
+  // Refresh members list after import
+  const handleImportComplete = () => {
+    queryClient.invalidateQueries({ queryKey: ['members'] });
+  };
 
   // Memoize filtered members to avoid recalculation on every render
   const filteredMembers = useMemo(() => {
@@ -108,10 +116,13 @@ export default function MembersPage() {
             </p>
           </div>
         </div>
-        <Button className="bg-gradient-primary hover:opacity-90">
-          <Plus className="mr-2 h-4 w-4" />
-          Add Member
-        </Button>
+        <div className="flex items-center gap-2">
+          <ImportButton module="members" onImportComplete={handleImportComplete} />
+          <Button className="bg-gradient-primary hover:opacity-90">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Member
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards - Using memoized stats to avoid recalculation */}
