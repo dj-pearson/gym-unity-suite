@@ -86,19 +86,20 @@ export function GettingStartedWidget() {
       const completed: string[] = [];
 
       // Check if any members exist
-      const { count: memberCount } = await supabase
-        .from('members')
-        .select('*', { count: 'exact', head: true })
-        .eq('organization_id', organization.id);
+      const { count: memberCount } = await (supabase as any)
+        .from('profiles')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', organization.id)
+        .eq('role', 'member');
 
       if (memberCount && memberCount > 0) {
         completed.push('add-member');
       }
 
       // Check if any classes exist
-      const { count: classCount } = await supabase
+      const { count: classCount } = await (supabase as any)
         .from('classes')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
         .eq('organization_id', organization.id);
 
       if (classCount && classCount > 0) {
@@ -106,9 +107,9 @@ export function GettingStartedWidget() {
       }
 
       // Check if any membership plans exist
-      const { count: planCount } = await supabase
+      const { count: planCount } = await (supabase as any)
         .from('membership_plans')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
         .eq('organization_id', organization.id);
 
       if (planCount && planCount > 0) {
