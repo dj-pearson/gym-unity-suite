@@ -2,7 +2,7 @@
 // import { Toaster } from "@/components/ui/toaster";
 // import { Toaster as Sonner } from "@/components/ui/sonner";
 // import { TooltipProvider } from "@/components/ui/tooltip";
-// import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { CustomDomainProvider } from "@/contexts/CustomDomainContext";
@@ -132,15 +132,17 @@ const HomeRoute = () => {
 
 const App = () => {
   return (
-    <HelmetProvider>
-      <AuthProvider>
-        <CustomDomainProvider>
-          <Router>
-            <AppRoutes />
-          </Router>
-        </CustomDomainProvider>
-      </AuthProvider>
-    </HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <AuthProvider>
+          <CustomDomainProvider>
+            <Router>
+              <AppRoutes />
+            </Router>
+          </CustomDomainProvider>
+        </AuthProvider>
+      </HelmetProvider>
+    </QueryClientProvider>
   );
 };
 
