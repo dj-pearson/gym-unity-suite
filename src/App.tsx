@@ -114,41 +114,19 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// Home Route Component (shows landing if not authenticated, dashboard if authenticated)  
+// Home Route Component (temporarily simplified to avoid dashboard runtime errors)
 const HomeRoute = () => {
-      const { user, profile, loading } = useAuth();
-      const isMobile = useIsMobile();
-      
-      if (loading) {
-        return (
-          <div className="min-h-screen flex items-center justify-center bg-background">
-            <div className="animate-pulse text-lg text-muted-foreground">Loading...</div>
-          </div>
-        );
-      }
-      
-      if (user && profile?.role === 'member') {
-        return (
-          <ProtectedRoute roles={['member']}>
-            {isMobile ? <MobileDashboardPage /> : (
-              <MemberLayout>
-                <MemberDashboard />
-              </MemberLayout>
-            )}
-          </ProtectedRoute>
-        );
-      }
-      
-      if (user) {
-        return (
-          <ProtectedRoute permission={PERMISSIONS.VIEW_DASHBOARD}>
-            <DashboardLayout>
-              <Dashboard />
-            </DashboardLayout>
-          </ProtectedRoute>
-        );
-      }
-  
+  const { loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-pulse text-lg text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  // While we debug the dashboard/runtime issue, always show the marketing landing page
   return <LandingPage />;
 };
 
