@@ -1,9 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Stars, PerspectiveCamera, Environment } from '@react-three/drei';
+import { Float, Stars, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
 
 function FloatingGeometries() {
   const groupRef = useRef<THREE.Group>(null);
@@ -87,9 +85,9 @@ function CameraRig() {
 export default function Hero3DScene() {
   return (
     <div className="absolute inset-0 -z-10 w-full h-full bg-gradient-to-b from-slate-950 to-slate-900">
-      <Canvas dpr={[1, 2]}>
+      <Canvas dpr={[1, 2]} gl={{ alpha: true, antialias: true }}>
         <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={50} />
-        <ambientLight intensity={0.2} />
+        <ambientLight intensity={0.3} />
         <pointLight position={[10, 10, 10]} intensity={1.5} color="#4f46e5" />
         <pointLight position={[-10, -10, -10]} intensity={1.5} color="#0ea5e9" />
         
@@ -97,8 +95,6 @@ export default function Hero3DScene() {
         
         <FloatingGeometries />
         <CameraRig />
-        
-        <Environment preset="city" />
       </Canvas>
       
       {/* Overlay gradient to blend with content */}
