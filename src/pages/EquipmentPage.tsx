@@ -8,16 +8,17 @@ import MaintenanceScheduler from '@/components/equipment/MaintenanceScheduler';
 import FacilityAreaManager from '@/components/equipment/FacilityAreaManager';
 import IncidentReports from '@/components/equipment/IncidentReports';
 import VendorManager from '@/components/equipment/VendorManager';
-import { 
-  Wrench, 
-  Calendar, 
-  Building, 
-  AlertTriangle, 
-  Users, 
+import {
+  Wrench,
+  Calendar,
+  Building,
+  AlertTriangle,
+  Users,
   Activity,
   Zap,
   Shield
 } from 'lucide-react';
+import ImportButton from '@/components/imports/ImportButton';
 
 export default function EquipmentPage() {
   const { profile } = useAuth();
@@ -62,10 +63,13 @@ export default function EquipmentPage() {
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Equipment & Facility Management</h2>
-        <Badge variant="outline" className="ml-auto">
-          <Activity className="w-4 h-4 mr-2" />
-          System Status: Operational
-        </Badge>
+        <div className="flex items-center gap-2">
+          <ImportButton module="equipment" />
+          <Badge variant="outline" className="ml-auto">
+            <Activity className="w-4 h-4 mr-2" />
+            System Status: Operational
+          </Badge>
+        </div>
       </div>
 
       {/* Stats Overview */}

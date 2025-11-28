@@ -27,6 +27,7 @@ import CategoryManager from '@/components/classes/CategoryManager';
 import ClassCalendarView from '@/components/classes/ClassCalendarView';
 import WaitlistManager from '@/components/classes/WaitlistManager';
 import { RecurringClassTemplates } from '@/components/classes/RecurringClassTemplates';
+import ImportButton from '@/components/imports/ImportButton';
 
 interface Class {
   id: string;
@@ -280,31 +281,30 @@ export default function ClassesPage() {
         </div>
         <div className="flex items-center space-x-2">
           {canScheduleClasses && (
-            <Button 
-              className="bg-gradient-secondary hover:opacity-90"
-              onClick={() => setShowScheduleForm(true)}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Schedule Class
-            </Button>
-          )}
-          {canScheduleClasses && (
-            <Button 
-              variant="outline"
-              onClick={() => setShowCategoryManager(true)}
-            >
-              <Settings className="mr-2 h-4 w-4" />
-              Categories
-            </Button>
-          )}
-          {canScheduleClasses && (
-            <Button 
-              variant="outline"
-              onClick={() => setShowWaitlistManager(true)}
-            >
-              <Users className="mr-2 h-4 w-4" />
-              Waitlists
-            </Button>
+            <>
+              <ImportButton module="classes" onImportComplete={fetchClasses} />
+              <Button
+                className="bg-gradient-secondary hover:opacity-90"
+                onClick={() => setShowScheduleForm(true)}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Schedule Class
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowCategoryManager(true)}
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                Categories
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowWaitlistManager(true)}
+              >
+                <Users className="mr-2 h-4 w-4" />
+                Waitlists
+              </Button>
+            </>
           )}
         </div>
       </div>
