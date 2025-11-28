@@ -1,5 +1,4 @@
-# Cloudflare Pages automatically handles SPA routing
-# No explicit fallback needed - CF Pages serves index.html for unknown routes
-
-# Redirect old URLs (example)
-# /old-path /new-path 301
+# SPA Fallback - REQUIRED for React Router client-side routing
+# This ensures all routes serve index.html (except static assets)
+# Without this, direct navigation or page refresh will return 404
+/* /index.html 200
