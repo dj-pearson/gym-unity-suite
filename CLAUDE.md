@@ -1,7 +1,7 @@
 # CLAUDE.md - AI Assistant Guide for Gym Unity Suite
 
-**Last Updated:** 2025-11-16
-**Codebase Version:** 1.0
+**Last Updated:** 2025-11-28
+**Codebase Version:** 1.1
 **Status:** Active Development
 
 ---
@@ -37,10 +37,10 @@
 
 **Key Metrics:**
 - **Total Codebase:** 150,000+ lines of code
-- **React Components:** 248+ components (74,783 lines)
-- **Page Routes:** 69 pages, 64+ distinct routes
+- **React Components:** 256+ components (75,000+ lines)
+- **Page Routes:** 73 pages, 68+ distinct routes
 - **Database Tables:** 243 tables
-- **Edge Functions:** 10 Supabase serverless functions
+- **Edge Functions:** 13 Supabase serverless functions
 - **Dependencies:** 100+ npm packages
 - **Feature Modules:** 20+ business domains
 
@@ -103,16 +103,16 @@
 ```
 /home/user/gym-unity-suite/
 ├── src/                          # Main application source
-│   ├── components/               # React components (248 files)
-│   ├── pages/                   # Page-level components (69 files)
+│   ├── components/               # React components (256 files)
+│   ├── pages/                   # Page-level components (73 files)
 │   ├── contexts/                # React Context providers
 │   ├── hooks/                   # Custom React hooks
 │   ├── lib/                     # Utility libraries
 │   ├── integrations/            # External service integrations
 │   └── utils/                   # Helper utilities
 ├── supabase/                    # Backend infrastructure
-│   ├── functions/               # Edge functions (10 functions)
-│   └── migrations/              # Database migrations (100+ files)
+│   ├── functions/               # Edge functions (13 functions)
+│   └── migrations/              # Database migrations (93+ files)
 ├── workers/                     # Cloudflare Workers
 │   └── custom-domain-router/    # Enterprise custom domain handling
 ├── public/                      # Static assets
@@ -139,7 +139,10 @@ src/components/
 ├── staff/               # Staff management (91K)
 ├── training/            # Personal training
 ├── equipment/           # Equipment tracking (196K)
+├── forms/               # Reusable form components
+├── integrations/        # Third-party integration UI
 ├── marketing/           # Marketing automation (106K)
+├── membership/          # Membership plans & management
 ├── communication/       # Communication tools (95K)
 ├── retail/              # Pro shop & POS
 ├── mobile/              # Mobile-specific components (122K)
@@ -157,8 +160,9 @@ src/components/
 ├── location/            # Multi-location management
 ├── admin/               # Admin tools
 ├── ai/                  # AI-powered features
-├── seo/                 # SEO components
+├── seo/                 # SEO utilities (FAQSection, ComparisonTable, etc.)
 ├── blog/                # Blog functionality
+├── tickets/             # Support ticket system
 ├── audit/               # Audit trails
 ├── advanced/            # Advanced features
 ├── 3d/                  # 3D elements
@@ -179,10 +183,24 @@ src/pages/
 ├── CRM.tsx                      # CRM & leads
 ├── Analytics.tsx                # Analytics dashboard
 ├── Billing.tsx                  # Billing management
-├── [50+ more pages]             # Domain-specific pages
-└── seo/                         # SEO landing pages
-    ├── [vertical-solutions]     # Industry-specific pages
-    └── [comparisons]            # Competitor comparison pages
+├── [54+ more pages]             # Domain-specific pages
+├── admin/                       # Admin pages
+│   └── BlogAdminPage.tsx        # Blog management
+├── blog/                        # SEO blog content
+│   ├── BestGymSoftware2025.tsx
+│   └── GymMemberRetentionGuide.tsx
+├── compare/                     # Competitor comparison pages
+│   ├── GlofoxAlternativePage.tsx
+│   ├── MindbodyAlternativePage.tsx
+│   └── ZenPlannerAlternativePage.tsx
+├── features/                    # Feature-specific landing pages
+│   └── SchedulingPage.tsx
+├── local/                       # Geographic/local SEO pages
+│   └── NewYorkGymSoftwarePage.tsx
+└── solutions/                   # Industry-specific solution pages
+    ├── CrossFitGymsPage.tsx
+    ├── MartialArtsSchoolsPage.tsx
+    └── YogaStudiosPage.tsx
 ```
 
 ### Important Directories
@@ -214,6 +232,8 @@ src/pages/
 - `customer-portal` - Customer portal access
 - `generate-sitemap` - SEO sitemap generation
 - `get-org-by-domain` - Custom domain resolution
+- `receive-email` - Inbound email handling
+- `send-email-response` - Outbound email responses
 - `setup-new-user` - New user setup
 - `verify-custom-domain` - Domain verification
 - `verify-payment` - Payment verification
@@ -249,9 +269,7 @@ npm run preview
 
 ### Branch Strategy
 
-**Current Branch:** `claude/add-claude-documentation-01LWqNTJ3tDtnBDNSakE4GjD`
-
-**Important:** All development should occur on designated `claude/*` branches with matching session IDs.
+**Important:** All development should occur on designated `claude/*` branches with matching session IDs. Each Claude Code session creates a unique branch for tracking changes.
 
 ### Git Workflow
 
@@ -1104,6 +1122,7 @@ npm run build:pages
 | `gym-unity-suite-seo-strategy.md` | SEO strategy (53KB) |
 | `CUSTOM_DOMAIN_IMPLEMENTATION.md` | Custom domain setup |
 | `Build-Output.md` | Build process docs |
+| `motion_ai_implementation_timeline.md` | AI capabilities roadmap |
 | `docs/` | Additional documentation |
 
 ### Supabase Files
@@ -1111,8 +1130,8 @@ npm run build:pages
 | Location | Purpose |
 |----------|---------|
 | `supabase/config.toml` | Supabase project config |
-| `supabase/functions/` | Edge functions (10 functions) |
-| `supabase/migrations/` | Database migrations (100+ files) |
+| `supabase/functions/` | Edge functions (13 functions) |
+| `supabase/migrations/` | Database migrations (93+ files) |
 
 ---
 
@@ -1177,7 +1196,13 @@ const { data } = await supabase
 - React Helmet Async is used for meta tags
 - Sitemap is generated via edge function
 - Schema.org structured data in index.html
-- SEO landing pages in `src/pages/seo/`
+- SEO landing pages organized in subdirectories:
+  - `src/pages/compare/` - Competitor comparison pages
+  - `src/pages/solutions/` - Industry vertical pages
+  - `src/pages/local/` - Geographic targeting pages
+  - `src/pages/blog/` - SEO-optimized blog content
+- SEO utility components in `src/components/seo/`
+- FAQ sections added to key comparison pages
 - Keep SEO metadata updated for new pages
 
 ### Dark Mode
@@ -1340,6 +1365,8 @@ const MyComponent = () => {
 - `LIVING_TECHNICAL_SPECIFICATION.md` - Detailed technical spec
 - `gym-platform-feature-modules.md` - Feature module details
 - `CUSTOM_DOMAIN_IMPLEMENTATION.md` - Custom domain setup
+- `motion_ai_implementation_timeline.md` - AI feature roadmap
+- `gym-unity-suite-seo-strategy.md` - Comprehensive SEO strategy
 
 ---
 
@@ -1347,6 +1374,7 @@ const MyComponent = () => {
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.1 | 2025-11-28 | Updated metrics (256 components, 73 pages, 13 edge functions), added email functions, fixed SEO pages structure, added new component directories |
 | 1.0 | 2025-11-16 | Initial comprehensive CLAUDE.md documentation |
 
 ---
