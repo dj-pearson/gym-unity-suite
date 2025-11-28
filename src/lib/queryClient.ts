@@ -9,45 +9,57 @@ import { QueryClient } from '@tanstack/react-query';
  * - refetchOnWindowFocus: false for stable data (members, settings)
  * - retry: Smart retry with exponential backoff
  */
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // How long data is considered fresh (no refetch needed)
-      staleTime: 5 * 60 * 1000, // 5 minutes
 
-      // How long unused data stays in cache
-      gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+// Lazy initialization to ensure React is fully loaded before creating QueryClient
+let _queryClient: QueryClient | null = null;
 
-      // Disable refetch on window focus for better UX
-      // (Users don't expect data to reload when switching tabs)
-      refetchOnWindowFocus: false,
+export function getQueryClient(): QueryClient {
+  if (!_queryClient) {
+    _queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          // How long data is considered fresh (no refetch needed)
+          staleTime: 5 * 60 * 1000, // 5 minutes
 
-      // Retry failed requests with exponential backoff
-      retry: (failureCount, error: any) => {
-        // Don't retry on 4xx errors (client errors)
-        if (error?.status >= 400 && error?.status < 500) {
-          return false;
-        }
-        // Retry up to 2 times for network/server errors
-        return failureCount < 2;
+          // How long unused data stays in cache
+          gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+
+          // Disable refetch on window focus for better UX
+          // (Users don't expect data to reload when switching tabs)
+          refetchOnWindowFocus: false,
+
+          // Retry failed requests with exponential backoff
+          retry: (failureCount, error: any) => {
+            // Don't retry on 4xx errors (client errors)
+            if (error?.status >= 400 && error?.status < 500) {
+              return false;
+            }
+            // Retry up to 2 times for network/server errors
+            return failureCount < 2;
+          },
+
+          // Retry delay: 1s, 2s, 4s (exponential backoff)
+          retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+
+          // Enable request deduplication
+          // Multiple components requesting same data = single network request
+          structuralSharing: true,
+        },
+        mutations: {
+          // Retry mutations once on network failure
+          retry: 1,
+
+          // Mutation retry delay
+          retryDelay: 1000,
+        },
       },
+    });
+  }
+  return _queryClient;
+}
 
-      // Retry delay: 1s, 2s, 4s (exponential backoff)
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-
-      // Enable request deduplication
-      // Multiple components requesting same data = single network request
-      structuralSharing: true,
-    },
-    mutations: {
-      // Retry mutations once on network failure
-      retry: 1,
-
-      // Mutation retry delay
-      retryDelay: 1000,
-    },
-  },
-});
+// For backwards compatibility
+export const queryClient = getQueryClient();
 
 /**
  * Query key factories for consistent cache keys across the app
@@ -97,13 +109,15 @@ export const queryKeys = {
 export async function prefetchDashboardData(organizationId: string) {
   if (!organizationId) return;
 
+  const client = getQueryClient();
+  
   // Prefetch dashboard stats in parallel
   await Promise.allSettled([
-    queryClient.prefetchQuery({
+    client.prefetchQuery({
       queryKey: queryKeys.dashboard.stats(organizationId),
       staleTime: 2 * 60 * 1000, // 2 minutes
     }),
-    queryClient.prefetchQuery({
+    client.prefetchQuery({
       queryKey: queryKeys.members.list(organizationId),
       staleTime: 5 * 60 * 1000, // 5 minutes
     }),
