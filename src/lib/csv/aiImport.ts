@@ -60,13 +60,14 @@ Important rules:
       temperature: 0.1,
     });
 
-    if (!response.success || !response.content) {
-      console.error('AI mapping failed:', response.error);
+    const content = response.content;
+    if (!content) {
+      console.error('AI mapping failed: empty response content');
       return [];
     }
 
     // Parse the JSON response
-    const jsonMatch = response.content.match(/\[[\s\S]*\]/);
+    const jsonMatch = content.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
       console.error('Could not parse AI response as JSON');
       return [];
@@ -175,11 +176,12 @@ Transformation rules:
       temperature: 0.1,
     });
 
-    if (!response.success || !response.content) {
+    const content = response.content;
+    if (!content) {
       return [];
     }
 
-    const jsonMatch = response.content.match(/\[[\s\S]*\]/);
+    const jsonMatch = content.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
       return [];
     }
@@ -228,10 +230,6 @@ Return ONLY the JSON object or null, no other text.`;
       temperature: 0.1,
     });
 
-    if (!response.success || !response.content) {
-      return null;
-    }
-
     const content = response.content.trim();
     if (content === 'null' || content === '') {
       return null;
@@ -275,7 +273,7 @@ Write 2-3 sentences summarizing the import results in a helpful, professional to
       temperature: 0.7,
     });
 
-    if (response.success && response.content) {
+    if (response.content) {
       return response.content;
     }
   } catch (error) {
