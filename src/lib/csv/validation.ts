@@ -239,7 +239,7 @@ export async function checkForDuplicates(
 
     try {
       let query = supabase
-        .from(config.tableName)
+        .from(config.tableName as any)
         .select('*')
         .eq('organization_id', organizationId);
 
