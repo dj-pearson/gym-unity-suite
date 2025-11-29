@@ -64,7 +64,7 @@ export default function CSVImportWizard({
   onOpenChange,
   onImportComplete,
 }: CSVImportWizardProps) {
-  const { user } = useAuth();
+  const { profile } = useAuth();
   const config = getModuleConfig(module);
 
   // Wizard state
@@ -199,9 +199,9 @@ export default function CSVImportWizard({
             <DataPreviewStep
               config={config}
               parsedData={parsedData}
-              columnMappings={columnMappings}
-              organizationId={user?.organization_id || ''}
-              onValidationComplete={handleValidationComplete}
+               columnMappings={columnMappings}
+               organizationId={profile?.organization_id || ''}
+               onValidationComplete={handleValidationComplete}
               onBack={goBack}
             />
           )}
@@ -218,10 +218,10 @@ export default function CSVImportWizard({
           {currentStep === 'importing' && validationResult && (
             <ImportingStep
               config={config}
-              validationResult={validationResult}
-              duplicates={duplicates}
-              organizationId={user?.organization_id || ''}
-              onComplete={handleImportComplete}
+               validationResult={validationResult}
+                duplicates={duplicates}
+                organizationId={profile?.organization_id || ''}
+                onComplete={handleImportComplete}
               onError={setError}
             />
           )}
