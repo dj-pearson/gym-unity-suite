@@ -31,7 +31,7 @@ import {
   X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { InteractiveHeroBackground } from '@/components/backgrounds/InteractiveHeroBackground';
+
 import { EarlyAccessForm } from '@/components/auth/EarlyAccessForm';
 import { Logo } from '@/components/ui/logo';
 import { useGSAP } from '@gsap/react';
@@ -322,83 +322,83 @@ export default function LandingPage() {
           </div>
         </nav>
 
-        {/* Parallax background with hero content only */}
-        <InteractiveHeroBackground className="relative w-full z-0">
-          {/* Hero Section - integrated into parallax */}
-          <section ref={heroContainerRef} className="relative container mx-auto px-4 py-20 text-center flex items-center min-h-[80vh] z-10">
-            <div className="relative z-10 max-w-4xl mx-auto">
-              <div className="hero-badge">
-                <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
-                  Elite Fitness Management Platform
-                </Badge>
-              </div>
-              <div className="mb-4 hero-badge">
-                <Badge className="bg-primary/20 text-primary border-primary/30 backdrop-blur-sm">
-                  🚀 Launching November 1st, 2025
-                </Badge>
-              </div>
-              <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
-                #1 Gym Management
-                <br />
-                <span className="relative text-gradient-primary">
-                  Software
-                </span>
-              </h1>
-              <p className="hero-description text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-                All-in-one fitness management system for gyms, studios & fitness centers. Automate scheduling,
-                billing, member management & more. Launching November 1st - join the waitlist!
-              </p>
-              <div className="hero-buttons flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <Button
-                  size="lg"
-                  onClick={() => {
-                    document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow hover:shadow-elevation-3 transition-all duration-300"
-                >
-                  Request Early Access
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  onClick={() => setShowDemoModal(true)}
-                  className="px-8 py-4 text-lg bg-white/95 text-foreground border-white/30 hover:bg-white transition-all duration-300"
-                >
-                  <Play className="mr-2 h-5 w-5" />
-                  Watch Demo
-                </Button>
-              </div>
-
-              {/* Social Proof */}
-              <div className="hero-buttons mt-10 flex flex-col items-center">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex -space-x-2">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <div
-                        key={i}
-                        className="w-8 h-8 rounded-full bg-gradient-secondary border-2 border-white flex items-center justify-center text-white text-xs font-bold"
-                      >
-                        {String.fromCharCode(64 + i)}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-1 ml-2">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-white/80 text-sm">
-                  <span className="font-semibold text-white">500+ fitness businesses</span> on our early access waitlist
-                </p>
-                <p className="text-white/60 text-xs mt-1 italic">
-                  "Finally, software built by people who actually run gyms." — Sarah J., Studio Owner
-                </p>
-              </div>
+        {/* Hero Section with static background (3D removed) */}
+        <section
+          ref={heroContainerRef}
+          className="relative container mx-auto px-4 py-20 text-center flex items-center min-h-[80vh]"
+        >
+          <div className="relative z-10 max-w-4xl mx-auto">
+            <div className="hero-badge">
+              <Badge className="mb-6 bg-secondary/10 text-primary border-secondary/20">
+                Elite Fitness Management Platform
+              </Badge>
             </div>
-          </section>
-        </InteractiveHeroBackground>
+            <div className="mb-4 hero-badge">
+              <Badge className="bg-primary/20 text-primary border-primary/30 backdrop-blur-sm">
+                🚀 Launching November 1st, 2025
+              </Badge>
+            </div>
+            <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
+              #1 Gym Management
+              <br />
+              <span className="relative text-gradient-primary">
+                Software
+              </span>
+            </h1>
+            <p className="hero-description text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+              All-in-one fitness management system for gyms, studios & fitness centers. Automate scheduling,
+              billing, member management & more. Launching November 1st - join the waitlist!
+            </p>
+            <div className="hero-buttons flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <Button
+                size="lg"
+                onClick={() => {
+                  document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-gradient-primary hover:opacity-90 px-8 py-4 text-lg shadow-glow hover:shadow-elevation-3 transition-all duration-300"
+              >
+                Request Early Access
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={() => setShowDemoModal(true)}
+                className="px-8 py-4 text-lg bg-white/95 text-foreground border-white/30 hover:bg-white transition-all duration-300"
+              >
+                <Play className="mr-2 h-5 w-5" />
+                Watch Demo
+              </Button>
+            </div>
+
+            {/* Social Proof */}
+            <div className="hero-buttons mt-10 flex flex-col items-center">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex -space-x-2">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      className="w-8 h-8 rounded-full bg-gradient-secondary border-2 border-white flex items-center justify-center text-white text-xs font-bold"
+                    >
+                      {String.fromCharCode(64 + i)}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1 ml-2">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+              </div>
+              <p className="text-white/80 text-sm">
+                <span className="font-semibold text-white">500+ fitness businesses</span> on our early access waitlist
+              </p>
+              <p className="text-white/60 text-xs mt-1 italic">
+                "Finally, software built by people who actually run gyms." — Sarah J., Studio Owner
+              </p>
+            </div>
+          </div>
+        </section>
 
         {/* Features Grid - separate section with standard background */}
         <section id="features" className="container mx-auto px-4 py-20">
