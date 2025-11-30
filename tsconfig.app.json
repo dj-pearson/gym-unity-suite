@@ -14,12 +14,19 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting */
-    "strict": false,
-    "noUnusedLocals": false,
+    /* Type Safety - Incrementally enabled */
+    "strict": true,
+    "noUnusedLocals": true,
     "noUnusedParameters": false,
-    "noImplicitAny": false,
-    "noFallthroughCasesInSwitch": false,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    /* Keep these relaxed for now to avoid breaking legacy code */
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
 
     "baseUrl": ".",
     "paths": {
