@@ -1,7 +1,7 @@
-// Toasts/Tooltips temporarily disabled to resolve React runtime issue
-// import { Toaster } from "@/components/ui/toaster";
-// import { Toaster as Sonner } from "@/components/ui/sonner";
-// import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "next-themes";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -134,13 +134,19 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
-        <AuthProvider>
-          <CustomDomainProvider>
-            <Router>
-              <AppRoutes />
-            </Router>
-          </CustomDomainProvider>
-        </AuthProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <TooltipProvider>
+            <AuthProvider>
+              <CustomDomainProvider>
+                <Router>
+                  <AppRoutes />
+                </Router>
+                <Toaster />
+                <Sonner />
+              </CustomDomainProvider>
+            </AuthProvider>
+          </TooltipProvider>
+        </ThemeProvider>
       </HelmetProvider>
     </QueryClientProvider>
   );
