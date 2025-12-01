@@ -191,16 +191,33 @@ class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { 
 
 // Separate component for routes to ensure proper React context
 const AppRoutes = () => {
-  // Register service worker for PWA functionality
+  // Register service worker for PWA functionality (production only)
   useEffect(() => {
+    // Only register service worker in production to avoid interfering with Vite dev server
+    const isProduction = import.meta.env.PROD;
+    
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then((registration) => {
-          console.log('SW registered: ', registration);
-        })
-        .catch((registrationError) => {
-          console.log('SW registration failed: ', registrationError);
+      if (isProduction) {
+        // Register service worker in production
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('SW registered: ', registration);
+          })
+          .catch((registrationError) => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      } else {
+        // Unregister service workers in development to prevent interference
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          registrations.forEach((registration) => {
+            registration.unregister().then((success) => {
+              if (success) {
+                console.log('SW unregistered for development');
+              }
+            });
+          });
         });
+      }
     }
   }, []);
 

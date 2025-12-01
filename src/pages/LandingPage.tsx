@@ -34,6 +34,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { EarlyAccessForm } from '@/components/auth/EarlyAccessForm';
 import { Logo } from '@/components/ui/logo';
+import { InteractiveHeroBackground } from '@/components/backgrounds/InteractiveHeroBackground';
+import { OneTimePaymentButton } from '@/components/membership/OneTimePaymentButton';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
@@ -752,3 +754,5 @@ export default function LandingPage() {
     </>
   );
 }
+
+
