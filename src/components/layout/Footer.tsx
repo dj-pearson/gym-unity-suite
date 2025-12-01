@@ -8,7 +8,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-muted/30 border-t">
+    <footer className="glass border-t border-white/10 relative z-10">
       <div className="container mx-auto px-4 py-12">
         {/* Main Footer Content */}
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
@@ -21,7 +21,7 @@ export function Footer() {
               <span className="text-xl font-bold">Rep Club</span>
             </div>
             <p className="text-muted-foreground mb-4 max-w-md">
-              The complete gym management platform designed to help fitness businesses grow, 
+              The complete gym management platform designed to help fitness businesses grow,
               engage members, and streamline operations with powerful tools and insights.
             </p>
             <div className="space-y-2 text-sm">
@@ -149,9 +149,9 @@ export function Footer() {
               Get the latest fitness business tips and Rep Club updates delivered to your inbox.
             </p>
             <div className="flex gap-2">
-              <Input 
-                type="email" 
-                placeholder="Enter your email" 
+              <Input
+                type="email"
+                placeholder="Enter your email"
                 className="flex-1"
               />
               <Button>Subscribe</Button>
@@ -166,39 +166,39 @@ export function Footer() {
           <div className="text-sm text-muted-foreground">
             © {currentYear} Rep Club. All rights reserved.
           </div>
-          
+
           {/* Social Links */}
           <div className="flex items-center gap-4">
-            <a 
-              href="https://twitter.com/repclub" 
-              target="_blank" 
+            <a
+              href="https://twitter.com/repclub"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Follow us on Twitter"
             >
               <Twitter className="h-5 w-5" />
             </a>
-            <a 
-              href="https://facebook.com/repclub" 
-              target="_blank" 
+            <a
+              href="https://facebook.com/repclub"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Follow us on Facebook"
             >
               <Facebook className="h-5 w-5" />
             </a>
-            <a 
-              href="https://instagram.com/repclub" 
-              target="_blank" 
+            <a
+              href="https://instagram.com/repclub"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Follow us on Instagram"
             >
               <Instagram className="h-5 w-5" />
             </a>
-            <a 
-              href="https://linkedin.com/company/repclub" 
-              target="_blank" 
+            <a
+              href="https://linkedin.com/company/repclub"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Follow us on LinkedIn"
