@@ -16,7 +16,7 @@ interface OneTimePaymentButtonProps {
   children?: React.ReactNode;
 }
 
-export default function OneTimePaymentButton({ 
+export function OneTimePaymentButton({ 
   amount,
   description,
   orderType = "one_time",
@@ -97,3 +97,6 @@ export default function OneTimePaymentButton({
     </Button>
   );
 }
+
+// Export as default for backward compatibility
+export default OneTimePaymentButton;

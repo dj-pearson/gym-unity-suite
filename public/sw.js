@@ -64,6 +64,21 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip Vite dev server requests (localhost development)
+  // This prevents service worker from interfering with HMR and dev server
+  if (
+    url.hostname === 'localhost' ||
+    url.hostname === '127.0.0.1' ||
+    url.hostname.includes('localhost') ||
+    url.pathname.startsWith('/src/') ||
+    url.pathname.startsWith('/@') ||
+    url.searchParams.has('t') || // Vite timestamp query param
+    url.protocol === 'ws:' ||
+    url.protocol === 'wss:'
+  ) {
+    return; // Let browser handle these requests normally
+  }
+
   // Strategy 1: Network-first for API calls
   if (url.pathname.startsWith('/api') || url.hostname.includes('supabase')) {
     event.respondWith(networkFirstStrategy(request));
