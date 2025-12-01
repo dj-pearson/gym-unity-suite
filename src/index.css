@@ -2,127 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Rep Club Design System - Professional upscale fitness aesthetic */
+/* Rep Club Design System - Premium Glassmorphism Aesthetic */
 
 @layer base {
   :root {
-    /* Core Brand Colors - Sophisticated Black & Luxury Gold */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 9%;
+    /* Core Brand Colors - Deep Luxury Black & Rich Gold */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
     
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 9%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
     
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 9%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
     
-    /* Primary - Sophisticated Black */
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --primary-glow: 0 0% 20%;
+    /* Primary - Rich Gold */
+    --primary: 45 93% 47%;
+    --primary-foreground: 240 10% 3.9%;
+    --primary-glow: 45 100% 60%;
     
-    /* Secondary - Luxury Gold */
-    --secondary: 45 100% 51%;
-    --secondary-foreground: 0 0% 9%;
-    --secondary-glow: 45 100% 61%;
+    /* Secondary - Deep Onyx */
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --secondary-glow: 240 4% 26%;
     
     /* Neutral Grays */
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
     
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 9%;
+    --accent: 240 4% 16%;
+    --accent-foreground: 0 0% 98%;
     
     /* Status Colors */
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
+    --success: 142 70% 45%;
+    --success-foreground: 240 10% 3.9%;
     
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 240 10% 3.9%;
     
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 0 0% 98%;
     
     /* Borders & Inputs */
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 9%;
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 45 93% 47%;
     
-    --radius: 0.75rem;
+    --radius: 1rem;
     
     /* Custom Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
-    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+    --gradient-primary: linear-gradient(135deg, hsl(45 93% 47%), hsl(45 100% 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(240 4% 16%), hsl(240 4% 26%));
+    --gradient-hero: linear-gradient(135deg, hsl(240 10% 3.9%), hsl(240 4% 16%));
+    --gradient-subtle: linear-gradient(180deg, hsl(240 10% 3.9%), hsl(240 4% 10%));
+    --gradient-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
     
     /* Shadows */
-    --shadow-elevation-1: 0 1px 3px 0 hsl(0 0% 0% / 0.1);
-    --shadow-elevation-2: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.06);
-    --shadow-elevation-3: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -2px hsl(0 0% 0% / 0.05);
-    --shadow-glow: 0 0 20px hsl(var(--secondary) / 0.3);
+    --shadow-elevation-1: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-elevation-2: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    --shadow-elevation-3: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.2);
     
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --transition-spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     
-    /* Typography Scale */
-    --font-size-xs: 0.75rem;
-    --font-size-sm: 0.875rem;
-    --font-size-base: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.25rem;
-    --font-size-2xl: 1.5rem;
-    --font-size-3xl: 1.875rem;
-    --font-size-4xl: 2.25rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 20%;
-    --sidebar-primary: 0 0% 9%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 95%;
-    --sidebar-accent-foreground: 0 0% 9%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 0 0% 9%;
+    /* Glass Effect Variables */
+    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+    --glass-bg: rgba(20, 20, 23, 0.7);
+    --glass-blur: blur(12px);
   }
 
   .dark {
-    /* Dark mode overrides for Rep Club theme */
-    --background: 0 0% 6%;
+    /* Dark mode is default, but keeping this for consistency if needed */
+    --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-    
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 98%;
-    
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 98%;
-    
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --primary-glow: 0 0% 85%;
-    
-    --secondary: 45 100% 55%;
-    --secondary-foreground: 0 0% 9%;
-    --secondary-glow: 45 100% 65%;
-    
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 55%;
-    
-    --accent: 0 0% 12%;
-    --accent-foreground: 0 0% 98%;
-    
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 0 0% 98%;
-    
-    --sidebar-background: 0 0% 4%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 0 0% 9%;
-    --sidebar-accent: 0 0% 10%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 0 0% 98%;
   }
 }
 
@@ -160,8 +114,13 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: 
+      radial-gradient(circle at 50% 0%, hsl(var(--primary) / 0.15), transparent 40%),
+      radial-gradient(circle at 0% 50%, hsl(var(--primary) / 0.05), transparent 40%),
+      radial-gradient(circle at 100% 50%, hsl(var(--primary) / 0.05), transparent 40%);
+    background-attachment: fixed;
   }
   
   /* Custom utility classes for the gym platform */
@@ -179,6 +138,10 @@
   
   .gradient-subtle {
     background: var(--gradient-subtle);
+  }
+
+  .gradient-glass {
+    background: var(--gradient-glass);
   }
   
   .shadow-elevation-1 {
@@ -205,13 +168,32 @@
     transition: var(--transition-spring);
   }
   
+  /* Glassmorphism Utilities */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: var(--glass-border);
+    box-shadow: var(--shadow-elevation-1);
+  }
+  
+  .glass-hover {
+    transition: var(--transition-smooth);
+  }
+  
+  .glass-hover:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: var(--shadow-glow);
+  }
+
   /* Typography utilities */
   .text-gradient-primary {
-    color: hsl(var(--primary)); /* Fallback for mobile */
     background: var(--gradient-primary);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    color: hsl(var(--primary)); /* Fallback */
   }
   
   /* Add support for browsers that don't support gradient text */
@@ -222,11 +204,11 @@
   }
   
   .text-gradient-hero {
-    color: hsl(var(--foreground)); /* Fallback for mobile */
-    background: var(--gradient-hero);
+    background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    color: white; /* Fallback */
   }
   
   /* Add support for browsers that don't support gradient text */
@@ -240,11 +222,11 @@
 @layer components {
   /* Custom component styles for gym platform */
   .gym-card {
-    @apply bg-card border border-border rounded-xl shadow-elevation-1 transition-smooth;
+    @apply glass rounded-2xl transition-all duration-300;
   }
   
   .gym-card:hover {
-    @apply shadow-elevation-2;
+    @apply glass-hover transform -translate-y-1;
   }
   
   .stat-card {
@@ -259,5 +241,13 @@
     right: 0;
     height: 4px;
     background: var(--gradient-primary);
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all duration-300;
+  }
+  
+  .btn-glass {
+    @apply glass hover:bg-white/10 text-foreground transition-all duration-300;
   }
 }
