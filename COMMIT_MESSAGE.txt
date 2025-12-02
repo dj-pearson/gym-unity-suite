@@ -1,0 +1,54 @@
+Fix: Resolve Node version incompatibility causing blank site on Cloudflare Pages
+
+## Problem
+Site was loading only background with console error:
+"Cannot read properties of undefined (reading 'createContext')"
+
+Build logs showed Node 18.20.8 with EBADENGINE warnings for packages
+requiring Node 20+.
+
+## Solution
+1. Node Version Configuration
+   - Add .nvmrc and .node-version files specifying Node 20.11.0
+   - Update package.json with engines field requiring Node >=20.0.0
+   - Update wrangler.toml with NODE_VERSION build environment variable
+
+2. Build Optimization
+   - Update vite.config.ts chunk splitting to avoid dependency issues
+   - Change build target from es2015 to es2020 for better compatibility
+   - Add scheduler to React vendor chunk for proper initialization
+
+3. Service Worker Fix
+   - Change JavaScript caching strategy from cache-first to network-first
+   - Prevents serving stale/corrupted code from cache
+
+4. Error Handling
+   - Add React loading verification in main.tsx
+   - Add user-friendly error messages and recovery UI
+   - Prevent silent failures
+
+5. Documentation
+   - Add BUILD_INSTRUCTIONS.md with troubleshooting guide
+   - Add DEPLOYMENT_FIX.md with deployment steps
+
+## Files Changed
+- package.json (added engines field)
+- vite.config.ts (improved chunking, updated target)
+- wrangler.toml (added NODE_VERSION)
+- src/main.tsx (added error handling)
+- public/sw.js (updated caching strategy)
+- .nvmrc (new)
+- .node-version (new)
+- BUILD_INSTRUCTIONS.md (new)
+- DEPLOYMENT_FIX.md (new)
+
+## Testing
+After deployment:
+- Build should use Node 20.x.x (not 18.x.x)
+- No EBADENGINE warnings in build logs
+- Site should load completely (not just background)
+- Console should show "App mounted successfully"
+
+## Next Steps
+See DEPLOYMENT_FIX.md for detailed deployment instructions
+
