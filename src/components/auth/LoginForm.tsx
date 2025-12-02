@@ -23,8 +23,13 @@ export const LoginForm: React.FC = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    await signIn(email, password);
+    const { error } = await signIn(email, password);
     setIsLoading(false);
+    
+    // Redirect to dashboard on successful login
+    if (!error) {
+      navigate('/dashboard');
+    }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
