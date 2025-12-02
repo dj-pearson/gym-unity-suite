@@ -114,9 +114,9 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// Home Route Component (temporarily simplified to avoid dashboard runtime errors)
+// Home Route Component - shows landing page for guests, redirects authenticated users to dashboard
 const HomeRoute = () => {
-  const { loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -126,7 +126,12 @@ const HomeRoute = () => {
     );
   }
 
-  // While we debug the dashboard/runtime issue, always show the marketing landing page
+  // Redirect authenticated users to dashboard
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // Show landing page for guests
   return <LandingPage />;
 };
 
