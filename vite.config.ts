@@ -24,33 +24,22 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Simplified chunk splitting to avoid dependency ordering issues
+          // Simplified chunk splitting - keep React with all vendors to avoid load order issues
           if (id.includes('node_modules')) {
-            // Keep React and React-DOM together (critical for proper initialization)
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router') || id.includes('scheduler')) {
-              return 'vendor-react';
-            }
-            // UI component libraries (Radix UI)
-            if (id.includes('@radix-ui')) {
-              return 'vendor-ui';
-            }
-            // Data & state management
-            if (id.includes('@tanstack/react-query') || id.includes('@supabase/supabase-js')) {
-              return 'vendor-data';
-            }
-            // Charts & visualization
+            // Charts & visualization (separate because they're large and not always needed)
             if (id.includes('recharts')) {
               return 'charts';
             }
-            // Calendar & date utilities
+            // Calendar & date utilities (separate because they're large and not always needed)
             if (id.includes('react-big-calendar') || id.includes('date-fns')) {
               return 'calendar';
             }
-            // Three.js and 3D libraries
+            // Three.js and 3D libraries (separate because they're large and not always needed)
             if (id.includes('three') || id.includes('@react-three')) {
               return 'vendor-3d';
             }
-            // All other vendor code
+            // ALL other vendor code including React stays together in one chunk
+            // This prevents chunk loading order issues where libraries try to use React before it loads
             return 'vendor';
           }
           // Split large component directories
