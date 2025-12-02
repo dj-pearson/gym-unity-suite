@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
+// Force bundle refresh: 2025-12-02-01:29
+// This comment changes the file content to generate a new vendor bundle hash
 // Verify React is loaded correctly
 if (!React || !React.createElement || !React.createContext) {
   console.error('CRITICAL: React is not loaded correctly!', {
