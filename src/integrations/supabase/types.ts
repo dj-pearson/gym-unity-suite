@@ -7333,6 +7333,7 @@ export type Database = {
           city: string | null
           country: string | null
           created_at: string
+          dashboard_preferences: Json | null
           date_of_birth: string | null
           department: string | null
           email: string
@@ -7350,6 +7351,7 @@ export type Database = {
           last_name: string | null
           location_id: string | null
           member_notes: string | null
+          onboarding_state: Json | null
           organization_id: string
           parent_member_id: string | null
           phone: string | null
@@ -7370,6 +7372,7 @@ export type Database = {
           city?: string | null
           country?: string | null
           created_at?: string
+          dashboard_preferences?: Json | null
           date_of_birth?: string | null
           department?: string | null
           email: string
@@ -7387,6 +7390,7 @@ export type Database = {
           last_name?: string | null
           location_id?: string | null
           member_notes?: string | null
+          onboarding_state?: Json | null
           organization_id: string
           parent_member_id?: string | null
           phone?: string | null
@@ -7407,6 +7411,7 @@ export type Database = {
           city?: string | null
           country?: string | null
           created_at?: string
+          dashboard_preferences?: Json | null
           date_of_birth?: string | null
           department?: string | null
           email?: string
@@ -7424,6 +7429,7 @@ export type Database = {
           last_name?: string | null
           location_id?: string | null
           member_notes?: string | null
+          onboarding_state?: Json | null
           organization_id?: string
           parent_member_id?: string | null
           phone?: string | null
