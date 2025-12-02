@@ -14,6 +14,71 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_model_settings: {
+        Row: {
+          claude_version: string | null
+          created_at: string | null
+          created_by: string | null
+          fallback_model: string | null
+          fallback_provider: string | null
+          id: string
+          last_used_at: string | null
+          max_tokens: number | null
+          openai_organization_id: string | null
+          organization_id: string
+          primary_model: string | null
+          primary_provider: string | null
+          temperature: number | null
+          total_requests: number | null
+          total_tokens_used: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          claude_version?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          fallback_model?: string | null
+          fallback_provider?: string | null
+          id?: string
+          last_used_at?: string | null
+          max_tokens?: number | null
+          openai_organization_id?: string | null
+          organization_id: string
+          primary_model?: string | null
+          primary_provider?: string | null
+          temperature?: number | null
+          total_requests?: number | null
+          total_tokens_used?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          claude_version?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          fallback_model?: string | null
+          fallback_provider?: string | null
+          id?: string
+          last_used_at?: string | null
+          max_tokens?: number | null
+          openai_organization_id?: string | null
+          organization_id?: string
+          primary_model?: string | null
+          primary_provider?: string | null
+          temperature?: number | null
+          total_requests?: number | null
+          total_tokens_used?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_model_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           announcement_type: string
@@ -142,6 +207,119 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_auto_generation_settings: {
+        Row: {
+          ai_search_optimization: boolean | null
+          auto_publish: boolean | null
+          brand_voice_guidelines: string | null
+          content_analysis_depth: string | null
+          content_style: string | null
+          content_template: string | null
+          created_at: string | null
+          created_by: string | null
+          custom_instructions: string | null
+          generation_frequency: string | null
+          generation_time: string | null
+          generation_timezone: string | null
+          geo_optimization: boolean | null
+          id: string
+          industry_focus: string[] | null
+          is_enabled: boolean | null
+          last_generation_at: string | null
+          minimum_topic_gap_days: number | null
+          next_generation_at: string | null
+          notification_emails: string[] | null
+          notify_on_generation: boolean | null
+          optimize_for_geographic: boolean | null
+          organization_id: string
+          perplexity_optimization: boolean | null
+          publish_as_draft: boolean | null
+          require_review: boolean | null
+          seo_focus: string | null
+          target_keywords: string[] | null
+          target_locations: string[] | null
+          target_word_count: number | null
+          topic_diversity_enabled: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          ai_search_optimization?: boolean | null
+          auto_publish?: boolean | null
+          brand_voice_guidelines?: string | null
+          content_analysis_depth?: string | null
+          content_style?: string | null
+          content_template?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          custom_instructions?: string | null
+          generation_frequency?: string | null
+          generation_time?: string | null
+          generation_timezone?: string | null
+          geo_optimization?: boolean | null
+          id?: string
+          industry_focus?: string[] | null
+          is_enabled?: boolean | null
+          last_generation_at?: string | null
+          minimum_topic_gap_days?: number | null
+          next_generation_at?: string | null
+          notification_emails?: string[] | null
+          notify_on_generation?: boolean | null
+          optimize_for_geographic?: boolean | null
+          organization_id: string
+          perplexity_optimization?: boolean | null
+          publish_as_draft?: boolean | null
+          require_review?: boolean | null
+          seo_focus?: string | null
+          target_keywords?: string[] | null
+          target_locations?: string[] | null
+          target_word_count?: number | null
+          topic_diversity_enabled?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          ai_search_optimization?: boolean | null
+          auto_publish?: boolean | null
+          brand_voice_guidelines?: string | null
+          content_analysis_depth?: string | null
+          content_style?: string | null
+          content_template?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          custom_instructions?: string | null
+          generation_frequency?: string | null
+          generation_time?: string | null
+          generation_timezone?: string | null
+          geo_optimization?: boolean | null
+          id?: string
+          industry_focus?: string[] | null
+          is_enabled?: boolean | null
+          last_generation_at?: string | null
+          minimum_topic_gap_days?: number | null
+          next_generation_at?: string | null
+          notification_emails?: string[] | null
+          notify_on_generation?: boolean | null
+          optimize_for_geographic?: boolean | null
+          organization_id?: string
+          perplexity_optimization?: boolean | null
+          publish_as_draft?: boolean | null
+          require_review?: boolean | null
+          seo_focus?: string | null
+          target_keywords?: string[] | null
+          target_locations?: string[] | null
+          target_word_count?: number | null
+          topic_diversity_enabled?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_auto_generation_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_categories: {
         Row: {
           created_at: string
@@ -168,6 +346,81 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      blog_generation_queue: {
+        Row: {
+          blog_post_id: string | null
+          created_at: string | null
+          custom_parameters: Json | null
+          error_message: string | null
+          generation_metadata: Json | null
+          id: string
+          max_retries: number | null
+          organization_id: string
+          priority: number | null
+          processing_completed_at: string | null
+          processing_started_at: string | null
+          retry_count: number | null
+          scheduled_for: string
+          status: string | null
+          suggested_topic: string | null
+          target_keywords: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          blog_post_id?: string | null
+          created_at?: string | null
+          custom_parameters?: Json | null
+          error_message?: string | null
+          generation_metadata?: Json | null
+          id?: string
+          max_retries?: number | null
+          organization_id: string
+          priority?: number | null
+          processing_completed_at?: string | null
+          processing_started_at?: string | null
+          retry_count?: number | null
+          scheduled_for: string
+          status?: string | null
+          suggested_topic?: string | null
+          target_keywords?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          blog_post_id?: string | null
+          created_at?: string | null
+          custom_parameters?: Json | null
+          error_message?: string | null
+          generation_metadata?: Json | null
+          id?: string
+          max_retries?: number | null
+          organization_id?: string
+          priority?: number | null
+          processing_completed_at?: string | null
+          processing_started_at?: string | null
+          retry_count?: number | null
+          scheduled_for?: string
+          status?: string | null
+          suggested_topic?: string | null
+          target_keywords?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_generation_queue_blog_post_id_fkey"
+            columns: ["blog_post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_generation_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       blog_post_tags: {
         Row: {
@@ -287,6 +540,78 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      blog_topic_history: {
+        Row: {
+          ai_confidence_score: number | null
+          blog_post_id: string | null
+          content_type: string | null
+          created_at: string | null
+          generation_model: string | null
+          generation_time_seconds: number | null
+          geo_targets: string[] | null
+          id: string
+          keywords_used: string[] | null
+          organization_id: string
+          primary_topic: string
+          readability_score: number | null
+          secondary_topics: string[] | null
+          seo_score: number | null
+          target_keywords: string[] | null
+          topic_category: string | null
+        }
+        Insert: {
+          ai_confidence_score?: number | null
+          blog_post_id?: string | null
+          content_type?: string | null
+          created_at?: string | null
+          generation_model?: string | null
+          generation_time_seconds?: number | null
+          geo_targets?: string[] | null
+          id?: string
+          keywords_used?: string[] | null
+          organization_id: string
+          primary_topic: string
+          readability_score?: number | null
+          secondary_topics?: string[] | null
+          seo_score?: number | null
+          target_keywords?: string[] | null
+          topic_category?: string | null
+        }
+        Update: {
+          ai_confidence_score?: number | null
+          blog_post_id?: string | null
+          content_type?: string | null
+          created_at?: string | null
+          generation_model?: string | null
+          generation_time_seconds?: number | null
+          geo_targets?: string[] | null
+          id?: string
+          keywords_used?: string[] | null
+          organization_id?: string
+          primary_topic?: string
+          readability_score?: number | null
+          secondary_topics?: string[] | null
+          seo_score?: number | null
+          target_keywords?: string[] | null
+          topic_category?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_topic_history_blog_post_id_fkey"
+            columns: ["blog_post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_topic_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bulk_member_operations: {
         Row: {
@@ -8416,6 +8741,146 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      social_media_automation_logs: {
+        Row: {
+          blog_post_id: string | null
+          created_at: string | null
+          error_message: string | null
+          generated_content: Json | null
+          id: string
+          organization_id: string
+          platforms_processed: Json | null
+          posts_created: number | null
+          status: string | null
+          trigger_type: string
+          updated_at: string | null
+          webhook_response: Json | null
+          webhook_response_status: number | null
+          webhook_sent: boolean | null
+          webhook_url: string | null
+        }
+        Insert: {
+          blog_post_id?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          generated_content?: Json | null
+          id?: string
+          organization_id: string
+          platforms_processed?: Json | null
+          posts_created?: number | null
+          status?: string | null
+          trigger_type: string
+          updated_at?: string | null
+          webhook_response?: Json | null
+          webhook_response_status?: number | null
+          webhook_sent?: boolean | null
+          webhook_url?: string | null
+        }
+        Update: {
+          blog_post_id?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          generated_content?: Json | null
+          id?: string
+          organization_id?: string
+          platforms_processed?: Json | null
+          posts_created?: number | null
+          status?: string | null
+          trigger_type?: string
+          updated_at?: string | null
+          webhook_response?: Json | null
+          webhook_response_status?: number | null
+          webhook_sent?: boolean | null
+          webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_media_automation_logs_blog_post_id_fkey"
+            columns: ["blog_post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_media_automation_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_media_automation_settings: {
+        Row: {
+          ai_content_generation: boolean | null
+          auto_post_on_publish: boolean | null
+          content_templates: Json | null
+          created_at: string | null
+          created_by: string | null
+          facebook_character_limit: number | null
+          id: string
+          instagram_character_limit: number | null
+          is_active: boolean | null
+          linkedin_character_limit: number | null
+          organization_id: string
+          platforms_enabled: Json | null
+          posting_schedule: Json | null
+          twitter_character_limit: number | null
+          updated_at: string | null
+          webhook_enabled: boolean | null
+          webhook_secret: string | null
+          webhook_url: string | null
+        }
+        Insert: {
+          ai_content_generation?: boolean | null
+          auto_post_on_publish?: boolean | null
+          content_templates?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          facebook_character_limit?: number | null
+          id?: string
+          instagram_character_limit?: number | null
+          is_active?: boolean | null
+          linkedin_character_limit?: number | null
+          organization_id: string
+          platforms_enabled?: Json | null
+          posting_schedule?: Json | null
+          twitter_character_limit?: number | null
+          updated_at?: string | null
+          webhook_enabled?: boolean | null
+          webhook_secret?: string | null
+          webhook_url?: string | null
+        }
+        Update: {
+          ai_content_generation?: boolean | null
+          auto_post_on_publish?: boolean | null
+          content_templates?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          facebook_character_limit?: number | null
+          id?: string
+          instagram_character_limit?: number | null
+          is_active?: boolean | null
+          linkedin_character_limit?: number | null
+          organization_id?: string
+          platforms_enabled?: Json | null
+          posting_schedule?: Json | null
+          twitter_character_limit?: number | null
+          updated_at?: string | null
+          webhook_enabled?: boolean | null
+          webhook_secret?: string | null
+          webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_media_automation_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       spa_appointments: {
         Row: {
