@@ -3,6 +3,7 @@
 ## The Problem
 
 Your site is showing a blank page with the error:
+
 ```
 Cannot read properties of undefined (reading 'createContext')
 ```
@@ -14,12 +15,14 @@ This is caused by **old cached JavaScript files** in your browser's service work
 ### Option 1: Hard Refresh (Try This First)
 
 **On Windows/Linux:**
+
 1. Hold **Ctrl + Shift**
 2. Press **R**
 3. Release all keys
 
 **On Mac:**
-1. Hold **Cmd + Shift**  
+
+1. Hold **Cmd + Shift**
 2. Press **R**
 3. Release all keys
 
@@ -91,6 +94,7 @@ To verify the fix worked:
 If none of the above work:
 
 **Chrome/Edge:**
+
 1. Go to **chrome://settings/clearBrowserData**
 2. Select **All time** for time range
 3. Check ALL boxes:
@@ -105,6 +109,7 @@ If none of the above work:
 6. Visit site
 
 **Firefox:**
+
 1. Go to **about:preferences#privacy**
 2. Under **Cookies and Site Data**, click **Clear Data**
 3. Check all boxes
@@ -154,6 +159,7 @@ After clearing, you should see:
 ## Prevention
 
 After the fix:
+
 - The new service worker will automatically serve fresh files
 - You shouldn't need to do this again
 - The issue was a one-time deployment problem
@@ -170,14 +176,15 @@ If the site still doesn't load after all of these steps:
 ## Technical Details (For Developers)
 
 The issue was caused by:
+
 1. Node 18 build creating incompatible vendor bundles
 2. Service worker aggressively caching these broken files
 3. Browser serving cached broken files even after new deployment
 
 The fix deployed:
+
 1. Updated to Node 20 for builds
 2. Improved chunk splitting to prevent React initialization issues
 3. Updated service worker to never cache vendor bundles
 4. Added aggressive service worker update checks
 5. Bumped service worker cache version to force refresh
-
