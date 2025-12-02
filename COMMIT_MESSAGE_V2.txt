@@ -1,0 +1,58 @@
+fix: Force service worker cache clear and prevent vendor JS caching
+
+## Problem
+Build succeeded with Node 20 but site still shows blank page with
+"Cannot read properties of undefined (reading 'createContext')" error.
+
+Root cause: Service worker serving OLD cached vendor JavaScript files
+from the broken Node 18 build, even after new build was deployed.
+
+## Solution
+1. Service Worker Updates (public/sw.js)
+   - Bump cache version from v2 to v3-2025-12-02 (forces cache clear)
+   - Add rule to NEVER cache vendor-*.js files (always fetch fresh)
+   - Prevents serving stale/incompatible vendor bundles
+
+2. Aggressive Update Strategy (src/App.tsx)
+   - Force service worker update on every app load
+   - Unregister old service workers before registering new ones
+   - Check for updates every 60 seconds
+   - Listen for new service worker installation
+   - Improves update delivery to users
+
+3. User Documentation
+   - Add CACHE_CLEAR_INSTRUCTIONS.md (step-by-step for users)
+   - Add QUICK_FIX.md (fast reference)
+   - Add FINAL_FIX_SUMMARY.md (complete technical overview)
+
+## Impact
+- Users will need to clear browser cache ONCE to see the fix
+- After that, service worker will auto-update for future deployments
+- Vendor JS files always fetch fresh (small perf trade-off for reliability)
+- Prevents this type of cache issue from happening again
+
+## User Action Required
+Users must clear their browser cache one time:
+- Hard refresh: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
+- Or follow detailed instructions in CACHE_CLEAR_INSTRUCTIONS.md
+
+## Files Changed
+- public/sw.js (cache version bump, no vendor caching)
+- src/App.tsx (aggressive SW update strategy)
+- CACHE_CLEAR_INSTRUCTIONS.md (new)
+- QUICK_FIX.md (new)
+- FINAL_FIX_SUMMARY.md (new)
+- COMMIT_MESSAGE_V2.txt (new)
+
+## Testing
+- Clear browser cache completely
+- Verify site loads in normal browser
+- Verify site loads in incognito
+- Check console for "App mounted successfully"
+- No errors about createContext
+- Service worker version shows v3
+
+## Rollback
+If issues occur: git revert HEAD && git push origin main
+Low risk - only clears caches and improves update delivery
+

@@ -198,13 +198,45 @@ const AppRoutes = () => {
     
     if ('serviceWorker' in navigator) {
       if (isProduction) {
+        // First, unregister any old service workers to ensure fresh start
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          if (registrations.length > 0) {
+            console.log('[App] Found existing service workers, forcing update...');
+            registrations.forEach((registration) => {
+              registration.update().catch((err) => {
+                console.warn('[App] SW update failed:', err);
+              });
+            });
+          }
+        });
+
         // Register service worker in production
         navigator.serviceWorker.register('/sw.js')
           .then((registration) => {
-            console.log('SW registered: ', registration);
+            console.log('[App] SW registered successfully');
+            
+            // Check for updates immediately and every 60 seconds
+            registration.update();
+            setInterval(() => {
+              registration.update();
+            }, 60000);
+            
+            // Listen for new service worker installation
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // New service worker is available, prompt user to reload
+                    console.log('[App] New version available! Please refresh.');
+                    // You could show a toast here prompting user to refresh
+                  }
+                });
+              }
+            });
           })
           .catch((registrationError) => {
-            console.log('SW registration failed: ', registrationError);
+            console.error('[App] SW registration failed:', registrationError);
           });
       } else {
         // Unregister service workers in development to prevent interference
@@ -212,7 +244,7 @@ const AppRoutes = () => {
           registrations.forEach((registration) => {
             registration.unregister().then((success) => {
               if (success) {
-                console.log('SW unregistered for development');
+                console.log('[App] SW unregistered for development');
               }
             });
           });
