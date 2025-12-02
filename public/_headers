@@ -8,13 +8,13 @@
   Link: <https://fonts.googleapis.com>; rel=preconnect
   Link: <https://fonts.gstatic.com>; rel=preconnect; crossorigin
 
+/assets/*.js
+  Cache-Control: public, max-age=3600, must-revalidate
+
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-/*.js
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.css
+/assets/*.css
   Cache-Control: public, max-age=31536000, immutable
 
 /*.woff2

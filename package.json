@@ -9,9 +9,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --force",
     "build:dev": "vite build --mode development",
-    "build:pages": "vite build && cp public/_headers dist/ && cp public/_redirects dist/",
+    "build:pages": "vite build --force && cp public/_headers dist/ && cp public/_redirects dist/",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
