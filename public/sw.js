@@ -1,5 +1,6 @@
 // Enhanced Service Worker for Gym Unity Suite PWA
-const CACHE_VERSION = 'v2';
+// Increment version to force cache clear and get fresh JavaScript
+const CACHE_VERSION = 'v3-2025-12-02';
 const CACHE_NAME = `gym-unity-${CACHE_VERSION}`;
 const OFFLINE_PAGE = '/offline.html';
 
@@ -77,6 +78,16 @@ self.addEventListener('fetch', (event) => {
     url.protocol === 'wss:'
   ) {
     return; // Let browser handle these requests normally
+  }
+
+  // CRITICAL: Never cache vendor JavaScript files - always fetch fresh
+  // This prevents serving corrupted/incompatible vendor bundles
+  if (url.pathname.includes('/assets/vendor-') && url.pathname.endsWith('.js')) {
+    event.respondWith(fetch(request).catch(() => {
+      // If network fails, show offline page rather than serve potentially broken cache
+      return caches.match(OFFLINE_PAGE);
+    }));
+    return;
   }
 
   // Strategy 1: Network-first for API calls
