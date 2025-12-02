@@ -36,7 +36,6 @@ import { EarlyAccessForm } from '@/components/auth/EarlyAccessForm';
 import { Logo } from '@/components/ui/logo';
 import { OneTimePaymentButton } from '@/components/membership/OneTimePaymentButton';
 import { useGSAP } from '@gsap/react';
-import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
 export default function LandingPage() {
