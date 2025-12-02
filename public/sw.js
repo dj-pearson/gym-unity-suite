@@ -85,14 +85,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Strategy 2: Cache-first for static assets
+  // Strategy 2: Cache-first for images and fonts only
+  // Use network-first for scripts to avoid stale JS issues
   if (
     request.destination === 'image' ||
-    request.destination === 'font' ||
-    request.destination === 'style' ||
-    request.destination === 'script'
+    request.destination === 'font'
   ) {
     event.respondWith(cacheFirstStrategy(request));
+    return;
+  }
+
+  // Strategy 2b: Network-first for scripts and styles to prevent stale code
+  if (
+    request.destination === 'script' ||
+    request.destination === 'style'
+  ) {
+    event.respondWith(networkFirstStrategy(request));
     return;
   }
 

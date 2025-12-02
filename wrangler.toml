@@ -3,3 +3,8 @@ compatibility_date = "2024-09-25"
 
 # Cloudflare Pages configuration
 pages_build_output_dir = "dist"
+
+# Node.js version for Cloudflare Pages
+# This ensures compatibility with dependencies requiring Node 20+
+[build.environment]
+NODE_VERSION = "20.11.0"

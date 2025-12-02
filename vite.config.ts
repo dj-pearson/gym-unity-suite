@@ -24,13 +24,10 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Split vendor chunks for better caching and parallel loading
+          // Simplified chunk splitting to avoid dependency ordering issues
           if (id.includes('node_modules')) {
-            // Core React libraries
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            if (id.includes('react-router')) {
+            // Keep React and React-DOM together (critical for proper initialization)
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router') || id.includes('scheduler')) {
               return 'vendor-react';
             }
             // UI component libraries (Radix UI)
@@ -38,10 +35,7 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-ui';
             }
             // Data & state management
-            if (id.includes('@tanstack/react-query')) {
-              return 'vendor-data';
-            }
-            if (id.includes('@supabase/supabase-js')) {
+            if (id.includes('@tanstack/react-query') || id.includes('@supabase/supabase-js')) {
               return 'vendor-data';
             }
             // Charts & visualization
@@ -52,7 +46,11 @@ export default defineConfig(({ mode }) => ({
             if (id.includes('react-big-calendar') || id.includes('date-fns')) {
               return 'calendar';
             }
-            // Remaining vendor code
+            // Three.js and 3D libraries
+            if (id.includes('three') || id.includes('@react-three')) {
+              return 'vendor-3d';
+            }
+            // All other vendor code
             return 'vendor';
           }
           // Split large component directories
@@ -88,7 +86,7 @@ export default defineConfig(({ mode }) => ({
         safari10: true,
       },
     },
-    target: 'es2015',
+    target: 'es2020',
     chunkSizeWarningLimit: 600,
   },
 }));
