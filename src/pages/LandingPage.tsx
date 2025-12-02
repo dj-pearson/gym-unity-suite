@@ -34,8 +34,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { EarlyAccessForm } from '@/components/auth/EarlyAccessForm';
 import { Logo } from '@/components/ui/logo';
-import { InteractiveHeroBackground } from '@/components/backgrounds/InteractiveHeroBackground';
 import { OneTimePaymentButton } from '@/components/membership/OneTimePaymentButton';
+import { useGSAP } from '@gsap/react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
@@ -325,7 +325,7 @@ export default function LandingPage() {
         </nav>
 
         {/* Parallax background with hero content only */}
-        <InteractiveHeroBackground className="relative w-full z-0 pt-20">
+        <div className="relative w-full z-0 pt-20">
           {/* Hero Section - integrated into parallax */}
           <section ref={heroContainerRef} className="relative container mx-auto px-4 py-32 text-center flex flex-col items-center justify-center min-h-[90vh] z-10">
             <div className="relative z-10 max-w-5xl mx-auto">
@@ -371,7 +371,7 @@ export default function LandingPage() {
               </div>
             </div>
           </section>
-        </InteractiveHeroBackground>
+        </div>
 
         {/* Features Grid - Glassmorphism */}
         <section id="features" className="relative py-32 overflow-hidden">
