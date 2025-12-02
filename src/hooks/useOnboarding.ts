@@ -88,7 +88,7 @@ export function useOnboarding() {
         // First-time user - show wizard and first-time tour
         setState({
           completedTours: [],
-          currentTour: 'first-time',
+          currentTour: null,
           showWizard: true,
           setupComplete: false,
         });
@@ -98,7 +98,7 @@ export function useOnboarding() {
       // Default to first-time experience
       setState({
         completedTours: [],
-        currentTour: 'first-time',
+        currentTour: null,
         showWizard: true,
         setupComplete: false,
       });
@@ -210,7 +210,7 @@ export function useOnboarding() {
   const resetOnboarding = useCallback(async () => {
     const newState: OnboardingState = {
       completedTours: [],
-      currentTour: 'first-time',
+      currentTour: null,
       showWizard: true,
       setupComplete: false,
     };
