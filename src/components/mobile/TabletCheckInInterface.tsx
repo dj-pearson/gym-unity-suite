@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,24 +6,27 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Scan, 
-  UserCheck, 
-  User, 
-  Calendar, 
+import {
+  Scan,
+  UserCheck,
+  User,
   MapPin,
   CheckCircle,
-  AlertTriangle,
   Clock,
   Search,
   UserPlus,
-  LogOut
+  LogOut,
+  Camera,
+  Keyboard,
+  Loader2,
+  AlertTriangle,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { BarcodeLogin } from '@/components/auth/BarcodeLogin';
 import { TabletSignupForm } from '@/components/members/TabletSignupForm';
+import { CameraScanner } from '@/components/checkin/CameraScanner';
+import { useBarcodeScanner } from '@/hooks/useBarcodeScanner';
+import { cn } from '@/lib/utils';
 
 interface Member {
   id: string;
@@ -63,10 +66,28 @@ export default function TabletCheckInInterface() {
   const [currentCheckIns, setCurrentCheckIns] = useState<CheckIn[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedLocationId, setSelectedLocationId] = useState<string>('');
-  const [showScanner, setShowScanner] = useState(false);
+  const [showCameraScanner, setShowCameraScanner] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchResults, setSearchResults] = useState<Member[]>([]);
+  const [isCheckingIn, setIsCheckingIn] = useState(false);
+  const [scannerMember, setScannerMember] = useState<Member | null>(null);
+
+  // USB Barcode Scanner Hook - listens for rapid keystrokes
+  const {
+    barcode: scannedBarcode,
+    isScanning,
+    buffer: scannerBuffer,
+    clear: clearScanner
+  } = useBarcodeScanner({
+    enabled: !showCameraScanner && !showSignup, // Disable when modal is open
+    onScan: async (barcode) => {
+      await handleBarcodeScan(barcode);
+    },
+    onError: (error) => {
+      console.error('Scanner error:', error);
+    },
+  });
 
   useEffect(() => {
     if (organization?.id) {
@@ -93,7 +114,7 @@ export default function TabletCheckInInterface() {
         .order('name');
 
       if (error) throw error;
-      
+
       setLocations(data || []);
       if (data && data.length === 1) {
         setSelectedLocationId(data[0].id);
@@ -120,7 +141,7 @@ export default function TabletCheckInInterface() {
         .limit(10);
 
       if (error) throw error;
-      
+
       setCurrentCheckIns((data || []).map(checkIn => ({
         ...checkIn,
         location: checkIn.locations || { name: 'Unknown Location' },
@@ -150,7 +171,62 @@ export default function TabletCheckInInterface() {
     }
   };
 
-  const handleCheckIn = async (memberId: string) => {
+  // Handle barcode scan (from USB scanner or camera)
+  const handleBarcodeScan = useCallback(async (barcode: string) => {
+    if (!organization?.id) return;
+
+    // Look up member by barcode
+    try {
+      const { data: member, error } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, email, barcode, phone, created_at')
+        .eq('organization_id', organization.id)
+        .eq('barcode', barcode.trim())
+        .single();
+
+      if (error || !member) {
+        // Try member_cards table
+        const { data: cardData, error: cardError } = await supabase
+          .from('member_cards')
+          .select(`
+            member_id,
+            profiles!member_cards_member_id_fkey (
+              id, first_name, last_name, email, barcode, phone, created_at
+            )
+          `)
+          .or(`barcode.eq.${barcode.trim()},card_number.eq.${barcode.trim()}`)
+          .eq('status', 'active')
+          .single();
+
+        if (cardError || !cardData?.profiles) {
+          toast({
+            title: 'Member Not Found',
+            description: `No member found with barcode: ${barcode}`,
+            variant: 'destructive',
+          });
+          return;
+        }
+
+        const foundMember = cardData.profiles as unknown as Member;
+        setScannerMember(foundMember);
+        await performCheckIn(foundMember);
+        return;
+      }
+
+      setScannerMember(member);
+      await performCheckIn(member);
+    } catch (err) {
+      console.error('Barcode lookup error:', err);
+      toast({
+        title: 'Scan Error',
+        description: 'Failed to process barcode. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  }, [organization?.id, selectedLocationId]);
+
+  // Perform the actual check-in
+  const performCheckIn = async (member: Member) => {
     if (!selectedLocationId) {
       toast({
         title: "Location Required",
@@ -160,19 +236,21 @@ export default function TabletCheckInInterface() {
       return;
     }
 
+    setIsCheckingIn(true);
+
     try {
       // Check if member is already checked in
       const { data: existingCheckIn } = await supabase
         .from('check_ins')
         .select('id')
-        .eq('member_id', memberId)
+        .eq('member_id', member.id)
         .is('checked_out_at', null)
         .single();
 
       if (existingCheckIn) {
         toast({
           title: "Already Checked In",
-          description: "This member is already checked in",
+          description: `${member.first_name} ${member.last_name} is already checked in`,
           variant: "destructive"
         });
         return;
@@ -181,7 +259,7 @@ export default function TabletCheckInInterface() {
       const { error } = await supabase
         .from('check_ins')
         .insert([{
-          member_id: memberId,
+          member_id: member.id,
           location_id: selectedLocationId,
           checked_in_at: new Date().toISOString()
         }]);
@@ -190,13 +268,15 @@ export default function TabletCheckInInterface() {
 
       toast({
         title: "Check-In Successful",
-        description: `${selectedMember?.first_name} ${selectedMember?.last_name} has been checked in`,
+        description: `${member.first_name} ${member.last_name} has been checked in`,
       });
 
-      // Reset search
+      // Reset state
       setSearchTerm('');
       setSelectedMember(null);
       setSearchResults([]);
+      setScannerMember(null);
+      clearScanner();
       fetchCurrentCheckIns();
     } catch (error) {
       console.error('Error checking in member:', error);
@@ -205,6 +285,14 @@ export default function TabletCheckInInterface() {
         description: "Unable to check in member. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsCheckingIn(false);
+    }
+  };
+
+  const handleCheckIn = async (memberId: string) => {
+    if (selectedMember) {
+      await performCheckIn(selectedMember);
     }
   };
 
@@ -233,15 +321,9 @@ export default function TabletCheckInInterface() {
     }
   };
 
-  const handleBarcodeSuccess = async () => {
-    // The barcode login component should handle check-in internally
-    // For now, just close the scanner and refresh check-ins
-    setShowScanner(false);
-    fetchCurrentCheckIns();
-    toast({
-      title: "Barcode Scanned",
-      description: "Processing check-in..."
-    });
+  const handleCameraScan = async (barcode: string) => {
+    setShowCameraScanner(false);
+    await handleBarcodeScan(barcode);
   };
 
   const handleSignupComplete = async (memberId: string) => {
@@ -293,6 +375,13 @@ export default function TabletCheckInInterface() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            {/* Scanner Status Indicator */}
+            {isScanning && (
+              <Badge variant="secondary" className="animate-pulse">
+                <Keyboard className="w-3 h-3 mr-1" />
+                Scanning: {scannerBuffer}
+              </Badge>
+            )}
             <Badge variant="outline">
               <Clock className="w-3 h-3 mr-1" />
               {format(new Date(), 'h:mm a')}
@@ -302,6 +391,15 @@ export default function TabletCheckInInterface() {
             </Badge>
           </div>
         </div>
+
+        {/* Scanner Ready Indicator */}
+        <Alert className="border-green-200 bg-green-50 dark:bg-green-950/20">
+          <Scan className="h-4 w-4 text-green-600" />
+          <AlertDescription className="text-green-800 dark:text-green-200">
+            <span className="font-medium">USB Scanner Ready</span> - Scan a member barcode to check in instantly.
+            Or use the camera button to scan with your device camera.
+          </AlertDescription>
+        </Alert>
 
         {/* Location Selection */}
         {locations.length > 1 && (
@@ -329,6 +427,15 @@ export default function TabletCheckInInterface() {
           </Card>
         )}
 
+        {!selectedLocationId && locations.length > 1 && (
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              Please select a location before checking in members
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Check-In Section */}
           <Card>
@@ -338,7 +445,7 @@ export default function TabletCheckInInterface() {
                 Member Check-In
               </CardTitle>
               <CardDescription>
-                Search for members or scan their barcode to check them in
+                Scan barcode, use camera, or search to check in members
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -358,11 +465,14 @@ export default function TabletCheckInInterface() {
                 {searchResults.length > 0 && (
                   <div className="space-y-2 max-h-60 overflow-y-auto">
                     {searchResults.map((member) => (
-                      <Card 
-                        key={member.id} 
-                        className={`cursor-pointer transition-colors ${
-                          selectedMember?.id === member.id ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'
-                        }`}
+                      <Card
+                        key={member.id}
+                        className={cn(
+                          "cursor-pointer transition-colors",
+                          selectedMember?.id === member.id
+                            ? 'border-primary bg-primary/5'
+                            : 'hover:bg-muted/50'
+                        )}
                         onClick={() => setSelectedMember(member)}
                       >
                         <CardContent className="p-3">
@@ -391,27 +501,32 @@ export default function TabletCheckInInterface() {
 
               {/* Action Buttons */}
               <div className="grid grid-cols-1 gap-3">
-                <Button 
+                <Button
                   onClick={() => selectedMember && handleCheckIn(selectedMember.id)}
-                  disabled={!selectedMember || !selectedLocationId}
+                  disabled={!selectedMember || !selectedLocationId || isCheckingIn}
                   size="lg"
                   className="w-full"
                 >
-                  <UserCheck className="w-4 h-4 mr-2" />
+                  {isCheckingIn ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <UserCheck className="w-4 h-4 mr-2" />
+                  )}
                   Check In {selectedMember ? `${selectedMember.first_name} ${selectedMember.last_name}` : 'Member'}
                 </Button>
 
                 <div className="grid grid-cols-2 gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowScanner(true)}
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCameraScanner(true)}
                     size="lg"
+                    disabled={!selectedLocationId}
                   >
-                    <Scan className="w-4 h-4 mr-2" />
-                    Scan Barcode
+                    <Camera className="w-4 h-4 mr-2" />
+                    Camera Scan
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setShowSignup(true)}
                     size="lg"
                   >
@@ -461,7 +576,7 @@ export default function TabletCheckInInterface() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleCheckOut(
-                          checkIn.id, 
+                          checkIn.id,
                           `${checkIn.member.first_name} ${checkIn.member.last_name}`
                         )}
                       >
@@ -476,27 +591,33 @@ export default function TabletCheckInInterface() {
           </Card>
         </div>
 
-        {/* Barcode Scanner Modal */}
-        {showScanner && (
+        {/* Camera Scanner Modal */}
+        {showCameraScanner && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <Card className="w-full max-w-md">
+            <Card className="w-full max-w-lg">
               <CardHeader>
-                <CardTitle className="text-center">Scan Member Barcode</CardTitle>
+                <CardTitle className="text-center flex items-center justify-center gap-2">
+                  <Camera className="w-5 h-5" />
+                  Scan Member Barcode
+                </CardTitle>
                 <CardDescription className="text-center">
-                  Scan the member's barcode or QR code for quick check-in
+                  Point the camera at a member's barcode or QR code
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <BarcodeLogin 
-                  onSuccess={handleBarcodeSuccess}
+              <CardContent className="space-y-4">
+                <CameraScanner
+                  onScan={handleCameraScan}
+                  onClose={() => setShowCameraScanner(false)}
+                  onError={(error) => {
+                    toast({
+                      title: 'Camera Error',
+                      description: error,
+                      variant: 'destructive',
+                    });
+                  }}
+                  height={350}
+                  preferredCamera="environment"
                 />
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowScanner(false)}
-                  className="w-full mt-4"
-                >
-                  Cancel
-                </Button>
               </CardContent>
             </Card>
           </div>
