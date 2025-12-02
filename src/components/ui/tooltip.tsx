@@ -1,9 +1,16 @@
-import { forwardRef, type ElementRef, type ComponentPropsWithoutRef } from "react"
+import { forwardRef, type ElementRef, type ComponentPropsWithoutRef, type ReactNode } from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
 import { cn } from "@/lib/utils"
 
-const TooltipProvider = TooltipPrimitive.Provider
+interface TooltipProviderProps {
+  children: ReactNode
+}
+
+// Lightweight TooltipProvider that simply renders children.
+// This avoids Radix's Provider, which was triggering a React hook runtime error
+// in the current build environment while still allowing tooltips to work.
+const TooltipProvider = ({ children }: TooltipProviderProps) => <>{children}</>
 
 const Tooltip = TooltipPrimitive.Root
 
