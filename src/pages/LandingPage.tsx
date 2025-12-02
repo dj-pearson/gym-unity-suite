@@ -38,12 +38,29 @@ import { OneTimePaymentButton } from '@/components/membership/OneTimePaymentButt
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
 export default function LandingPage() {
   const navigate = useNavigate();
-  const heroContainerRef = React.useRef(null);
+  const heroWrapperRef = React.useRef(null);
+  const heroBackgroundRef = React.useRef(null);
   const [showDemoModal, setShowDemoModal] = useState(false);
 
   useGSAP(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Parallax effect for background
+    gsap.to(heroBackgroundRef.current, {
+      yPercent: 30,
+      ease: "none",
+      scrollTrigger: {
+        trigger: heroWrapperRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    });
+
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
     tl.from(".hero-badge", {
@@ -69,7 +86,7 @@ export default function LandingPage() {
         duration: 0.8,
         scale: 0.95
       }, "-=0.6");
-  }, { scope: heroContainerRef });
+  }, { scope: heroWrapperRef });
 
   // Auto-scroll to pricing section if /pricing route
   React.useEffect(() => {
@@ -324,9 +341,25 @@ export default function LandingPage() {
         </nav>
 
         {/* Parallax background with hero content only */}
-        <div className="relative w-full z-0 pt-20">
+        <div ref={heroWrapperRef} className="relative w-full z-0 pt-20 overflow-hidden min-h-[95vh] flex items-center">
+
+          {/* Background Image with Parallax */}
+          <div
+            ref={heroBackgroundRef}
+            className="absolute inset-0 z-0 w-full h-[120%] -top-[10%]"
+          >
+            <img
+              src="/assets/Rep_Club_Gym.webp"
+              alt="Hero Background"
+              className="w-full h-full object-cover opacity-40"
+            />
+            {/* Gradient Overlay for better text readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/60 to-background"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80"></div>
+          </div>
+
           {/* Hero Section - integrated into parallax */}
-          <section ref={heroContainerRef} className="relative container mx-auto px-4 py-32 text-center flex flex-col items-center justify-center min-h-[90vh] z-10">
+          <section className="relative container mx-auto px-4 py-32 text-center flex flex-col items-center justify-center z-10">
             <div className="relative z-10 max-w-5xl mx-auto">
               <div className="hero-badge flex justify-center mb-8">
                 <Badge className="px-4 py-2 bg-primary/10 text-primary border-primary/20 backdrop-blur-md rounded-full text-sm font-medium tracking-wide uppercase">

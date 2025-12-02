@@ -4,7 +4,7 @@
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Link: </assets/Hero-Background.webp>; rel=preload; as=image; fetchpriority=high
+  Link: </assets/Rep_Club_Gym.webp>; rel=preload; as=image; fetchpriority=high
   Link: <https://fonts.googleapis.com>; rel=preconnect
   Link: <https://fonts.gstatic.com>; rel=preconnect; crossorigin
 
