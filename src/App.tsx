@@ -6,6 +6,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { CustomDomainProvider } from "@/contexts/CustomDomainContext";
+import { SessionTimeoutProvider } from "@/components/security/SessionTimeoutProvider";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PERMISSIONS } from "@/hooks/usePermissions";
@@ -142,13 +143,15 @@ const App = () => {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TooltipProvider>
             <AuthProvider>
-              <CustomDomainProvider>
-                <Router>
-                  <AppRoutes />
-                </Router>
-                <Toaster />
-                <Sonner />
-              </CustomDomainProvider>
+              <SessionTimeoutProvider>
+                <CustomDomainProvider>
+                  <Router>
+                    <AppRoutes />
+                  </Router>
+                  <Toaster />
+                  <Sonner />
+                </CustomDomainProvider>
+              </SessionTimeoutProvider>
             </AuthProvider>
           </TooltipProvider>
         </ThemeProvider>
