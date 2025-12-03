@@ -4,19 +4,72 @@
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Link: </assets/Rep_Club_Gym.webp>; rel=preload; as=image; fetchpriority=high
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.google-analytics.com https://api.stripe.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
+# HTML - no cache (SPA needs fresh index.html)
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+# Preload critical assets for faster initial load
+/
+  Link: </assets/js/vendor-react-*.js>; rel=modulepreload; as=script
+  Link: </assets/js/vendor-router-*.js>; rel=modulepreload; as=script
+  Link: </assets/js/vendor-ui-utils-*.js>; rel=modulepreload; as=script
+  Link: </assets/images/Rep_Club_Gym.webp>; rel=preload; as=image; fetchpriority=high
   Link: <https://fonts.googleapis.com>; rel=preconnect
   Link: <https://fonts.gstatic.com>; rel=preconnect; crossorigin
 
-/assets/*.js
-  Cache-Control: public, max-age=3600, must-revalidate
+# JavaScript files - immutable with hash (1 year cache)
+/assets/js/*
+  Cache-Control: public, max-age=31536000, immutable
+  Vary: Accept-Encoding
 
+# CSS files - immutable with hash (1 year cache)
+/assets/css/*
+  Cache-Control: public, max-age=31536000, immutable
+  Vary: Accept-Encoding
+
+# Image assets in build output - immutable (1 year cache)
+/assets/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Font assets - immutable (1 year cache)
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# All other build assets - immutable (1 year cache)
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-/assets/*.css
-  Cache-Control: public, max-age=31536000, immutable
+# Static images in public folder (may change) - 1 week cache
+/*.webp
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
 
+/*.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.jpg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.jpeg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.gif
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# Favicon and icons - 1 day cache
+/*.ico
+  Cache-Control: public, max-age=86400
+
+/favicon.ico
+  Cache-Control: public, max-age=86400
+
+# Fonts in public folder - immutable (1 year cache)
 /*.woff2
   Cache-Control: public, max-age=31536000, immutable
 
@@ -26,14 +79,23 @@
 /*.ttf
   Cache-Control: public, max-age=31536000, immutable
 
-/*.ico
+/*.otf
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.eot
+  Cache-Control: public, max-age=31536000, immutable
+
+# PWA manifest - short cache to allow updates
+/manifest.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+# Service worker - no cache (must always be fresh)
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Robots and sitemap - 1 day cache
+/robots.txt
   Cache-Control: public, max-age=86400
 
-/*.png
-  Cache-Control: public, max-age=86400
-
-/*.jpg
-  Cache-Control: public, max-age=86400
-
-/*.svg
-  Cache-Control: public, max-age=86400
+/sitemap.xml
+  Cache-Control: public, max-age=86400, stale-while-revalidate=3600
