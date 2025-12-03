@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SecurityDashboard from '@/components/security/SecurityDashboard';
 import AccessControlManager from '@/components/security/AccessControlManager';
 import ComplianceManager from '@/components/security/ComplianceManager';
+import SessionTimeoutSettings from '@/components/security/SessionTimeoutSettings';
 import { usePermissions } from '@/hooks/usePermissions';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield } from 'lucide-react';
@@ -34,9 +35,10 @@ export default function SecurityPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="dashboard">Security Dashboard</TabsTrigger>
           <TabsTrigger value="access-control">Access Control</TabsTrigger>
+          <TabsTrigger value="session-timeout">Session Timeout</TabsTrigger>
           <TabsTrigger value="compliance">Compliance</TabsTrigger>
         </TabsList>
 
@@ -46,6 +48,10 @@ export default function SecurityPage() {
 
         <TabsContent value="access-control" className="space-y-6">
           <AccessControlManager />
+        </TabsContent>
+
+        <TabsContent value="session-timeout" className="space-y-6">
+          <SessionTimeoutSettings />
         </TabsContent>
 
         <TabsContent value="compliance" className="space-y-6">
