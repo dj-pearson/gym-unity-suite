@@ -1,6 +1,8 @@
-tree c9efa3aacb47207ee7e5d5c54786c099e49017dc
-parent 770b14bee1f7e1e7b384449fee97cac15f970b86
-author gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756328215 +0000
-committer gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756328215 +0000
+tree 251a24b7df11edd03711ca1d7752811a0cec5783
+parent f266b103bafe31b537b8f4ed5d865639bd8ba959
+author gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756341871 +0000
+committer gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756341871 +0000
 
-Fix build errors in communication and commission modules
+Update feature module status
+
+The AI is updating the status of the "Class & Scheduling Management" feature module to "completed" and prioritizing "Staff Management" and "Payroll" for future development based on the user's feedback.
