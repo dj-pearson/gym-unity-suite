@@ -1,0 +1,3 @@
+Fix CRM loading issue
+
+Addressed an infinite recursion in the RLS policy for the profiles table, which was causing the CRM page to remain in a loading state. This was resolved by creating a security definer function and updating the policy to correctly manage user profile visibility within their organization.
