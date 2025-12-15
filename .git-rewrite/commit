@@ -1,0 +1,8 @@
+tree 9ca502c0a6a9e696d51b7a9938f783cc5d233381
+parent 122c4822425c270cd2de409ae952c7672c46c803
+author gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756248611 +0000
+committer gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756248611 +0000
+
+Fix CRM loading issue
+
+The CRM page is stuck on loading due to an issue with the RLS policy on the profiles table. This commit addresses the infinite recursion in the policy to allow users to view profiles within their organization or their own.
