@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y curl && \
     mv supabase /usr/local/bin/supabase && \
     chmod +x /usr/local/bin/supabase
 
-# Copy function files into proper Supabase structure
+# Copy Supabase config and function files
+COPY supabase/config.toml /app/supabase/config.toml
 COPY supabase/functions /app/supabase/functions
 
 # Set environment variables
