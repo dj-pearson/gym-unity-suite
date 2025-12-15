@@ -1,8 +1,8 @@
-tree 251a24b7df11edd03711ca1d7752811a0cec5783
-parent f266b103bafe31b537b8f4ed5d865639bd8ba959
-author gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756341871 +0000
-committer gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756341871 +0000
+tree 7d03bcc818e755cbbca552a52064fd09bd15372a
+parent 16fbdf0df9948386efd06459b19057696694d94e
+author gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756342479 +0000
+committer gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756342479 +0000
 
-Update feature module status
+Fix marketing module build errors
 
-The AI is updating the status of the "Class & Scheduling Management" feature module to "completed" and prioritizing "Staff Management" and "Payroll" for future development based on the user's feedback.
+The AI fixed build errors in `LoyaltyProgramsManager.tsx` by correcting property access for `first_name`, `last_name`, and `email`, resolving type mismatches related to the `loyalty_points` and `profiles` relation.
