@@ -1,8 +1,8 @@
-tree 7d03bcc818e755cbbca552a52064fd09bd15372a
-parent 16fbdf0df9948386efd06459b19057696694d94e
-author gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756342479 +0000
-committer gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756342479 +0000
+tree 2b677912668de359ba63655866c2110e4b5126da
+parent 68818d47ff1a6e61974535a6f8e494752bdd47f6
+author gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756701636 +0000
+committer gpt-engineer-app[bot] <159125892+gpt-engineer-app[bot]@users.noreply.github.com> 1756701636 +0000
 
-Fix marketing module build errors
+Add Priority 2 items
 
-The AI fixed build errors in `LoyaltyProgramsManager.tsx` by correcting property access for `first_name`, `last_name`, and `email`, resolving type mismatches related to the `loyalty_points` and `profiles` relation.
+The user has provided a list of Priority 2 items, which include advanced scheduling features and communication enhancements. These items are currently marked as implementation gaps.
