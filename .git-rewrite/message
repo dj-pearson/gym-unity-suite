@@ -1,3 +1,3 @@
-Fix marketing module build errors
+Add Priority 2 items
 
-The AI fixed build errors in `LoyaltyProgramsManager.tsx` by correcting property access for `first_name`, `last_name`, and `email`, resolving type mismatches related to the `loyalty_points` and `profiles` relation.
+The user has provided a list of Priority 2 items, which include advanced scheduling features and communication enhancements. These items are currently marked as implementation gaps.
