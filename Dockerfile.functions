@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y curl && \
     mv supabase /usr/local/bin/supabase && \
     chmod +x /usr/local/bin/supabase
 
-# Copy function files
-COPY supabase/functions /app/functions
+# Copy function files into proper Supabase structure
+COPY supabase/functions /app/supabase/functions
 
 # Set environment variables
 ENV DENO_DIR=/app/.deno_cache
@@ -29,4 +29,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:8000/health || exit 1
 
 # Start the functions server
-CMD ["supabase", "functions", "serve", "--port", "8000", "--no-verify-jwt"]
+# Note: Supabase CLI uses default port 8000 and looks for functions in ./supabase/functions
+CMD ["supabase", "functions", "serve", "--no-verify-jwt"]
