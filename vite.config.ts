@@ -64,6 +64,8 @@ export default defineConfig(({ mode }) => ({
                 id.includes('react-router') || // React Router
                 id.includes('react-hook-form') || // Forms
                 id.includes('@hookform') ||
+                id.includes('/zod') || // Zod validation (Unix paths)
+                id.includes('\\zod') || // Zod validation (Windows paths)
                 id.includes('react-helmet') || // SEO
                 id.includes('react-joyride') || // Tours
                 id.includes('framer-motion') || // Animations (uses React)
@@ -74,6 +76,9 @@ export default defineConfig(({ mode }) => ({
                 id.includes('use-callback-ref') || // React hooks
                 id.includes('use-sidecar') || // React hooks
                 id.includes('detect-node-es') || // Used by React libs
+                id.includes('aria-hidden') || // Accessibility (Radix dependency)
+                id.includes('react-focus-lock') || // Focus management
+                id.includes('react-focus-on') || // Focus management
                 id.includes('react-resizable-panels') || // Panels
                 id.includes('@tanstack/react-virtual') || // Virtualization
                 id.includes('@tanstack/virtual') || // Virtualization core
@@ -108,12 +113,7 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-supabase';
             }
 
-            // Forms validation (Zod doesn't use React, can be separate)
-            if (id.includes('/zod/')) {
-              return 'vendor-forms';
-            }
-
-            // Radix UI is now bundled with vendor-react above
+            // Radix UI and Zod are now bundled with vendor-react above
 
             // Drag and drop
             if (id.includes('@dnd-kit')) {
