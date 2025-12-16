@@ -90,6 +90,41 @@ NOT:
 3. Click "..." on latest deployment
 4. Click "Retry deployment" with "Clear cache" checked
 
+### MIME Type Errors (JavaScript modules load as HTML)
+
+**Symptoms**:
+- Console errors: "Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of 'text/html'"
+- Blank page after successful build
+- All JS/CSS files return HTML content
+
+**Root Cause**: Invalid `_redirects` file causing all requests (including static assets) to serve `index.html`.
+
+**Solution**: 
+Cloudflare Pages **automatically handles SPA routing** - it serves existing files and falls back to `index.html` for 404s. The `public/_redirects` file should be empty or minimal.
+
+**DON'T** try to manually exclude assets with patterns like:
+```
+/assets/* 200  ❌ Invalid syntax
+/*.js 200      ❌ Invalid syntax
+/* /index.html 200  ❌ Causes infinite loop
+```
+
+**DO** keep `_redirects` simple or empty:
+```
+# Cloudflare Pages automatically handles SPA routing
+# No explicit rules needed for basic functionality
+```
+
+### Invalid Redirect Rules in Build Logs
+
+**Symptoms**: Build logs show:
+```
+URLs should either be relative (e.g. begin with a forward-slash), or use HTTPS
+Infinite loop detected in this rule and has been ignored
+```
+
+**Solution**: Simplify or remove redirect rules. Cloudflare Pages handles SPA routing automatically.
+
 ## Deployment URLs
 
 After successful deployment:
