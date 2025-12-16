@@ -1,7 +1,31 @@
-import { defineConfig } from "vite";
+import { defineConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+
+// Plugin to ensure vendor-react loads before other vendor chunks
+const prioritizeReactLoading = (): Plugin => ({
+  name: 'prioritize-react-loading',
+  transformIndexHtml(html) {
+    // Reorder modulepreload links to ensure vendor-react comes first
+    const lines = html.split('\n');
+    const reactPreloadIndex = lines.findIndex(line => line.includes('vendor-react') && line.includes('modulepreload'));
+    
+    if (reactPreloadIndex > 0) {
+      const reactLine = lines[reactPreloadIndex];
+      const firstPreloadIndex = lines.findIndex(line => line.includes('modulepreload') && line.includes('/assets/js/'));
+      
+      if (firstPreloadIndex >= 0 && firstPreloadIndex < reactPreloadIndex) {
+        // Remove React preload from its current position
+        lines.splice(reactPreloadIndex, 1);
+        // Insert it at the first preload position
+        lines.splice(firstPreloadIndex, 0, reactLine);
+      }
+    }
+    
+    return lines.join('\n');
+  },
+});
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -11,8 +35,8 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    mode === 'development' && componentTagger(),
+    prioritizeReactLoading(),
   ].filter(Boolean),
   resolve: {
     alias: {
@@ -26,14 +50,17 @@ export default defineConfig(({ mode }) => ({
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
             // Core React ecosystem - loaded on every page
+            // MUST be loaded first before any other React-dependent code
             if (id.includes('react-dom') || 
                 id.includes('/react/') || 
                 id.includes('\\react\\') ||
-                id.includes('scheduler')) {
+                id.includes('scheduler') ||
+                id.includes('prop-types') ||
+                id.includes('use-sync-external-store')) {
               return 'vendor-react';
             }
 
-            // Router - loaded on every page
+            // Router - loaded on every page (depends on React)
             if (id.includes('react-router')) {
               return 'vendor-router';
             }
