@@ -49,7 +49,7 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            // Core React ecosystem + ALL React-dependent base libraries
+            // Core React ecosystem + ALL React-dependent libraries
             // MUST be loaded first before any other code
             if (id.includes('react-dom') || 
                 id.includes('/react/') || 
@@ -60,8 +60,29 @@ export default defineConfig(({ mode }) => ({
                 id.includes('react-is') ||
                 id.includes('hoist-non-react-statics') ||
                 id.includes('object-assign') ||
-                id.includes('@radix-ui') ||  // ALL Radix UI with React
-                id.includes('react-router')) { // Router with React
+                id.includes('@radix-ui') ||  // ALL Radix UI
+                id.includes('react-router') || // React Router
+                id.includes('react-hook-form') || // Forms
+                id.includes('@hookform') ||
+                id.includes('react-helmet') || // SEO
+                id.includes('react-joyride') || // Tours
+                id.includes('framer-motion') || // Animations (uses React)
+                id.includes('react-transition-group') || // Transitions
+                id.includes('react-remove-scroll') || // Scroll locking
+                id.includes('react-style-singleton') || // Style injection
+                id.includes('get-nonce') || // CSP
+                id.includes('use-callback-ref') || // React hooks
+                id.includes('use-sidecar') || // React hooks
+                id.includes('detect-node-es') || // Used by React libs
+                id.includes('react-resizable-panels') || // Panels
+                id.includes('@tanstack/react-virtual') || // Virtualization
+                id.includes('@tanstack/virtual') || // Virtualization core
+                id.includes('@tanstack/react-query') || // React Query
+                id.includes('@tanstack/query') || // Query core
+                id.includes('cmdk') || // Command menu
+                id.includes('vaul') || // Drawer
+                id.includes('sonner') || // Toast
+                id.includes('input-otp')) { // OTP input
               return 'vendor-react';
             }
 
@@ -82,21 +103,13 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-calendar';
             }
 
-            // Data fetching & state
-            if (id.includes('@tanstack/react-query') ||
-                id.includes('@tanstack/query')) {
-              return 'vendor-query';
-            }
-
             // Supabase client
             if (id.includes('@supabase')) {
               return 'vendor-supabase';
             }
 
-            // Forms & validation
-            if (id.includes('react-hook-form') ||
-                id.includes('@hookform') ||
-                id.includes('/zod/')) {
+            // Forms validation (Zod doesn't use React, can be separate)
+            if (id.includes('/zod/')) {
               return 'vendor-forms';
             }
 
@@ -142,47 +155,6 @@ export default defineConfig(({ mode }) => ({
             // Carousel
             if (id.includes('embla-carousel')) {
               return 'vendor-carousel';
-            }
-
-            // Toast notifications
-            if (id.includes('sonner')) {
-              return 'vendor-toast';
-            }
-
-            // Command palette
-            if (id.includes('cmdk')) {
-              return 'vendor-cmdk';
-            }
-
-            // Drawer (vaul)
-            if (id.includes('vaul')) {
-              return 'vendor-drawer';
-            }
-
-            // Onboarding tour
-            if (id.includes('react-joyride')) {
-              return 'vendor-joyride';
-            }
-
-            // Resizable panels
-            if (id.includes('react-resizable-panels')) {
-              return 'vendor-panels';
-            }
-
-            // React Helmet (SEO)
-            if (id.includes('react-helmet')) {
-              return 'vendor-helmet';
-            }
-
-            // Virtualization
-            if (id.includes('@tanstack/react-virtual') ||
-                id.includes('@tanstack/virtual')) {
-              return 'vendor-virtual';
-            }
-
-            // Input OTP
-            if (id.includes('input-otp')) {
-              return 'vendor-otp';
             }
 
             // Next-themes (dark mode)
