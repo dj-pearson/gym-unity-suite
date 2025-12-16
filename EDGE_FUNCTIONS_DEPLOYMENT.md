@@ -7,6 +7,7 @@ This guide covers deploying Supabase Edge Functions to Coolify/self-hosted infra
 ## Architecture
 
 Our edge functions deployment uses:
+
 - **Base Image**: `denoland/deno:1.40.0` - Official Deno runtime
 - **Custom Server**: `edge-runtime-server.ts` - Custom edge function router
 - **Docker Compose**: `docker-compose.yaml` - Service orchestration
@@ -30,13 +31,10 @@ Each function must follow this pattern:
 // supabase/functions/my-function/index.ts
 export default async (req: Request): Promise<Response> => {
   // Handle the request
-  return new Response(
-    JSON.stringify({ message: "Success" }),
-    { 
-      headers: { "Content-Type": "application/json" },
-      status: 200 
-    }
-  );
+  return new Response(JSON.stringify({ message: "Success" }), {
+    headers: { "Content-Type": "application/json" },
+    status: 200,
+  });
 };
 ```
 
@@ -48,23 +46,23 @@ export default async (req: Request): Promise<Response> => {
 
 These **must** be set in Coolify for the deployment to work:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `SUPABASE_URL` | Your Supabase API URL | `https://api.repclub.net` |
-| `SUPABASE_ANON_KEY` | Supabase anonymous/public key | `eyJ0eXAiOiJKV1Q...` |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (admin) | `eyJ0eXAiOiJKV1Q...` |
+| Variable                    | Description                       | Example                   |
+| --------------------------- | --------------------------------- | ------------------------- |
+| `SUPABASE_URL`              | Your Supabase API URL             | `https://api.repclub.net` |
+| `SUPABASE_ANON_KEY`         | Supabase anonymous/public key     | `eyJ0eXAiOiJKV1Q...`      |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (admin) | `eyJ0eXAiOiJKV1Q...`      |
 
 ### Optional Variables (for specific functions)
 
-| Variable | Used By | Description |
-|----------|---------|-------------|
-| `OPENAI_API_KEY` | ai-generate | OpenAI API key for AI features |
-| `STRIPE_SECRET_KEY` | Payment functions | Stripe secret key |
-| `STRIPE_WEBHOOK_SECRET` | verify-payment | Stripe webhook signing secret |
-| `RESEND_API_KEY` | Email functions | Resend API key for emails |
-| `SUPABASE_DB_HOST` | Various | Direct database host (if needed) |
-| `SUPABASE_DB_PORT` | Various | Database port (default: 5432) |
-| `SUPABASE_DB_PASSWORD` | Various | Database password (if direct access needed) |
+| Variable                | Used By           | Description                                 |
+| ----------------------- | ----------------- | ------------------------------------------- |
+| `OPENAI_API_KEY`        | ai-generate       | OpenAI API key for AI features              |
+| `STRIPE_SECRET_KEY`     | Payment functions | Stripe secret key                           |
+| `STRIPE_WEBHOOK_SECRET` | verify-payment    | Stripe webhook signing secret               |
+| `RESEND_API_KEY`        | Email functions   | Resend API key for emails                   |
+| `SUPABASE_DB_HOST`      | Various           | Direct database host (if needed)            |
+| `SUPABASE_DB_PORT`      | Various           | Database port (default: 5432)               |
+| `SUPABASE_DB_PASSWORD`  | Various           | Database password (if direct access needed) |
 
 ### Runtime Variables (auto-set by Coolify)
 
@@ -134,24 +132,24 @@ PRELOAD_FUNCTIONS=false
 
 Your deployment includes these functions:
 
-| Function | Path | Description |
-|----------|------|-------------|
-| `ai-generate` | `/ai-generate` | AI content generation |
-| `check-subscription` | `/check-subscription` | Subscription verification |
-| `create-checkout` | `/create-checkout` | Stripe checkout creation |
-| `create-one-time-payment` | `/create-one-time-payment` | One-time payment processing |
-| `customer-portal` | `/customer-portal` | Stripe customer portal access |
-| `generate-sitemap` | `/generate-sitemap` | SEO sitemap generation |
-| `generate-wallet-pass` | `/generate-wallet-pass` | Apple Wallet pass generation |
-| `get-org-by-domain` | `/get-org-by-domain` | Custom domain organization lookup |
-| `health` | `/health` | Simple health check |
-| `health-check` | `/health-check` | Comprehensive health check with dependencies |
-| `rate-limit` | `/rate-limit` | Rate limiting middleware |
-| `receive-email` | `/receive-email` | Inbound email webhook |
-| `send-email-response` | `/send-email-response` | Outbound email sending |
-| `setup-new-user` | `/setup-new-user` | New user onboarding |
-| `verify-custom-domain` | `/verify-custom-domain` | Custom domain verification |
-| `verify-payment` | `/verify-payment` | Payment verification |
+| Function                  | Path                       | Description                                  |
+| ------------------------- | -------------------------- | -------------------------------------------- |
+| `ai-generate`             | `/ai-generate`             | AI content generation                        |
+| `check-subscription`      | `/check-subscription`      | Subscription verification                    |
+| `create-checkout`         | `/create-checkout`         | Stripe checkout creation                     |
+| `create-one-time-payment` | `/create-one-time-payment` | One-time payment processing                  |
+| `customer-portal`         | `/customer-portal`         | Stripe customer portal access                |
+| `generate-sitemap`        | `/generate-sitemap`        | SEO sitemap generation                       |
+| `generate-wallet-pass`    | `/generate-wallet-pass`    | Apple Wallet pass generation                 |
+| `get-org-by-domain`       | `/get-org-by-domain`       | Custom domain organization lookup            |
+| `health`                  | `/health`                  | Simple health check                          |
+| `health-check`            | `/health-check`            | Comprehensive health check with dependencies |
+| `rate-limit`              | `/rate-limit`              | Rate limiting middleware                     |
+| `receive-email`           | `/receive-email`           | Inbound email webhook                        |
+| `send-email-response`     | `/send-email-response`     | Outbound email sending                       |
+| `setup-new-user`          | `/setup-new-user`          | New user onboarding                          |
+| `verify-custom-domain`    | `/verify-custom-domain`    | Custom domain verification                   |
+| `verify-payment`          | `/verify-payment`          | Payment verification                         |
 
 ## Testing Deployment
 
@@ -164,6 +162,7 @@ curl https://functions.repclub.net/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "ok",
@@ -182,6 +181,7 @@ curl https://functions.repclub.net/health-check
 ```
 
 Expected response:
+
 ```json
 {
   "status": "healthy",
@@ -221,6 +221,7 @@ curl https://functions.repclub.net/
 ```
 
 Expected response:
+
 ```json
 {
   "message": "Supabase Edge Functions Runtime",
@@ -272,6 +273,7 @@ docker logs -f repclub-edge-functions
 ```
 
 Look for:
+
 - `📦 Found function: <name>` - Function discovery
 - `✅ Loaded function: <name>` - Function loaded successfully
 - `🚀 Invoking function: <name>` - Function invocation
@@ -294,6 +296,7 @@ The health check endpoint returns these statuses:
 **Symptom**: Deployment shows "unhealthy" status
 
 **Solutions**:
+
 - Check if environment variables are set correctly
 - Verify `SUPABASE_URL` is accessible from the container
 - Check logs for specific errors
@@ -304,6 +307,7 @@ The health check endpoint returns these statuses:
 **Symptom**: `404` error when calling a function
 
 **Solutions**:
+
 - Verify function exists in `supabase/functions/` directory
 - Check function has `index.ts` file
 - Ensure function exports default handler
@@ -314,6 +318,7 @@ The health check endpoint returns these statuses:
 **Symptom**: Health check shows database as unhealthy
 
 **Solutions**:
+
 - Verify `SUPABASE_URL` is correct
 - Check `SUPABASE_SERVICE_ROLE_KEY` is valid
 - Ensure database is accessible from container
@@ -324,6 +329,7 @@ The health check endpoint returns these statuses:
 **Symptom**: Browser shows CORS errors
 
 **Solution**: The edge runtime server automatically handles CORS. If you still see errors:
+
 - Check the origin is allowed
 - Verify function returns proper Response object
 - Add custom CORS headers if needed
@@ -333,6 +339,7 @@ The health check endpoint returns these statuses:
 **Symptom**: Function takes too long to respond
 
 **Solutions**:
+
 - Optimize function code
 - Check external API dependencies
 - Increase timeout if needed (default: 10s for healthcheck)
@@ -382,6 +389,7 @@ git push origin main
 Coolify will automatically detect the change and redeploy (if auto-deploy is enabled).
 
 Or manually trigger deployment:
+
 1. Go to Coolify dashboard
 2. Select your service
 3. Click **"Deploy"**
@@ -413,22 +421,19 @@ export default async (req: Request): Promise<Response> => {
   try {
     // Parse request
     const { data } = await req.json();
-    
+
     // Your logic here
     const result = processData(data);
-    
+
     // Return response
-    return new Response(
-      JSON.stringify({ success: true, result }),
-      {
-        headers: { "Content-Type": "application/json" },
-        status: 200,
-      }
-    );
+    return new Response(JSON.stringify({ success: true, result }), {
+      headers: { "Content-Type": "application/json" },
+      status: 200,
+    });
   } catch (error) {
     return new Response(
-      JSON.stringify({ 
-        error: error.message 
+      JSON.stringify({
+        error: error.message,
       }),
       {
         headers: { "Content-Type": "application/json" },
@@ -482,6 +487,7 @@ Commit and push your changes - the function will be automatically discovered and
 ## Support
 
 For issues or questions:
+
 - Check Coolify logs first
 - Review this documentation
 - Check Supabase Edge Functions docs
@@ -492,4 +498,3 @@ For issues or questions:
 **Last Updated**: 2025-12-16  
 **Version**: 1.0.0  
 **Maintainer**: Development Team
-
