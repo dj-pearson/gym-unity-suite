@@ -26,8 +26,10 @@ export default defineConfig(({ mode }) => ({
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
             // Core React ecosystem - loaded on every page
-            if (id.includes('react-dom') ||
-                (id.includes('/react/') && !id.includes('react-'))) {
+            if (id.includes('react-dom') || 
+                id.includes('/react/') || 
+                id.includes('\\react\\') ||
+                id.includes('scheduler')) {
               return 'vendor-react';
             }
 
