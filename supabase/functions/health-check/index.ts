@@ -12,7 +12,6 @@
  * @module functions/health-check
  */
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // Types
@@ -228,7 +227,7 @@ function getStatusCode(status: string): number {
 /**
  * Main handler
  */
-serve(async (req: Request) => {
+export default async (req: Request): Promise<Response> => {
   const origin = req.headers.get("origin");
   const corsHeaders = getCorsHeaders(origin);
 
@@ -334,4 +333,4 @@ serve(async (req: Request) => {
       }
     );
   }
-});
+};

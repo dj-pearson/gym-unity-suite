@@ -1,0 +1,86 @@
+# Node modules and dependencies
+node_modules
+.npm
+.pnpm-store
+
+# Build outputs
+dist
+build
+.vite
+.turbo
+
+# Git
+.git
+.gitignore
+
+# Environment files (these should be injected by Coolify)
+.env
+.env.*
+!.env.example
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation
+*.md
+!README.md
+docs
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Testing
+coverage
+.nyc_output
+*.test.ts
+*.spec.ts
+__tests__
+test
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local development
+.cache
+tmp
+temp
+*.local
+
+# Supabase (keep only what we need)
+supabase/.branches
+supabase/.temp
+supabase/seed.sql
+supabase/migrations
+
+# Workers and other non-function code
+workers
+
+# Source files (we only need compiled functions)
+src
+public
+index.html
+postcss.config.js
+tailwind.config.ts
+tsconfig*.json
+vite.config.ts
+components.json
+package.json
+package-lock.json
+
+# Docker files (except the ones we're using)
+Dockerfile
+!Dockerfile.functions
+docker-compose*.yml
+!docker-compose.yaml
+
