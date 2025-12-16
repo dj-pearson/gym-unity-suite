@@ -6,14 +6,18 @@ Set these values in your Cloudflare Pages dashboard:
 
 ### Build Settings
 
-⚠️ **CRITICAL**: Make sure these are set correctly!
+⚠️ **CRITICAL**: These MUST be set in Cloudflare Pages Dashboard (not in wrangler.toml)!
 
-1. **Framework preset**: `None` or `Vite`
-2. **Build command**: `npm run build:pages` ⚠️ **MUST be `build:pages` not just `build`**
+Go to: **Cloudflare Dashboard → Pages → Your Project → Settings → Build & deployments**
+
+1. **Framework preset**: `Vite`
+2. **Build command**: `npm run build:pages` ⚠️ **MUST be exactly `npm run build:pages`**
 3. **Build output directory**: `dist`
-4. **Root directory**: `/` (leave empty or `.`)
+4. **Root directory**: `/` (leave empty)
 
-**Why `build:pages` is required**: This command copies `_headers` and `_redirects` files to the `dist` folder. Without these files, your JS modules won't load correctly!
+**Why `build:pages` is required**: This command runs `vite build` AND copies `_headers` and `_redirects` files to the `dist` folder. Without these files, your JS modules won't load correctly!
+
+**Common mistake**: Using `npm run build` instead of `npm run build:pages` will cause a blank page!
 
 ### Environment Variables
 
