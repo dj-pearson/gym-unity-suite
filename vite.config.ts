@@ -49,20 +49,20 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            // Core React ecosystem - loaded on every page
-            // MUST be loaded first before any other React-dependent code
+            // Core React ecosystem + ALL React-dependent base libraries
+            // MUST be loaded first before any other code
             if (id.includes('react-dom') || 
                 id.includes('/react/') || 
                 id.includes('\\react\\') ||
                 id.includes('scheduler') ||
                 id.includes('prop-types') ||
-                id.includes('use-sync-external-store')) {
+                id.includes('use-sync-external-store') ||
+                id.includes('react-is') ||
+                id.includes('hoist-non-react-statics') ||
+                id.includes('object-assign') ||
+                id.includes('@radix-ui') ||  // ALL Radix UI with React
+                id.includes('react-router')) { // Router with React
               return 'vendor-react';
-            }
-
-            // Router - loaded on every page (depends on React)
-            if (id.includes('react-router')) {
-              return 'vendor-router';
             }
 
             // Charts & visualization - only loaded when needed
@@ -100,29 +100,7 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-forms';
             }
 
-            // Radix UI primitives - split into groups by usage frequency
-            if (id.includes('@radix-ui')) {
-              // High-frequency Radix components (used on most pages)
-              if (id.includes('dialog') ||
-                  id.includes('dropdown') ||
-                  id.includes('popover') ||
-                  id.includes('tooltip') ||
-                  id.includes('toast') ||
-                  id.includes('slot')) {
-                return 'vendor-radix-core';
-              }
-              // Medium-frequency Radix components
-              if (id.includes('select') ||
-                  id.includes('checkbox') ||
-                  id.includes('radio') ||
-                  id.includes('switch') ||
-                  id.includes('tabs') ||
-                  id.includes('label')) {
-                return 'vendor-radix-forms';
-              }
-              // Lower-frequency Radix components
-              return 'vendor-radix-extra';
-            }
+            // Radix UI is now bundled with vendor-react above
 
             // Drag and drop
             if (id.includes('@dnd-kit')) {
