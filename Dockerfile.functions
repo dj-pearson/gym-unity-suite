@@ -1,34 +1,37 @@
 # Supabase Edge Functions Runtime for Coolify
-# Based on Deno runtime for Supabase Functions
+# Production-ready edge functions using edge-runtime directly
 
 FROM denoland/deno:1.40.0
+
+# Install curl for healthcheck
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Install Supabase CLI
-RUN apt-get update && apt-get install -y curl && \
-    curl -fsSL https://github.com/supabase/cli/releases/download/v1.142.2/supabase_linux_amd64.tar.gz | tar -xz && \
-    mv supabase /usr/local/bin/supabase && \
-    chmod +x /usr/local/bin/supabase
+# Create necessary directories
+RUN mkdir -p /app/functions /app/.deno_cache
 
-# Copy Supabase config and function files
-COPY supabase/config.toml /app/supabase/config.toml
-COPY supabase/functions /app/supabase/functions
+# Copy function files
+COPY supabase/functions /app/functions
+
+# Copy the main server file
+COPY edge-runtime-server.ts /app/edge-runtime-server.ts
 
 # Set environment variables
 ENV DENO_DIR=/app/.deno_cache
-ENV SUPABASE_URL=${SUPABASE_URL}
-ENV SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
-ENV SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+ENV PORT=8000
+ENV FUNCTIONS_PATH=/app/functions
+
+# Cache dependencies by running deno cache
+RUN deno cache --reload edge-runtime-server.ts
 
 # Expose port for functions
 EXPOSE 8000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:8000/health || exit 1
 
-# Start the functions server
-# Note: Supabase CLI uses default port 8000 and looks for functions in ./supabase/functions
-CMD ["supabase", "functions", "serve", "--no-verify-jwt"]
+# Start the edge runtime server
+CMD ["deno", "run", "--allow-all", "--unstable", "edge-runtime-server.ts"]

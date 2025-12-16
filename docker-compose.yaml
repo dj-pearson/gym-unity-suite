@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  edge-functions:
+    build:
+      context: .
+      dockerfile: Dockerfile.functions
+    container_name: ${COOLIFY_CONTAINER_NAME:-repclub-edge-functions}
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      # Core Supabase Configuration
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      
+      # Database Configuration (if needed by functions)
+      - SUPABASE_DB_HOST=${SUPABASE_DB_HOST:-}
+      - SUPABASE_DB_PORT=${SUPABASE_DB_PORT:-5432}
+      - SUPABASE_DB_PASSWORD=${SUPABASE_DB_PASSWORD:-}
+      
+      # Third-party API Keys (loaded from env vars)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-}
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+      
+      # Runtime Configuration
+      - PORT=8000
+      - DENO_ENV=production
+      - PRELOAD_FUNCTIONS=${PRELOAD_FUNCTIONS:-false}
+      
+      # Coolify metadata (passed from Coolify)
+      - SOURCE_COMMIT=${SOURCE_COMMIT:-}
+      - COOLIFY_URL=${COOLIFY_URL:-}
+      - COOLIFY_FQDN=${COOLIFY_FQDN:-}
+      - COOLIFY_BRANCH=${COOLIFY_BRANCH:-}
+      
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
