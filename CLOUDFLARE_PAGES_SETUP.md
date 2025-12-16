@@ -6,10 +6,14 @@ Set these values in your Cloudflare Pages dashboard:
 
 ### Build Settings
 
+⚠️ **CRITICAL**: Make sure these are set correctly!
+
 1. **Framework preset**: `None` or `Vite`
-2. **Build command**: `npm run build:pages`
+2. **Build command**: `npm run build:pages` ⚠️ **MUST be `build:pages` not just `build`**
 3. **Build output directory**: `dist`
-4. **Root directory**: `/` (leave empty)
+4. **Root directory**: `/` (leave empty or `.`)
+
+**Why `build:pages` is required**: This command copies `_headers` and `_redirects` files to the `dist` folder. Without these files, your JS modules won't load correctly!
 
 ### Environment Variables
 

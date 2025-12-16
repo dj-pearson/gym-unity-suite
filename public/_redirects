@@ -1,4 +1,27 @@
 # SPA Fallback - REQUIRED for React Router client-side routing
 # This ensures all routes serve index.html (except static assets)
-# Without this, direct navigation or page refresh will return 404
+# Static assets should NOT be redirected
+# Cloudflare Pages processes rules from top to bottom, first match wins
+
+# Don't redirect actual files (they exist)
+/assets/* 200
+/*.js 200
+/*.css 200
+/*.png 200
+/*.jpg 200
+/*.jpeg 200
+/*.gif 200
+/*.svg 200
+/*.webp 200
+/*.ico 200
+/*.woff 200
+/*.woff2 200
+/*.ttf 200
+/*.otf 200
+/*.eot 200
+/*.json 200
+/*.xml 200
+/*.txt 200
+
+# Fallback for SPA routing - only if no file exists
 /* /index.html 200
