@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, edgeFunctions } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface Profile {
@@ -174,7 +174,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Set up user profile after successful signup
       if (data.user) {
         try {
-          await supabase.functions.invoke('setup-new-user', {
+          await edgeFunctions.invoke('setup-new-user', {
             body: {
               userId: data.user.id,
               email: data.user.email,

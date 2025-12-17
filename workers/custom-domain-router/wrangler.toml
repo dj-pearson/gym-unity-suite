@@ -12,8 +12,13 @@ routes = [
 DEFAULT_ORIGIN = "gym-unity.app"
 
 # Secrets (set these using: wrangler secret put <SECRET_NAME>)
-# SUPABASE_URL - Your Supabase project URL
+# SUPABASE_URL - Your Supabase project URL (API subdomain for self-hosted)
+#   Example for hosted: https://yourproject.supabase.co
+#   Example for self-hosted: https://api.yourdomain.com
 # SUPABASE_ANON_KEY - Your Supabase anonymous key
+# SUPABASE_FUNCTIONS_URL - (Optional) Edge Functions URL for self-hosted Supabase
+#   Only needed for self-hosted deployments with separate functions subdomain
+#   Example: https://functions.yourdomain.com
 
 # For production
 [env.production]

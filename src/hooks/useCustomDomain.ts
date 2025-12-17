@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { edgeFunctions } from '@/integrations/supabase/client';
 
 interface CustomDomainOrganization {
   id: string;
@@ -47,7 +47,7 @@ export const useCustomDomain = () => {
         setIsCustomDomain(true);
 
         // Use the edge function to get organization by domain
-        const { data, error } = await supabase.functions.invoke('get-org-by-domain', {
+        const { data, error } = await edgeFunctions.invoke('get-org-by-domain', {
           body: { domain: hostname },
         });
 

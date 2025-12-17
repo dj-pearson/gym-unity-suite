@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, edgeFunctions } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -100,7 +100,7 @@ export function EmailMessageDetail({ messageId, onUpdateStatus, onAssignMember, 
 
     setSending(true);
     try {
-      const { data, error } = await supabase.functions.invoke('send-email-response', {
+      const { data, error } = await edgeFunctions.invoke('send-email-response', {
         body: { messageId, responseBody: replyBody }
       });
 
