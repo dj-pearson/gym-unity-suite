@@ -7,7 +7,7 @@
  * @module monitoring/health
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, edgeFunctions } from '@/integrations/supabase/client';
 import { logger } from './logger';
 
 // Health status types
@@ -321,7 +321,7 @@ class HealthService {
 
     try {
       // Test rate-limit function as it doesn't require auth
-      const { error } = await supabase.functions.invoke('rate-limit', {
+      const { error } = await edgeFunctions.invoke('rate-limit', {
         body: { action: 'health-check', key: 'health-check' },
       });
 
