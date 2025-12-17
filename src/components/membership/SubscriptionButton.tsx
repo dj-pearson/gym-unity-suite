@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { edgeFunctions } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -39,7 +39,7 @@ export default function SubscriptionButton({
     try {
       setLoading(true);
       
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      const { data, error } = await edgeFunctions.invoke('create-checkout', {
         body: {
           membership_plan_id: membershipPlanId
         }

@@ -5,11 +5,17 @@
  * 1. Verifies the domain is registered and verified in the database
  * 2. Injects organization-specific branding and configuration
  * 3. Routes the request to the appropriate application instance
+ *
+ * Supports both hosted and self-hosted Supabase deployments:
+ * - SUPABASE_URL: API URL (e.g., https://api.yourdomain.com)
+ * - SUPABASE_FUNCTIONS_URL: Edge Functions URL (e.g., https://functions.yourdomain.com)
+ *   If not provided, falls back to ${SUPABASE_URL}/functions/v1
  */
 
 interface Env {
   SUPABASE_URL: string;
   SUPABASE_ANON_KEY: string;
+  SUPABASE_FUNCTIONS_URL?: string; // Optional: separate functions subdomain for self-hosted
   DEFAULT_ORIGIN: string;
 }
 
@@ -59,9 +65,12 @@ export default {
 
     // This is a custom domain, look it up in the database
     try {
-      const orgResponse = await fetch(`${env.SUPABASE_URL}/functions/v1/get-org-by-domain?domain=${hostname}`, {
+      // Use separate functions URL if configured (for self-hosted Supabase via Kong)
+      const functionsUrl = env.SUPABASE_FUNCTIONS_URL || `${env.SUPABASE_URL}/functions/v1`;
+      const orgResponse = await fetch(`${functionsUrl}/get-org-by-domain?domain=${hostname}`, {
         headers: {
           'Authorization': `Bearer ${env.SUPABASE_ANON_KEY}`,
+          'apikey': env.SUPABASE_ANON_KEY,
           'Content-Type': 'application/json',
         },
       });

@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, edgeFunctions } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Settings, Building, Users, CreditCard, Bell, Shield, Mail, Globe, Palette, Save, ExternalLink, Check, X, AlertTriangle, Copy } from 'lucide-react';
 
@@ -217,7 +217,7 @@ export default function OrganizationSettingsPage() {
         throw new Error('Not authenticated');
       }
 
-      const response = await supabase.functions.invoke('verify-custom-domain', {
+      const response = await edgeFunctions.invoke('verify-custom-domain', {
         body: {
           organizationId: user?.user_metadata?.organization_id,
           domain: customDomain,

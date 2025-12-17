@@ -9,6 +9,7 @@
 
 import { logger } from './logger';
 import { healthService } from './health';
+import { supabaseConfig, edgeFunctions } from '@/integrations/supabase/client';
 
 // Uptime check types
 export type CheckType = 'http' | 'tcp' | 'ping' | 'dns' | 'ssl';
@@ -55,8 +56,8 @@ export interface UptimeMonitoringConfig {
   };
 }
 
-// Default monitoring checks
-const DEFAULT_CHECKS: UptimeCheckConfig[] = [
+// Default monitoring checks - using dynamic configuration from Supabase client
+const createDefaultChecks = (): UptimeCheckConfig[] => [
   // Main application
   {
     name: 'Gym Unity Suite - Main',
@@ -77,10 +78,10 @@ const DEFAULT_CHECKS: UptimeCheckConfig[] = [
       warnDaysBeforeExpiry: 30,
     },
   },
-  // Health check endpoint
+  // Health check endpoint - uses functions subdomain for self-hosted
   {
     name: 'Gym Unity Suite - Health',
-    url: 'https://your-project.supabase.co/functions/v1/health-check',
+    url: edgeFunctions.getUrl('health-check'),
     type: 'http',
     interval: 60,
     timeout: 30,
@@ -94,10 +95,10 @@ const DEFAULT_CHECKS: UptimeCheckConfig[] = [
       escalation: true,
     },
   },
-  // Readiness probe
+  // Readiness probe - uses functions subdomain for self-hosted
   {
     name: 'Gym Unity Suite - Readiness',
-    url: 'https://your-project.supabase.co/functions/v1/health-check/ready',
+    url: edgeFunctions.getUrl('health-check/ready'),
     type: 'http',
     interval: 60,
     timeout: 15,
@@ -110,10 +111,10 @@ const DEFAULT_CHECKS: UptimeCheckConfig[] = [
       escalation: false,
     },
   },
-  // API endpoint
+  // API endpoint - uses api subdomain
   {
     name: 'Gym Unity Suite - API',
-    url: 'https://your-project.supabase.co/rest/v1/',
+    url: `${supabaseConfig.url}/rest/v1/`,
     type: 'http',
     interval: 120, // 2 minutes
     timeout: 30,
@@ -121,7 +122,7 @@ const DEFAULT_CHECKS: UptimeCheckConfig[] = [
     regions: ['us-east', 'eu-west'],
     expectedStatus: [200, 401], // 401 is expected without auth
     headers: {
-      'apikey': '${SUPABASE_ANON_KEY}',
+      'apikey': supabaseConfig.anonKey,
     },
     alerts: {
       channels: ['email', 'slack'],
@@ -150,6 +151,9 @@ const DEFAULT_CHECKS: UptimeCheckConfig[] = [
     },
   },
 ];
+
+// Default checks instance
+const DEFAULT_CHECKS: UptimeCheckConfig[] = createDefaultChecks();
 
 // Default configuration
 const DEFAULT_CONFIG: UptimeMonitoringConfig = {
