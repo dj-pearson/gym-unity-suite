@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { edgeFunctions } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -43,7 +43,7 @@ export function OneTimePaymentButton({
     try {
       setLoading(true);
       
-      const { data, error } = await supabase.functions.invoke('create-one-time-payment', {
+      const { data, error } = await edgeFunctions.invoke('create-one-time-payment', {
         body: {
           amount: amount,
           description: description,

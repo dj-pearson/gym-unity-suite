@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import QRCode from 'qrcode';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, edgeFunctions } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -135,7 +135,7 @@ export function MemberCheckInPass({
         throw new Error('Please log in to add to wallet');
       }
 
-      const response = await supabase.functions.invoke('generate-wallet-pass', {
+      const response = await edgeFunctions.invoke('generate-wallet-pass', {
         body: { walletType: 'apple' },
       });
 
@@ -180,7 +180,7 @@ export function MemberCheckInPass({
         throw new Error('Please log in to add to wallet');
       }
 
-      const response = await supabase.functions.invoke('generate-wallet-pass', {
+      const response = await edgeFunctions.invoke('generate-wallet-pass', {
         body: { walletType: 'google' },
       });
 
