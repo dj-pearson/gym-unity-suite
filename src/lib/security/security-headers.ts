@@ -121,8 +121,14 @@ const DEFAULT_CONFIG: SecurityHeadersConfig = {
       ],
       'connect-src': [
         "'self'",
+        // Self-hosted Supabase domains (configure via environment)
+        'https://api.repclub.net',
+        'https://functions.repclub.net',
+        'wss://api.repclub.net',
+        // Cloud Supabase (keep for migration/compatibility)
         'https://*.supabase.co',
         'wss://*.supabase.co',
+        // Third-party services
         'https://www.google-analytics.com',
         'https://api.stripe.com',
         'https://api.pwnedpasswords.com', // For breach checking

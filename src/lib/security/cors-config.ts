@@ -26,7 +26,10 @@ const PRODUCTION_ORIGINS = [
   // Cloudflare Pages domains
   'https://gym-unity-suite.pages.dev',
   'https://*.gym-unity-suite.pages.dev',
-  // Supabase domain
+  // Self-hosted Supabase domains
+  'https://api.repclub.net',
+  'https://functions.repclub.net',
+  // Cloud Supabase domain (keep for migration/compatibility)
   'https://*.supabase.co',
   // Stripe domains
   'https://js.stripe.com',
