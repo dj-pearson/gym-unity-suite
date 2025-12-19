@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, edgeFunctions } from '@/integrations/supabase/client';
 
 export type AIProvider = 'claude' | 'openai';
 
@@ -131,7 +131,7 @@ export class AIService {
     const model = this.getModel(request.model);
     
     try {
-      const { data, error } = await supabase.functions.invoke('ai-generate', {
+      const { data, error } = await edgeFunctions.invoke('ai-generate', {
         body: {
           messages: request.messages,
           model: model.id,

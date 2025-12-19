@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, edgeFunctions } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -24,7 +24,7 @@ export function useSubscription() {
     
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('check-subscription', {
+      const { data, error } = await edgeFunctions.invoke('check-subscription', {
         headers: {
           Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
         },
@@ -48,7 +48,7 @@ export function useSubscription() {
     if (!user) return;
     
     try {
-      const { data, error } = await supabase.functions.invoke('customer-portal', {
+      const { data, error } = await edgeFunctions.invoke('customer-portal', {
         headers: {
           Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
         },

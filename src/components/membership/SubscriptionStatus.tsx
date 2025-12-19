@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CreditCard, RefreshCw, Settings, Calendar, User } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { edgeFunctions } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -36,7 +36,7 @@ export default function SubscriptionStatus() {
 
     try {
       setLoading(true);
-      const { data, error } = await supabase.functions.invoke('check-subscription');
+      const { data, error } = await edgeFunctions.invoke('check-subscription');
       
       if (error) throw error;
       setSubscriptionData(data);
@@ -57,7 +57,7 @@ export default function SubscriptionStatus() {
 
     try {
       setPortalLoading(true);
-      const { data, error } = await supabase.functions.invoke('customer-portal');
+      const { data, error } = await edgeFunctions.invoke('customer-portal');
       
       if (error) throw error;
 
