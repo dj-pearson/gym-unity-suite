@@ -14,9 +14,16 @@
 import { createClient, SupabaseClient, FunctionsInvokeOptions } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-// Configuration from environment variables with fallbacks
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://nerqstezuygviutluslt.supabase.co";
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5lcnFzdGV6dXlndml1dGx1c2x0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNDMzNzAsImV4cCI6MjA3MTgxOTM3MH0.LeIwNjNnPDhU_aJgmXeRVIu6E1PKTU3OcJ1CfZu1C6Q";
+// Configuration from environment variables
+// For self-hosted: VITE_SUPABASE_URL should be your API subdomain (e.g., https://api.repclub.net)
+// For cloud: VITE_SUPABASE_URL should be your project URL (e.g., https://yourproject.supabase.co)
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Validate required configuration
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error('Missing required Supabase configuration. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.');
+}
 
 // Edge Functions URL for self-hosted Supabase (via Kong)
 // If not provided, falls back to the standard Supabase functions path

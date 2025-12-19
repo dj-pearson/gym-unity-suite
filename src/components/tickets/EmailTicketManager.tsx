@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, edgeFunctions } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -51,8 +51,8 @@ export default function EmailTicketManager() {
   }, [activeThread]);
 
   const generateWebhookUrl = () => {
-    const projectRef = 'nerqstezuygviutluslt';
-    const url = `https://${projectRef}.supabase.co/functions/v1/receive-email`;
+    // Use the edgeFunctions helper to get the correct URL for self-hosted or cloud Supabase
+    const url = edgeFunctions.getUrl('receive-email');
     setWebhookUrl(url);
   };
 
