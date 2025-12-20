@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Loader2, ArrowRight, Home } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, invokeEdgeFunction } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function PaymentSuccessPage() {
@@ -26,7 +26,7 @@ export default function PaymentSuccessPage() {
       // Wait a moment for Stripe processing
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const { data, error } = await supabase.functions.invoke('verify-payment', {
+      const { data, error } = await invokeEdgeFunction('verify-payment', {
         body: { session_id: sessionId }
       });
 

@@ -387,6 +387,89 @@ export function EmailTemplates() {
 }
 
 export function SupportTickets() {
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const { profile } = useAuth();
+
+  useEffect(() => {
+    fetchTickets();
+  }, [profile?.organization_id, statusFilter]);
+
+  const fetchTickets = async () => {
+    if (!profile?.organization_id) return;
+
+    try {
+      let query = supabase
+        .from('support_tickets')
+        .select(`
+          *,
+          member:profiles!support_tickets_member_id_fkey(first_name, last_name)
+        `)
+        .eq('organization_id', profile.organization_id)
+        .order('created_at', { ascending: false });
+
+      if (statusFilter !== 'all') {
+        query = query.eq('status', statusFilter);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+      setTickets(data || []);
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredTickets = tickets.filter(ticket =>
+    searchTerm === '' ||
+    ticket.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    `${ticket.member?.first_name} ${ticket.member?.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const getPriorityVariant = (priority: string) => {
+    switch (priority) {
+      case 'high':
+      case 'urgent':
+        return 'destructive';
+      case 'low':
+        return 'outline';
+      default:
+        return 'secondary';
+    }
+  };
+
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case 'open':
+        return 'default';
+      case 'closed':
+        return 'secondary';
+      default:
+        return 'outline';
+    }
+  };
+
+  const formatTimeAgo = (date: string) => {
+    const now = new Date();
+    const created = new Date(date);
+    const diffMs = now.getTime() - created.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 0) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    if (diffHours > 0) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    return 'Just now';
+  };
+
+  if (loading) {
+    return <Card><CardContent className="p-6">Loading support tickets...</CardContent></Card>;
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -399,8 +482,13 @@ export function SupportTickets() {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <Input placeholder="Search tickets..." className="w-64" />
-              <Select defaultValue="all">
+              <Input
+                placeholder="Search tickets..."
+                className="w-64"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
@@ -414,65 +502,58 @@ export function SupportTickets() {
             </div>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Ticket #</TableHead>
-                <TableHead>Member</TableHead>
-                <TableHead>Subject</TableHead>
-                <TableHead>Priority</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-mono">#001</TableCell>
-                <TableCell>John Doe</TableCell>
-                <TableCell>Equipment Issue</TableCell>
-                <TableCell>
-                  <Badge variant="destructive">High</Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge variant="default">Open</Badge>
-                </TableCell>
-                <TableCell>2 hours ago</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" variant="outline">
-                      <MessageSquare className="w-4 h-4" />
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-mono">#002</TableCell>
-                <TableCell>Jane Smith</TableCell>
-                <TableCell>Class Booking Issue</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">Normal</Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline">In Progress</Badge>
-                </TableCell>
-                <TableCell>1 day ago</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" variant="outline">
-                      <MessageSquare className="w-4 h-4" />
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          {filteredTickets.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <Headphones className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <p>No support tickets found.</p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Ticket #</TableHead>
+                  <TableHead>Member</TableHead>
+                  <TableHead>Subject</TableHead>
+                  <TableHead>Priority</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredTickets.map((ticket, index) => (
+                  <TableRow key={ticket.id}>
+                    <TableCell className="font-mono">#{String(index + 1).padStart(3, '0')}</TableCell>
+                    <TableCell>
+                      {ticket.member?.first_name} {ticket.member?.last_name}
+                    </TableCell>
+                    <TableCell>{ticket.subject}</TableCell>
+                    <TableCell>
+                      <Badge variant={getPriorityVariant(ticket.priority)}>
+                        {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusVariant(ticket.status)}>
+                        {ticket.status.replace('_', ' ').charAt(0).toUpperCase() + ticket.status.slice(1).replace('_', ' ')}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{formatTimeAgo(ticket.created_at)}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" variant="outline">
+                          <MessageSquare className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </CardContent>
     </Card>
@@ -480,6 +561,122 @@ export function SupportTickets() {
 }
 
 export function MilestoneTracking() {
+  const [milestones, setMilestones] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const { profile } = useAuth();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchMilestones();
+  }, [profile?.organization_id, typeFilter]);
+
+  const fetchMilestones = async () => {
+    if (!profile?.organization_id) return;
+
+    try {
+      // First get members for this organization
+      const { data: members } = await supabase
+        .from('members')
+        .select('id')
+        .eq('organization_id', profile.organization_id);
+
+      if (!members || members.length === 0) {
+        setMilestones([]);
+        setLoading(false);
+        return;
+      }
+
+      const memberIds = members.map(m => m.id);
+
+      let query = supabase
+        .from('member_milestones')
+        .select(`
+          *,
+          member:profiles!member_milestones_member_id_fkey(first_name, last_name)
+        `)
+        .in('member_id', memberIds)
+        .order('achievement_date', { ascending: false });
+
+      if (typeFilter !== 'all') {
+        query = query.eq('milestone_type', typeFilter);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+      setMilestones(data || []);
+    } catch (error) {
+      console.error('Error fetching milestones:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendRecognition = async (milestoneId: string) => {
+    try {
+      const { error } = await supabase
+        .from('member_milestones')
+        .update({
+          recognition_sent: true,
+          recognition_sent_at: new Date().toISOString()
+        })
+        .eq('id', milestoneId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Recognition Sent",
+        description: "Member has been celebrated for their achievement!"
+      });
+
+      fetchMilestones();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send recognition",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const getMilestoneColor = (type: string) => {
+    switch (type) {
+      case 'visit':
+        return 'border-l-yellow-500';
+      case 'class':
+        return 'border-l-blue-500';
+      case 'referral':
+        return 'border-l-green-500';
+      default:
+        return 'border-l-primary';
+    }
+  };
+
+  const formatTimeAgo = (date: string) => {
+    const now = new Date();
+    const achieved = new Date(date);
+    const diffMs = now.getTime() - achieved.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return 'Achieved today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffHours > 0 && diffHours < 24) return `${diffHours} hours ago`;
+    return `${diffDays} days ago`;
+  };
+
+  const filteredMilestones = milestones.filter(milestone =>
+    searchTerm === '' ||
+    milestone.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    `${milestone.member?.first_name} ${milestone.member?.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return <Card><CardContent className="p-6">Loading milestones...</CardContent></Card>;
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -492,16 +689,21 @@ export function MilestoneTracking() {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <Input placeholder="Search members..." className="w-64" />
-              <Select defaultValue="all">
+              <Input
+                placeholder="Search members..."
+                className="w-64"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Milestones</SelectItem>
-                  <SelectItem value="visits">Visit Milestones</SelectItem>
-                  <SelectItem value="classes">Class Milestones</SelectItem>
-                  <SelectItem value="referrals">Referral Milestones</SelectItem>
+                  <SelectItem value="visit">Visit Milestones</SelectItem>
+                  <SelectItem value="class">Class Milestones</SelectItem>
+                  <SelectItem value="referral">Referral Milestones</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -511,70 +713,48 @@ export function MilestoneTracking() {
             </Button>
           </div>
 
-          <div className="grid gap-4">
-            <Card className="border-l-4 border-l-yellow-500">
-              <CardContent className="pt-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">50 Visit Milestone</h3>
-                    <p className="text-sm text-muted-foreground">Sarah Johnson reached 50 gym visits!</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Badge variant="outline">Visit Milestone</Badge>
-                      <span className="text-xs text-muted-foreground">Achieved today</span>
+          {filteredMilestones.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <p>No milestones found.</p>
+            </div>
+          ) : (
+            <div className="grid gap-4">
+              {filteredMilestones.map((milestone) => (
+                <Card key={milestone.id} className={`border-l-4 ${getMilestoneColor(milestone.milestone_type)}`}>
+                  <CardContent className="pt-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium">{milestone.title}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {milestone.member?.first_name} {milestone.member?.last_name}
+                          {milestone.description && ` - ${milestone.description}`}
+                        </p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Badge variant="outline">
+                            {milestone.milestone_type.charAt(0).toUpperCase() + milestone.milestone_type.slice(1)} Milestone
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {formatTimeAgo(milestone.achievement_date)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {milestone.recognition_sent ? (
+                          <Badge variant="secondary">Celebrated</Badge>
+                        ) : (
+                          <Button size="sm" onClick={() => sendRecognition(milestone.id)}>
+                            <Trophy className="w-4 h-4 mr-1" />
+                            Celebrate
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm">
-                      <Trophy className="w-4 h-4 mr-1" />
-                      Celebrate
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-blue-500">
-              <CardContent className="pt-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">First Class Completed</h3>
-                    <p className="text-sm text-muted-foreground">Mike Wilson completed his first fitness class</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Badge variant="outline">Class Milestone</Badge>
-                      <span className="text-xs text-muted-foreground">2 hours ago</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm">
-                      <Trophy className="w-4 h-4 mr-1" />
-                      Celebrate
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-green-500">
-              <CardContent className="pt-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">First Referral</h3>
-                    <p className="text-sm text-muted-foreground">Amy Davis referred her first new member</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Badge variant="outline">Referral Milestone</Badge>
-                      <span className="text-xs text-muted-foreground">Yesterday</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm">
-                      <Trophy className="w-4 h-4 mr-1" />
-                      Celebrate
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

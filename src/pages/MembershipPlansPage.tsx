@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, invokeEdgeFunction } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, CreditCard, TrendingUp, Users, DollarSign } from 'lucide-react';
 import MembershipPlanForm from '@/components/membership/MembershipPlanForm';
@@ -49,7 +49,7 @@ export default function MembershipPlansPage() {
 
   const checkSubscriptionStatus = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('check-subscription');
+      const { data, error } = await invokeEdgeFunction('check-subscription');
       if (error) throw error;
       setSubscriptionData(data);
     } catch (error) {

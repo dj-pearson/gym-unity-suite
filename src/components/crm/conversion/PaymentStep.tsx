@@ -17,7 +17,7 @@ import {
   User,
   Lock
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, invokeEdgeFunction } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
@@ -180,7 +180,7 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
     try {
       // For now, simulate Stripe integration - in real implementation, 
       // this would integrate with your existing Stripe checkout
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      const { data, error } = await invokeEdgeFunction<{ url: string }>('create-checkout', {
         body: {
           membership_plan_id: plan.id,
           promotion_id: promotion?.id,

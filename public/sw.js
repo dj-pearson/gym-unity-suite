@@ -234,19 +234,21 @@ async function syncCheckIns() {
 
     console.log(`[SW] Found ${pendingCheckIns.length} pending check-ins`);
 
+    // Get Supabase configuration from IndexedDB (stored by main app)
+    const config = await getSupabaseConfig();
+    if (!config) {
+      console.warn('[SW] Supabase config not found in IndexedDB. Sync will be retried later.');
+      return Promise.reject(new Error('Supabase config not available'));
+    }
+
+    const { url: supabaseUrl, anonKey: supabaseAnonKey } = config;
+
     // Sync each check-in
     const results = await Promise.allSettled(
       pendingCheckIns.map(async (checkIn) => {
         try {
           // Remove IndexedDB-specific fields
           const { id, created_at, retries, ...checkInData } = checkIn;
-
-          // Get Supabase configuration from environment
-          // Note: In production, you'd configure this properly
-          const supabaseUrl = self.location.origin.includes('localhost')
-            ? 'YOUR_SUPABASE_URL'
-            : 'YOUR_SUPABASE_URL';
-          const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
 
           // Sync to Supabase
           const response = await fetch(`${supabaseUrl}/rest/v1/check_ins`, {
@@ -308,14 +310,53 @@ async function syncCheckIns() {
 const DB_NAME = 'gym-unity-offline';
 const STORES = {
   PENDING_CHECK_INS: 'pending-check-ins',
+  CONFIG: 'config',
 };
 
 function openDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
+    const request = indexedDB.open(DB_NAME, 2); // Bumped version for config store
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      // Create config store if it doesn't exist
+      if (!db.objectStoreNames.contains(STORES.CONFIG)) {
+        db.createObjectStore(STORES.CONFIG);
+      }
+      // Create pending check-ins store if it doesn't exist
+      if (!db.objectStoreNames.contains(STORES.PENDING_CHECK_INS)) {
+        db.createObjectStore(STORES.PENDING_CHECK_INS, { keyPath: 'id', autoIncrement: true });
+      }
+    };
   });
+}
+
+/**
+ * Get Supabase configuration from IndexedDB
+ * The main app stores this config when it initializes
+ */
+async function getSupabaseConfig() {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([STORES.CONFIG], 'readonly');
+      const store = transaction.objectStore(STORES.CONFIG);
+      const request = store.get('supabase');
+      request.onsuccess = () => {
+        const config = request.result;
+        if (config && config.url && config.anonKey) {
+          resolve(config);
+        } else {
+          resolve(null);
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error('[SW] Error getting Supabase config:', error);
+    return null;
+  }
 }
 
 async function getPendingCheckIns() {

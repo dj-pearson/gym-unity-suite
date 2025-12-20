@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import { initSWConfig } from '@/lib/pwa/swConfig';
 
 // Force bundle refresh: 2025-12-02-01:29
 // This comment changes the file content to generate a new vendor bundle hash
@@ -41,6 +42,9 @@ if (container) {
       </React.StrictMode>
     );
     console.log('App mounted successfully');
+
+    // Initialize service worker config storage for offline sync
+    initSWConfig();
   } catch (error) {
     console.error('Failed to mount React app:', error);
     document.body.innerHTML = `
