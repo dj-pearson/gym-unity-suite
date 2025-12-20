@@ -29,8 +29,6 @@ const PRODUCTION_ORIGINS = [
   // Self-hosted Supabase domains
   'https://api.repclub.net',
   'https://functions.repclub.net',
-  // Cloud Supabase domain (keep for migration/compatibility)
-  'https://*.supabase.co',
   // Stripe domains
   'https://js.stripe.com',
   'https://api.stripe.com',

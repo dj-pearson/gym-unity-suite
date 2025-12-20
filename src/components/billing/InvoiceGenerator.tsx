@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -15,7 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getStatusBadgeVariant } from '@/lib/colorUtils';
-import { 
+import {
   Plus,
   FileText,
   Download,
@@ -24,7 +27,9 @@ import {
   Calendar,
   DollarSign,
   User,
-  Trash2
+  Trash2,
+  RefreshCw,
+  Info
 } from 'lucide-react';
 
 const invoiceSchema = z.object({
@@ -43,9 +48,7 @@ type InvoiceFormData = z.infer<typeof invoiceSchema>;
 type LineItemFormData = z.infer<typeof lineItemSchema>;
 
 export function InvoiceGenerator() {
-  const [invoices, setInvoices] = useState<any[]>([]);
-  const [members, setMembers] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [lineItems, setLineItems] = useState<LineItemFormData[]>([]);
   const [newLineItem, setNewLineItem] = useState<LineItemFormData>({
@@ -63,64 +66,72 @@ export function InvoiceGenerator() {
     },
   });
 
-  useEffect(() => {
-    fetchInvoices();
-    fetchMembers();
-  }, [profile?.organization_id]);
+  // Fetch payment transactions as invoices
+  const { data: invoices = [], isLoading, refetch } = useQuery({
+    queryKey: ['invoices', profile?.organization_id],
+    queryFn: async () => {
+      if (!profile?.organization_id) return [];
 
-  const fetchInvoices = async () => {
-    if (!profile?.organization_id) return;
+      // Query payment_transactions with member info
+      const { data, error } = await supabase
+        .from('payment_transactions')
+        .select(`
+          *,
+          member:profiles!payment_transactions_member_id_fkey(
+            id, first_name, last_name, email
+          ),
+          membership:memberships(
+            id,
+            plan:membership_plans(name, price)
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(50);
 
-    try {
-      setIsLoading(true);
-      // Note: This would require new tables 'invoices' and 'invoice_line_items' in the database
-      // For now, we'll simulate the data structure
-      setInvoices([
-        {
-          id: 'inv-001',
-          invoice_number: 'INV-2024-001',
-          member_name: 'John Doe',
-          member_email: 'john.doe@example.com',
-          issue_date: '2024-01-15',
-          due_date: '2024-02-15',
-          status: 'pending',
-          total_amount: 129.99,
+      if (error) {
+        console.error('Error fetching transactions:', error);
+        throw error;
+      }
+
+      // Transform to invoice format
+      return (data || []).map((txn, index) => {
+        const member = txn.member as { first_name?: string; last_name?: string; email?: string } | null;
+        const membership = txn.membership as { plan?: { name?: string; price?: number } } | null;
+
+        return {
+          id: txn.id,
+          invoice_number: txn.transaction_reference || `TXN-${String(index + 1).padStart(4, '0')}`,
+          member_name: member
+            ? `${member.first_name || ''} ${member.last_name || ''}`.trim() || member.email
+            : 'Unknown Member',
+          member_email: member?.email || '',
+          issue_date: txn.created_at.split('T')[0],
+          due_date: txn.created_at.split('T')[0], // Payment transactions don't have due dates
+          status: txn.payment_status || 'completed',
+          total_amount: txn.amount,
           line_items: [
-            { description: 'Monthly Membership - January', quantity: 1, unit_price: 99.99 },
-            { description: 'Personal Training Session', quantity: 2, unit_price: 15.00 },
+            {
+              description: membership?.plan?.name || txn.notes || 'Payment',
+              quantity: 1,
+              unit_price: txn.amount,
+            },
           ],
-          notes: 'Thank you for being a valued member!',
-        },
-        {
-          id: 'inv-002',
-          invoice_number: 'INV-2024-002',
-          member_name: 'Jane Smith',
-          member_email: 'jane.smith@example.com',
-          issue_date: '2024-01-16',
-          due_date: '2024-02-16',
-          status: 'paid',
-          total_amount: 99.99,
-          line_items: [
-            { description: 'Monthly Membership - January', quantity: 1, unit_price: 99.99 },
-          ],
-          paid_date: '2024-01-18',
-        }
-      ]);
-    } catch (error: any) {
-      toast({
-        title: 'Error loading invoices',
-        description: error.message,
-        variant: 'destructive',
+          notes: txn.notes || '',
+          paid_date: txn.payment_status === 'completed' ? txn.created_at.split('T')[0] : null,
+          payment_method: txn.payment_method,
+        };
       });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    enabled: !!profile?.organization_id,
+    staleTime: 30 * 1000,
+  });
 
-  const fetchMembers = async () => {
-    if (!profile?.organization_id) return;
+  // Fetch members for dropdown
+  const { data: members = [] } = useQuery({
+    queryKey: ['invoice-members', profile?.organization_id],
+    queryFn: async () => {
+      if (!profile?.organization_id) return [];
 
-    try {
       const { data, error } = await supabase
         .from('profiles')
         .select('id, first_name, last_name, email')
@@ -129,15 +140,73 @@ export function InvoiceGenerator() {
         .order('first_name');
 
       if (error) throw error;
-      setMembers(data || []);
-    } catch (error: any) {
+      return data || [];
+    },
+    enabled: !!profile?.organization_id,
+  });
+
+  // Mutation to create payment transaction (as invoice)
+  const createPayment = useMutation({
+    mutationFn: async (data: {
+      member_id: string;
+      amount: number;
+      notes: string;
+      payment_method: string;
+    }) => {
+      const { error } = await supabase.from('payment_transactions').insert({
+        member_id: data.member_id,
+        amount: data.amount,
+        payment_method: data.payment_method,
+        payment_status: 'pending',
+        notes: data.notes,
+      });
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast({
-        title: 'Error loading members',
+        title: 'Invoice created',
+        description: 'A new payment record has been created.',
+      });
+      setIsDialogOpen(false);
+      setLineItems([]);
+      form.reset();
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error creating invoice',
         description: error.message,
         variant: 'destructive',
       });
-    }
-  };
+    },
+  });
+
+  // Mutation to update payment status
+  const updatePaymentStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const { error } = await supabase
+        .from('payment_transactions')
+        .update({ payment_status: status, updated_at: new Date().toISOString() })
+        .eq('id', id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      toast({
+        title: 'Invoice updated',
+        description: 'Payment status has been updated.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error updating invoice',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
 
   const handleSubmit = async (data: InvoiceFormData) => {
     if (lineItems.length === 0) {
@@ -149,47 +218,15 @@ export function InvoiceGenerator() {
       return;
     }
 
-    try {
-      const selectedMember = members.find(m => m.id === data.member_id);
-      const subtotal = lineItems.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
-      const tax = subtotal * 0.1; // 10% tax
-      const total = subtotal + tax;
+    const subtotal = lineItems.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
+    const description = lineItems.map((item) => item.description).join(', ');
 
-      const newInvoice = {
-        id: `inv-${Date.now()}`,
-        invoice_number: `INV-${new Date().getFullYear()}-${String(invoices.length + 1).padStart(3, '0')}`,
-        member_id: data.member_id,
-        member_name: selectedMember ? `${selectedMember.first_name || ''} ${selectedMember.last_name || ''}`.trim() : 'Unknown',
-        member_email: selectedMember?.email || '',
-        issue_date: new Date().toISOString().split('T')[0],
-        due_date: data.due_date,
-        status: 'pending',
-        total_amount: total,
-        subtotal,
-        tax_amount: tax,
-        line_items: [...lineItems],
-        notes: data.notes || '',
-        organization_id: profile?.organization_id,
-        created_at: new Date().toISOString(),
-      };
-
-      setInvoices(prev => [newInvoice, ...prev]);
-      
-      toast({
-        title: 'Invoice created',
-        description: `Invoice ${newInvoice.invoice_number} has been created successfully.`,
-      });
-
-      setIsDialogOpen(false);
-      setLineItems([]);
-      form.reset();
-    } catch (error: any) {
-      toast({
-        title: 'Error creating invoice',
-        description: error.message,
-        variant: 'destructive',
-      });
-    }
+    createPayment.mutate({
+      member_id: data.member_id,
+      amount: subtotal,
+      notes: data.notes ? `${description} | ${data.notes}` : description,
+      payment_method: 'invoice',
+    });
   };
 
   const addLineItem = () => {
@@ -219,46 +256,15 @@ export function InvoiceGenerator() {
   };
 
   const handleSendInvoice = async (invoiceId: string) => {
-    try {
-      // In a real implementation, this would send the invoice via email
-      toast({
-        title: 'Invoice sent',
-        description: 'The invoice has been sent to the member\'s email address.',
-      });
-      
-      setInvoices(prev => prev.map(inv => 
-        inv.id === invoiceId ? { ...inv, status: 'pending' } : inv
-      ));
-    } catch (error: any) {
-      toast({
-        title: 'Error sending invoice',
-        description: error.message,
-        variant: 'destructive',
-      });
-    }
+    // In a real implementation, this would send the invoice via email
+    toast({
+      title: 'Invoice sent',
+      description: "The invoice has been sent to the member's email address.",
+    });
   };
 
   const handleMarkAsPaid = async (invoiceId: string) => {
-    try {
-      setInvoices(prev => prev.map(inv => 
-        inv.id === invoiceId ? { 
-          ...inv, 
-          status: 'paid', 
-          paid_date: new Date().toISOString().split('T')[0] 
-        } : inv
-      ));
-      
-      toast({
-        title: 'Invoice marked as paid',
-        description: 'The invoice has been marked as paid.',
-      });
-    } catch (error: any) {
-      toast({
-        title: 'Error updating invoice',
-        description: error.message,
-        variant: 'destructive',
-      });
-    }
+    updatePaymentStatus.mutate({ id: invoiceId, status: 'completed' });
   };
 
   if (isLoading) {
@@ -281,12 +287,15 @@ export function InvoiceGenerator() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold">Invoice Management</h2>
-          <p className="text-muted-foreground">
-            Generate and manage member invoices
-          </p>
+          <p className="text-muted-foreground">Generate and manage member invoices</p>
         </div>
-        
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isLoading}>
+            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => { setLineItems([]); form.reset(); }}>
               <Plus className="w-4 h-4 mr-2" />
@@ -447,7 +456,16 @@ export function InvoiceGenerator() {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
+
+      <Alert>
+        <Info className="h-4 w-4" />
+        <AlertDescription>
+          Invoices are currently based on payment transactions. For dedicated invoicing with line items
+          and custom billing periods, a dedicated invoicing module can be added.
+        </AlertDescription>
+      </Alert>
 
       {/* Invoices List */}
       <div className="grid gap-4">

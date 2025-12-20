@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, invokeEdgeFunction } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -88,10 +88,10 @@ export function MembershipInfo({ memberId }: MembershipInfoProps) {
 
   const handleManageBilling = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('customer-portal');
-      
+      const { data, error } = await invokeEdgeFunction<{ url: string }>('customer-portal');
+
       if (error) throw error;
-      
+
       if (data?.url) {
         window.open(data.url, '_blank');
       }

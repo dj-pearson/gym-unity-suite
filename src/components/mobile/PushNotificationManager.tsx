@@ -6,17 +6,22 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Label } from '@/components/ui/label';
-import { 
-  Bell, 
-  BellOff, 
-  MessageSquare, 
-  Calendar, 
-  CreditCard, 
-  UserCheck, 
+import { Skeleton } from '@/components/ui/skeleton';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  Bell,
+  BellOff,
+  MessageSquare,
+  Calendar,
+  CreditCard,
+  UserCheck,
   AlertTriangle,
   CheckCircle,
   Settings,
-  Smartphone
+  Smartphone,
+  RefreshCw,
+  Inbox
 } from 'lucide-react';
 
 interface NotificationSettings {
@@ -54,12 +59,42 @@ export default function PushNotificationManager() {
   });
   const [loading, setLoading] = useState(false);
   const [testNotificationSent, setTestNotificationSent] = useState(false);
-  const [notificationHistory, setNotificationHistory] = useState<NotificationHistory[]>([]);
+
+  // Fetch real notification history from Supabase
+  const { data: notificationHistory = [], isLoading: historyLoading, refetch: refetchHistory } = useQuery({
+    queryKey: ['push-notification-history', profile?.id],
+    queryFn: async () => {
+      if (!profile?.id || !profile?.organization_id) return [];
+
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('id, title, message, type, status, sent_at, read_at, created_at')
+        .eq('member_id', profile.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) {
+        console.error('Error fetching notifications:', error);
+        return [];
+      }
+
+      // Transform to NotificationHistory format
+      return (data || []).map((notification): NotificationHistory => ({
+        id: notification.id,
+        title: notification.title,
+        body: notification.message,
+        type: notification.type || 'system',
+        timestamp: new Date(notification.sent_at || notification.created_at),
+        status: notification.read_at ? 'clicked' : notification.sent_at ? 'delivered' : 'sent'
+      }));
+    },
+    enabled: !!profile?.id,
+    staleTime: 30 * 1000, // 30 seconds
+  });
 
   useEffect(() => {
     checkNotificationSupport();
     loadSettings();
-    loadNotificationHistory();
   }, []);
 
   const checkNotificationSupport = () => {
@@ -74,37 +109,6 @@ export default function PushNotificationManager() {
     if (saved) {
       setSettings(JSON.parse(saved));
     }
-  };
-
-  const loadNotificationHistory = () => {
-    // Mock notification history
-    const mockHistory: NotificationHistory[] = [
-      {
-        id: '1',
-        title: 'Class Reminder',
-        body: 'Your yoga class starts in 30 minutes',
-        type: 'class_reminder',
-        timestamp: new Date(Date.now() - 30 * 60 * 1000),
-        status: 'delivered'
-      },
-      {
-        id: '2',
-        title: 'Payment Successful',
-        body: 'Your monthly membership payment was processed',
-        type: 'payment_confirmation',
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-        status: 'clicked'
-      },
-      {
-        id: '3',
-        title: 'New Class Available',
-        body: 'HIIT Training has been added to the schedule',
-        type: 'announcement',
-        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-        status: 'delivered'
-      }
-    ];
-    setNotificationHistory(mockHistory);
   };
 
   const requestPermission = async () => {
@@ -433,29 +437,63 @@ export default function PushNotificationManager() {
       {/* Notification History */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Notifications</CardTitle>
-          <CardDescription>
-            History of notifications sent to this device
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Recent Notifications</CardTitle>
+              <CardDescription>
+                History of notifications sent to you
+              </CardDescription>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => refetchHistory()}>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {notificationHistory.map((notification) => (
-              <div key={notification.id} className="flex items-start justify-between p-3 border rounded-lg">
-                <div className="flex items-start gap-3">
-                  {getNotificationIcon(notification.type)}
-                  <div className="flex-1">
-                    <h4 className="font-medium text-sm">{notification.title}</h4>
-                    <p className="text-sm text-muted-foreground">{notification.body}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {notification.timestamp.toLocaleString()}
-                    </p>
+          {historyLoading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-start justify-between p-3 border rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <Skeleton className="h-4 w-4 rounded" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-48" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
                   </div>
+                  <Skeleton className="h-5 w-16" />
                 </div>
-                {getStatusBadge(notification.status)}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : notificationHistory.length === 0 ? (
+            <div className="py-8 text-center">
+              <Inbox className="h-12 w-12 mx-auto text-muted-foreground opacity-50 mb-4" />
+              <h3 className="text-lg font-medium mb-2">No Notifications Yet</h3>
+              <p className="text-sm text-muted-foreground">
+                You'll see your notification history here once you start receiving notifications.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {notificationHistory.map((notification) => (
+                <div key={notification.id} className="flex items-start justify-between p-3 border rounded-lg">
+                  <div className="flex items-start gap-3">
+                    {getNotificationIcon(notification.type)}
+                    <div className="flex-1">
+                      <h4 className="font-medium text-sm">{notification.title}</h4>
+                      <p className="text-sm text-muted-foreground">{notification.body}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {notification.timestamp.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                  {getStatusBadge(notification.status)}
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

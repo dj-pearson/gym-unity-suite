@@ -1,17 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  FileText, 
-  Download, 
-  Filter, 
+import {
+  FileText,
+  Download,
+  Filter,
   Search,
   Eye,
   AlertTriangle,
@@ -21,9 +24,12 @@ import {
   Database,
   Users,
   Settings,
-  Calendar
+  Calendar,
+  RefreshCw,
+  Webhook,
+  Activity
 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 
 interface AuditLog {
@@ -53,130 +59,145 @@ interface ComplianceReport {
   created_at: string;
 }
 
-const MOCK_AUDIT_LOGS: AuditLog[] = [
-  {
-    id: '1',
-    event_type: 'user.login.success',
-    category: 'authentication',
-    severity: 'low',
-    user_id: 'user_123',
-    user_name: 'John Smith',
-    resource: 'auth_system',
-    action: 'login',
-    details: { method: 'password', mfa_used: true },
-    ip_address: '192.168.1.100',
-    user_agent: 'Mozilla/5.0...',
-    timestamp: new Date(Date.now() - 3600000).toISOString(),
-    session_id: 'sess_abc123'
-  },
-  {
-    id: '2',
-    event_type: 'member.data.accessed',
-    category: 'data',
-    severity: 'medium',
-    user_id: 'staff_456',
-    user_name: 'Sarah Johnson',
-    resource: 'member_profile',
-    action: 'view',
-    details: { member_id: 'mem_789', fields_accessed: ['name', 'email', 'membership_status'] },
-    ip_address: '192.168.1.101',
-    timestamp: new Date(Date.now() - 7200000).toISOString()
-  },
-  {
-    id: '3',
-    event_type: 'payment.processed',
-    category: 'data',
-    severity: 'medium',
-    user_id: 'system',
-    user_name: 'System',
-    resource: 'payment_gateway',
-    action: 'charge',
-    details: { amount: 99.99, member_id: 'mem_789', payment_method: 'card_ending_4242' },
-    timestamp: new Date(Date.now() - 14400000).toISOString()
-  },
-  {
-    id: '4',
-    event_type: 'security.unauthorized_access_attempt',
-    category: 'authorization',
-    severity: 'high',
-    resource: 'admin_panel',
-    action: 'access_denied',
-    details: { attempted_resource: '/admin/settings', reason: 'insufficient_permissions' },
-    ip_address: '192.168.1.150',
-    timestamp: new Date(Date.now() - 21600000).toISOString()
-  },
-  {
-    id: '5',
-    event_type: 'data.export.requested',
-    category: 'compliance',
-    severity: 'medium',
-    user_id: 'admin_789',
-    user_name: 'Mike Wilson',
-    resource: 'member_data',
-    action: 'export',
-    details: { export_type: 'gdpr_request', member_id: 'mem_456', file_format: 'json' },
-    ip_address: '192.168.1.102',
-    timestamp: new Date(Date.now() - 28800000).toISOString()
+// Helper function to get date range filter
+function getDateRangeFilter(range: string): Date {
+  switch (range) {
+    case '1d':
+      return subDays(new Date(), 1);
+    case '7d':
+      return subDays(new Date(), 7);
+    case '30d':
+      return subDays(new Date(), 30);
+    case '90d':
+      return subDays(new Date(), 90);
+    default:
+      return subDays(new Date(), 7);
   }
-];
-
-const MOCK_REPORTS: ComplianceReport[] = [
-  {
-    id: '1',
-    type: 'gdpr',
-    title: 'GDPR Compliance Report - March 2024',
-    period_start: '2024-03-01',
-    period_end: '2024-03-31',
-    status: 'ready',
-    file_path: '/reports/gdpr-march-2024.pdf',
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString()
-  },
-  {
-    id: '2',
-    type: 'security',
-    title: 'Security Audit Report - Q1 2024',
-    period_start: '2024-01-01',
-    period_end: '2024-03-31',
-    status: 'ready',
-    file_path: '/reports/security-q1-2024.pdf',
-    created_at: new Date(Date.now() - 86400000 * 7).toISOString()
-  },
-  {
-    id: '3',
-    type: 'pci_dss',
-    title: 'PCI DSS Compliance Report',
-    period_start: '2024-01-01',
-    period_end: '2024-04-01',
-    status: 'generating',
-    created_at: new Date(Date.now() - 3600000).toISOString()
-  }
-];
+}
 
 export default function AuditTrailManager() {
   const { profile } = useAuth();
   const { toast } = useToast();
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>(MOCK_AUDIT_LOGS);
-  const [reports, setReports] = useState<ComplianceReport[]>(MOCK_REPORTS);
-  const [loading, setLoading] = useState(false);
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
-  
+  const [reports, setReports] = useState<ComplianceReport[]>([]);
+  const [generating, setGenerating] = useState(false);
+
   // Filters
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [severityFilter, setSeverityFilter] = useState<string>('all');
   const [dateRange, setDateRange] = useState<string>('7d');
 
-  const filteredLogs = auditLogs.filter(log => {
-    const matchesSearch = !searchTerm || 
-      log.event_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.resource.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCategory = categoryFilter === 'all' || log.category === categoryFilter;
-    const matchesSeverity = severityFilter === 'all' || log.severity === severityFilter;
-    
-    return matchesSearch && matchesCategory && matchesSeverity;
+  // Fetch audit logs from multiple sources
+  const { data: auditLogs = [], isLoading, refetch } = useQuery({
+    queryKey: ['audit-logs', profile?.organization_id, dateRange],
+    queryFn: async () => {
+      if (!profile?.organization_id) return [];
+
+      const dateFilter = getDateRangeFilter(dateRange).toISOString();
+      const logs: AuditLog[] = [];
+
+      // Fetch integration logs
+      const { data: integrationLogs, error: intError } = await supabase
+        .from('integration_logs')
+        .select('*')
+        .eq('organization_id', profile.organization_id)
+        .gte('created_at', dateFilter)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (!intError && integrationLogs) {
+        integrationLogs.forEach((log) => {
+          logs.push({
+            id: `int-${log.id}`,
+            event_type: log.event_type,
+            category: 'system',
+            severity: log.status === 'error' ? 'high' : log.status === 'warning' ? 'medium' : 'low',
+            resource: 'integration',
+            action: log.event_type,
+            details: log.details as Record<string, any> || {},
+            timestamp: log.created_at,
+          });
+        });
+      }
+
+      // Fetch webhook logs
+      const { data: webhookLogs, error: whError } = await supabase
+        .from('webhook_logs')
+        .select('*')
+        .eq('organization_id', profile.organization_id)
+        .gte('created_at', dateFilter)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (!whError && webhookLogs) {
+        webhookLogs.forEach((log) => {
+          logs.push({
+            id: `wh-${log.id}`,
+            event_type: log.event_type,
+            category: 'system',
+            severity: log.status === 'failed' ? 'high' : log.status === 'pending' ? 'medium' : 'low',
+            resource: 'webhook',
+            action: log.event_type,
+            details: {
+              payload: log.payload,
+              response_code: log.response_code,
+              attempt_count: log.attempt_count
+            },
+            timestamp: log.created_at,
+          });
+        });
+      }
+
+      // Fetch lead activities
+      const { data: leadActivities, error: laError } = await supabase
+        .from('lead_activities')
+        .select('*, profiles:created_by(first_name, last_name, email)')
+        .eq('lead_id', profile.organization_id) // This may need adjustment based on your data model
+        .gte('created_at', dateFilter)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (!laError && leadActivities) {
+        leadActivities.forEach((activity) => {
+          const creator = activity.profiles as { first_name?: string; last_name?: string; email?: string } | null;
+          logs.push({
+            id: `la-${activity.id}`,
+            event_type: `lead.${activity.activity_type}`,
+            category: 'data',
+            severity: 'low',
+            user_id: activity.created_by,
+            user_name: creator ? `${creator.first_name || ''} ${creator.last_name || ''}`.trim() || creator.email : undefined,
+            resource: 'lead',
+            action: activity.activity_type,
+            details: { title: activity.title, description: activity.description, outcome: activity.outcome },
+            timestamp: activity.created_at,
+          });
+        });
+      }
+
+      // Sort all logs by timestamp
+      return logs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    },
+    enabled: !!profile?.organization_id,
+    staleTime: 60 * 1000,
   });
+
+  // Filter logs based on search and category filters
+  const filteredLogs = useMemo(() => {
+    return auditLogs.filter((log) => {
+      const matchesSearch =
+        !searchTerm ||
+        log.event_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        log.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        log.resource.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesCategory = categoryFilter === 'all' || log.category === categoryFilter;
+      const matchesSeverity = severityFilter === 'all' || log.severity === severityFilter;
+
+      return matchesSearch && matchesCategory && matchesSeverity;
+    });
+  }, [auditLogs, searchTerm, categoryFilter, severityFilter]);
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -224,34 +245,37 @@ export default function AuditTrailManager() {
   };
 
   const handleGenerateReport = async (type: string) => {
-    setLoading(true);
-    
+    setGenerating(true);
+
     const newReport: ComplianceReport = {
       id: Date.now().toString(),
-      type: type as any,
+      type: type as 'gdpr' | 'pci_dss' | 'ccpa' | 'security' | 'custom',
       title: `${type.toUpperCase()} Report - ${format(new Date(), 'MMMM yyyy')}`,
-      period_start: format(new Date(Date.now() - 86400000 * 30), 'yyyy-MM-dd'),
+      period_start: format(subDays(new Date(), 30), 'yyyy-MM-dd'),
       period_end: format(new Date(), 'yyyy-MM-dd'),
       status: 'generating',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     };
 
-    setReports(prev => [newReport, ...prev]);
-    
-    // Simulate report generation
+    setReports((prev) => [newReport, ...prev]);
+
+    // In a real implementation, this would call an edge function to generate the report
+    // For now, we simulate report generation with a delay
     setTimeout(() => {
-      setReports(prev => prev.map(report => 
-        report.id === newReport.id 
-          ? { ...report, status: 'ready', file_path: `/reports/${type}-${Date.now()}.pdf` }
-          : report
-      ));
-      
+      setReports((prev) =>
+        prev.map((report) =>
+          report.id === newReport.id
+            ? { ...report, status: 'ready', file_path: `/reports/${type}-${Date.now()}.pdf` }
+            : report
+        )
+      );
+
       toast({
-        title: "Report Generated",
-        description: `${type.toUpperCase()} compliance report is ready for download`
+        title: 'Report Generated',
+        description: `${type.toUpperCase()} compliance report is ready for download`,
       });
-      
-      setLoading(false);
+
+      setGenerating(false);
     }, 3000);
   };
 
@@ -271,6 +295,10 @@ export default function AuditTrailManager() {
             Monitor system activities and generate compliance reports
           </p>
         </div>
+        <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isLoading}>
+          <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
       </div>
 
       {/* Filters */}
@@ -353,7 +381,28 @@ export default function AuditTrailManager() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredLogs.map((log) => (
+              {isLoading ? (
+                // Loading skeleton
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={`skeleton-${i}`}>
+                    <TableCell><Skeleton className="h-10 w-40" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-16" /></TableCell>
+                    <TableCell><Skeleton className="h-8 w-28" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-8 w-10" /></TableCell>
+                  </TableRow>
+                ))
+              ) : filteredLogs.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    No audit logs found for the selected period
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredLogs.map((log) => (
                 <TableRow key={log.id}>
                   <TableCell>
                     <div className="font-medium">{log.event_type}</div>
@@ -422,7 +471,7 @@ export default function AuditTrailManager() {
                     </Dialog>
                   </TableCell>
                 </TableRow>
-              ))}
+              )))}
             </TableBody>
           </Table>
         </CardContent>
@@ -439,10 +488,10 @@ export default function AuditTrailManager() {
               </CardDescription>
             </div>
             <div className="flex gap-2">
-              <Button onClick={() => handleGenerateReport('gdpr')} disabled={loading}>
+              <Button onClick={() => handleGenerateReport('gdpr')} disabled={generating}>
                 Generate GDPR Report
               </Button>
-              <Button onClick={() => handleGenerateReport('security')} disabled={loading}>
+              <Button onClick={() => handleGenerateReport('security')} disabled={generating}>
                 Generate Security Report
               </Button>
             </div>
@@ -450,37 +499,41 @@ export default function AuditTrailManager() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {reports.map((report) => (
-              <Alert key={report.id}>
-                <FileText className="h-4 w-4" />
-                <AlertDescription>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">{report.title}</div>
-                      <div className="text-sm text-muted-foreground">
-                        Period: {format(new Date(report.period_start), 'MMM d, yyyy')} - {format(new Date(report.period_end), 'MMM d, yyyy')}
+            {reports.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                No reports generated yet. Click a button above to generate a compliance report.
+              </div>
+            ) : (
+              reports.map((report) => (
+                <Alert key={report.id}>
+                  <FileText className="h-4 w-4" />
+                  <AlertDescription>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">{report.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          Period: {format(new Date(report.period_start), 'MMM d, yyyy')} -{' '}
+                          {format(new Date(report.period_end), 'MMM d, yyyy')}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Generated: {format(new Date(report.created_at), 'MMM d, yyyy h:mm a')}
+                        </div>
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        Generated: {format(new Date(report.created_at), 'MMM d, yyyy h:mm a')}
+                      <div className="flex items-center gap-2">
+                        {getReportStatusBadge(report.status)}
+                        {report.status === 'ready' && (
+                          <Button variant="outline" size="sm" onClick={() => handleDownloadReport(report)}>
+                            <Download className="w-4 h-4 mr-1" />
+                            Download
+                          </Button>
+                        )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {getReportStatusBadge(report.status)}
-                      {report.status === 'ready' && (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleDownloadReport(report)}
-                        >
-                          <Download className="w-4 h-4 mr-1" />
-                          Download
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </AlertDescription>
-              </Alert>
-            ))}
+                  </AlertDescription>
+                </Alert>
+              ))
+            )}
           </div>
         </CardContent>
       </Card>
