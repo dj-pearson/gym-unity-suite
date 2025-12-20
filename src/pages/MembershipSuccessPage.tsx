@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, ArrowRight, RefreshCw } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, invokeEdgeFunction } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function MembershipSuccessPage() {
@@ -25,7 +25,7 @@ export default function MembershipSuccessPage() {
       // Wait a moment for Stripe to process
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const { data, error } = await supabase.functions.invoke('check-subscription');
+      const { data, error } = await invokeEdgeFunction('check-subscription');
       if (error) throw error;
       
       setSubscriptionData(data);

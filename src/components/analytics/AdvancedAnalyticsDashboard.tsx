@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,12 +6,13 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Users, 
-  DollarSign, 
+import {
+  TrendingUp,
+  TrendingDown,
+  Users,
+  DollarSign,
   Activity,
   Calendar,
   Target,
@@ -23,125 +24,32 @@ import {
   RefreshCw,
   Zap
 } from 'lucide-react';
-
-interface AnalyticsData {
-  revenue: {
-    current: number;
-    previous: number;
-    trend: 'up' | 'down';
-    forecast: number[];
-  };
-  members: {
-    total: number;
-    active: number;
-    churn: number;
-    retention: number;
-    growth: number;
-  };
-  classes: {
-    attendance: number;
-    capacity: number;
-    popular: Array<{ name: string; bookings: number }>;
-    revenue: number;
-  };
-  equipment: {
-    utilization: number;
-    maintenance: number;
-    incidents: number;
-  };
-  predictions: {
-    membershipGrowth: Array<{ month: string; predicted: number; actual?: number }>;
-    revenueProjection: Array<{ month: string; amount: number; confidence: number }>;
-    churnRisk: Array<{ segment: string; risk: number; count: number }>;
-  };
-}
-
-const mockAnalyticsData: AnalyticsData = {
-  revenue: {
-    current: 45780,
-    previous: 42350,
-    trend: 'up',
-    forecast: [48000, 51200, 53800, 56400, 59100]
-  },
-  members: {
-    total: 1247,
-    active: 1089,
-    churn: 12,
-    retention: 92.4,
-    growth: 8.2
-  },
-  classes: {
-    attendance: 847,
-    capacity: 960,
-    popular: [
-      { name: 'HIIT Training', bookings: 156 },
-      { name: 'Yoga Flow', bookings: 134 },
-      { name: 'Strength Training', bookings: 98 },
-      { name: 'Spin Class', bookings: 87 }
-    ],
-    revenue: 12450
-  },
-  equipment: {
-    utilization: 78.5,
-    maintenance: 5,
-    incidents: 2
-  },
-  predictions: {
-    membershipGrowth: [
-      { month: 'Jan', predicted: 1100, actual: 1089 },
-      { month: 'Feb', predicted: 1150, actual: 1134 },
-      { month: 'Mar', predicted: 1200, actual: 1178 },
-      { month: 'Apr', predicted: 1250 },
-      { month: 'May', predicted: 1300 },
-      { month: 'Jun', predicted: 1350 }
-    ],
-    revenueProjection: [
-      { month: 'Apr', amount: 48000, confidence: 89 },
-      { month: 'May', amount: 51200, confidence: 85 },
-      { month: 'Jun', amount: 53800, confidence: 78 },
-      { month: 'Jul', amount: 56400, confidence: 72 },
-      { month: 'Aug', amount: 59100, confidence: 68 }
-    ],
-    churnRisk: [
-      { segment: 'New Members (0-3 months)', risk: 25, count: 89 },
-      { segment: 'Regular Members (3-12 months)', risk: 8, count: 456 },
-      { segment: 'Long-term Members (12+ months)', risk: 3, count: 702 }
-    ]
-  }
-};
-
-const revenueData = [
-  { month: 'Jan', revenue: 42350, target: 45000 },
-  { month: 'Feb', revenue: 43200, target: 45000 },
-  { month: 'Mar', revenue: 44100, target: 45000 },
-  { month: 'Apr', revenue: 45780, target: 45000 },
-  { month: 'May', revenue: 47200, target: 46000 },
-  { month: 'Jun', revenue: 48900, target: 47000 }
-];
-
-const membershipData = [
-  { month: 'Jan', new: 45, churned: 12, net: 33 },
-  { month: 'Feb', new: 52, churned: 8, net: 44 },
-  { month: 'Mar', new: 38, churned: 15, net: 23 },
-  { month: 'Apr', new: 67, churned: 11, net: 56 },
-  { month: 'May', new: 43, churned: 9, net: 34 },
-  { month: 'Jun', new: 58, churned: 14, net: 44 }
-];
+import { useAnalyticsData } from '@/hooks/useAnalyticsData';
+import { useQueryClient } from '@tanstack/react-query';
 
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--muted))'];
 
 export default function AdvancedAnalyticsDashboard() {
   const { profile } = useAuth();
-  const [data, setData] = useState<AnalyticsData>(mockAnalyticsData);
+  const queryClient = useQueryClient();
   const [timeRange, setTimeRange] = useState('30d');
-  const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
+  // Fetch real analytics data from Supabase
+  const { data: analyticsResult, isLoading, isRefetching } = useAnalyticsData(timeRange);
+
+  const data = analyticsResult?.data ?? {
+    revenue: { current: 0, previous: 0, trend: 'up' as const, forecast: [] },
+    members: { total: 0, active: 0, churn: 0, retention: 0, growth: 0 },
+    classes: { attendance: 0, capacity: 0, popular: [], revenue: 0 },
+    equipment: { utilization: 0, maintenance: 0, incidents: 0 },
+    predictions: { membershipGrowth: [], revenueProjection: [], churnRisk: [] },
+  };
+  const revenueData = analyticsResult?.revenueData ?? [];
+  const membershipData = analyticsResult?.membershipData ?? [];
+
   const refreshData = async () => {
-    setRefreshing(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setRefreshing(false);
+    await queryClient.invalidateQueries({ queryKey: ['analytics'] });
   };
 
   const exportReport = () => {
@@ -159,6 +67,51 @@ export default function AdvancedAnalyticsDashboard() {
   const getPercentageChange = (current: number, previous: number) => {
     return ((current - previous) / previous * 100).toFixed(1);
   };
+
+  // Loading skeleton
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold">Advanced Analytics</h2>
+            <p className="text-muted-foreground">Loading analytics data...</p>
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i}>
+              <CardHeader className="pb-2">
+                <Skeleton className="h-4 w-24" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-8 w-32 mb-2" />
+                <Skeleton className="h-3 w-20" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-5 w-32" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-[300px] w-full" />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-5 w-32" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-[300px] w-full" />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -181,8 +134,8 @@ export default function AdvancedAnalyticsDashboard() {
               <SelectItem value="1y">Last year</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" onClick={refreshData} disabled={refreshing}>
-            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+          <Button variant="outline" onClick={refreshData} disabled={isRefetching}>
+            <RefreshCw className={`w-4 h-4 mr-2 ${isRefetching ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
           <Button onClick={exportReport}>

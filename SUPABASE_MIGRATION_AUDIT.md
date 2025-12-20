@@ -2,7 +2,7 @@
 
 **Date:** 2025-12-20
 **Purpose:** Comprehensive audit to verify self-hosted Supabase migration and identify hardcoded/mock data
-**Status:** In Progress
+**Status:** In Progress - Critical & High Priority Items Fixed
 
 ---
 
@@ -11,10 +11,10 @@
 This audit identifies all areas requiring attention to ensure the application is fully functional with the self-hosted Supabase setup and displays real data from the database rather than hardcoded/mock data.
 
 ### Quick Stats
-- **Critical Issues:** 3
-- **High Priority Issues:** 8
-- **Medium Priority Issues:** 12
-- **Low Priority Issues:** 5
+- **Critical Issues:** ~~3~~ 0 remaining (4 fixed)
+- **High Priority Issues:** ~~8~~ 5 remaining (2 fixed)
+- **Medium Priority Issues:** 4
+- **Low Priority Issues:** 2
 
 ---
 
@@ -35,20 +35,16 @@ The main Supabase client (`src/integrations/supabase/client.ts`) is correctly co
 
 ## 2. Legacy Cloud Supabase References
 
-### 2.1 Critical: Service Worker Hardcoded URLs
+### 2.1 ~~Critical:~~ FIXED: Service Worker Hardcoded URLs
 
-**File:** `public/sw.js` (Lines 246-249)
+**File:** `public/sw.js`
 
-```javascript
-const supabaseUrl = self.location.origin.includes('localhost')
-  ? 'YOUR_SUPABASE_URL'
-  : 'YOUR_SUPABASE_URL';
-const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
-```
+**Status:** FIXED (2025-12-20)
 
-**Issue:** Background sync for check-ins has placeholder URLs that won't work.
-**Priority:** HIGH
-**Fix Required:** Inject actual Supabase URL/key at build time or fetch from app config.
+**Solution Applied:**
+- Service worker now reads Supabase config from IndexedDB
+- Main app stores config via `src/lib/pwa/swConfig.ts` on initialization
+- Config is stored when app mounts and refreshed on visibility change
 
 ---
 
@@ -98,23 +94,20 @@ postgresql://postgres.nerqstezuygviutluslt:[YOUR-PASSWORD]@aws-1-us-east-1.poole
 
 ## 3. Edge Function Invocation Issues
 
-### 3.1 Critical: Components Using Old `supabase.functions.invoke`
+### 3.1 ~~Critical:~~ FIXED: Components Using Old `supabase.functions.invoke`
 
-Some components still use `supabase.functions.invoke` directly instead of the new `invokeEdgeFunction` helper. This may not route correctly to the self-hosted functions subdomain.
+**Status:** FIXED (2025-12-20)
 
-**Files needing update:**
+All 6 components have been updated to use `invokeEdgeFunction`:
 
-| File | Line | Function Called |
-|------|------|-----------------|
-| `src/components/members/MembershipInfo.tsx` | 91 | `customer-portal` |
-| `src/pages/MembershipSuccessPage.tsx` | 28 | `check-subscription` |
-| `src/pages/MembershipPlansPage.tsx` | 52 | `check-subscription` |
-| `src/pages/PaymentSuccessPage.tsx` | 29 | `verify-payment` |
-| `src/components/crm/conversion/PaymentStep.tsx` | 183 | `create-checkout` |
-| `src/components/membership/SubscriptionManager.tsx` | 28, 53 | `check-subscription`, `customer-portal` |
-
-**Priority:** CRITICAL
-**Fix Required:** Replace `supabase.functions.invoke` with `invokeEdgeFunction` from client.
+| File | Status |
+|------|--------|
+| `src/components/members/MembershipInfo.tsx` | FIXED |
+| `src/pages/MembershipSuccessPage.tsx` | FIXED |
+| `src/pages/MembershipPlansPage.tsx` | FIXED |
+| `src/pages/PaymentSuccessPage.tsx` | FIXED |
+| `src/components/crm/conversion/PaymentStep.tsx` | FIXED |
+| `src/components/membership/SubscriptionManager.tsx` | FIXED |
 
 ---
 
@@ -137,74 +130,61 @@ These are correctly implemented:
 
 ## 4. Hardcoded/Mock Data Issues
 
-### 4.1 Critical: Analytics Dashboard Uses Mock Data
+### 4.1 ~~Critical:~~ FIXED: Analytics Dashboard Uses Mock Data
 
-**File:** `src/components/analytics/AdvancedAnalyticsDashboard.tsx` (Lines 59-111)
+**File:** `src/components/analytics/AdvancedAnalyticsDashboard.tsx`
 
-```typescript
-const mockAnalyticsData: AnalyticsData = {
-  revenue: { current: 45780, previous: 42350, ... },
-  members: { total: 1247, active: 1089, ... },
-  classes: { attendance: 847, ... },
-  ...
-};
-```
+**Status:** FIXED (2025-12-20)
 
-**Issue:** Dashboard displays hardcoded mock data instead of real analytics.
-**Priority:** CRITICAL
-**Fix Required:** Replace with Supabase queries for real data.
+**Solution Applied:**
+- Created new hook `src/hooks/useAnalyticsData.ts`
+- Fetches real data from: members, payment_transactions, classes, class_bookings, equipment tables
+- Calculates real metrics: revenue, member counts, class attendance, equipment utilization
+- Displays loading skeleton while data loads
+- Uses TanStack Query for caching and refetching
 
 ---
 
-### 4.2 Critical: Notifications Hook Returns Mock Data
+### 4.2 ~~Critical:~~ FIXED: Notifications Hook Returns Mock Data
 
-**File:** `src/hooks/useNotifications.ts` (Lines 49-116)
+**File:** `src/hooks/useNotifications.ts`
 
-```typescript
-// TODO: Replace with actual Supabase query once table is created
-const mockNotifications: Notification[] = [
-  { id: '1', type: 'payment_failed', title: 'Payment Failed', message: "John Doe's payment..." },
-  ...
-];
-```
+**Status:** FIXED (2025-12-20)
 
-**Issue:** Notification system is completely stubbed with fake data.
-**Priority:** CRITICAL
-**Fix Required:**
-1. Create `notifications` table in Supabase (if not exists)
-2. Implement real Supabase query
+**Solution Applied:**
+- Hook now queries real `notifications` table from Supabase
+- Implemented real mutations for markAsRead, markAllAsRead, deleteNotification
+- `is_read` derived from `read_at` timestamp field
+- Proper organization filtering applied
 
 ---
 
-### 4.3 High: Support Tickets Shows Hardcoded Data
+### 4.3 ~~High:~~ FIXED: Support Tickets Shows Hardcoded Data
 
-**File:** `src/components/communication/PlaceholderComponents.tsx` (Lines 429-475)
+**File:** `src/components/communication/PlaceholderComponents.tsx`
 
-```typescript
-<TableCell>John Doe</TableCell>
-<TableCell>Equipment Issue</TableCell>
-...
-<TableCell>Jane Smith</TableCell>
-<TableCell>Class Booking Issue</TableCell>
-```
+**Status:** FIXED (2025-12-20)
 
-**Issue:** Support tickets display is completely static HTML with fake data.
-**Priority:** HIGH
-**Fix Required:** Implement actual ticket fetching from `support_tickets` table.
+**Solution Applied:**
+- Component now fetches real tickets from `support_tickets` table
+- Joins with `profiles` table for member names
+- Implemented filtering by status and search
+- Dynamic priority and status badges
 
 ---
 
-### 4.4 High: Milestone Tracking Shows Fake Members
+### 4.4 ~~High:~~ FIXED: Milestone Tracking Shows Fake Members
 
-**File:** `src/components/communication/PlaceholderComponents.tsx` (Lines 514-576)
+**File:** `src/components/communication/PlaceholderComponents.tsx`
 
-Hardcoded milestone data:
-- "Sarah Johnson reached 50 gym visits!"
-- "Mike Wilson completed his first fitness class"
-- "Amy Davis referred her first new member"
+**Status:** FIXED (2025-12-20)
 
-**Priority:** HIGH
-**Fix Required:** Query real milestone achievements from database.
+**Solution Applied:**
+- Component now fetches real milestones from `member_milestones` table
+- Joins with `profiles` table for member names
+- Implemented filtering by milestone type and search
+- Send recognition functionality updates database
+- Dynamic milestone type colors
 
 ---
 
