@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, invokeEdgeFunction } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,14 +22,11 @@ export function SubscriptionManager() {
 
   const checkSubscription = async () => {
     if (!user) return;
-    
+
     setRefreshing(true);
     try {
-      const { data, error } = await supabase.functions.invoke('check-subscription', {
-        headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-        },
-      });
+      // invokeEdgeFunction automatically handles auth headers
+      const { data, error } = await invokeEdgeFunction<SubscriptionData>('check-subscription');
 
       if (error) throw error;
       setSubscriptionData(data);
@@ -47,14 +44,11 @@ export function SubscriptionManager() {
 
   const openCustomerPortal = async () => {
     if (!user) return;
-    
+
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('customer-portal', {
-        headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-        },
-      });
+      // invokeEdgeFunction automatically handles auth headers
+      const { data, error } = await invokeEdgeFunction<{ url: string }>('customer-portal');
 
       if (error) throw error;
       if (data?.url) {

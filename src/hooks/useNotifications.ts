@@ -18,17 +18,18 @@ export type NotificationPriority = 'low' | 'medium' | 'high' | 'urgent';
 export interface Notification {
   id: string;
   organization_id: string;
-  user_id?: string; // If null, notification is for all org staff
-  type: NotificationType;
-  priority: NotificationPriority;
+  member_id?: string; // Member the notification is about
+  type: NotificationType | string;
+  priority: NotificationPriority | string;
   title: string;
   message: string;
-  action_url?: string; // Where to navigate when clicked
-  action_label?: string; // Label for action button
-  metadata?: Record<string, any>; // Additional data (member_id, class_id, etc.)
-  is_read: boolean;
+  metadata?: Record<string, any> | null; // Additional data (member_id, class_id, etc.)
+  status: string;
+  is_read: boolean; // Derived from read_at
   created_at: string;
-  read_at?: string;
+  read_at?: string | null;
+  scheduled_for?: string | null;
+  sent_at?: string | null;
 }
 
 /**
@@ -44,92 +45,38 @@ export function useNotifications(organizationId: string | undefined, userId?: st
         throw new Error('Organization ID is required');
       }
 
-      // For now, return mock data since we haven't created the Supabase table yet
-      // TODO: Replace with actual Supabase query once table is created
-      const mockNotifications: Notification[] = [
-        {
-          id: '1',
-          organization_id: organizationId,
-          type: 'payment_failed',
-          priority: 'high',
-          title: 'Payment Failed',
-          message: 'John Doe\'s payment of $99.00 failed',
-          action_url: '/members?selected=member-123',
-          action_label: 'View Member',
-          metadata: { member_id: 'member-123', amount: 99.00 },
-          is_read: false,
-          created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-        },
-        {
-          id: '2',
-          organization_id: organizationId,
-          type: 'class_full',
-          priority: 'medium',
-          title: 'Class Full',
-          message: 'Yoga - Morning Flow is now full (20/20)',
-          action_url: '/classes?selected=class-456',
-          action_label: 'View Class',
-          metadata: { class_id: 'class-456', capacity: 20 },
-          is_read: false,
-          created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
-        },
-        {
-          id: '3',
-          organization_id: organizationId,
-          type: 'member_inactive',
-          priority: 'low',
-          title: 'Member Inactive',
-          message: 'Jane Smith hasn\'t checked in for 30 days',
-          action_url: '/members?selected=member-789',
-          action_label: 'Follow Up',
-          metadata: { member_id: 'member-789', days_inactive: 30 },
-          is_read: true,
-          created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-          read_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-        },
-        {
-          id: '4',
-          organization_id: organizationId,
-          type: 'membership_expiring',
-          priority: 'medium',
-          title: 'Membership Expiring Soon',
-          message: '5 memberships expiring in the next 7 days',
-          action_url: '/members?filter=expiring',
-          action_label: 'View All',
-          metadata: { count: 5 },
-          is_read: false,
-          created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
-        },
-        {
-          id: '5',
-          organization_id: organizationId,
-          type: 'payment_past_due',
-          priority: 'urgent',
-          title: 'Payment Past Due',
-          message: 'Mike Johnson has an overdue payment of $149.00',
-          action_url: '/billing?member=member-321',
-          action_label: 'Send Reminder',
-          metadata: { member_id: 'member-321', amount: 149.00, days_overdue: 7 },
-          is_read: false,
-          created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
-        },
-      ];
-
-      // Actual implementation would be:
-      /*
+      // Query real notifications from the database
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
         .eq('organization_id', organizationId)
-        .or(`user_id.is.null,user_id.eq.${userId}`)
         .order('created_at', { ascending: false })
         .limit(50);
 
-      if (error) throw error;
-      return data as Notification[];
-      */
+      if (error) {
+        console.error('Error fetching notifications:', error);
+        throw error;
+      }
 
-      return mockNotifications;
+      // Transform database rows to include is_read derived field
+      const notifications: Notification[] = (data || []).map((row) => ({
+        id: row.id,
+        organization_id: row.organization_id,
+        member_id: row.member_id,
+        type: row.type,
+        priority: row.priority,
+        title: row.title,
+        message: row.message,
+        metadata: row.metadata as Record<string, any> | null,
+        status: row.status,
+        is_read: !!row.read_at, // Derive from read_at timestamp
+        created_at: row.created_at,
+        read_at: row.read_at,
+        scheduled_for: row.scheduled_for,
+        sent_at: row.sent_at,
+      }));
+
+      return notifications;
     },
     enabled: !!organizationId,
     staleTime: 30 * 1000, // 30 seconds - notifications should be fairly fresh
@@ -155,20 +102,14 @@ export function useNotificationMutations(organizationId: string | undefined) {
 
   const markAsRead = useMutation({
     mutationFn: async (notificationId: string) => {
-      // TODO: Implement actual Supabase update
-      /*
       const { error } = await supabase
         .from('notifications')
         .update({
-          is_read: true,
           read_at: new Date().toISOString()
         })
         .eq('id', notificationId);
 
       if (error) throw error;
-      */
-
-      // Mock implementation
       return { success: true };
     },
     onSuccess: () => {
@@ -178,20 +119,17 @@ export function useNotificationMutations(organizationId: string | undefined) {
 
   const markAllAsRead = useMutation({
     mutationFn: async () => {
-      // TODO: Implement actual Supabase update
-      /*
+      if (!organizationId) throw new Error('Organization ID required');
+
       const { error } = await supabase
         .from('notifications')
         .update({
-          is_read: true,
           read_at: new Date().toISOString()
         })
         .eq('organization_id', organizationId)
-        .eq('is_read', false);
+        .is('read_at', null);
 
       if (error) throw error;
-      */
-
       return { success: true };
     },
     onSuccess: () => {
@@ -204,16 +142,12 @@ export function useNotificationMutations(organizationId: string | undefined) {
 
   const deleteNotification = useMutation({
     mutationFn: async (notificationId: string) => {
-      // TODO: Implement actual Supabase delete
-      /*
       const { error } = await supabase
         .from('notifications')
         .delete()
         .eq('id', notificationId);
 
       if (error) throw error;
-      */
-
       return { success: true };
     },
     onSuccess: () => {
