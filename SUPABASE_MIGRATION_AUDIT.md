@@ -332,6 +332,32 @@ The ScheduleManager correctly fetches real data:
 
 ---
 
+### 4.16 ~~Medium:~~ FIXED: Push Notification Manager
+
+**File:** `src/components/mobile/PushNotificationManager.tsx`
+
+**Status:** FIXED (2025-12-20)
+
+**Solution Applied:**
+- Replaced mock notification history with real data from `notifications` table
+- Uses TanStack Query to fetch user's notifications by `member_id`
+- Added loading skeleton for notification history
+- Added empty state when no notifications exist
+- Added refresh button to refetch notifications
+- Transforms database fields (`message`, `sent_at`, `read_at`) to UI format
+
+---
+
+### 4.17 FIXED: Cleanup - Pooler URL Temp File
+
+**File:** `supabase/.temp/pooler-url`
+
+**Status:** DELETED (2025-12-20)
+
+This file contained an obsolete reference to the cloud Supabase pooler URL (`aws-1-us-east-1.pooler.supabase.com`). File has been removed as part of the migration cleanup.
+
+---
+
 ## 5. Action Items Checklist
 
 ### Critical (Must Fix Before Production) - ALL COMPLETE
@@ -356,11 +382,11 @@ The ScheduleManager correctly fetches real data:
 - [ ] **SEC-001:** Remove `*.supabase.co` from CSP/CORS after migration stable
 - [ ] **CONFIG-001:** Move footer contact info to organization settings
 - [x] **DATA-010:** Review staff schedule mock data in `ScheduleManager.tsx` - Already uses real data, schedules table needed
-- [ ] **DATA-011:** Review push notification manager mock data
+- [x] **DATA-011:** Replace mock notification history in `PushNotificationManager.tsx`
 
 ### Low Priority
 
-- [ ] **CLEANUP-001:** Delete `supabase/.temp/pooler-url` or update
+- [x] **CLEANUP-001:** Delete `supabase/.temp/pooler-url` - Removed obsolete cloud Supabase URL
 - [ ] **DOCS-001:** Update documentation with self-hosted URLs where appropriate
 
 ---
