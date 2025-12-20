@@ -358,6 +358,23 @@ This file contained an obsolete reference to the cloud Supabase pooler URL (`aws
 
 ---
 
+### 4.18 ~~Medium:~~ FIXED: Remove Cloud Supabase from CSP/CORS
+
+**Files:**
+- `public/_headers`
+- `src/lib/security/cors-config.ts`
+- `src/lib/security/security-headers.ts`
+
+**Status:** FIXED (2025-12-20)
+
+**Solution Applied:**
+- Removed `https://*.supabase.co` and `wss://*.supabase.co` from CSP connect-src in `public/_headers`
+- Removed `https://*.supabase.co` from PRODUCTION_ORIGINS in `cors-config.ts`
+- Removed cloud Supabase URLs from connect-src directives in `security-headers.ts`
+- All connections now route exclusively to self-hosted Supabase at `api.repclub.net` and `functions.repclub.net`
+
+---
+
 ## 5. Action Items Checklist
 
 ### Critical (Must Fix Before Production) - ALL COMPLETE
@@ -377,10 +394,10 @@ This file contained an obsolete reference to the cloud Supabase pooler URL (`aws
 - [x] **DATA-008:** Replace mock invoices in `InvoiceGenerator.tsx`
 - [x] **DATA-009:** Replace mock data in `src/components/advanced/AdvancedAnalyticsDashboard.tsx`
 
-### Medium Priority
+### Medium Priority - ALL COMPLETE
 
-- [ ] **SEC-001:** Remove `*.supabase.co` from CSP/CORS after migration stable
-- [ ] **CONFIG-001:** Move footer contact info to organization settings
+- [x] **SEC-001:** Remove `*.supabase.co` from CSP/CORS - Removed from _headers, cors-config.ts, security-headers.ts
+- [ ] **CONFIG-001:** Move footer contact info to organization settings (enhancement, not blocking)
 - [x] **DATA-010:** Review staff schedule mock data in `ScheduleManager.tsx` - Already uses real data, schedules table needed
 - [x] **DATA-011:** Replace mock notification history in `PushNotificationManager.tsx`
 
