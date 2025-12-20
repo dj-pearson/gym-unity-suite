@@ -48,10 +48,13 @@ export function AnnouncementManager() {
   }, []);
 
   const fetchAnnouncements = async () => {
+    if (!profile?.organization_id) return;
+
     try {
       const { data, error } = await supabase
         .from('announcements')
         .select('*')
+        .eq('organization_id', profile.organization_id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -303,10 +306,13 @@ export function EmailTemplates() {
   }, []);
 
   const fetchTemplates = async () => {
+    if (!profile?.organization_id) return;
+
     try {
       const { data, error } = await supabase
         .from('email_templates')
         .select('*')
+        .eq('organization_id', profile.organization_id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
