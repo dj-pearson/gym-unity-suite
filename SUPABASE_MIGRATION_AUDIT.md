@@ -278,6 +278,60 @@ Example CSV data like "john@example.com, Jane Doe" in templates. This is **accep
 
 ---
 
+### 4.12 ~~High:~~ FIXED: Duplicate Advanced Analytics Dashboard
+
+**File:** `src/components/advanced/AdvancedAnalyticsDashboard.tsx`
+
+**Status:** FIXED (2025-12-20)
+
+**Solution Applied:**
+- Component now fetches real data from multiple Supabase tables: `members`, `check_ins`, `payment_transactions`, `equipment`, `classes`, `class_bookings`
+- AI insights are dynamically generated based on actual member activity, revenue, and equipment status
+- Predictive metrics calculate real retention rates, utilization, and equipment uptime
+- Automation rules displayed as configurable templates (pending activation)
+- Added loading skeleton and refresh functionality
+- Uses TanStack Query for data fetching and caching
+
+---
+
+### 4.13 Note: Staff Schedule Manager
+
+**File:** `src/components/staff/ScheduleManager.tsx`
+
+**Status:** Already properly implemented
+
+The ScheduleManager correctly fetches real data:
+- Staff members from `profiles` table
+- Locations from `locations` table
+- Schedules table doesn't exist yet (intentional - awaiting database migration)
+- Shows appropriate messaging about table creation needed
+
+---
+
+### 4.14 Note: Early Access Form
+
+**File:** `src/components/auth/EarlyAccessForm.tsx`
+
+**Status:** Already using real data
+
+- Inserts to `early_access_requests` table via Supabase
+- Proper validation with Zod schema
+- No mock data present
+
+---
+
+### 4.15 Note: Tablet Signup Form
+
+**File:** `src/components/members/TabletSignupForm.tsx`
+
+**Status:** Already using real data
+
+- Creates leads in `leads` table
+- Fetches locations from `locations` table
+- No mock data present
+
+---
+
 ## 5. Action Items Checklist
 
 ### Critical (Must Fix Before Production) - ALL COMPLETE
@@ -295,13 +349,13 @@ Example CSV data like "john@example.com, Jane Doe" in templates. This is **accep
 - [x] **DATA-006:** Replace mock audit logs in `AuditTrailManager.tsx`
 - [x] **DATA-007:** Replace mock metrics in `SystemHealthMonitor.tsx`
 - [x] **DATA-008:** Replace mock invoices in `InvoiceGenerator.tsx`
-- [ ] **DATA-009:** Replace mock data in `src/components/advanced/AdvancedAnalyticsDashboard.tsx` (duplicate component - may share same logic)
+- [x] **DATA-009:** Replace mock data in `src/components/advanced/AdvancedAnalyticsDashboard.tsx`
 
 ### Medium Priority
 
 - [ ] **SEC-001:** Remove `*.supabase.co` from CSP/CORS after migration stable
 - [ ] **CONFIG-001:** Move footer contact info to organization settings
-- [ ] **DATA-010:** Review staff schedule mock data in `ScheduleManager.tsx`
+- [x] **DATA-010:** Review staff schedule mock data in `ScheduleManager.tsx` - Already uses real data, schedules table needed
 - [ ] **DATA-011:** Review push notification manager mock data
 
 ### Low Priority
