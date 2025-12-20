@@ -1,26 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  Users, 
-  Shield, 
-  Key, 
+import {
+  Users,
+  Shield,
+  Key,
   Lock,
   Unlock,
   Plus,
   Settings,
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  RefreshCw
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -52,74 +56,47 @@ interface Permission {
   description: string;
 }
 
-const MOCK_USERS: UserAccess[] = [
+// Role definitions - these are based on the user_role enum in the database
+const SYSTEM_ROLES: Role[] = [
   {
-    id: '1',
-    name: 'John Smith',
-    email: 'john@gymclub.com',
-    role: 'Admin',
-    status: 'active',
-    lastLogin: new Date(Date.now() - 3600000).toISOString(),
-    mfaEnabled: true,
+    id: 'owner',
+    name: 'Owner',
+    description: 'Full system access and business ownership',
     permissions: ['all'],
-    loginAttempts: 0
-  },
-  {
-    id: '2',
-    name: 'Sarah Johnson',
-    email: 'sarah@gymclub.com',
-    role: 'Staff',
-    status: 'active',
-    lastLogin: new Date(Date.now() - 7200000).toISOString(),
-    mfaEnabled: false,
-    permissions: ['members.read', 'classes.manage'],
-    loginAttempts: 2
-  },
-  {
-    id: '3',
-    name: 'Mike Wilson',
-    email: 'mike@gymclub.com',
-    role: 'Trainer',
-    status: 'suspended',
-    lastLogin: new Date(Date.now() - 86400000 * 3).toISOString(),
-    mfaEnabled: true,
-    permissions: ['classes.read', 'members.read'],
-    loginAttempts: 5
-  }
-];
-
-const MOCK_ROLES: Role[] = [
-  {
-    id: '1',
-    name: 'Admin',
-    description: 'Full system access',
-    permissions: ['all'],
-    userCount: 2,
+    userCount: 0,
     isCustom: false
   },
   {
-    id: '2',
+    id: 'manager',
+    name: 'Manager',
+    description: 'Location and staff management',
+    permissions: ['members.read', 'members.write', 'classes.manage', 'staff.manage', 'billing.read', 'reports.view'],
+    userCount: 0,
+    isCustom: false
+  },
+  {
+    id: 'staff',
     name: 'Staff',
     description: 'General staff access',
-    permissions: ['members.read', 'members.write', 'classes.manage'],
-    userCount: 5,
+    permissions: ['members.read', 'members.write', 'classes.manage', 'checkins.manage'],
+    userCount: 0,
     isCustom: false
   },
   {
-    id: '3',
+    id: 'trainer',
     name: 'Trainer',
     description: 'Class instruction access',
-    permissions: ['classes.read', 'members.read'],
-    userCount: 8,
+    permissions: ['classes.read', 'classes.manage', 'members.read'],
+    userCount: 0,
     isCustom: false
   },
   {
-    id: '4',
-    name: 'Front Desk',
-    description: 'Reception and check-in access',
-    permissions: ['checkins.manage', 'members.read'],
-    userCount: 3,
-    isCustom: true
+    id: 'member',
+    name: 'Member',
+    description: 'Member self-service access',
+    permissions: ['classes.read'],
+    userCount: 0,
+    isCustom: false
   }
 ];
 
@@ -138,9 +115,7 @@ const AVAILABLE_PERMISSIONS: Permission[] = [
 export default function AccessControlManager() {
   const { profile } = useAuth();
   const { toast } = useToast();
-  const [users, setUsers] = useState<UserAccess[]>(MOCK_USERS);
-  const [roles, setRoles] = useState<Role[]>(MOCK_ROLES);
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [showAddRole, setShowAddRole] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserAccess | null>(null);
 
@@ -148,6 +123,113 @@ export default function AccessControlManager() {
     name: '',
     description: '',
     permissions: [] as string[]
+  });
+
+  // Fetch users from the database
+  const { data: usersData = [], isLoading: usersLoading, refetch: refetchUsers } = useQuery({
+    queryKey: ['access-control-users', profile?.organization_id],
+    queryFn: async () => {
+      if (!profile?.organization_id) return [];
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, email, first_name, last_name, role, status, updated_at')
+        .eq('organization_id', profile.organization_id)
+        .order('role', { ascending: true })
+        .order('first_name', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching users:', error);
+        throw error;
+      }
+
+      return data || [];
+    },
+    enabled: !!profile?.organization_id,
+    staleTime: 30 * 1000,
+  });
+
+  // Transform database users to UserAccess format
+  const users: UserAccess[] = useMemo(() => {
+    return usersData.map((user) => ({
+      id: user.id,
+      name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email,
+      email: user.email,
+      role: user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Member',
+      status: (user.status as 'active' | 'inactive' | 'suspended') || 'active',
+      lastLogin: user.updated_at, // Using updated_at as proxy for activity
+      mfaEnabled: false, // MFA not implemented in current schema
+      permissions: SYSTEM_ROLES.find(r => r.id === user.role)?.permissions || [],
+      loginAttempts: 0, // Not tracked in current schema
+    }));
+  }, [usersData]);
+
+  // Calculate role user counts
+  const roles: Role[] = useMemo(() => {
+    const roleCounts: Record<string, number> = {};
+    usersData.forEach((user) => {
+      const role = user.role || 'member';
+      roleCounts[role] = (roleCounts[role] || 0) + 1;
+    });
+
+    return SYSTEM_ROLES.map((role) => ({
+      ...role,
+      userCount: roleCounts[role.id] || 0,
+    }));
+  }, [usersData]);
+
+  // Mutation to update user status
+  const updateUserStatus = useMutation({
+    mutationFn: async ({ userId, status }: { userId: string; status: string }) => {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ status })
+        .eq('id', userId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['access-control-users'] });
+      toast({
+        title: 'User Status Updated',
+        description: 'User access has been modified successfully',
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error',
+        description: 'Failed to update user status',
+        variant: 'destructive',
+      });
+      console.error('Error updating user status:', error);
+    },
+  });
+
+  // Mutation to update user role
+  const updateUserRole = useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role })
+        .eq('id', userId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['access-control-users'] });
+      toast({
+        title: 'User Role Updated',
+        description: 'User role has been changed successfully',
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error',
+        description: 'Failed to update user role',
+        variant: 'destructive',
+      });
+      console.error('Error updating user role:', error);
+    },
   });
 
   const getStatusBadge = (status: string) => {
@@ -170,86 +252,47 @@ export default function AccessControlManager() {
   };
 
   const handleToggleUserStatus = (userId: string) => {
-    setUsers(prev => prev.map(user => 
-      user.id === userId 
-        ? { ...user, status: user.status === 'active' ? 'suspended' : 'active' }
-        : user
-    ));
+    const user = users.find((u) => u.id === userId);
+    if (!user) return;
 
-    toast({
-      title: "User Status Updated",
-      description: "User access has been modified successfully"
-    });
+    const newStatus = user.status === 'active' ? 'suspended' : 'active';
+    updateUserStatus.mutate({ userId, status: newStatus });
   };
 
   const handleToggleMFA = (userId: string) => {
-    setUsers(prev => prev.map(user => 
-      user.id === userId 
-        ? { ...user, mfaEnabled: !user.mfaEnabled }
-        : user
-    ));
-
+    // MFA is not implemented in the current schema
     toast({
-      title: "MFA Settings Updated",
-      description: "Multi-factor authentication settings have been changed"
+      title: 'MFA Not Available',
+      description: 'Multi-factor authentication is not yet implemented',
+      variant: 'destructive',
     });
   };
 
   const handleResetLoginAttempts = (userId: string) => {
-    setUsers(prev => prev.map(user => 
-      user.id === userId 
-        ? { ...user, loginAttempts: 0 }
-        : user
-    ));
-
+    // Login attempts tracking is not implemented in current schema
     toast({
-      title: "Login Attempts Reset",
-      description: "Failed login attempts have been cleared"
+      title: 'Feature Not Available',
+      description: 'Login attempt tracking is not yet implemented',
+      variant: 'destructive',
     });
   };
 
   const handleAddRole = () => {
-    if (!roleForm.name || !roleForm.description || roleForm.permissions.length === 0) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill in all required fields",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const newRole: Role = {
-      id: Date.now().toString(),
-      ...roleForm,
-      userCount: 0,
-      isCustom: true
-    };
-
-    setRoles(prev => [...prev, newRole]);
-    setShowAddRole(false);
-    setRoleForm({ name: '', description: '', permissions: [] });
-
+    // Custom roles are not supported - roles are defined in the database enum
     toast({
-      title: "Role Created",
-      description: "New role has been created successfully"
+      title: 'Custom Roles Not Supported',
+      description: 'Roles are managed at the database level. Contact support to add new roles.',
+      variant: 'destructive',
     });
+    setShowAddRole(false);
   };
 
   const handleDeleteRole = (roleId: string) => {
-    const role = roles.find(r => r.id === roleId);
-    if (role && role.userCount > 0) {
-      toast({
-        title: "Cannot Delete Role",
-        description: "Role is assigned to users and cannot be deleted",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setRoles(prev => prev.filter(role => role.id !== roleId));
+    // Roles are defined in the database enum and cannot be deleted
     toast({
-      title: "Role Deleted",
-      description: "Role has been removed successfully"
+      title: 'Cannot Delete System Role',
+      description: 'System roles cannot be deleted',
+      variant: 'destructive',
     });
   };
 
@@ -262,6 +305,15 @@ export default function AccessControlManager() {
             Manage user permissions, roles, and security settings
           </p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => refetchUsers()}
+          disabled={usersLoading}
+        >
+          <RefreshCw className={`w-4 h-4 mr-2 ${usersLoading ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
       </div>
 
       {/* User Access Table */}
@@ -283,12 +335,30 @@ export default function AccessControlManager() {
                 <TableHead>Role</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>MFA</TableHead>
-                <TableHead>Last Login</TableHead>
+                <TableHead>Last Activity</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((user) => (
+              {usersLoading ? (
+                // Loading skeleton
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={`skeleton-${i}`}>
+                    <TableCell><Skeleton className="h-10 w-48" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-16" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-16" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-8 w-32" /></TableCell>
+                  </TableRow>
+                ))
+              ) : users.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    No users found in this organization
+                  </TableCell>
+                </TableRow>
+              ) : users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>
                     <div className="flex items-center gap-2">
