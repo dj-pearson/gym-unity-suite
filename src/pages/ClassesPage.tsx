@@ -82,6 +82,7 @@ export default function ClassesPage() {
   const [showCategoryManager, setShowCategoryManager] = useState(false);
   const [showWaitlistManager, setShowWaitlistManager] = useState(false);
   const [activeTab, setActiveTab] = useState('list');
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     fetchClasses();
@@ -146,10 +147,12 @@ export default function ClassesPage() {
         return;
       }
 
-      // Fetch waitlist data separately
+      // Fetch waitlist data separately - only for classes in this organization
+      const classIds = classesData.map(c => c.id);
       const { data: waitlistData } = await supabase
         .from('class_waitlists')
         .select('class_id, id, member_id, status, priority_order')
+        .in('class_id', classIds.length > 0 ? classIds : [''])
         .eq('status', 'waiting');
 
       // Transform the data to match our interface
@@ -383,7 +386,11 @@ export default function ClassesPage() {
                   className="pl-10 w-64"
                 />
               </div>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+              >
                 <Filter className="mr-2 h-4 w-4" />
                 Filter
               </Button>
@@ -452,7 +459,14 @@ export default function ClassesPage() {
                             </Badge>
                           )}
                         </div>
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedClass(classItem);
+                          }}
+                        >
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </div>
