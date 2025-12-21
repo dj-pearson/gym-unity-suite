@@ -147,7 +147,10 @@ export default function MarketingPage() {
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          <Button className="bg-gradient-secondary hover:opacity-90">
+          <Button
+            className="bg-gradient-secondary hover:opacity-90"
+            onClick={() => setActiveTab('email')}
+          >
             <Plus className="mr-2 h-4 w-4" />
             New Campaign
           </Button>
@@ -227,7 +230,7 @@ export default function MarketingPage() {
                 <p className="text-sm text-muted-foreground mb-4">
                   Send targeted emails to member segments
                 </p>
-                <Button size="sm">Create Email</Button>
+                <Button size="sm" onClick={() => setActiveTab('email')}>Create Email</Button>
               </CardContent>
             </Card>
 
@@ -238,7 +241,7 @@ export default function MarketingPage() {
                 <p className="text-sm text-muted-foreground mb-4">
                   Send SMS reminders and promotions
                 </p>
-                <Button size="sm" variant="outline">Create SMS</Button>
+                <Button size="sm" variant="outline" onClick={() => setActiveTab('sms')}>Create SMS</Button>
               </CardContent>
             </Card>
 
@@ -249,7 +252,7 @@ export default function MarketingPage() {
                 <p className="text-sm text-muted-foreground mb-4">
                   Reward members for engagement
                 </p>
-                <Button size="sm" variant="outline">Manage Rewards</Button>
+                <Button size="sm" variant="outline" onClick={() => setActiveTab('loyalty')}>Manage Rewards</Button>
               </CardContent>
             </Card>
 
@@ -260,7 +263,7 @@ export default function MarketingPage() {
                 <p className="text-sm text-muted-foreground mb-4">
                   Win back at-risk members
                 </p>
-                <Button size="sm" variant="outline">View Campaigns</Button>
+                <Button size="sm" variant="outline" onClick={() => setActiveTab('retention')}>View Campaigns</Button>
               </CardContent>
             </Card>
           </div>

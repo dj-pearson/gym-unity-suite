@@ -31,6 +31,7 @@ export function AnnouncementManager() {
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [editingAnnouncement, setEditingAnnouncement] = useState<any>(null);
   const { profile } = useAuth();
   const { toast } = useToast();
 
@@ -48,10 +49,13 @@ export function AnnouncementManager() {
   }, []);
 
   const fetchAnnouncements = async () => {
+    if (!profile?.organization_id) return;
+
     try {
       const { data, error } = await supabase
         .from('announcements')
         .select('*')
+        .eq('organization_id', profile.organization_id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -277,7 +281,11 @@ export function AnnouncementManager() {
                             Publish
                           </Button>
                         )}
-                        <Button size="sm" variant="outline">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setEditingAnnouncement(announcement)}
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
                       </div>
@@ -296,6 +304,9 @@ export function AnnouncementManager() {
 export function EmailTemplates() {
   const [templates, setTemplates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [viewingTemplate, setViewingTemplate] = useState<any>(null);
+  const [editingTemplate, setEditingTemplate] = useState<any>(null);
   const { profile } = useAuth();
 
   useEffect(() => {
@@ -303,10 +314,13 @@ export function EmailTemplates() {
   }, []);
 
   const fetchTemplates = async () => {
+    if (!profile?.organization_id) return;
+
     try {
       const { data, error } = await supabase
         .from('email_templates')
         .select('*')
+        .eq('organization_id', profile.organization_id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -334,12 +348,21 @@ export function EmailTemplates() {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <Input placeholder="Search templates..." className="w-64" />
-              <Button size="sm" variant="outline">
+              <Input
+                placeholder="Search templates..."
+                className="w-64"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => fetchTemplates()}
+              >
                 <Search className="w-4 h-4" />
               </Button>
             </div>
-            <Button>
+            <Button onClick={() => setEditingTemplate({})}>
               <Plus className="w-4 h-4 mr-2" />
               New Template
             </Button>
@@ -367,10 +390,18 @@ export function EmailTemplates() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setViewingTemplate(template)}
+                        >
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button size="sm" variant="outline">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setEditingTemplate(template)}
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
                       </div>

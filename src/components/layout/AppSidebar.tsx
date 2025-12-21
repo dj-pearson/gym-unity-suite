@@ -18,12 +18,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Calendar, 
-  CreditCard, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Users,
+  Calendar,
+  CreditCard,
+  Settings,
   LogOut,
   UserCheck,
   BarChart3,
@@ -51,7 +51,9 @@ import {
   Bath,
   ShoppingCart,
   Building,
-  Brain
+  Brain,
+  Target,
+  Ticket
 } from 'lucide-react';
 
 // Navigation structure organized by functional areas with permissions
@@ -60,7 +62,7 @@ const navigationGroups = [
   {
     title: 'Overview',
     items: [
-      { name: 'Dashboard', href: '/', icon: LayoutDashboard, permission: PERMISSIONS.VIEW_DASHBOARD }
+      { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, permission: PERMISSIONS.VIEW_DASHBOARD }
     ]
   },
   {
@@ -80,6 +82,8 @@ const navigationGroups = [
       { name: 'CRM', href: '/crm', icon: Phone, permission: PERMISSIONS.VIEW_CRM },
       { name: 'Leads Pipeline', href: '/leads', icon: TrendingUp, permission: PERMISSIONS.VIEW_CRM },
       { name: 'Marketing', href: '/marketing', icon: Mail, permission: PERMISSIONS.VIEW_REPORTS },
+      { name: 'Attribution', href: '/attribution', icon: Target, permission: PERMISSIONS.VIEW_CRM },
+      { name: 'Corporate Accounts', href: '/corporate', icon: Building2, permission: PERMISSIONS.VIEW_CORPORATE },
       { name: 'Referrals', href: '/referrals', icon: Share2, permission: PERMISSIONS.VIEW_CRM },
       { name: 'Commissions', href: '/commissions', icon: DollarSign, permission: PERMISSIONS.VIEW_CRM }
     ]
@@ -115,6 +119,7 @@ const navigationGroups = [
       { name: 'Onboarding', href: '/onboarding', icon: UserCheck, permission: PERMISSIONS.VIEW_MEMBERS },
       { name: 'Staff Certifications', href: '/staff-certifications', icon: Shield, permission: PERMISSIONS.MANAGE_STAFF },
       { name: 'Incidents', href: '/incidents', icon: AlertTriangle, permission: PERMISSIONS.VIEW_SETTINGS },
+      { name: 'Support Tickets', href: '/tickets', icon: Ticket, permission: PERMISSIONS.VIEW_SETTINGS },
       { name: 'Multi-Location', href: '/multi-location', icon: Building, permission: PERMISSIONS.VIEW_SETTINGS }
     ]
   },

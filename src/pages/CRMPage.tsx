@@ -131,41 +131,21 @@ export const CRMPage: React.FC = () => {
     if (!profile?.organization_id) return;
 
     try {
+      // Use a join to fetch activities only for leads in this organization
       const { data, error } = await supabase
         .from('lead_activities')
-        .select('*')
+        .select(`
+          *,
+          leads!inner(organization_id),
+          creator:profiles(first_name, last_name)
+        `)
+        .eq('leads.organization_id', profile.organization_id)
         .order('created_at', { ascending: false })
         .limit(20);
 
       if (error) throw error;
-      
-      // Fetch creator details separately and filter by organization
-      const activitiesWithDetails = await Promise.all((data || []).map(async (activity) => {
-        // Check if lead belongs to current organization
-        const { data: leadData } = await supabase
-          .from('leads')
-          .select('organization_id')
-          .eq('id', activity.lead_id)
-          .single();
 
-        if (!leadData || leadData.organization_id !== profile.organization_id) {
-          return null;
-        }
-
-        let creator = null;
-        if (activity.created_by) {
-          const { data: creatorData } = await supabase
-            .from('profiles')
-            .select('first_name, last_name')
-            .eq('id', activity.created_by)
-            .single();
-          creator = creatorData;
-        }
-
-        return { ...activity, creator };
-      }));
-
-      setActivities(activitiesWithDetails.filter(Boolean));
+      setActivities(data || []);
     } catch (error) {
       console.error('Error fetching activities:', error);
     }

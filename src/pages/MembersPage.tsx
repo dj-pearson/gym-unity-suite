@@ -20,6 +20,7 @@ import {
   Users2
 } from 'lucide-react';
 import { MemberDetailDialog } from '@/components/members/MemberDetailDialog';
+import { AddMemberDialog } from '@/components/members/AddMemberDialog';
 import { VirtualList } from '@/components/ui/VirtualList';
 import { useMembers, type Member } from '@/hooks/useMembers';
 import ImportButton from '@/components/imports/ImportButton';
@@ -30,6 +31,8 @@ export default function MembersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Use React Query for data fetching with automatic caching
   const { data: members = [], isLoading: loading } = useMembers(profile?.organization_id);
@@ -118,7 +121,10 @@ export default function MembersPage() {
         </div>
         <div className="flex items-center gap-2">
           <ImportButton module="members" onImportComplete={handleImportComplete} />
-          <Button className="bg-gradient-primary hover:opacity-90">
+          <Button
+            className="bg-gradient-primary hover:opacity-90"
+            onClick={() => setIsAddMemberDialogOpen(true)}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Add Member
           </Button>
@@ -164,7 +170,11 @@ export default function MembersPage() {
             className="pl-10"
           />
         </div>
-        <Button variant="outline" size="sm">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowFilters(!showFilters)}
+        >
           <Filter className="mr-2 h-4 w-4" />
           Filter
         </Button>
@@ -184,7 +194,10 @@ export default function MembersPage() {
                 {searchTerm ? 'Try adjusting your search terms' : 'Start by adding your first member'}
               </p>
               {!searchTerm && (
-                <Button className="bg-gradient-primary hover:opacity-90">
+                <Button
+                  className="bg-gradient-primary hover:opacity-90"
+                  onClick={() => setIsAddMemberDialogOpen(true)}
+                >
                   <Plus className="mr-2 h-4 w-4" />
                   Add First Member
                 </Button>
@@ -296,6 +309,12 @@ export default function MembersPage() {
           setIsDetailDialogOpen(false);
           setSelectedMember(null);
         }}
+      />
+
+      <AddMemberDialog
+        isOpen={isAddMemberDialogOpen}
+        onClose={() => setIsAddMemberDialogOpen(false)}
+        onSuccess={handleImportComplete}
       />
     </div>
   );
