@@ -110,10 +110,11 @@ export function BulkMemberOperations() {
       for (const member of memberData) {
         try {
           if (operationType === 'bulk_add') {
-            // Check if user exists
+            // Check if user exists within this organization
             let { data: existingProfile } = await supabase
               .from('profiles')
               .select('id')
+              .eq('organization_id', profile?.organization_id)
               .eq('email', member.email)
               .single();
 
