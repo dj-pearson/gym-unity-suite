@@ -153,12 +153,15 @@ export function InvoiceGenerator() {
       notes: string;
       payment_method: string;
     }) => {
+      if (!profile?.organization_id) throw new Error('No organization ID');
+
       const { error } = await supabase.from('payment_transactions').insert({
         member_id: data.member_id,
         amount: data.amount,
         payment_method: data.payment_method,
         payment_status: 'pending',
         notes: data.notes,
+        organization_id: profile.organization_id,
       });
 
       if (error) throw error;
@@ -185,10 +188,13 @@ export function InvoiceGenerator() {
   // Mutation to update payment status
   const updatePaymentStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      if (!profile?.organization_id) throw new Error('No organization ID');
+
       const { error } = await supabase
         .from('payment_transactions')
         .update({ payment_status: status, updated_at: new Date().toISOString() })
-        .eq('id', id);
+        .eq('id', id)
+        .eq('organization_id', profile.organization_id);
 
       if (error) throw error;
     },

@@ -73,10 +73,16 @@ export default function TrainerAvailabilityManager() {
 
   const fetchTrainers = async () => {
     try {
+      if (!profile?.organization_id) {
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('profiles')
         .select('id, first_name, last_name, email')
         .eq('role', 'trainer')
+        .eq('organization_id', profile.organization_id)
         .order('first_name');
 
       if (error) throw error;
@@ -160,6 +166,10 @@ export default function TrainerAvailabilityManager() {
     }
 
     try {
+      if (!profile?.organization_id) {
+        throw new Error('No organization ID');
+      }
+
       if (editingAvailability) {
         // Update existing availability
         const { error } = await supabase
@@ -170,7 +180,8 @@ export default function TrainerAvailabilityManager() {
             end_time: formData.end_time,
             is_available: formData.is_available
           })
-          .eq('id', editingAvailability.id);
+          .eq('id', editingAvailability.id)
+          .eq('organization_id', profile.organization_id);
 
         if (error) throw error;
 
@@ -187,7 +198,8 @@ export default function TrainerAvailabilityManager() {
             day_of_week: formData.day_of_week,
             start_time: formData.start_time,
             end_time: formData.end_time,
-            is_available: formData.is_available
+            is_available: formData.is_available,
+            organization_id: profile.organization_id
           });
 
         if (error) throw error;
@@ -227,10 +239,15 @@ export default function TrainerAvailabilityManager() {
     }
 
     try {
+      if (!profile?.organization_id) {
+        throw new Error('No organization ID');
+      }
+
       const { error } = await supabase
         .from('trainer_availability')
         .delete()
-        .eq('id', availabilityRecord.id);
+        .eq('id', availabilityRecord.id)
+        .eq('organization_id', profile.organization_id);
 
       if (error) throw error;
 

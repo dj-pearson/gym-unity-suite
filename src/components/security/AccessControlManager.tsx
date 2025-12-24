@@ -181,10 +181,13 @@ export default function AccessControlManager() {
   // Mutation to update user status
   const updateUserStatus = useMutation({
     mutationFn: async ({ userId, status }: { userId: string; status: string }) => {
+      if (!profile?.organization_id) throw new Error('No organization ID');
+
       const { error } = await supabase
         .from('profiles')
         .update({ status })
-        .eq('id', userId);
+        .eq('id', userId)
+        .eq('organization_id', profile.organization_id);
 
       if (error) throw error;
     },
@@ -208,10 +211,13 @@ export default function AccessControlManager() {
   // Mutation to update user role
   const updateUserRole = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
+      if (!profile?.organization_id) throw new Error('No organization ID');
+
       const { error } = await supabase
         .from('profiles')
         .update({ role })
-        .eq('id', userId);
+        .eq('id', userId)
+        .eq('organization_id', profile.organization_id);
 
       if (error) throw error;
     },

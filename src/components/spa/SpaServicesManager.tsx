@@ -90,10 +90,13 @@ export function SpaServicesManager() {
 
   const updateServiceMutation = useMutation({
     mutationFn: async ({ id, ...serviceData }: Partial<SpaService> & { id: string }) => {
+      if (!profile?.organization_id) throw new Error("No organization");
+
       const { data, error } = await supabase
         .from("spa_services")
         .update(serviceData)
         .eq("id", id)
+        .eq("organization_id", profile.organization_id)
         .select()
         .single();
 
@@ -113,10 +116,13 @@ export function SpaServicesManager() {
 
   const deleteServiceMutation = useMutation({
     mutationFn: async (id: string) => {
+      if (!profile?.organization_id) throw new Error("No organization");
+
       const { error } = await supabase
         .from("spa_services")
         .delete()
-        .eq("id", id);
+        .eq("id", id)
+        .eq("organization_id", profile.organization_id);
 
       if (error) throw error;
     },
