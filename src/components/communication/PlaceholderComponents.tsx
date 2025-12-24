@@ -107,13 +107,18 @@ export function AnnouncementManager() {
 
   const publishAnnouncement = async (id: string) => {
     try {
+      if (!profile?.organization_id) {
+        throw new Error('No organization ID');
+      }
+
       const { error } = await supabase
         .from('announcements')
-        .update({ 
+        .update({
           is_published: true,
           published_at: new Date().toISOString()
         })
-        .eq('id', id);
+        .eq('id', id)
+        .eq('organization_id', profile.organization_id);
 
       if (error) throw error;
 
@@ -647,13 +652,18 @@ export function MilestoneTracking() {
 
   const sendRecognition = async (milestoneId: string) => {
     try {
+      if (!profile?.organization_id) {
+        throw new Error('No organization ID');
+      }
+
       const { error } = await supabase
         .from('member_milestones')
         .update({
           recognition_sent: true,
           recognition_sent_at: new Date().toISOString()
         })
-        .eq('id', milestoneId);
+        .eq('id', milestoneId)
+        .eq('organization_id', profile.organization_id);
 
       if (error) throw error;
 

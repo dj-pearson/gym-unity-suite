@@ -47,9 +47,43 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true,
     rollupOptions: {
       output: {
-        // Let Vite/Rollup automatically handle vendor chunking based on dependency graph
-        // This prevents circular dependency issues from manual chunking
-        manualChunks: undefined,
+        // Manual chunking strategy for optimal bundle splitting
+        manualChunks: (id) => {
+          // React core and related libraries
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-is') || id.includes('node_modules/scheduler')) {
+            return 'vendor-react';
+          }
+
+          // Recharts and charting libraries (heavy - separate chunk)
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-') || id.includes('node_modules/victory')) {
+            return 'vendor-charts';
+          }
+
+          // UI component libraries
+          if (id.includes('node_modules/@radix-ui') || id.includes('node_modules/lucide-react') || id.includes('node_modules/@hookform')) {
+            return 'vendor-ui';
+          }
+
+          // Data fetching and state management
+          if (id.includes('node_modules/@tanstack') || id.includes('node_modules/@supabase') || id.includes('node_modules/react-query')) {
+            return 'vendor-data';
+          }
+
+          // Date/time libraries
+          if (id.includes('node_modules/date-fns') || id.includes('node_modules/react-big-calendar')) {
+            return 'vendor-calendar';
+          }
+
+          // Form libraries
+          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod')) {
+            return 'vendor-forms';
+          }
+
+          // Other large vendor dependencies
+          if (id.includes('node_modules/')) {
+            return 'vendor-misc';
+          }
+        },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) {
             return 'assets/css/[name]-[hash][extname]';
@@ -69,16 +103,16 @@ export default defineConfig(({ mode }) => ({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: false,
+        drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn', 'console.error'],
       },
       mangle: {
         safari10: true,
       },
     },
     target: 'es2020',
-    chunkSizeWarningLimit: 250,
+    chunkSizeWarningLimit: 600,
     // Enable source maps for production debugging
     sourcemap: false,
     // Optimize CSS
