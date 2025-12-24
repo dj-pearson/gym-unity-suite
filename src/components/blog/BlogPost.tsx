@@ -5,6 +5,7 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { Footer } from '@/components/layout/Footer';
 import { Calendar, Clock, ArrowLeft, Share2, BookmarkPlus } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 
 interface BlogPostProps {
   title: string;
@@ -156,9 +157,16 @@ export function BlogPost({
           </figure>
         )}
 
-        {/* Article Content */}
+        {/* Article Content - SECURITY: Sanitized with DOMPurify to prevent XSS */}
         <div className="prose prose-lg max-w-none mb-12">
-          <div dangerouslySetInnerHTML={{ __html: content }} />
+          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content, {
+            ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'ul', 'ol', 'li',
+              'a', 'strong', 'em', 'b', 'i', 'u', 'blockquote', 'code', 'pre', 'img',
+              'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'figure', 'figcaption'],
+            ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'title', 'class', 'id',
+              'width', 'height', 'loading'],
+            ALLOW_DATA_ATTR: false
+          }) }} />
         </div>
 
         {/* Tags */}
