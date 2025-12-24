@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { MemberDetailDialog } from '@/components/members/MemberDetailDialog';
 import { AddMemberDialog } from '@/components/members/AddMemberDialog';
 import { VirtualList } from '@/components/ui/VirtualList';
@@ -101,12 +102,71 @@ export default function MembersPage() {
   if (loading) {
     return (
       <div className="space-y-6">
+        {/* Header Skeleton */}
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Members</h1>
+          <div className="flex items-center space-x-4">
+            <Skeleton className="h-10 w-10 rounded-lg" />
+            <div>
+              <Skeleton className="h-8 w-32 mb-2" />
+              <Skeleton className="h-4 w-64" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-10 w-24" />
+            <Skeleton className="h-10 w-32" />
+          </div>
         </div>
-        <div className="text-center py-12">
-          <div className="animate-pulse text-muted-foreground">Loading members...</div>
+
+        {/* Stats Cards Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i} className="gym-card">
+              <CardContent className="p-4">
+                <Skeleton className="h-8 w-16 mb-2" />
+                <Skeleton className="h-4 w-24" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
+
+        {/* Search Bar Skeleton */}
+        <div className="flex items-center space-x-4">
+          <Skeleton className="h-10 flex-1 max-w-md" />
+          <Skeleton className="h-10 w-20" />
+        </div>
+
+        {/* Members List Skeleton */}
+        <Card className="gym-card">
+          <CardHeader>
+            <Skeleton className="h-6 w-40" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex items-center justify-between p-4 border border-border rounded-lg">
+                  <div className="flex items-center space-x-4 flex-1">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <Skeleton className="h-5 w-32" />
+                        <Skeleton className="h-5 w-16 rounded-full" />
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <Skeleton className="h-4 w-40" />
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-4 w-28" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-8 w-8" />
+                    <Skeleton className="h-8 w-8" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
