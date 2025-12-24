@@ -6,6 +6,13 @@ import { initSWConfig } from '@/lib/pwa/swConfig';
 
 // Force bundle refresh: 2025-12-02-01:29
 // This comment changes the file content to generate a new vendor bundle hash
+
+// Security: Escape HTML entities to prevent XSS in error messages
+const escapeHtml = (text: string): string => {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+};
 // Verify React is loaded correctly
 if (!React || !React.createElement || !React.createContext) {
   console.error('CRITICAL: React is not loaded correctly!', {
@@ -52,7 +59,7 @@ if (container) {
         <div>
           <h1 style="color: #ef4444; margin-bottom: 16px;">Application Mount Error</h1>
           <p style="color: #6b7280; margin-bottom: 8px;">Failed to start the application.</p>
-          <p style="color: #9ca3af; font-size: 14px;">${error instanceof Error ? error.message : 'Unknown error'}</p>
+          <p style="color: #9ca3af; font-size: 14px;">${escapeHtml(error instanceof Error ? error.message : 'Unknown error')}</p>
           <button onclick="window.location.reload()" style="margin-top: 16px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">
             Reload Page
           </button>
