@@ -41,17 +41,38 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
+    // Get user's profile to determine their organization
+    const { data: userProfile, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !userProfile?.organization_id) {
+      throw new Error("User organization not found. Please contact support.");
+    }
+
+    const organizationId = userProfile.organization_id;
+    logStep("User organization found", { organizationId });
+
     // Parse request body
     const { membership_plan_id } = await req.json();
     if (!membership_plan_id) {
       throw new Error("membership_plan_id is required");
     }
 
-    // Get membership plan details
+    // Security: Validate membership_plan_id format (UUID)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(membership_plan_id)) {
+      throw new Error("Invalid membership plan ID format");
+    }
+
+    // Get membership plan details - SECURITY: Filter by organization_id to prevent cross-tenant access
     const { data: membershipPlan, error: planError } = await supabaseClient
       .from('membership_plans')
       .select('*')
       .eq('id', membership_plan_id)
+      .eq('organization_id', organizationId)
       .single();
 
     if (planError || !membershipPlan) {
