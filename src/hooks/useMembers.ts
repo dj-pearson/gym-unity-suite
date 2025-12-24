@@ -23,21 +23,32 @@ export interface Member {
   };
 }
 
+export interface UseMembersOptions {
+  page?: number;
+  pageSize?: number;
+}
+
 /**
  * Fetch members for an organization using React Query
- * Provides automatic caching, refetching, and error handling
+ * Provides automatic caching, refetching, and error handling with pagination support
  */
-export function useMembers(organizationId: string | undefined) {
+export function useMembers(organizationId: string | undefined, options: UseMembersOptions = {}) {
   const { toast } = useToast();
+  const { page = 1, pageSize = 25 } = options;
 
   return useQuery({
-    queryKey: queryKeys.members.list(organizationId || ''),
+    queryKey: queryKeys.members.list(organizationId || '', page, pageSize),
     queryFn: async () => {
       if (!organizationId) {
         throw new Error('Organization ID is required');
       }
 
-      const { data, error } = await supabase
+      // Calculate range for pagination
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      // Fetch data with count for pagination
+      const { data, error, count } = await supabase
         .from('profiles')
         .select(`
           id,
@@ -57,10 +68,11 @@ export function useMembers(organizationId: string | undefined) {
               price
             )
           )
-        `)
+        `, { count: 'exact' })
         .eq('organization_id', organizationId)
         .eq('role', 'member')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .range(from, to);
 
       if (error) {
         toast({
@@ -80,7 +92,13 @@ export function useMembers(organizationId: string | undefined) {
         } : undefined
       }));
 
-      return transformedMembers;
+      return {
+        members: transformedMembers,
+        totalCount: count || 0,
+        totalPages: Math.ceil((count || 0) / pageSize),
+        currentPage: page,
+        pageSize,
+      };
     },
     enabled: !!organizationId,
     staleTime: 5 * 60 * 1000, // 5 minutes
