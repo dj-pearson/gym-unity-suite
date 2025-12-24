@@ -5,11 +5,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { Loader2, Mail, QrCode, Home, ArrowLeft, Calendar, ArrowRight } from 'lucide-react';
+import { Loader2, Mail, QrCode, Home, ArrowLeft, Calendar, ArrowRight, AlertCircle } from 'lucide-react';
 import { Logo } from '@/components/ui/logo';
 import { BarcodeLogin } from './BarcodeLogin';
 import { useNavigate } from 'react-router-dom';
 import { RoleTestingPanel } from './RoleTestingPanel';
+import { useToast } from '@/hooks/use-toast';
 
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -17,8 +18,10 @@ export const LoginForm: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showRoleTesting, setShowRoleTesting] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,14 +37,42 @@ export const LoginForm: React.FC = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setPasswordError('');
+
     if (password !== confirmPassword) {
+      setPasswordError('Passwords do not match');
+      toast({
+        title: 'Passwords do not match',
+        description: 'Please make sure both password fields are identical.',
+        variant: 'destructive',
+      });
       return;
     }
-    
+
+    if (password.length < 6) {
+      setPasswordError('Password must be at least 6 characters');
+      toast({
+        title: 'Password too short',
+        description: 'Password must be at least 6 characters long.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
     await signUp(email, password);
     setIsLoading(false);
+  };
+
+  // Clear password error when user starts typing
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    if (passwordError) setPasswordError('');
+  };
+
+  const handleConfirmPasswordChange = (value: string) => {
+    setConfirmPassword(value);
+    if (passwordError) setPasswordError('');
   };
 
   return (
