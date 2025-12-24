@@ -69,16 +69,16 @@ export default defineConfig(({ mode }) => ({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: false,
+        drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn', 'console.error'],
       },
       mangle: {
         safari10: true,
       },
     },
     target: 'es2020',
-    chunkSizeWarningLimit: 250,
+    chunkSizeWarningLimit: 600,
     // Enable source maps for production debugging
     sourcemap: false,
     // Optimize CSS

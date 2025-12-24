@@ -73,7 +73,8 @@ export default function MembershipPlanForm({ onSuccess, onCancel, initialData }:
         const { error } = await supabase
           .from('membership_plans')
           .update(planData)
-          .eq('id', initialData.id);
+          .eq('id', initialData.id)
+          .eq('organization_id', profile.organization_id);
 
         if (error) throw error;
 
