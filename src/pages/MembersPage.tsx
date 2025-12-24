@@ -17,7 +17,9 @@ import {
   Calendar,
   UserCheck,
   FileText,
-  Users2
+  Users2,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { MemberDetailDialog } from '@/components/members/MemberDetailDialog';
 import { AddMemberDialog } from '@/components/members/AddMemberDialog';
@@ -33,9 +35,14 @@ export default function MembersPage() {
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 25;
 
-  // Use React Query for data fetching with automatic caching
-  const { data: members = [], isLoading: loading } = useMembers(profile?.organization_id);
+  // Use React Query for data fetching with automatic caching and pagination
+  const { data, isLoading: loading } = useMembers(profile?.organization_id, { page: currentPage, pageSize });
+  const members = data?.members || [];
+  const totalPages = data?.totalPages || 1;
+  const totalCount = data?.totalCount || 0;
 
   // Refresh members list after import
   const handleImportComplete = () => {
@@ -297,6 +304,61 @@ export default function MembersPage() {
                   );
                 }}
               />
+            </div>
+          )}
+
+          {/* Pagination Controls */}
+          {filteredMembers.length > 0 && totalPages > 1 && (
+            <div className="flex items-center justify-between pt-4 border-t border-border">
+              <div className="text-sm text-muted-foreground">
+                Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, totalCount)} of {totalCount} members
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(pageNum)}
+                        className="w-10"
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
