@@ -71,7 +71,8 @@ export const queryKeys = {
   members: {
     all: ['members'] as const,
     lists: () => [...queryKeys.members.all, 'list'] as const,
-    list: (organizationId: string) => [...queryKeys.members.lists(), organizationId] as const,
+    list: (organizationId: string, page?: number, pageSize?: number) =>
+      [...queryKeys.members.lists(), organizationId, page, pageSize] as const,
     details: () => [...queryKeys.members.all, 'detail'] as const,
     detail: (id: string) => [...queryKeys.members.details(), id] as const,
     attendance: (id: string) => [...queryKeys.members.detail(id), 'attendance'] as const,
@@ -118,7 +119,7 @@ export async function prefetchDashboardData(organizationId: string) {
       staleTime: 2 * 60 * 1000, // 2 minutes
     }),
     client.prefetchQuery({
-      queryKey: queryKeys.members.list(organizationId),
+      queryKey: queryKeys.members.list(organizationId, 1, 25),
       staleTime: 5 * 60 * 1000, // 5 minutes
     }),
   ]);

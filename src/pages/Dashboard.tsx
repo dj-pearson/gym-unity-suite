@@ -70,6 +70,7 @@ export default function Dashboard() {
       const { count: activeMembers } = await supabase
         .from('memberships')
         .select('member_id', { count: 'exact', head: true })
+        .eq('organization_id', profile.organization_id)
         .eq('status', 'active');
 
       // Fetch today's check-ins
@@ -77,6 +78,7 @@ export default function Dashboard() {
       const { count: todayCheckins } = await supabase
         .from('check_ins')
         .select('*', { count: 'exact', head: true })
+        .eq('organization_id', profile.organization_id)
         .gte('checked_in_at', `${today}T00:00:00`)
         .lt('checked_in_at', `${today}T23:59:59`);
 
@@ -98,6 +100,7 @@ export default function Dashboard() {
           member_id,
           membership_plans (price)
         `)
+        .eq('organization_id', profile.organization_id)
         .eq('status', 'active');
 
       const monthlyRevenue = membershipData?.reduce((sum, membership: any) => {
