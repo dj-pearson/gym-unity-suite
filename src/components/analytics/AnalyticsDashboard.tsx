@@ -68,19 +68,21 @@ export default function AnalyticsDashboard() {
 
       const totalMembers = members?.length || 0;
       
-      // Active members (with recent check-ins)
+      // Active members (with recent check-ins) - SECURITY: Filter by organization_id
       const { data: recentCheckIns } = await supabase
         .from('check_ins')
         .select('member_id')
+        .eq('organization_id', profile.organization_id)
         .gte('checked_in_at', startDate.toISOString())
         .eq('is_guest', false);
       
       const activeMembers = new Set(recentCheckIns?.map(ci => ci.member_id)).size;
 
-      // Revenue metrics
+      // Revenue metrics - SECURITY: Filter by organization_id for multi-tenant isolation
       const { data: transactions } = await supabase
         .from('payment_transactions')
         .select('amount, created_at')
+        .eq('organization_id', profile.organization_id)
         .gte('created_at', startDate.toISOString())
         .eq('payment_status', 'completed');
 
