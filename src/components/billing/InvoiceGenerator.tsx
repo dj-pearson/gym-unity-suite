@@ -72,7 +72,7 @@ export function InvoiceGenerator() {
     queryFn: async () => {
       if (!profile?.organization_id) return [];
 
-      // Query payment_transactions with member info
+      // Query payment_transactions with member info - SECURITY: Filter by organization_id
       const { data, error } = await supabase
         .from('payment_transactions')
         .select(`
@@ -85,6 +85,7 @@ export function InvoiceGenerator() {
             plan:membership_plans(name, price)
           )
         `)
+        .eq('organization_id', profile.organization_id)
         .order('created_at', { ascending: false })
         .limit(50);
 
