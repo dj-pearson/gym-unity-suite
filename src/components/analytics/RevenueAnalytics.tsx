@@ -46,10 +46,11 @@ export default function RevenueAnalytics({ timeRange }: RevenueAnalyticsProps) {
       const startDate = new Date();
       startDate.setDate(endDate.getDate() - parseInt(timeRange));
 
-      // Fetch transactions
+      // Fetch transactions - SECURITY: Filter by organization_id for multi-tenant isolation
       const { data: transactions } = await supabase
         .from('payment_transactions')
         .select('amount, created_at, membership_id')
+        .eq('organization_id', profile.organization_id)
         .gte('created_at', startDate.toISOString())
         .eq('payment_status', 'completed')
         .order('created_at');
@@ -108,9 +109,11 @@ export default function RevenueAnalytics({ timeRange }: RevenueAnalyticsProps) {
       const prevStartDate = new Date(startDate);
       prevStartDate.setDate(prevStartDate.getDate() - parseInt(timeRange));
       
+      // SECURITY: Filter by organization_id for multi-tenant isolation
       const { data: prevTransactions } = await supabase
         .from('payment_transactions')
         .select('amount')
+        .eq('organization_id', profile.organization_id)
         .gte('created_at', prevStartDate.toISOString())
         .lt('created_at', startDate.toISOString())
         .eq('payment_status', 'completed');

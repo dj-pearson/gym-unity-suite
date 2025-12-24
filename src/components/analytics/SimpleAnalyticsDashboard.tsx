@@ -34,21 +34,23 @@ export default function SimpleAnalyticsDashboard() {
 
       const totalMembers = members?.length || 0;
 
-      // Fetch active memberships to get realistic active member count
+      // Fetch active memberships to get realistic active member count - SECURITY: Filter by organization_id
       const { data: activeMemberships } = await supabase
         .from('memberships')
         .select('member_id')
+        .eq('organization_id', profile.organization_id)
         .eq('status', 'active');
 
       const activeMembers = activeMemberships?.length || Math.floor(totalMembers * 0.85); // 85% active if no membership data
 
-      // Calculate realistic monthly revenue from membership plans
+      // Calculate realistic monthly revenue from membership plans - SECURITY: Filter by organization_id
       const { data: membershipData } = await supabase
         .from('memberships')
         .select(`
           member_id,
           membership_plans (price)
         `)
+        .eq('organization_id', profile.organization_id)
         .eq('status', 'active');
 
       const monthlyRevenue = membershipData?.reduce((sum, membership: any) => {
