@@ -19,6 +19,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { Logo } from '@/components/ui/logo';
 import { FAQSection, mindbodyAlternativeFAQs } from '@/components/seo';
+import { BreadcrumbNavigation, createComparisonBreadcrumbs } from '@/components/seo/BreadcrumbNavigation';
+import { TestimonialSection, mindbodyMigrationTestimonials } from '@/components/seo/TestimonialSection';
 
 const comparisonFeatures = [
   { category: 'Pricing & Value', features: [
@@ -73,33 +75,6 @@ const whySwitch = [
     title: 'Better Member Experience',
     description: 'Intuitive interface that members actually enjoy using, leading to higher engagement and retention.',
     highlight: '23% higher member retention'
-  }
-];
-
-const testimonials = [
-  {
-    name: 'Sarah Mitchell',
-    role: 'Owner, Flex Studios',
-    content: 'We switched from Mindbody after 3 years of frustration. Rep Club is everything Mindbody should have been - fast, intuitive, and actually works on mobile. Our members love it.',
-    rating: 5,
-    previousSoftware: 'Mindbody',
-    savings: '$4,200/year'
-  },
-  {
-    name: 'Marcus Johnson',
-    role: 'Manager, Elite Fitness',
-    content: 'The difference is night and day. Rep Club loads instantly, bookings work flawlessly, and we\'re saving over $300/month. Should have switched years ago.',
-    rating: 5,
-    previousSoftware: 'Mindbody',
-    savings: '$3,600/year'
-  },
-  {
-    name: 'Jennifer Kim',
-    role: 'Owner, Zen Yoga Collective',
-    content: 'Mindbody was holding us back with its outdated interface and high fees. Rep Club modernized our entire operation and our members are much happier.',
-    rating: 5,
-    previousSoftware: 'Mindbody',
-    savings: '$2,800/year'
   }
 ];
 
@@ -200,7 +175,7 @@ export default function MindbodyAlternativePage() {
         <nav className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <Logo size="md" linkToHome={true} />
-            <Button 
+            <Button
               onClick={() => navigate('/auth')}
               className="bg-gradient-primary hover:opacity-90"
             >
@@ -208,6 +183,14 @@ export default function MindbodyAlternativePage() {
             </Button>
           </div>
         </nav>
+
+        {/* Breadcrumb Navigation for SEO */}
+        <div className="container mx-auto px-4 py-4">
+          <BreadcrumbNavigation
+            items={createComparisonBreadcrumbs('Mindbody')}
+            className="text-sm"
+          />
+        </div>
 
         {/* Hero Section */}
         <section className="bg-gradient-subtle py-20">
@@ -443,48 +426,14 @@ export default function MindbodyAlternativePage() {
           </div>
         </section>
 
-        {/* Testimonials */}
-        <section className="bg-muted/50 py-20">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4">Gym Owners Who Made the Switch</h2>
-              <p className="text-xl text-muted-foreground">
-                Real stories from fitness professionals who left Mindbody for Rep Club.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {testimonials.map((testimonial, index) => (
-                <Card key={index} className="gym-card">
-                  <CardHeader>
-                    <div className="flex items-center mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-primary text-primary" />
-                      ))}
-                    </div>
-                    <div className="flex space-x-2">
-                      <Badge variant="outline" className="text-xs">
-                        From: {testimonial.previousSoftware}
-                      </Badge>
-                      <Badge className="text-xs bg-success/10 text-success border-success/20">
-                        Saves: {testimonial.savings}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <blockquote className="text-foreground mb-4 italic">
-                      "{testimonial.content}"
-                    </blockquote>
-                    <div>
-                      <div className="font-semibold text-foreground">{testimonial.name}</div>
-                      <div className="text-sm text-muted-foreground">{testimonial.role}</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* Testimonials with Review Schema */}
+        <TestimonialSection
+          title="Gym Owners Who Made the Switch"
+          subtitle="Real stories from fitness professionals who left Mindbody for Gym Unity Suite"
+          testimonials={mindbodyMigrationTestimonials}
+          className="bg-muted/50"
+          showAggregateRating={true}
+        />
 
         {/* FAQ Section with Schema Markup */}
         <FAQSection
