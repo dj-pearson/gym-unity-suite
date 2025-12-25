@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions, Permission, UserRole } from '@/hooks/usePermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, Lock } from 'lucide-react';
+import { AlertTriangle, Lock, RefreshCw, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ProtectedRouteProps {
@@ -21,7 +21,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   fallbackPath = '/auth',
   showFallback = true,
 }) => {
-  const { user, loading, profile } = useAuth();
+  const { user, loading, profile, profileError, refreshProfile, signOut } = useAuth();
   const { hasPermission, hasAnyRole } = usePermissions();
   const location = useLocation();
 
@@ -29,7 +29,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <p className="text-sm text-muted-foreground">Loading your account...</p>
+        </div>
       </div>
     );
   }
@@ -39,17 +42,44 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={fallbackPath} state={{ from: location }} replace />;
   }
 
-  // Check if profile is loaded
+  // Handle profile loading errors with retry option
+  if (profileError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <AlertTriangle className="w-12 h-12 text-destructive mx-auto mb-4" />
+            <CardTitle className="text-destructive">Profile Loading Failed</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-center">
+            <p className="text-muted-foreground">{profileError}</p>
+            <div className="flex flex-col gap-2">
+              <Button onClick={refreshProfile} className="w-full">
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Try Again
+              </Button>
+              <Button variant="outline" onClick={signOut} className="w-full">
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Check if profile is still loading (no error but no profile yet)
   if (!profile) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Card className="w-full max-w-md mx-4">
           <CardHeader className="text-center">
-            <AlertTriangle className="w-12 h-12 text-warning mx-auto mb-4" />
-            <CardTitle>Profile Loading...</CardTitle>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <CardTitle>Setting Up Your Account</CardTitle>
           </CardHeader>
           <CardContent className="text-center text-muted-foreground">
-            <p>Setting up your account...</p>
+            <p>Please wait while we load your profile...</p>
           </CardContent>
         </Card>
       </div>
