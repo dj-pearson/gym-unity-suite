@@ -2,18 +2,54 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+// Allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  'https://gym-unity-suite.com',
+  'https://www.gym-unity-suite.com',
+  'https://gym-unity-suite.pages.dev',
+  'https://api.repclub.net',
+  'https://functions.repclub.net',
+  'http://localhost:8080',
+  'http://localhost:3000',
+  'http://localhost:5173',
+];
+
+// Get CORS headers based on origin
+const getCorsHeaders = (origin?: string | null) => {
+  const isAllowed = origin && ALLOWED_ORIGINS.some(allowed => origin === allowed);
+  const allowedOrigin = isAllowed ? origin : ALLOWED_ORIGINS[0];
+
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Credentials": "true",
+  };
 };
 
-// Helper logging function for debugging
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+// Sanitize sensitive data from logs
+const sanitizeForLog = (data: Record<string, unknown>): Record<string, unknown> => {
+  const sanitized = { ...data };
+  const sensitiveKeys = ['email', 'customer_email', 'card'];
+  for (const key of sensitiveKeys) {
+    if (key in sanitized) {
+      sanitized[key] = '[REDACTED]';
+    }
+  }
+  return sanitized;
+};
+
+// Helper logging function for debugging (with sanitization)
+const logStep = (step: string, details?: Record<string, unknown>) => {
+  const sanitizedDetails = details ? sanitizeForLog(details) : undefined;
+  const detailsStr = sanitizedDetails ? ` - ${JSON.stringify(sanitizedDetails)}` : '';
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -36,10 +72,10 @@ serve(async (req) => {
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    
+
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
+    logStep("User authenticated", { userId: user.id });
 
     // Get user's profile to determine their organization
     const { data: userProfile, error: profileError } = await supabaseClient
@@ -79,6 +115,11 @@ serve(async (req) => {
       throw new Error("Membership plan not found");
     }
 
+    // Validate price is positive and reasonable
+    if (typeof membershipPlan.price !== 'number' || membershipPlan.price <= 0 || membershipPlan.price > 100000) {
+      throw new Error("Invalid membership plan price");
+    }
+
     logStep("Found membership plan", { planId: membership_plan_id, planName: membershipPlan.name });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
@@ -99,6 +140,10 @@ serve(async (req) => {
       interval = 'year';
     }
 
+    // Validate origin for success/cancel URLs
+    const requestOrigin = req.headers.get("origin");
+    const safeOrigin = ALLOWED_ORIGINS.includes(requestOrigin || '') ? requestOrigin : ALLOWED_ORIGINS[0];
+
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -107,7 +152,7 @@ serve(async (req) => {
         {
           price_data: {
             currency: "usd",
-            product_data: { 
+            product_data: {
               name: `${membershipPlan.name} Membership`,
               description: membershipPlan.description || `${membershipPlan.name} gym membership plan`
             },
@@ -118,16 +163,17 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      success_url: `${req.headers.get("origin")}/membership-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/membership-plans`,
+      success_url: `${safeOrigin}/membership-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${safeOrigin}/membership-plans`,
       metadata: {
         user_id: user.id,
+        organization_id: organizationId,
         membership_plan_id: membership_plan_id,
         plan_name: membershipPlan.name
       }
     });
 
-    logStep("Created checkout session", { sessionId: session.id, url: session.url });
+    logStep("Created checkout session", { sessionId: session.id });
 
     return new Response(JSON.stringify({ url: session.url, session_id: session.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
