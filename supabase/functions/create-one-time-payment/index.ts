@@ -2,18 +2,59 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+// Allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  'https://gym-unity-suite.com',
+  'https://www.gym-unity-suite.com',
+  'https://gym-unity-suite.pages.dev',
+  'https://api.repclub.net',
+  'https://functions.repclub.net',
+  'http://localhost:8080',
+  'http://localhost:3000',
+  'http://localhost:5173',
+];
+
+// Get CORS headers based on origin
+const getCorsHeaders = (origin?: string | null) => {
+  const isAllowed = origin && ALLOWED_ORIGINS.some(allowed => origin === allowed);
+  const allowedOrigin = isAllowed ? origin : ALLOWED_ORIGINS[0];
+
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Credentials": "true",
+  };
 };
 
-// Helper logging function for debugging
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+// Sanitize sensitive data from logs
+const sanitizeForLog = (data: Record<string, unknown>): Record<string, unknown> => {
+  const sanitized = { ...data };
+  const sensitiveKeys = ['email', 'customer_email', 'card'];
+  for (const key of sensitiveKeys) {
+    if (key in sanitized) {
+      sanitized[key] = '[REDACTED]';
+    }
+  }
+  return sanitized;
+};
+
+// Helper logging function for debugging (with sanitization)
+const logStep = (step: string, details?: Record<string, unknown>) => {
+  const sanitizedDetails = details ? sanitizeForLog(details) : undefined;
+  const detailsStr = sanitizedDetails ? ` - ${JSON.stringify(sanitizedDetails)}` : '';
   console.log(`[CREATE-ONE-TIME-PAYMENT] ${step}${detailsStr}`);
 };
 
+// Constants for validation
+const MIN_AMOUNT = 0.50; // Stripe minimum is $0.50
+const MAX_AMOUNT = 99999.99; // Reasonable maximum
+const MAX_DESCRIPTION_LENGTH = 500;
+
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -36,18 +77,52 @@ serve(async (req) => {
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    
+
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
+    logStep("User authenticated", { userId: user.id });
 
     // Parse request body
     const { amount, description, order_type = "one_time", metadata = {} } = await req.json();
-    if (!amount || amount <= 0) {
-      throw new Error("Valid amount is required");
+
+    // Validate amount - must be a number within reasonable bounds
+    if (typeof amount !== 'number' || isNaN(amount)) {
+      throw new Error("Amount must be a valid number");
     }
-    if (!description) {
+    if (amount < MIN_AMOUNT) {
+      throw new Error(`Amount must be at least $${MIN_AMOUNT}`);
+    }
+    if (amount > MAX_AMOUNT) {
+      throw new Error(`Amount cannot exceed $${MAX_AMOUNT}`);
+    }
+
+    // Validate description
+    if (!description || typeof description !== 'string') {
       throw new Error("Description is required");
+    }
+    if (description.length > MAX_DESCRIPTION_LENGTH) {
+      throw new Error(`Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters`);
+    }
+
+    // Sanitize description to prevent XSS in Stripe dashboard
+    const sanitizedDescription = description.replace(/<[^>]*>/g, '').trim();
+
+    // Validate order_type
+    const allowedOrderTypes = ['one_time', 'retail', 'service', 'deposit', 'fee'];
+    if (!allowedOrderTypes.includes(order_type)) {
+      throw new Error("Invalid order type");
+    }
+
+    // Validate metadata (if provided) - only allow primitive values
+    if (metadata && typeof metadata === 'object') {
+      for (const [key, value] of Object.entries(metadata)) {
+        if (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean') {
+          throw new Error("Metadata values must be strings, numbers, or booleans");
+        }
+        if (typeof key !== 'string' || key.length > 40) {
+          throw new Error("Metadata keys must be strings with max 40 characters");
+        }
+      }
     }
 
     // Get user's organization
@@ -75,6 +150,10 @@ serve(async (req) => {
       logStep("Creating new customer");
     }
 
+    // Validate origin for success/cancel URLs
+    const requestOrigin = req.headers.get("origin");
+    const safeOrigin = ALLOWED_ORIGINS.includes(requestOrigin || '') ? requestOrigin : ALLOWED_ORIGINS[0];
+
     // Create checkout session for one-time payment
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -83,9 +162,9 @@ serve(async (req) => {
         {
           price_data: {
             currency: "usd",
-            product_data: { 
-              name: description,
-              description: `One-time payment - ${description}`
+            product_data: {
+              name: sanitizedDescription,
+              description: `One-time payment - ${sanitizedDescription}`
             },
             unit_amount: Math.round(amount * 100), // Convert to cents
           },
@@ -93,8 +172,8 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/payment-cancelled`,
+      success_url: `${safeOrigin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${safeOrigin}/payment-cancelled`,
       metadata: {
         user_id: user.id,
         organization_id: profile.organization_id,
@@ -103,7 +182,7 @@ serve(async (req) => {
       }
     });
 
-    logStep("Created checkout session", { sessionId: session.id, url: session.url });
+    logStep("Created checkout session", { sessionId: session.id });
 
     // Create order record in Supabase using service role
     const supabaseService = createClient(
@@ -119,8 +198,9 @@ serve(async (req) => {
       amount: Math.round(amount * 100),
       status: "pending",
       order_type: order_type,
-      description: description,
-      metadata: metadata
+      description: sanitizedDescription,
+      metadata: metadata,
+      created_at: new Date().toISOString()
     });
 
     logStep("Created order record");
