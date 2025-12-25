@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, useCallback, type ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase, edgeFunctions } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -34,6 +34,7 @@ interface AuthContextType {
   organization: Organization | null;
   session: Session | null;
   loading: boolean;
+  profileError: string | null;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, organizationId?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -48,20 +49,58 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const fetchProfile = async (userId: string) => {
+  // Refs to prevent race conditions
+  const fetchInProgressRef = useRef(false);
+  const currentUserIdRef = useRef<string | null>(null);
+  const initializedRef = useRef(false);
+  const retryCountRef = useRef(0);
+  const MAX_RETRIES = 3;
+  const RETRY_DELAY = 1000;
+
+  const fetchProfile = useCallback(async (userId: string, isRetry = false): Promise<boolean> => {
+    // Prevent duplicate fetches for the same user
+    if (fetchInProgressRef.current && currentUserIdRef.current === userId && !isRetry) {
+      return false;
+    }
+
+    // Reset retry count for new user
+    if (currentUserIdRef.current !== userId) {
+      retryCountRef.current = 0;
+    }
+
+    fetchInProgressRef.current = true;
+    currentUserIdRef.current = userId;
+    setProfileError(null);
+
     try {
-      const { data: profileData, error: profileError } = await supabase
+      const { data: profileData, error: profileFetchError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
 
-      if (profileError) {
-        console.error('Profile fetch error:', profileError);
+      // Check if user changed during fetch (race condition prevention)
+      if (currentUserIdRef.current !== userId) {
+        return false;
+      }
+
+      if (profileFetchError) {
+        console.error('Profile fetch error:', profileFetchError);
+
+        // Retry logic for transient errors
+        if (retryCountRef.current < MAX_RETRIES &&
+            (profileFetchError.code === 'PGRST301' || profileFetchError.message?.includes('network'))) {
+          retryCountRef.current++;
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * retryCountRef.current));
+          return fetchProfile(userId, true);
+        }
+
+        setProfileError('Failed to load profile. Please try refreshing the page.');
         setLoading(false);
-        return;
+        return false;
       }
 
       setProfile(profileData);
@@ -78,53 +117,99 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setOrganization(orgData);
         }
       }
+
+      retryCountRef.current = 0;
+      return true;
     } catch (error) {
       console.error('Error fetching profile:', error);
+
+      // Retry on network errors
+      if (retryCountRef.current < MAX_RETRIES) {
+        retryCountRef.current++;
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * retryCountRef.current));
+        return fetchProfile(userId, true);
+      }
+
+      setProfileError('Failed to load profile. Please check your connection.');
+      return false;
     } finally {
+      fetchInProgressRef.current = false;
       setLoading(false);
     }
-  };
+  }, []);
 
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     if (user) {
+      setLoading(true);
       await fetchProfile(user.id);
     }
-  };
+  }, [user, fetchProfile]);
 
   useEffect(() => {
-    // Set up auth state listener
+    // Prevent double initialization in React StrictMode
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
+    let isSubscribed = true;
+
+    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Use setTimeout to defer async operations to prevent auth deadlock
-          setTimeout(() => {
-            fetchProfile(session.user.id);
-          }, 0);
+      (event, newSession) => {
+        if (!isSubscribed) return;
+
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+
+        if (newSession?.user) {
+          // Only fetch profile if user changed or on initial sign in
+          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            // Defer to prevent Supabase internal deadlock
+            setTimeout(() => {
+              if (isSubscribed) {
+                fetchProfile(newSession.user.id);
+              }
+            }, 0);
+          }
         } else {
+          // User signed out
           setProfile(null);
           setOrganization(null);
+          setProfileError(null);
+          currentUserIdRef.current = null;
           setLoading(false);
         }
       }
     );
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
-        setLoading(false);
-      }
-    });
+    // Get initial session AFTER setting up listener
+    const initializeSession = async () => {
+      try {
+        const { data: { session: existingSession } } = await supabase.auth.getSession();
 
-    return () => subscription.unsubscribe();
-  }, []);
+        if (!isSubscribed) return;
+
+        if (existingSession?.user) {
+          setSession(existingSession);
+          setUser(existingSession.user);
+          await fetchProfile(existingSession.user.id);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error getting initial session:', error);
+        if (isSubscribed) {
+          setLoading(false);
+        }
+      }
+    };
+
+    initializeSession();
+
+    return () => {
+      isSubscribed = false;
+      subscription.unsubscribe();
+    };
+  }, [fetchProfile]);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -208,6 +293,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setProfile(null);
       setOrganization(null);
       setSession(null);
+      setProfileError(null);
+      currentUserIdRef.current = null;
       toast({
         title: "Signed out successfully",
         description: "You have been signed out of your account.",
@@ -228,6 +315,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     organization,
     session,
     loading,
+    profileError,
     signIn,
     signUp,
     signOut,

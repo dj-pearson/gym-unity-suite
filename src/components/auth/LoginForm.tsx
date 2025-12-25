@@ -9,17 +9,16 @@ import { Loader2, Mail, QrCode, Home, ArrowLeft, Calendar, ArrowRight, AlertCirc
 import { Logo } from '@/components/ui/logo';
 import { BarcodeLogin } from './BarcodeLogin';
 import { useNavigate } from 'react-router-dom';
-import { RoleTestingPanel } from './RoleTestingPanel';
 import { useToast } from '@/hooks/use-toast';
+import { validatePasswordSync } from '@/lib/security/password-policy';
 
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showRoleTesting, setShowRoleTesting] = useState(false);
   const [passwordError, setPasswordError] = useState('');
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -49,14 +48,26 @@ export const LoginForm: React.FC = () => {
       return;
     }
 
-    if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
+    // Use comprehensive password policy validation
+    const validation = validatePasswordSync(password);
+    if (!validation.isValid) {
+      const errorMessage = validation.errors[0] || 'Password does not meet requirements';
+      setPasswordError(errorMessage);
       toast({
-        title: 'Password too short',
-        description: 'Password must be at least 6 characters long.',
+        title: 'Password Requirements Not Met',
+        description: errorMessage,
         variant: 'destructive',
       });
       return;
+    }
+
+    // Show warning for weak passwords even if technically valid
+    if (validation.strength === 'weak' || validation.strength === 'fair') {
+      toast({
+        title: 'Consider a Stronger Password',
+        description: 'Your password meets minimum requirements but could be stronger.',
+        variant: 'default',
+      });
     }
 
     setIsLoading(true);
@@ -110,7 +121,7 @@ export const LoginForm: React.FC = () => {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="signin" className="flex items-center gap-1">
                   <Mail className="w-4 h-4" />
                   <span className="hidden sm:inline">Sign In</span>
@@ -123,12 +134,6 @@ export const LoginForm: React.FC = () => {
                   <Mail className="w-4 h-4" />
                   <span className="hidden sm:inline">Sign Up</span>
                 </TabsTrigger>
-                {user && (
-                  <TabsTrigger value="testing" className="flex items-center gap-1">
-                    <QrCode className="w-4 h-4" />
-                    <span className="hidden sm:inline">Testing</span>
-                  </TabsTrigger>
-                )}
               </TabsList>
               <TabsContent value="signin" className="space-y-4">
                 <form onSubmit={handleSignIn} className="space-y-4">
@@ -190,12 +195,6 @@ export const LoginForm: React.FC = () => {
                   </div>
                 </div>
               </TabsContent>
-              
-              {user && (
-                <TabsContent value="testing" className="space-y-4">
-                  <RoleTestingPanel />
-                </TabsContent>
-              )}
             </Tabs>
           </CardContent>
         </Card>
