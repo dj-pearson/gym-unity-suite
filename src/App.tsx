@@ -76,6 +76,7 @@ const BlogAdminPage = lazy(() => import("./pages/admin/BlogAdminPage"));
 const AIControlPage = lazy(() => import("./pages/AIControlPage"));
 const FeaturesPage = lazy(() => import("./pages/FeaturesPage"));
 const SchedulingPage = lazy(() => import("./pages/features/SchedulingPage"));
+const BillingSoftwarePage = lazy(() => import("./pages/features/BillingSoftwarePage"));
 const MindbodyAlternativePage = lazy(() => import("./pages/compare/MindbodyAlternativePage"));
 const GlofoxAlternativePage = lazy(() => import("./pages/compare/GlofoxAlternativePage"));
 const ZenPlannerAlternativePage = lazy(() => import("./pages/compare/ZenPlannerAlternativePage"));
@@ -85,6 +86,7 @@ const MartialArtsSchoolsPage = lazy(() => import("./pages/solutions/MartialArtsS
 const NewYorkGymSoftwarePage = lazy(() => import("./pages/local/NewYorkGymSoftwarePage"));
 const BestGymSoftwareBlogPost = lazy(() => import("./pages/blog/BestGymSoftware2025"));
 const GymMemberRetentionGuide = lazy(() => import("./pages/blog/GymMemberRetentionGuide"));
+const BestGymCRMSoftware2025 = lazy(() => import("./pages/blog/BestGymCRMSoftware2025"));
 const TicketsPage = lazy(() => import("./pages/TicketsPage"));
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
@@ -279,6 +281,7 @@ const AppRoutes = () => {
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/blog/best-gym-management-software-2025" element={<BestGymSoftwareBlogPost />} />
               <Route path="/blog/gym-member-retention-guide" element={<GymMemberRetentionGuide />} />
+              <Route path="/blog/best-gym-crm-software-2025" element={<BestGymCRMSoftware2025 />} />
               <Route path="/blog/admin" element={
                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                   <DashboardLayout>
@@ -650,6 +653,7 @@ const AppRoutes = () => {
               <Route path="/pricing" element={<LandingPage />} />
               <Route path="/features" element={<FeaturesPage />} />
               <Route path="/features/scheduling" element={<SchedulingPage />} />
+              <Route path="/features/billing-software" element={<BillingSoftwarePage />} />
 
               {/* Solution Pages */}
               <Route path="/solutions/yoga-studios" element={<YogaStudiosPage />} />
