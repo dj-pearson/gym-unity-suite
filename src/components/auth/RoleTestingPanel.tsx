@@ -6,18 +6,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { 
-  Crown, 
-  Users, 
-  UserCog, 
-  Dumbbell, 
+import {
+  Crown,
+  Users,
+  UserCog,
+  Dumbbell,
   User,
   TestTube,
   Shield,
   CheckCircle,
   RefreshCw,
-  Info
+  Info,
+  AlertTriangle
 } from 'lucide-react';
+
+// Security: Only allow in development mode
+const IS_DEVELOPMENT = import.meta.env.DEV;
 
 const roleOptions = [
   { value: 'owner', label: 'Owner', icon: Crown, description: 'Full system access' },
@@ -40,14 +44,52 @@ export const RoleTestingPanel: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState(false);
 
+  // Security: Block access in production
+  if (!IS_DEVELOPMENT) {
+    return (
+      <Card className="border-destructive bg-destructive/5">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="w-6 h-6 text-destructive" />
+            <div>
+              <CardTitle className="text-destructive">Access Denied</CardTitle>
+              <CardDescription>
+                Role testing is only available in development mode for security reasons.
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  // Security: Only allow owners to use the testing panel
+  if (profile?.role !== 'owner') {
+    return (
+      <Card className="border-warning bg-warning/5">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <Shield className="w-6 h-6 text-warning" />
+            <div>
+              <CardTitle>Owner Access Required</CardTitle>
+              <CardDescription>
+                Only system owners can access the role testing panel.
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+    );
+  }
+
   const handleRoleUpdate = async () => {
     if (!selectedRole || !profile?.id) return;
-    
+
     setIsUpdating(true);
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ 
+        .update({
           role: selectedRole as any,
           organization_id: 'd290f1ee-6c54-4b01-90e6-d701748f0851', // FitnessPro Gym
           location_id: 'a290f1ee-6c54-4b01-90e6-d701748f0851'
@@ -57,7 +99,7 @@ export const RoleTestingPanel: React.FC = () => {
       if (error) throw error;
 
       await refreshProfile();
-      
+
       toast.success(`Role updated to ${selectedRole}!`, {
         description: 'You can now test features for this role.'
       });
