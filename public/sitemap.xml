@@ -131,12 +131,102 @@
   
   <!-- Local SEO Pages -->
   <url>
+    <loc>https://gymunitysuite.com/local</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gymunitysuite.com/local/new-york-gym-software</loc>
-    <lastmod>2025-11-14T10:00:00+00:00</lastmod>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-  
+  <url>
+    <loc>https://gymunitysuite.com/local/los-angeles-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/chicago-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/houston-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/phoenix-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/philadelphia-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/san-antonio-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/san-diego-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/dallas-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/austin-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/denver-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/seattle-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/miami-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/atlanta-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://gymunitysuite.com/local/boston-gym-software</loc>
+    <lastmod>2025-12-25T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
   <!-- Blog Pages -->
   <url>
     <loc>https://gymunitysuite.com/blog</loc>

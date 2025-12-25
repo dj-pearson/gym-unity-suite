@@ -83,7 +83,12 @@ const ZenPlannerAlternativePage = lazy(() => import("./pages/compare/ZenPlannerA
 const YogaStudiosPage = lazy(() => import("./pages/solutions/YogaStudiosPage"));
 const CrossFitGymsPage = lazy(() => import("./pages/solutions/CrossFitGymsPage"));
 const MartialArtsSchoolsPage = lazy(() => import("./pages/solutions/MartialArtsSchoolsPage"));
+const PilatesStudiosPage = lazy(() => import("./pages/solutions/PilatesStudiosPage"));
+const PersonalTrainingStudiosPage = lazy(() => import("./pages/solutions/PersonalTrainingStudiosPage"));
+const SolutionsIndexPage = lazy(() => import("./pages/solutions/SolutionsIndexPage"));
 const NewYorkGymSoftwarePage = lazy(() => import("./pages/local/NewYorkGymSoftwarePage"));
+const LocalPage = lazy(() => import("./pages/local/LocalPage"));
+const LocalIndexPage = lazy(() => import("./pages/local/LocalIndexPage"));
 const BestGymSoftwareBlogPost = lazy(() => import("./pages/blog/BestGymSoftware2025"));
 const GymMemberRetentionGuide = lazy(() => import("./pages/blog/GymMemberRetentionGuide"));
 const BestGymCRMSoftware2025 = lazy(() => import("./pages/blog/BestGymCRMSoftware2025"));
@@ -656,9 +661,12 @@ const AppRoutes = () => {
               <Route path="/features/billing-software" element={<BillingSoftwarePage />} />
 
               {/* Solution Pages */}
+              <Route path="/solutions" element={<SolutionsIndexPage />} />
               <Route path="/solutions/yoga-studios" element={<YogaStudiosPage />} />
               <Route path="/solutions/crossfit-gyms" element={<CrossFitGymsPage />} />
               <Route path="/solutions/martial-arts-schools" element={<MartialArtsSchoolsPage />} />
+              <Route path="/solutions/pilates-studios" element={<PilatesStudiosPage />} />
+              <Route path="/solutions/personal-training" element={<PersonalTrainingStudiosPage />} />
 
               {/* Comparison Pages */}
               <Route path="/compare/mindbody-alternative" element={<MindbodyAlternativePage />} />
@@ -666,7 +674,9 @@ const AppRoutes = () => {
               <Route path="/compare/zen-planner-alternative" element={<ZenPlannerAlternativePage />} />
 
               {/* Local SEO Pages */}
+              <Route path="/local" element={<LocalIndexPage />} />
               <Route path="/local/new-york-gym-software" element={<NewYorkGymSoftwarePage />} />
+              <Route path="/local/:slug" element={<LocalPage />} />
 
               {/* Legal Pages */}
               <Route path="/privacy" element={<PrivacyPage />} />
