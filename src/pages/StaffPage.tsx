@@ -30,6 +30,7 @@ import ScheduleManager from '@/components/staff/ScheduleManager';
 import PayrollManager from '@/components/staff/PayrollManager';
 import { usePermissions } from '@/hooks/usePermissions';
 import ImportButton from '@/components/imports/ImportButton';
+import { Skeleton, SkeletonCard, SkeletonAvatar } from '@/components/ui/skeleton';
 
 interface StaffMember {
   id: string;
@@ -184,12 +185,59 @@ export default function StaffPage() {
   if (loading) {
     return (
       <div className="space-y-6">
+        {/* Header Skeleton */}
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Staff Management</h1>
+          <div className="flex items-center space-x-4">
+            <Skeleton className="h-10 w-10 rounded-lg" />
+            <div>
+              <Skeleton className="h-8 w-48 mb-2" />
+              <Skeleton className="h-4 w-64" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-10 w-24" />
+            <Skeleton className="h-10 w-36" />
+          </div>
         </div>
-        <div className="text-center py-12">
-          <div className="animate-pulse text-muted-foreground">Loading staff members...</div>
+
+        {/* Stats Cards Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
+
+        {/* Tabs Skeleton */}
+        <Skeleton className="h-10 w-96" />
+
+        {/* Staff List Skeleton */}
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-32" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex items-center justify-between p-4 border border-border rounded-lg">
+                  <div className="flex items-center gap-4">
+                    <SkeletonAvatar size="lg" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-5 w-40" />
+                      <div className="flex items-center gap-4">
+                        <Skeleton className="h-4 w-48" />
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-6 w-20 rounded-full" />
+                    <Skeleton className="h-8 w-8" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }

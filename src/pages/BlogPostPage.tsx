@@ -2,6 +2,8 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { BlogPost } from '@/components/blog/BlogPost';
 import NotFound from '@/pages/NotFound';
+import { SEOHead } from '@/components/seo/SEOHead';
+import { BlogArticleSkeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 
 export default function BlogPostPage() {
@@ -53,8 +55,18 @@ export default function BlogPostPage() {
     }
   });
 
+  // Show skeleton with generic SEO during loading
   if (postQuery.isLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-background"><div className="animate-pulse text-lg text-muted-foreground">Loading article…</div></div>;
+    return (
+      <>
+        <SEOHead
+          title="Loading Article... - Gym Unity Suite Blog"
+          description="Loading fitness business article from Gym Unity Suite blog."
+          type="article"
+        />
+        <BlogArticleSkeleton />
+      </>
+    );
   }
 
   if (!postQuery.data) {

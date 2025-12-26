@@ -12,6 +12,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PERMISSIONS } from "@/hooks/usePermissions";
 import { HelmetProvider } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
+import { PageLoader } from '@/components/ui/skeleton';
 import { queryClient } from '@/lib/queryClient';
 import React, { useEffect, lazy, Suspense } from 'react';
 import { MemberLayout } from "./components/layout/MemberLayout";
@@ -96,29 +97,21 @@ const TicketsPage = lazy(() => import("./pages/TicketsPage"));
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
 
-// Loading component for suspense fallback
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <div className="animate-pulse text-lg text-muted-foreground">Loading...</div>
-  </div>
-);
+// AppPageLoader - wrapper for Suspense fallback that uses improved PageLoader
+const AppPageLoader = () => <PageLoader message="Loading..." />;
 
 // Public Route Component (shows landing page if not authenticated, redirects to dashboard if authenticated)
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-lg text-muted-foreground">Loading...</div>
-      </div>
-    );
+    return <PageLoader message="Checking authentication..." />;
   }
-  
+
   if (user) {
     return <Navigate to="/" replace />;
   }
-  
+
   return <>{children}</>;
 };
 
@@ -127,11 +120,7 @@ const HomeRoute = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-lg text-muted-foreground">Loading...</div>
-      </div>
-    );
+    return <PageLoader message="Loading..." />;
   }
 
   // Redirect authenticated users to dashboard
@@ -270,7 +259,7 @@ const AppRoutes = () => {
 
   return (
     <AppErrorBoundary>
-      <Suspense fallback={<PageLoader />}>
+      <Suspense fallback={<AppPageLoader />}>
         <Routes>
       {/* Home Route - Landing page or Dashboard */}
       <Route path="/" element={<HomeRoute />} />
