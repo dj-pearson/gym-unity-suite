@@ -1,0 +1,376 @@
+# Environment Variables Master Sheet
+
+**Gym Unity Suite - Complete Environment Variables Reference**
+
+Last Updated: 2025-12-27
+
+---
+
+## Table of Contents
+
+1. [Frontend Variables (Vite)](#frontend-variables-vite)
+2. [Supabase Edge Functions](#supabase-edge-functions)
+3. [Cloudflare Workers](#cloudflare-workers)
+4. [Testing/CI Variables](#testingci-variables)
+5. [Quick Setup Checklist](#quick-setup-checklist)
+
+---
+
+## Frontend Variables (Vite)
+
+These variables are used in the React frontend and must be prefixed with `VITE_` to be accessible via `import.meta.env`.
+
+**Configuration Location:** Cloudflare Pages Environment Variables (or `.env` file for local development)
+
+### Core Supabase Configuration
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `VITE_SUPABASE_URL` | **Yes** | Plain text | Main Supabase API URL | `https://yourproject.supabase.co` or `https://api.yourdomain.com` (self-hosted) |
+| `VITE_SUPABASE_ANON_KEY` | **Yes** | Plain text | Supabase anonymous/public key (safe to expose in frontend) | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `VITE_SUPABASE_FUNCTIONS_URL` | Self-hosted only | Plain text | Separate Edge Functions URL for self-hosted Supabase via Kong | `https://functions.yourdomain.com` |
+
+**Source Files:**
+- `src/integrations/supabase/client.ts:20-30`
+
+### Application Configuration
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `VITE_APP_VERSION` | No | Plain text | Application version number for display and tracking | `1.0.0` |
+| `VITE_APP_ENV` | No | Plain text | Environment mode identifier | `development`, `staging`, `production` |
+| `VITE_DEFAULT_ORIGIN` | No | Plain text | Default domain for custom domain routing | `gym-unity.app` |
+
+**Source Files:**
+- `src/lib/monitoring/health.ts:125`
+- `src/lib/monitoring/apm.ts:51`
+
+### Analytics & Monitoring
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `VITE_GA_ID` | No | Plain text | Google Analytics 4 measurement ID | `G-XXXXXXXXXX` |
+| `VITE_SENTRY_DSN` | No | Plain text | Sentry error tracking DSN | `https://xxx@sentry.io/xxx` |
+| `VITE_LOG_ENDPOINT` | No | Plain text | Remote logging endpoint URL | `https://logs.yourdomain.com/api/logs` |
+| `VITE_APM_ENDPOINT` | No | Plain text | Application Performance Monitoring endpoint | `https://apm.yourdomain.com/api` |
+| `VITE_APM_API_KEY` | No | Plain text | APM service API key | `apm_key_xxx` |
+
+**Source Files:**
+- `src/lib/monitoring/sentry.ts:47-55`
+- `src/lib/monitoring/logger.ts:85`
+- `src/lib/monitoring/apm.ts:53-54`
+
+### Payment Processing
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `VITE_STRIPE_PUBLISHABLE_KEY` | For payments | Plain text | Stripe publishable/public key | `pk_live_xxx` or `pk_test_xxx` |
+
+**Source Files:**
+- `src/lib/security/secrets.ts:84`
+
+### Build Information (CI/CD)
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `VITE_GIT_COMMIT` | No | Plain text | Git commit SHA (set by CI) | `abc123def456` |
+| `VITE_GIT_BRANCH` | No | Plain text | Git branch name (set by CI) | `main` |
+| `VITE_BUILD_TIME` | No | Plain text | Build timestamp (set by CI) | `2025-01-01T00:00:00Z` |
+
+**Source Files:**
+- `src/lib/monitoring/health.ts:131-133`
+
+---
+
+## Supabase Edge Functions
+
+These variables are used in Supabase Edge Functions (Deno runtime). Configure them in **Supabase Dashboard > Project Settings > Edge Functions > Secrets**.
+
+### Auto-Injected Variables
+
+These are automatically provided by Supabase and do NOT need to be set manually:
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `SUPABASE_URL` | Auto-injected | Your Supabase project URL |
+| `SUPABASE_ANON_KEY` | Auto-injected | Anonymous/public API key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Auto-injected | Service role key (admin access, bypasses RLS) |
+
+### Payment Processing (Stripe)
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `STRIPE_SECRET_KEY` | **Yes** (for payments) | Supabase Secret | Stripe secret API key | `sk_live_xxx` or `sk_test_xxx` |
+| `STRIPE_WEBHOOK_SECRET` | **Yes** (for webhooks) | Supabase Secret | Stripe webhook signing secret | `whsec_xxx` |
+
+**Used By:**
+- `supabase/functions/create-checkout/index.ts:60`
+- `supabase/functions/customer-portal/index.ts:60`
+- `supabase/functions/check-subscription/index.ts:67`
+- `supabase/functions/verify-payment/index.ts:60`
+- `supabase/functions/create-one-time-payment/index.ts:65`
+- `supabase/functions/stripe-webhook/index.ts:68-69`
+
+### AI Services
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `CLAUDE_API_KEY` | For AI features | Supabase Secret | Anthropic Claude API key | `sk-ant-xxx` |
+| `OPENAI_API_KEY` | For AI features | Supabase Secret | OpenAI API key | `sk-xxx` |
+
+**Used By:**
+- `supabase/functions/ai-generate/index.ts:85,138`
+
+### Email Services (Amazon SES)
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `AMAZON_SMTP_ENDPOINT` | For email | Supabase Secret | Amazon SES SMTP endpoint | `email-smtp.us-east-1.amazonaws.com` |
+| `AMAZON_SMTP_USER_NAME` | For email | Supabase Secret | Amazon SES SMTP username | `AKIAIOSFODNN7EXAMPLE` |
+| `AMAZON_SMTP_PASSWORD` | For email | Supabase Secret | Amazon SES SMTP password | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` |
+
+**Used By:**
+- `supabase/functions/send-email-response/index.ts:59-61`
+- `supabase/functions/receive-email/index.ts:12-14`
+
+### Apple Wallet Pass Generation
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `APPLE_PASS_TYPE_ID` | For Apple Wallet | Supabase Secret | Apple Pass Type Identifier | `pass.com.gymunity.membership` |
+| `APPLE_TEAM_ID` | For Apple Wallet | Supabase Secret | Apple Developer Team ID | `ABCDE12345` |
+| `APPLE_PASS_CERTIFICATE` | For Apple Wallet | Supabase Secret | Base64-encoded .p12 certificate | `MIILuQIBAzCCC4MGCSq...` |
+| `APPLE_PASS_CERTIFICATE_PASSWORD` | For Apple Wallet | Supabase Secret | Password for .p12 certificate | `yourpassword` |
+| `APPLE_WWDR_CERTIFICATE` | For Apple Wallet | Supabase Secret | Base64-encoded Apple WWDR certificate | `MIIEuzCCA6Og...` |
+
+**Used By:**
+- `supabase/functions/generate-wallet-pass/index.ts:41-42,153-155`
+
+### Google Wallet Pass Generation
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `GOOGLE_WALLET_ISSUER_ID` | For Google Wallet | Supabase Secret | Google Pay Issuer ID | `3388000000012345678` |
+| `GOOGLE_WALLET_SERVICE_ACCOUNT` | For Google Wallet | Supabase Secret | Base64-encoded service account JSON | `eyJ0eXBlIjoic2Vydmlj...` |
+
+**Used By:**
+- `supabase/functions/generate-wallet-pass/index.ts:261-262`
+
+### Custom Domain Configuration
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `APP_DOMAIN` | For custom domains | Supabase Secret | Main application domain for CNAME verification | `gym-unity.app` |
+| `APP_IP_ADDRESS` | For custom domains | Supabase Secret | Application IP address for A record verification | `104.21.xxx.xxx` |
+
+**Used By:**
+- `supabase/functions/verify-custom-domain/index.ts:72,93,231`
+
+### Health Check / Monitoring
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `APP_VERSION` | No | Supabase Secret | Application version for health endpoint | `1.0.0` |
+| `ENVIRONMENT` | No | Supabase Secret | Environment name | `production` |
+| `GIT_COMMIT` | No | Supabase Secret | Git commit SHA | `abc123` |
+| `GIT_BRANCH` | No | Supabase Secret | Git branch name | `main` |
+| `BUILD_TIME` | No | Supabase Secret | Build timestamp | `2025-01-01T00:00:00Z` |
+
+**Used By:**
+- `supabase/functions/health-check/index.ts:305-313`
+
+---
+
+## Cloudflare Workers
+
+These variables are used in the Custom Domain Router worker. Configure using `wrangler secret put <SECRET_NAME>`.
+
+**Configuration Location:** Cloudflare Dashboard > Workers > gym-unity-custom-domain-router > Settings > Variables
+
+### Required Secrets
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `SUPABASE_URL` | **Yes** | Wrangler Secret | Supabase API URL | `https://yourproject.supabase.co` or `https://api.yourdomain.com` |
+| `SUPABASE_ANON_KEY` | **Yes** | Wrangler Secret | Supabase anonymous key | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+
+### Optional Variables
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `SUPABASE_FUNCTIONS_URL` | Self-hosted only | Wrangler Secret | Separate functions URL for self-hosted | `https://functions.yourdomain.com` |
+| `DEFAULT_ORIGIN` | No | Plain text (vars) | Default origin for routing | `gym-unity.app` |
+
+**Configuration File:** `workers/custom-domain-router/wrangler.toml`
+
+**Source Files:**
+- `workers/custom-domain-router/index.ts:15-20,69-100`
+
+---
+
+## Testing/CI Variables
+
+These variables are used in testing and CI/CD pipelines.
+
+### Playwright Testing
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `CI` | Auto-set | Plain text | CI environment flag (auto-set by most CI systems) | `true` |
+| `PLAYWRIGHT_BASE_URL` | No | Plain text | Override base URL for tests | `http://localhost:8080` |
+
+**Source Files:**
+- `playwright.config.ts:14-81`
+
+### Lighthouse CI
+
+| Variable | Required | Type | Description | Example |
+|----------|----------|------|-------------|---------|
+| `LHCI_TOKEN` | For LHCI server | Plain text | Lighthouse CI server token | `lhci_token_xxx` |
+
+**Source Files:**
+- `lighthouserc.js:149`
+
+---
+
+## Quick Setup Checklist
+
+### Minimum Required Variables
+
+For the application to function, you need at minimum:
+
+#### Cloudflare Pages (Frontend)
+- [ ] `VITE_SUPABASE_URL`
+- [ ] `VITE_SUPABASE_ANON_KEY`
+
+#### Supabase Edge Functions
+- [ ] `STRIPE_SECRET_KEY` (if using payments)
+- [ ] `STRIPE_WEBHOOK_SECRET` (if using Stripe webhooks)
+
+#### Cloudflare Workers (Custom Domains)
+- [ ] `SUPABASE_URL`
+- [ ] `SUPABASE_ANON_KEY`
+
+### Full Production Setup
+
+#### Cloudflare Pages Environment Variables
+
+```bash
+# Required
+VITE_SUPABASE_URL=https://yourproject.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Self-hosted Supabase only
+VITE_SUPABASE_FUNCTIONS_URL=https://functions.yourdomain.com
+
+# Recommended
+VITE_APP_VERSION=1.0.0
+VITE_APP_ENV=production
+VITE_GA_ID=G-XXXXXXXXXX
+
+# Optional - Monitoring
+VITE_SENTRY_DSN=https://xxx@sentry.io/xxx
+
+# Optional - Payments
+VITE_STRIPE_PUBLISHABLE_KEY=pk_live_xxx
+```
+
+#### Supabase Edge Function Secrets
+
+```bash
+# Run these commands via Supabase CLI or set in Dashboard
+
+# Stripe (Required for payments)
+supabase secrets set STRIPE_SECRET_KEY=sk_live_xxx
+supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_xxx
+
+# AI Services (Required for AI features)
+supabase secrets set CLAUDE_API_KEY=sk-ant-xxx
+supabase secrets set OPENAI_API_KEY=sk-xxx
+
+# Email (Required for email functionality)
+supabase secrets set AMAZON_SMTP_ENDPOINT=email-smtp.us-east-1.amazonaws.com
+supabase secrets set AMAZON_SMTP_USER_NAME=AKIAIOSFODNN7EXAMPLE
+supabase secrets set AMAZON_SMTP_PASSWORD=wJalrXUtnFEMI/xxx
+
+# Apple Wallet (Required for Apple Wallet passes)
+supabase secrets set APPLE_PASS_TYPE_ID=pass.com.gymunity.membership
+supabase secrets set APPLE_TEAM_ID=ABCDE12345
+supabase secrets set APPLE_PASS_CERTIFICATE=<base64-encoded-p12>
+supabase secrets set APPLE_PASS_CERTIFICATE_PASSWORD=yourpassword
+supabase secrets set APPLE_WWDR_CERTIFICATE=<base64-encoded-wwdr>
+
+# Google Wallet (Required for Google Wallet passes)
+supabase secrets set GOOGLE_WALLET_ISSUER_ID=3388000000012345678
+supabase secrets set GOOGLE_WALLET_SERVICE_ACCOUNT=<base64-encoded-json>
+
+# Custom Domain Verification
+supabase secrets set APP_DOMAIN=gym-unity.app
+supabase secrets set APP_IP_ADDRESS=104.21.xxx.xxx
+```
+
+#### Cloudflare Worker Secrets
+
+```bash
+# Navigate to worker directory
+cd workers/custom-domain-router
+
+# Set secrets using Wrangler CLI
+wrangler secret put SUPABASE_URL
+# Enter: https://yourproject.supabase.co
+
+wrangler secret put SUPABASE_ANON_KEY
+# Enter: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Self-hosted only
+wrangler secret put SUPABASE_FUNCTIONS_URL
+# Enter: https://functions.yourdomain.com
+```
+
+---
+
+## Variable Type Reference
+
+| Type | Description | Security | Where to Set |
+|------|-------------|----------|--------------|
+| **Plain text** | Non-sensitive configuration | Safe to expose | Environment variables, `.env` files |
+| **Supabase Secret** | Sensitive keys for Edge Functions | Never expose | Supabase Dashboard > Edge Functions > Secrets |
+| **Wrangler Secret** | Sensitive keys for Cloudflare Workers | Never expose | `wrangler secret put` command |
+| **Auto-injected** | Automatically provided by platform | Managed by platform | N/A - do not set manually |
+
+---
+
+## Security Notes
+
+1. **Never commit** `.env` files with real credentials to version control
+2. **VITE_* variables** are embedded in the frontend bundle and visible to users - only use for public keys
+3. **Service role keys** should ONLY be used in Edge Functions, never in frontend code
+4. **Rotate secrets** periodically, especially after team member departures
+5. **Use separate keys** for development/staging/production environments
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**"Missing required Supabase configuration"**
+- Ensure `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set in Cloudflare Pages
+
+**Edge Function fails with "Secret not found"**
+- Verify the secret is set in Supabase Dashboard > Project Settings > Edge Functions > Secrets
+
+**Custom domain not working**
+- Ensure `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set in Cloudflare Worker
+
+**Stripe payments failing**
+- Verify `STRIPE_SECRET_KEY` is set as a Supabase secret
+- For webhooks, verify `STRIPE_WEBHOOK_SECRET` matches the webhook endpoint in Stripe Dashboard
+
+---
+
+## Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0 | 2025-12-27 | Initial comprehensive variables documentation |
