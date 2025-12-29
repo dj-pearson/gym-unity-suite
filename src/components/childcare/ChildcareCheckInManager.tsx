@@ -9,8 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Clock, UserCheck, UserX, Baby, CheckCircle, XCircle } from "lucide-react";
+import { ResponsiveTable, type Column } from "@/components/ui/responsive-table";
+import { Clock, UserCheck, UserX, Baby, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
@@ -297,61 +297,74 @@ export function ChildcareCheckInManager() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Child</TableHead>
-                  <TableHead>Check-in Time</TableHead>
-                  <TableHead>Condition</TableHead>
-                  <TableHead>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {checkedInChildren.map((checkIn) => (
-                  <TableRow key={checkIn.id}>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <Baby className="h-4 w-4 text-blue-500" />
-                        <div>
-                          <p className="font-medium">
-                            {checkIn.child_profiles.child_first_name} {checkIn.child_profiles.child_last_name}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {calculateAge(checkIn.child_profiles.date_of_birth)} old
-                          </p>
-                        </div>
+            <ResponsiveTable<ChildcareCheckIn>
+              data={checkedInChildren}
+              keyExtractor={(item) => item.id}
+              emptyMessage="No children currently checked in"
+              mobileTitle={(item) => (
+                <div className="flex items-center space-x-2">
+                  <Baby className="h-4 w-4 text-blue-500" />
+                  <span>{item.child_profiles.child_first_name} {item.child_profiles.child_last_name}</span>
+                </div>
+              )}
+              mobileSubtitle={(item) => `${calculateAge(item.child_profiles.date_of_birth)} old`}
+              columns={[
+                {
+                  key: "child",
+                  header: "Child",
+                  priority: "primary",
+                  render: (item) => (
+                    <div className="flex items-center space-x-2">
+                      <Baby className="h-4 w-4 text-blue-500" />
+                      <div>
+                        <p className="font-medium">
+                          {item.child_profiles.child_first_name} {item.child_profiles.child_last_name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {calculateAge(item.child_profiles.date_of_birth)} old
+                        </p>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <Clock className="h-3 w-3 mr-1" />
-                        {format(new Date(checkIn.check_in_time), "HH:mm")}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {getConditionBadge(checkIn.child_condition_checkin)}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setSelectedCheckIn(checkIn);
-                          setCheckOutDialogOpen(true);
-                        }}
-                      >
-                        <UserX className="h-4 w-4 mr-1" />
-                        Check Out
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            {checkedInChildren.length === 0 && (
-              <div className="text-center py-4 text-muted-foreground">
-                No children currently checked in
-              </div>
-            )}
+                    </div>
+                  ),
+                },
+                {
+                  key: "time",
+                  header: "Check-in Time",
+                  priority: "primary",
+                  render: (item) => (
+                    <div className="flex items-center">
+                      <Clock className="h-3 w-3 mr-1" />
+                      {format(new Date(item.check_in_time), "HH:mm")}
+                    </div>
+                  ),
+                },
+                {
+                  key: "condition",
+                  header: "Condition",
+                  priority: "primary",
+                  render: (item) => getConditionBadge(item.child_condition_checkin),
+                },
+                {
+                  key: "action",
+                  header: "Action",
+                  priority: "primary",
+                  render: (item) => (
+                    <Button
+                      size="sm"
+                      className="touch-target"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedCheckIn(item);
+                        setCheckOutDialogOpen(true);
+                      }}
+                    >
+                      <UserX className="h-4 w-4 mr-1" />
+                      Check Out
+                    </Button>
+                  ),
+                },
+              ]}
+            />
           </CardContent>
         </Card>
 
@@ -367,49 +380,60 @@ export function ChildcareCheckInManager() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Child</TableHead>
-                  <TableHead>Time Range</TableHead>
-                  <TableHead>Conditions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {checkedOutChildren.map((checkIn) => (
-                  <TableRow key={checkIn.id}>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <Baby className="h-4 w-4 text-green-500" />
-                        <div>
-                          <p className="font-medium">
-                            {checkIn.child_profiles.child_first_name} {checkIn.child_profiles.child_last_name}
-                          </p>
-                        </div>
+            <ResponsiveTable<ChildcareCheckIn>
+              data={checkedOutChildren}
+              keyExtractor={(item) => item.id}
+              emptyMessage="No completed visits today"
+              mobileTitle={(item) => (
+                <div className="flex items-center space-x-2">
+                  <Baby className="h-4 w-4 text-green-500" />
+                  <span>{item.child_profiles.child_first_name} {item.child_profiles.child_last_name}</span>
+                </div>
+              )}
+              mobileSubtitle={(item) =>
+                `${format(new Date(item.check_in_time), "HH:mm")} - ${item.check_out_time ? format(new Date(item.check_out_time), "HH:mm") : "—"}`
+              }
+              columns={[
+                {
+                  key: "child",
+                  header: "Child",
+                  priority: "primary",
+                  render: (item) => (
+                    <div className="flex items-center space-x-2">
+                      <Baby className="h-4 w-4 text-green-500" />
+                      <div>
+                        <p className="font-medium">
+                          {item.child_profiles.child_first_name} {item.child_profiles.child_last_name}
+                        </p>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <p>{format(new Date(checkIn.check_in_time), "HH:mm")} - {checkIn.check_out_time ? format(new Date(checkIn.check_out_time), "HH:mm") : "—"}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="text-xs">In: {getConditionBadge(checkIn.child_condition_checkin)}</div>
-                        {checkIn.child_condition_checkout && (
-                          <div className="text-xs">Out: {getConditionBadge(checkIn.child_condition_checkout)}</div>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            {checkedOutChildren.length === 0 && (
-              <div className="text-center py-4 text-muted-foreground">
-                No completed visits today
-              </div>
-            )}
+                    </div>
+                  ),
+                },
+                {
+                  key: "timeRange",
+                  header: "Time Range",
+                  priority: "primary",
+                  render: (item) => (
+                    <div className="text-sm">
+                      <p>{format(new Date(item.check_in_time), "HH:mm")} - {item.check_out_time ? format(new Date(item.check_out_time), "HH:mm") : "—"}</p>
+                    </div>
+                  ),
+                },
+                {
+                  key: "conditions",
+                  header: "Conditions",
+                  priority: "secondary",
+                  render: (item) => (
+                    <div className="space-y-1">
+                      <div className="text-xs">In: {getConditionBadge(item.child_condition_checkin)}</div>
+                      {item.child_condition_checkout && (
+                        <div className="text-xs">Out: {getConditionBadge(item.child_condition_checkout)}</div>
+                      )}
+                    </div>
+                  ),
+                },
+              ]}
+            />
           </CardContent>
         </Card>
       </div>
