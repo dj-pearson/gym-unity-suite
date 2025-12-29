@@ -224,15 +224,15 @@
   .gym-card {
     @apply glass rounded-2xl transition-all duration-300;
   }
-  
+
   .gym-card:hover {
     @apply glass-hover transform -translate-y-1;
   }
-  
+
   .stat-card {
     @apply gym-card p-6 relative overflow-hidden;
   }
-  
+
   .stat-card::before {
     content: '';
     position: absolute;
@@ -246,8 +246,196 @@
   .btn-primary {
     @apply bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all duration-300;
   }
-  
+
   .btn-glass {
     @apply glass hover:bg-white/10 text-foreground transition-all duration-300;
+  }
+}
+
+/* ===== MOBILE OPTIMIZATION UTILITIES ===== */
+
+@layer utilities {
+  /* Touch Target Sizing - WCAG 2.5.5 compliant minimum 44x44px */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  .touch-target-lg {
+    @apply min-h-[48px] min-w-[48px];
+  }
+
+  /* Touch-friendly padding for interactive elements */
+  .touch-padding {
+    @apply p-3;
+  }
+
+  .touch-padding-sm {
+    @apply p-2.5;
+  }
+
+  /* Safe Area Insets for notched/rounded devices */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .pl-safe {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+
+  .pr-safe {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  .p-safe {
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  }
+
+  /* Mobile-friendly scrollbars */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Prevent pull-to-refresh on mobile for specific areas */
+  .overscroll-contain {
+    overscroll-behavior: contain;
+  }
+
+  .overscroll-none {
+    overscroll-behavior: none;
+  }
+
+  /* Mobile tap highlight removal */
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Touch action utilities for gestures */
+  .touch-pan-x {
+    touch-action: pan-x;
+  }
+
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+
+  .touch-pinch-zoom {
+    touch-action: pinch-zoom;
+  }
+
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  /* Mobile text size adjustment prevention */
+  .text-size-adjust-none {
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+  }
+
+  /* Bottom navigation spacing */
+  .pb-nav {
+    padding-bottom: 5rem; /* 80px for bottom nav */
+  }
+
+  .pb-nav-safe {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Mobile-first card touch states */
+  .mobile-card-active {
+    @apply transition-colors;
+  }
+
+  .mobile-card-active:active {
+    @apply bg-muted/50;
+  }
+
+  /* Horizontal scroll container with fade edges */
+  .scroll-fade-x {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8px,
+      black calc(100% - 8px),
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8px,
+      black calc(100% - 8px),
+      transparent
+    );
+  }
+
+  /* Mobile-friendly list item spacing */
+  .mobile-list-item {
+    @apply py-3 px-4 border-b border-border last:border-b-0;
+  }
+
+  /* Active states for touch feedback */
+  .active-scale {
+    @apply transition-transform duration-100;
+  }
+
+  .active-scale:active {
+    @apply scale-[0.98];
+  }
+
+  /* Focus visible for keyboard navigation (mobile accessibility) */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+}
+
+/* Mobile-specific media queries */
+@media (max-width: 767px) {
+  /* Ensure inputs are at least 16px to prevent iOS zoom */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Improve touch targets for checkboxes and radios */
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-width: 20px;
+    min-height: 20px;
+  }
+
+  /* Better touch spacing for links in lists */
+  nav a, .nav-link {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
 }
