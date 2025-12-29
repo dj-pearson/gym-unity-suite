@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SimpleMessagingCenter } from '@/components/communication/SimpleMessagingCenter';
-import { AnnouncementManager, EmailTemplates, SupportTickets, MilestoneTracking } from '@/components/communication/PlaceholderComponents';
+import { AnnouncementManager } from '@/components/communication/AnnouncementManager';
+import { EmailTemplates } from '@/components/communication/EmailTemplates';
+import { SupportTickets } from '@/components/communication/SupportTickets';
+import { MilestoneTracking } from '@/components/communication/MilestoneTracking';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { MessageSquare, Megaphone, Mail, Headphones, Trophy } from 'lucide-react';
 
 export default function CommunicationPage() {
@@ -42,23 +44,33 @@ export default function CommunicationPage() {
         </TabsList>
 
         <TabsContent value="messaging" className="space-y-6">
-          <SimpleMessagingCenter />
+          <ErrorBoundary componentName="Messaging Center">
+            <SimpleMessagingCenter />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="announcements" className="space-y-6">
-          <AnnouncementManager />
+          <ErrorBoundary componentName="Announcements">
+            <AnnouncementManager />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="templates" className="space-y-6">
-          <EmailTemplates />
+          <ErrorBoundary componentName="Email Templates">
+            <EmailTemplates />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="support" className="space-y-6">
-          <SupportTickets />
+          <ErrorBoundary componentName="Support Tickets">
+            <SupportTickets />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="milestones" className="space-y-6">
-          <MilestoneTracking />
+          <ErrorBoundary componentName="Milestones">
+            <MilestoneTracking />
+          </ErrorBoundary>
         </TabsContent>
       </Tabs>
     </div>
