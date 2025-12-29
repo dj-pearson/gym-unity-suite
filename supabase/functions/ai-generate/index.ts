@@ -1,10 +1,35 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+// Allowed origins for CORS - restrict to known domains
+const ALLOWED_ORIGINS = [
+  'https://gym-unity-suite.com',
+  'https://www.gym-unity-suite.com',
+  'https://gym-unity-suite.pages.dev',
+  'https://api.repclub.net',
+  'https://functions.repclub.net',
+  'http://localhost:8080',
+  'http://localhost:3000',
+  'http://localhost:5173',
+];
+
+// Get CORS headers based on origin - only allow whitelisted origins
+const getCorsHeaders = (origin?: string | null) => {
+  const isAllowed = origin && ALLOWED_ORIGINS.some(allowed => origin === allowed);
+  const allowedOrigin = isAllowed ? origin : ALLOWED_ORIGINS[0];
+
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Credentials': 'true',
+  };
 };
+
+// Input validation constants
+const MAX_MESSAGE_LENGTH = 50000;
+const MAX_MESSAGES = 100;
+const VALID_PROVIDERS = ['claude', 'openai'] as const;
 
 interface AIRequest {
   messages: Array<{
@@ -19,20 +44,52 @@ interface AIRequest {
 }
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const {
-      messages,
-      model,
-      provider,
-      maxTokens = 4000,
-      temperature = 0.7,
-      stream = false
-    }: AIRequest = await req.json();
+    const requestBody = await req.json();
+
+    // Input validation
+    const { messages, model, provider, maxTokens = 4000, temperature = 0.7, stream = false } = requestBody as AIRequest;
+
+    // Validate provider
+    if (!provider || !VALID_PROVIDERS.includes(provider)) {
+      throw new Error('Invalid AI provider specified');
+    }
+
+    // Validate messages array
+    if (!Array.isArray(messages) || messages.length === 0) {
+      throw new Error('Messages array is required and cannot be empty');
+    }
+
+    if (messages.length > MAX_MESSAGES) {
+      throw new Error(`Too many messages. Maximum allowed: ${MAX_MESSAGES}`);
+    }
+
+    // Validate each message
+    for (let i = 0; i < messages.length; i++) {
+      const msg = messages[i];
+      if (!msg || typeof msg.content !== 'string') {
+        throw new Error(`Invalid message format at index ${i}`);
+      }
+      if (msg.content.length > MAX_MESSAGE_LENGTH) {
+        throw new Error(`Message ${i} exceeds maximum length of ${MAX_MESSAGE_LENGTH} characters`);
+      }
+      if (!['system', 'user', 'assistant'].includes(msg.role)) {
+        throw new Error(`Invalid role at message ${i}`);
+      }
+    }
+
+    // Validate model is a non-empty string
+    if (!model || typeof model !== 'string' || model.length > 100) {
+      throw new Error('Invalid model specified');
+    }
 
     console.log(`[AI-GENERATE] Processing request for ${provider}:${model}`);
 
@@ -64,13 +121,26 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    // Log detailed error server-side for debugging
     console.error('[AI-GENERATE] Error:', error);
-    return new Response(JSON.stringify({ 
-      error: error?.message || 'Unknown error',
-      details: error?.toString() || 'No details available'
+
+    // Return generic error message to client - never expose stack traces or internal details
+    const isValidationError = error instanceof Error &&
+      (error.message.includes('Invalid') ||
+       error.message.includes('required') ||
+       error.message.includes('exceeds') ||
+       error.message.includes('Too many'));
+
+    // Only expose validation error messages, not internal errors
+    const clientMessage = isValidationError && error instanceof Error
+      ? error.message
+      : 'An error occurred processing your request. Please try again.';
+
+    return new Response(JSON.stringify({
+      error: clientMessage
     }), {
-      status: 500,
+      status: isValidationError ? 400 : 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
