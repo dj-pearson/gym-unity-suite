@@ -1,14 +1,47 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+// Allowed origins for CORS - restrict to known trusted domains
+const ALLOWED_ORIGINS = [
+  'https://gym-unity-suite.com',
+  'https://www.gym-unity-suite.com',
+  'https://gym-unity-suite.pages.dev',
+  'https://api.repclub.net',
+  'https://functions.repclub.net',
+  'http://localhost:8080',
+  'http://localhost:3000',
+  'http://localhost:5173',
+];
+
+// Get CORS headers based on origin
+const getCorsHeaders = (origin?: string | null) => {
+  const isAllowed = origin && ALLOWED_ORIGINS.some(allowed => origin === allowed);
+  const allowedOrigin = isAllowed ? origin : ALLOWED_ORIGINS[0];
+
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Credentials": "true",
+  };
 };
 
-// Helper logging function for enhanced debugging
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+// Sanitize sensitive data from logs
+const sanitizeForLog = (data: Record<string, unknown>): Record<string, unknown> => {
+  const sanitized = { ...data };
+  const sensitiveKeys = ['domain_verification_token', 'token', 'verificationToken'];
+  for (const key of sensitiveKeys) {
+    if (key in sanitized && typeof sanitized[key] === 'string') {
+      sanitized[key] = '[REDACTED]';
+    }
+  }
+  return sanitized;
+};
+
+// Helper logging function for enhanced debugging with sanitization
+const logStep = (step: string, details?: Record<string, unknown>) => {
+  const sanitizedDetails = details ? sanitizeForLog(details) : undefined;
+  const detailsStr = sanitizedDetails ? ` - ${JSON.stringify(sanitizedDetails)}` : '';
   console.log(`[VERIFY-CUSTOM-DOMAIN] ${step}${detailsStr}`);
 };
 
@@ -44,7 +77,7 @@ async function verifyDNS(domain: string, verificationToken: string): Promise<{
             const txtValue = record.data.replace(/"/g, "");
             txtRecords.push(txtValue);
             if (txtValue === verificationToken) {
-              logStep("TXT verification successful", { token: verificationToken });
+              logStep("TXT verification successful");
               return { txtVerified: true, cnameVerified, txtRecords, cnameRecords };
             }
           }
@@ -111,6 +144,9 @@ async function verifyDNS(domain: string, verificationToken: string): Promise<{
 }
 
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }

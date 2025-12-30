@@ -2,9 +2,48 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+// Allowed origins for CORS - restrict to known trusted domains
+const ALLOWED_ORIGINS = [
+  'https://gym-unity-suite.com',
+  'https://www.gym-unity-suite.com',
+  'https://gym-unity-suite.pages.dev',
+  'https://api.repclub.net',
+  'https://functions.repclub.net',
+  'http://localhost:8080',
+  'http://localhost:3000',
+  'http://localhost:5173',
+];
+
+// Get CORS headers based on origin
+const getCorsHeaders = (origin?: string | null) => {
+  const isAllowed = origin && ALLOWED_ORIGINS.some(allowed => origin === allowed);
+  const allowedOrigin = isAllowed ? origin : ALLOWED_ORIGINS[0];
+
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+};
+
+// Sanitize sensitive data from logs
+const sanitizeForLog = (data: Record<string, unknown>): Record<string, unknown> => {
+  const sanitized = { ...data };
+  const sensitiveKeys = ['email', 'From Email', 'To', 'From', 'Body', 'body', 'from_email', 'to_email'];
+  for (const key of sensitiveKeys) {
+    if (key in sanitized && typeof sanitized[key] === 'string') {
+      sanitized[key] = '[REDACTED]';
+    }
+  }
+  return sanitized;
+};
+
+// Helper logging function with sanitization
+const logStep = (step: string, details?: Record<string, unknown>) => {
+  const sanitizedDetails = details ? sanitizeForLog(details) : undefined;
+  const detailsStr = sanitizedDetails ? ` - ${JSON.stringify(sanitizedDetails)}` : '';
+  console.log(`[RECEIVE-EMAIL] ${step}${detailsStr}`);
 };
 
 const sendNotificationEmail = async (ticketData: any) => {
@@ -67,18 +106,23 @@ Status: ${ticketData.status}
 };
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    logStep('Function started');
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
     const payload = await req.json();
-    console.log('Received email payload:', payload);
+    logStep('Received email payload', payload as Record<string, unknown>);
 
     const { To, From, 'From Email': fromEmail, Subject, Date, Body, ID } = payload;
 
@@ -165,7 +209,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('Email message created:', message);
+    logStep('Email message created', { id: message.id, subject: message.subject });
 
     // Send notification email (non-blocking)
     sendNotificationEmail({
