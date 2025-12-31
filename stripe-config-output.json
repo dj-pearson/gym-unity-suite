@@ -1,0 +1,19 @@
+﻿{
+    "created_at":  "2025-12-31 08:48:40",
+    "prices":  {
+                   "enterprise_monthly":  "price_1SkQhTRk7qIKHyBwbFfJ0dym",
+                   "studio_monthly":  "price_1SkQhRRk7qIKHyBwl224HqmT",
+                   "professional_monthly":  "price_1SkQhSRk7qIKHyBwWPsf8h7k"
+               },
+    "products":  {
+                     "professional":  "prod_ThqOZHRSXJ61d4",
+                     "enterprise":  "prod_ThqOQBPPZ0tTYX",
+                     "studio":  "prod_ThqORj2w9AtgVm"
+                 },
+    "payment_links":  {
+                          "professional":  "plink_1SkQhVRk7qIKHyBwbBuuJ2mQ",
+                          "enterprise":  "plink_1SkQhWRk7qIKHyBw66wN6zky",
+                          "studio":  "plink_1SkQhTRk7qIKHyBwuUkyjrxX"
+                      },
+    "mode":  "live"
+}
