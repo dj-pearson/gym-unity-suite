@@ -3,3 +3,27 @@ compatibility_date = "2024-09-25"
 
 # Cloudflare Pages configuration
 pages_build_output_dir = "dist"
+
+# ============================================
+# Environment Variables (for Cloudflare Workers/Functions)
+# ============================================
+
+[vars]
+# Stripe Product IDs
+STRIPE_PRODUCT_STUDIO = "prod_ThqORj2w9AtgVm"
+STRIPE_PRODUCT_PROFESSIONAL = "prod_ThqOZHRSXJ61d4"
+STRIPE_PRODUCT_ENTERPRISE = "prod_ThqOQBPPZ0tTYX"
+
+# Stripe Price IDs (Monthly)
+STRIPE_PRICE_STUDIO_MONTHLY = "price_1SkQhRRk7qIKHyBwl224HqmT"
+STRIPE_PRICE_PROFESSIONAL_MONTHLY = "price_1SkQhSRk7qIKHyBwWPsf8h7k"
+STRIPE_PRICE_ENTERPRISE_MONTHLY = "price_1SkQhTRk7qIKHyBwbFfJ0dym"
+
+# Stripe Payment Link IDs
+STRIPE_LINK_STUDIO = "plink_1SkQhTRk7qIKHyBwuUkyjrxX"
+STRIPE_LINK_PROFESSIONAL = "plink_1SkQhVRk7qIKHyBwbBuuJ2mQ"
+STRIPE_LINK_ENTERPRISE = "plink_1SkQhWRk7qIKHyBw66wN6zky"
+
+# Note: Secret keys should be set via `wrangler secret put` command:
+# wrangler secret put STRIPE_SECRET_KEY
+# wrangler secret put STRIPE_WEBHOOK_SECRET

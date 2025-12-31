@@ -99,19 +99,19 @@ Write-Host ""
 
 # Product 1: Studio
 Write-Host "1. Creating Studio product..." -ForegroundColor White
-$studioProduct = Invoke-StripeCommand 'products create --name="Rep Club Studio" --description="Complete gym management for single studios. Up to 500 members, 5 team members. Includes member management, class scheduling, mobile check-in, automated billing, basic reporting, email & SMS notifications, member mobile app, and standard support." --metadata[tier]="studio" --metadata[member_limit]="500" --metadata[team_limit]="5"'
+$studioProduct = Invoke-StripeCommand 'products create --name="Rep Club Studio" --description="Complete gym management for single studios. Up to 500 members, 5 team members. Includes member management, class scheduling, mobile check-in, automated billing, basic reporting, email & SMS notifications, member mobile app, and standard support." -d "metadata[tier]=studio" -d "metadata[member_limit]=500" -d "metadata[team_limit]=5"'
 $productIds["studio"] = Get-StripeId $studioProduct
 Write-Host "  Studio Product ID: $($productIds['studio'])" -ForegroundColor Green
 
 # Product 2: Professional
 Write-Host "2. Creating Professional product..." -ForegroundColor White
-$proProduct = Invoke-StripeCommand 'products create --name="Rep Club Professional" --description="Advanced gym management for growing businesses. Up to 2,000 members, 15 team members. Everything in Studio plus advanced analytics, marketing automation, equipment management, staff scheduling & payroll, multi-location support (up to 3), custom branding, and priority support." --metadata[tier]="professional" --metadata[member_limit]="2000" --metadata[team_limit]="15"'
+$proProduct = Invoke-StripeCommand 'products create --name="Rep Club Professional" --description="Advanced gym management for growing businesses. Up to 2,000 members, 15 team members. Everything in Studio plus advanced analytics, marketing automation, equipment management, staff scheduling & payroll, multi-location support (up to 3), custom branding, and priority support." -d "metadata[tier]=professional" -d "metadata[member_limit]=2000" -d "metadata[team_limit]=15"'
 $productIds["professional"] = Get-StripeId $proProduct
 Write-Host "  Professional Product ID: $($productIds['professional'])" -ForegroundColor Green
 
 # Product 3: Enterprise
 Write-Host "3. Creating Enterprise product..." -ForegroundColor White
-$entProduct = Invoke-StripeCommand 'products create --name="Rep Club Enterprise" --description="Enterprise-grade gym management with unlimited scale. Unlimited members and team members. Everything in Professional plus unlimited locations, advanced CRM & lead management, custom integrations & API access, white-label solutions, dedicated success manager, 24/7 premium support, and custom training & onboarding." --metadata[tier]="enterprise" --metadata[member_limit]="unlimited" --metadata[team_limit]="unlimited"'
+$entProduct = Invoke-StripeCommand 'products create --name="Rep Club Enterprise" --description="Enterprise-grade gym management with unlimited scale. Unlimited members and team members. Everything in Professional plus unlimited locations, advanced CRM & lead management, custom integrations & API access, white-label solutions, dedicated success manager, 24/7 premium support, and custom training & onboarding." -d "metadata[tier]=enterprise" -d "metadata[member_limit]=unlimited" -d "metadata[team_limit]=unlimited"'
 $productIds["enterprise"] = Get-StripeId $entProduct
 Write-Host "  Enterprise Product ID: $($productIds['enterprise'])" -ForegroundColor Green
 
@@ -126,19 +126,19 @@ Write-Host ""
 
 # Price 1: Studio - $149/month
 Write-Host "1. Creating Studio monthly price ($149/month)..." -ForegroundColor White
-$studioPrice = Invoke-StripeCommand "prices create --product=$($productIds['studio']) --unit-amount=14900 --currency=usd --recurring[interval]=month --metadata[plan]='studio_monthly'"
+$studioPrice = Invoke-StripeCommand "prices create --product=$($productIds['studio']) --unit-amount=14900 --currency=usd -d `"recurring[interval]=month`" -d `"metadata[plan]=studio_monthly`""
 $priceIds["studio_monthly"] = Get-StripeId $studioPrice
 Write-Host "  Studio Price ID: $($priceIds['studio_monthly'])" -ForegroundColor Green
 
 # Price 2: Professional - $349/month
 Write-Host "2. Creating Professional monthly price ($349/month)..." -ForegroundColor White
-$proPrice = Invoke-StripeCommand "prices create --product=$($productIds['professional']) --unit-amount=34900 --currency=usd --recurring[interval]=month --metadata[plan]='professional_monthly'"
+$proPrice = Invoke-StripeCommand "prices create --product=$($productIds['professional']) --unit-amount=34900 --currency=usd -d `"recurring[interval]=month`" -d `"metadata[plan]=professional_monthly`""
 $priceIds["professional_monthly"] = Get-StripeId $proPrice
 Write-Host "  Professional Price ID: $($priceIds['professional_monthly'])" -ForegroundColor Green
 
 # Price 3: Enterprise - $649/month
 Write-Host "3. Creating Enterprise monthly price ($649/month)..." -ForegroundColor White
-$entPrice = Invoke-StripeCommand "prices create --product=$($productIds['enterprise']) --unit-amount=64900 --currency=usd --recurring[interval]=month --metadata[plan]='enterprise_monthly'"
+$entPrice = Invoke-StripeCommand "prices create --product=$($productIds['enterprise']) --unit-amount=64900 --currency=usd -d `"recurring[interval]=month`" -d `"metadata[plan]=enterprise_monthly`""
 $priceIds["enterprise_monthly"] = Get-StripeId $entPrice
 Write-Host "  Enterprise Price ID: $($priceIds['enterprise_monthly'])" -ForegroundColor Green
 
@@ -153,19 +153,19 @@ Write-Host ""
 
 # Payment Link 1: Studio
 Write-Host "1. Creating Studio payment link..." -ForegroundColor White
-$studioLink = Invoke-StripeCommand "payment_links create --line-items[0][price]=$($priceIds['studio_monthly']) --line-items[0][quantity]=1 --after-completion[type]=redirect --after-completion[redirect][url]='https://gymunitysuite.com/membership-success?session_id={CHECKOUT_SESSION_ID}'"
+$studioLink = Invoke-StripeCommand "payment_links create -d `"line_items[0][price]=$($priceIds['studio_monthly'])`" -d `"line_items[0][quantity]=1`" -d `"after_completion[type]=redirect`" -d `"after_completion[redirect][url]=https://gymunitysuite.com/membership-success?session_id={CHECKOUT_SESSION_ID}`""
 $paymentLinks["studio"] = Get-StripeId $studioLink
 Write-Host "  Studio Payment Link ID: $($paymentLinks['studio'])" -ForegroundColor Green
 
 # Payment Link 2: Professional
 Write-Host "2. Creating Professional payment link..." -ForegroundColor White
-$proLink = Invoke-StripeCommand "payment_links create --line-items[0][price]=$($priceIds['professional_monthly']) --line-items[0][quantity]=1 --after-completion[type]=redirect --after-completion[redirect][url]='https://gymunitysuite.com/membership-success?session_id={CHECKOUT_SESSION_ID}'"
+$proLink = Invoke-StripeCommand "payment_links create -d `"line_items[0][price]=$($priceIds['professional_monthly'])`" -d `"line_items[0][quantity]=1`" -d `"after_completion[type]=redirect`" -d `"after_completion[redirect][url]=https://gymunitysuite.com/membership-success?session_id={CHECKOUT_SESSION_ID}`""
 $paymentLinks["professional"] = Get-StripeId $proLink
 Write-Host "  Professional Payment Link ID: $($paymentLinks['professional'])" -ForegroundColor Green
 
 # Payment Link 3: Enterprise
 Write-Host "3. Creating Enterprise payment link..." -ForegroundColor White
-$entLink = Invoke-StripeCommand "payment_links create --line-items[0][price]=$($priceIds['enterprise_monthly']) --line-items[0][quantity]=1 --after-completion[type]=redirect --after-completion[redirect][url]='https://gymunitysuite.com/membership-success?session_id={CHECKOUT_SESSION_ID}'"
+$entLink = Invoke-StripeCommand "payment_links create -d `"line_items[0][price]=$($priceIds['enterprise_monthly'])`" -d `"line_items[0][quantity]=1`" -d `"after_completion[type]=redirect`" -d `"after_completion[redirect][url]=https://gymunitysuite.com/membership-success?session_id={CHECKOUT_SESSION_ID}`""
 $paymentLinks["enterprise"] = Get-StripeId $entLink
 Write-Host "  Enterprise Payment Link ID: $($paymentLinks['enterprise'])" -ForegroundColor Green
 
