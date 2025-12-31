@@ -12,4 +12,5 @@ export default async (req: Request): Promise<Response> => {
       status: 200,
     }
   );
-};
+});
+
