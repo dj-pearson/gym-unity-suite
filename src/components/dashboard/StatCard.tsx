@@ -13,6 +13,7 @@ interface StatCardProps {
   icon: LucideIcon;
   gradient?: 'primary' | 'secondary' | 'success' | 'warning';
   className?: string;
+  loading?: boolean;
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
@@ -22,6 +23,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   icon: Icon,
   gradient = 'primary',
   className,
+  loading = false,
 }) => {
   const gradientClasses = {
     primary: 'from-primary to-primary-glow',
@@ -44,24 +46,33 @@ export const StatCard: React.FC<StatCardProps> = ({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-foreground">{value}</div>
-        {change && (
-          <div className="flex items-center mt-1">
-            <span
-              className={cn(
-                'text-xs font-medium',
-                change.type === 'positive' && 'text-success',
-                change.type === 'negative' && 'text-destructive',
-                change.type === 'neutral' && 'text-muted-foreground'
-              )}
-            >
-              {change.type === 'positive' && '+'}
-              {change.value}
-            </span>
-            <span className="text-xs text-muted-foreground ml-1">
-              from last month
-            </span>
+        {loading ? (
+          <div className="space-y-2">
+            <div className="h-8 w-20 bg-muted animate-pulse rounded" />
+            <div className="h-4 w-32 bg-muted animate-pulse rounded" />
           </div>
+        ) : (
+          <>
+            <div className="text-2xl font-bold text-foreground">{value}</div>
+            {change && (
+              <div className="flex items-center mt-1">
+                <span
+                  className={cn(
+                    'text-xs font-medium',
+                    change.type === 'positive' && 'text-success',
+                    change.type === 'negative' && 'text-destructive',
+                    change.type === 'neutral' && 'text-muted-foreground'
+                  )}
+                >
+                  {change.type === 'positive' && '+'}
+                  {change.value}
+                </span>
+                <span className="text-xs text-muted-foreground ml-1">
+                  from last month
+                </span>
+              </div>
+            )}
+          </>
         )}
       </CardContent>
     </Card>
