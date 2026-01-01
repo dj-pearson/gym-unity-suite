@@ -1,7 +1,7 @@
 # CLAUDE.md - AI Assistant Guide for Gym Unity Suite
 
-**Last Updated:** 2025-11-28
-**Codebase Version:** 1.1
+**Last Updated:** 2026-01-01
+**Codebase Version:** 1.2
 **Status:** Active Development
 
 ---
@@ -36,19 +36,22 @@
 - **Scale:** 40,000+ potential boutique studios, plus large gym chains
 
 **Key Metrics:**
-- **Total Codebase:** 150,000+ lines of code
-- **React Components:** 256+ components (75,000+ lines)
-- **Page Routes:** 73 pages, 68+ distinct routes
+- **Total Codebase:** 175,000+ lines of code
+- **React Components:** 294+ components (85,000+ lines)
+- **Page Routes:** 80 pages, 75+ distinct routes
 - **Database Tables:** 243 tables
-- **Edge Functions:** 13 Supabase serverless functions
+- **Edge Functions:** 17 Supabase serverless functions
+- **Database Migrations:** 98 migration files
+- **Component Domains:** 43 feature directories
 - **Dependencies:** 100+ npm packages
 - **Feature Modules:** 20+ business domains
 
 **Current Development Status:**
-- Core features: 85% complete
-- Enterprise features: 60% complete
-- Advanced analytics: 75% complete
-- Mobile experience (PWA): 50% complete
+- Core features: 90% complete
+- Enterprise features: 70% complete
+- Advanced analytics: 80% complete
+- Mobile experience (PWA): 60% complete
+- Testing infrastructure: Established (Vitest + Playwright)
 
 ---
 
@@ -71,8 +74,10 @@
 | **Recharts** | 2.15.4 | Data visualization |
 | **React Big Calendar** | 1.19.4 | Calendar UI |
 | **@dnd-kit** | 6.3.1+ | Drag & drop |
-| **Lucide React** | 0.462.0 | Icon library |
+| **Lucide React** | 0.555.0 | Icon library |
 | **next-themes** | 0.3.0 | Dark mode support |
+| **GSAP** | 3.13.0 | Animation library |
+| **Three.js** | 0.181.2 | 3D graphics |
 
 ### Backend Stack
 
@@ -84,15 +89,18 @@
 | **Cloudflare Workers** | - | Custom domain routing |
 | **Cloudflare Pages** | - | Hosting & CDN |
 
-### Development Tools
+### Development & Testing Tools
 
-| Tool | Purpose |
-|------|---------|
-| **ESLint** | Code linting |
-| **PostCSS** | CSS processing |
-| **Autoprefixer** | CSS vendor prefixes |
-| **Terser** | Production minification |
-| **Lovable Tagger** | Development tagging (dev mode only) |
+| Tool | Version | Purpose |
+|------|---------|---------|
+| **Vitest** | 1.3.1 | Unit & component testing |
+| **Playwright** | 1.40.0 | End-to-end testing |
+| **React Testing Library** | 14.2.1 | Component testing utilities |
+| **ESLint** | 9.32.0 | Code linting |
+| **PostCSS** | 8.5.6 | CSS processing |
+| **Autoprefixer** | 10.4.21 | CSS vendor prefixes |
+| **Terser** | 5.44.0 | Production minification |
+| **Lovable Tagger** | 1.1.9 | Development tagging (dev mode only) |
 
 ---
 
@@ -103,18 +111,20 @@
 ```
 /home/user/gym-unity-suite/
 ├── src/                          # Main application source
-│   ├── components/               # React components (256 files)
-│   ├── pages/                   # Page-level components (73 files)
+│   ├── components/               # React components (294 files, 43 domains)
+│   ├── pages/                   # Page-level components (80 files)
 │   ├── contexts/                # React Context providers
 │   ├── hooks/                   # Custom React hooks
 │   ├── lib/                     # Utility libraries
 │   ├── integrations/            # External service integrations
+│   ├── test/                    # Test utilities and setup
 │   └── utils/                   # Helper utilities
 ├── supabase/                    # Backend infrastructure
-│   ├── functions/               # Edge functions (13 functions)
-│   └── migrations/              # Database migrations (93+ files)
+│   ├── functions/               # Edge functions (17 functions)
+│   └── migrations/              # Database migrations (98 files)
 ├── workers/                     # Cloudflare Workers
 │   └── custom-domain-router/    # Enterprise custom domain handling
+├── e2e/                         # End-to-end tests (Playwright)
 ├── public/                      # Static assets
 ├── docs/                        # Documentation
 ├── dist/                        # Build output (gitignored)
@@ -131,21 +141,21 @@ src/components/
 ├── layout/              # Layout components (DashboardLayout, etc.)
 ├── auth/                # Authentication components
 ├── dashboard/           # Dashboard & widgets
-├── analytics/           # Analytics dashboards & reporting (190K)
-├── crm/                 # CRM, leads, pipeline management (483K)
-├── members/             # Member management (104K)
-├── classes/             # Class scheduling & management (124K)
-├── billing/             # Billing & payments (91K)
-├── staff/               # Staff management (91K)
+├── analytics/           # Analytics dashboards & reporting
+├── crm/                 # CRM, leads, pipeline management
+├── members/             # Member management
+├── classes/             # Class scheduling & management
+├── billing/             # Billing & payments
+├── staff/               # Staff management
 ├── training/            # Personal training
-├── equipment/           # Equipment tracking (196K)
+├── equipment/           # Equipment tracking
 ├── forms/               # Reusable form components
 ├── integrations/        # Third-party integration UI
-├── marketing/           # Marketing automation (106K)
+├── marketing/           # Marketing automation
 ├── membership/          # Membership plans & management
-├── communication/       # Communication tools (95K)
+├── communication/       # Communication tools
 ├── retail/              # Pro shop & POS
-├── mobile/              # Mobile-specific components (122K)
+├── mobile/              # Mobile-specific components
 ├── pools/               # Pool management
 ├── spa/                 # Spa services
 ├── childcare/           # Childcare management
@@ -166,7 +176,10 @@ src/components/
 ├── audit/               # Audit trails
 ├── advanced/            # Advanced features
 ├── 3d/                  # 3D elements
-└── backgrounds/         # Background components
+├── backgrounds/         # Background components
+├── checkin/             # Check-in kiosk & workflows
+├── charts/              # Reusable chart components
+└── imports/             # Data import utilities
 ```
 
 **Key Insight:** Each domain folder contains all related components for that business feature, promoting cohesion and making it easy to find related code.
@@ -224,17 +237,22 @@ src/pages/
 **`src/integrations/`** - External service integrations:
 - `supabase/` - Supabase client & types
 
-**`supabase/functions/`** - Edge functions:
-- `ai-generate` - AI content generation
+**`supabase/functions/`** - Edge functions (17 total):
+- `ai-generate` - AI content generation (with CORS & input validation)
 - `check-subscription` - Subscription verification
 - `create-checkout` - Payment checkout
 - `create-one-time-payment` - One-time payments
 - `customer-portal` - Customer portal access
 - `generate-sitemap` - SEO sitemap generation
+- `generate-wallet-pass` - Apple Wallet/Google Pay pass generation
 - `get-org-by-domain` - Custom domain resolution
+- `health` - Health check endpoint
+- `health-check` - Extended health monitoring
+- `rate-limit` - Rate limiting enforcement
 - `receive-email` - Inbound email handling
 - `send-email-response` - Outbound email responses
 - `setup-new-user` - New user setup
+- `stripe-webhook` - Stripe payment webhook handler
 - `verify-custom-domain` - Domain verification
 - `verify-payment` - Payment verification
 
@@ -993,17 +1011,96 @@ const MemberForm = ({ onSubmit }: { onSubmit: (values: MemberFormValues) => void
 
 ### Current Status
 
-**No formal test suite exists** - This is a gap that needs to be addressed.
+**Testing infrastructure is established** with Vitest for unit/component tests and Playwright for E2E tests.
 
-**Recommendations for future testing:**
-- Unit tests: Vitest or Jest
-- Component tests: React Testing Library
-- E2E tests: Playwright or Cypress
-- Coverage target: 80%+
+### Test Configuration
+
+**Files:**
+- `vitest.config.ts` - Unit/component test configuration
+- `playwright.config.ts` - E2E test configuration (multi-browser)
+- `src/test/setup.ts` - Test environment setup
+
+### Running Tests
+
+```bash
+# Unit/Component Tests (Vitest)
+npm run test              # Watch mode
+npm run test:run          # Single run
+npm run test:coverage     # With coverage report
+npm run test:ui           # UI dashboard
+
+# End-to-End Tests (Playwright)
+npm run test:e2e          # Run all E2E tests
+npm run test:e2e:ui       # Interactive UI mode
+npm run test:e2e:headed   # Visible browser
+npm run test:e2e:debug    # Debug mode
+npm run test:e2e:report   # View test report
+npm run test:e2e:codegen  # Generate tests from browser
+
+# Full Suite
+npm run test:all          # Run all tests
+```
+
+### Current Test Coverage
+
+**Unit Tests** (`src/` directory):
+- `src/components/ui/` - Button, Card, Alert components
+- `src/components/auth/` - ProtectedRoute component
+- `src/lib/` - Utils, rate-limiter, TOTP utilities
+- `src/hooks/` - usePermissions hook
+
+**E2E Tests** (`e2e/` directory):
+- `auth.spec.ts` - Authentication flows
+- `accessibility.spec.ts` - Accessibility compliance
+- `performance.spec.ts` - Performance metrics
+- `navigation.spec.ts` - Navigation functionality
+
+### Testing Features
+
+- **Vitest:** JSDOM environment, React Testing Library integration
+- **Playwright:** Cross-browser testing (Chrome, Firefox, Safari, Mobile)
+- **Artifacts:** Screenshots, videos, traces on failures
+- **Reports:** HTML and JSON test reports
+- **Coverage:** v8 provider with detailed reports
+
+### Writing New Tests
+
+**Unit Test Example:**
+```typescript
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import MyComponent from './MyComponent';
+
+describe('MyComponent', () => {
+  it('renders correctly', () => {
+    render(<MyComponent title="Test" />);
+    expect(screen.getByText('Test')).toBeInTheDocument();
+  });
+});
+```
+
+**E2E Test Example:**
+```typescript
+import { test, expect } from '@playwright/test';
+
+test('user can navigate to dashboard', async ({ page }) => {
+  await page.goto('/');
+  await page.click('text=Dashboard');
+  await expect(page).toHaveURL('/dashboard');
+});
+```
+
+### Areas Needing Test Expansion
+
+- Business-critical hooks (useMembers, useCheckIn)
+- CRM domain components
+- Billing workflows
+- Form validation logic
+- Multi-tenant data isolation
 
 ### Manual Testing Checklist
 
-When implementing features, manually test:
+When implementing features, also manually verify:
 - ✅ Responsive design (mobile, tablet, desktop)
 - ✅ Dark mode compatibility
 - ✅ Permission checks work correctly
@@ -1130,8 +1227,17 @@ npm run build:pages
 | Location | Purpose |
 |----------|---------|
 | `supabase/config.toml` | Supabase project config |
-| `supabase/functions/` | Edge functions (13 functions) |
-| `supabase/migrations/` | Database migrations (93+ files) |
+| `supabase/functions/` | Edge functions (17 functions) |
+| `supabase/migrations/` | Database migrations (98 files) |
+
+### Test Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `vitest.config.ts` | Vitest test configuration |
+| `playwright.config.ts` | Playwright E2E config |
+| `src/test/setup.ts` | Test environment setup |
+| `e2e/` | E2E test specifications |
 
 ---
 
@@ -1148,15 +1254,16 @@ npm run build:pages
 
 ### Backup Files
 
-**Issue:** Many `.backup` files exist in the codebase
-**Impact:** Code clutter, potential confusion
-**Action:** These should be cleaned up and removed
+**Issue:** Database backup files exist in `backup/` and `backups/` directories
+**Impact:** Storage overhead (these are large .gz files)
+**Status:** These are database backups, not source code - consider archiving to external storage
 
-### Testing Gap
+### Testing Coverage Gap
 
-**Issue:** No automated test suite
-**Impact:** Regression risk, manual testing burden
-**Action:** Implement testing framework (high priority)
+**Status:** Testing infrastructure is established (Vitest + Playwright)
+**Current Coverage:** Limited (8 unit tests, 4 E2E specs)
+**Priority:** Expand coverage to business-critical domains (CRM, billing, members)
+**Action:** Add tests for hooks and form validation logic
 
 ### Code Splitting
 
@@ -1374,6 +1481,7 @@ const MyComponent = () => {
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.2 | 2026-01-01 | Updated metrics (294 components, 80 pages, 17 edge functions, 98 migrations), documented testing infrastructure (Vitest + Playwright), added new edge functions (wallet pass, health checks, rate limiting, Stripe webhook), updated development tool versions, added new component directories (checkin, charts, imports) |
 | 1.1 | 2025-11-28 | Updated metrics (256 components, 73 pages, 13 edge functions), added email functions, fixed SEO pages structure, added new component directories |
 | 1.0 | 2025-11-16 | Initial comprehensive CLAUDE.md documentation |
 
@@ -1390,7 +1498,8 @@ This document is specifically designed to help AI assistants (like Claude) under
 ✅ **Always** use lazy loading for new pages
 ✅ **Always** consider mobile-first design
 ✅ **Always** support dark mode
-✅ **Always** test manually since no automated tests exist
+✅ **Always** run `npm run test:run` before committing changes
+✅ **Always** add tests for new business logic (hooks, utilities)
 
 ❌ **Never** skip organization filtering in queries
 ❌ **Never** commit directly to main branch
