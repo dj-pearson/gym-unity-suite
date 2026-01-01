@@ -6,6 +6,7 @@ import { Bell, User, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
+import { useUnreadCount } from '@/hooks/useNotifications';
 
 interface MemberLayoutProps {
   children: React.ReactNode;
@@ -15,13 +16,13 @@ export function MemberLayout({ children }: MemberLayoutProps) {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
 
+  // Fetch real unread notification count from the database
+  const unreadCount = useUnreadCount(profile?.organization_id, profile?.id);
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/auth');
   };
-
-  // TODO: Fetch unread notification count
-  const unreadCount = 0; // This would come from a real query
 
   return (
     <SidebarProvider>
