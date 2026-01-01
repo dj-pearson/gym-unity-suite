@@ -70,37 +70,7 @@ export function usePresence(
 
     setIsTracking(true);
 
-    // For now, use mock presence since we need Supabase Realtime configuration
-    // TODO: Replace with actual Supabase Realtime when configured
-
-    // Mock implementation - simulates other users viewing the resource
-    const mockViewers: PresenceUser[] = [];
-
-    // Randomly add 0-2 other viewers for demo
-    if (Math.random() > 0.5) {
-      mockViewers.push({
-        id: 'user-1',
-        name: 'Sarah Johnson',
-        email: 'sarah@gymunity.com',
-        avatar_url: undefined,
-        color: getUserColor('user-1'),
-      });
-    }
-
-    if (Math.random() > 0.7) {
-      mockViewers.push({
-        id: 'user-2',
-        name: 'Mike Chen',
-        email: 'mike@gymunity.com',
-        avatar_url: undefined,
-        color: getUserColor('user-2'),
-      });
-    }
-
-    setViewers(mockViewers);
-
-    // Actual Supabase Realtime implementation would be:
-    /*
+    // Use Supabase Realtime for actual presence tracking
     const channel = supabase.channel(`presence:${resourceType}:${resourceId}`, {
       config: {
         presence: {
@@ -139,17 +109,20 @@ export function usePresence(
         }
       });
 
-    return () => {
-      channel.unsubscribe();
-    };
-    */
+    // Store channel reference for cleanup
+    (window as any).__presenceChannel = channel;
   }, [enabled, resourceId, profile, isTracking, resourceType, getUserColor]);
 
   const stopPresence = useCallback(() => {
     setIsTracking(false);
     setViewers([]);
 
-    // Actual implementation would unsubscribe from channel
+    // Unsubscribe from the Supabase Realtime channel
+    const channel = (window as any).__presenceChannel;
+    if (channel) {
+      channel.unsubscribe();
+      delete (window as any).__presenceChannel;
+    }
   }, []);
 
   // Auto-start presence when component mounts
