@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -276,25 +276,30 @@ export function FollowUpTasksManager() {
     return format(today, "yyyy-MM-dd") === format(scheduled, "yyyy-MM-dd");
   };
 
-  const filterTasks = (status: string) => {
-    switch (status) {
-      case "pending":
-        return tasks.filter(t => !t.completed_at);
-      case "completed":
-        return tasks.filter(t => !!t.completed_at);
-      case "overdue":
-        return tasks.filter(t => !t.completed_at && isOverdue(t.scheduled_at));
-      case "today":
-        return tasks.filter(t => !t.completed_at && isToday(t.scheduled_at));
-      default:
-        return tasks;
-    }
-  };
+  // Memoized single-pass filtering to avoid 4 separate array iterations on every render
+  const { pendingTasks, overdueTasks, todayTasks, completedTasks } = useMemo(() => {
+    const pending: FollowUpTask[] = [];
+    const overdue: FollowUpTask[] = [];
+    const today: FollowUpTask[] = [];
+    const completed: FollowUpTask[] = [];
 
-  const pendingTasks = filterTasks("pending");
-  const overdueTasks = filterTasks("overdue");
-  const todayTasks = filterTasks("today");
-  const completedTasks = filterTasks("completed");
+    for (const task of tasks) {
+      if (task.completed_at) {
+        completed.push(task);
+      } else {
+        pending.push(task);
+        // Check overdue and today status only for pending tasks
+        if (isOverdue(task.scheduled_at)) {
+          overdue.push(task);
+        }
+        if (isToday(task.scheduled_at)) {
+          today.push(task);
+        }
+      }
+    }
+
+    return { pendingTasks: pending, overdueTasks: overdue, todayTasks: today, completedTasks: completed };
+  }, [tasks]);
 
   if (loading) {
     return <div className="flex justify-center p-8">Loading follow-up tasks...</div>;

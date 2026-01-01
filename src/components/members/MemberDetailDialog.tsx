@@ -131,11 +131,17 @@ export function MemberDetailDialog({ member, isOpen, onClose }: MemberDetailDial
   const fetchAttendance = async () => {
     if (!member) return;
 
+    // Limit query to last 365 days for performance - covers all needed statistics
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
     const { data, error } = await supabase
       .from('check_ins')
       .select('checked_in_at, checked_out_at')
       .eq('member_id', member.id)
-      .eq('is_guest', false);
+      .eq('is_guest', false)
+      .gte('checked_in_at', oneYearAgo.toISOString())
+      .order('checked_in_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching attendance:', error);
@@ -144,27 +150,37 @@ export function MemberDetailDialog({ member, isOpen, onClose }: MemberDetailDial
 
     if (data) {
       const now = new Date();
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const thirtyDaysAgo = now.getTime() - 30 * 24 * 60 * 60 * 1000;
+      const sevenDaysAgo = now.getTime() - 7 * 24 * 60 * 60 * 1000;
 
-      const visits30Days = data.filter(visit => 
-        new Date(visit.checked_in_at) >= thirtyDaysAgo
-      ).length;
+      // Single-pass processing for all statistics
+      let visits30Days = 0;
+      let visits7Days = 0;
+      let totalDuration = 0;
+      let completedVisitsCount = 0;
 
-      const visits7Days = data.filter(visit => 
-        new Date(visit.checked_in_at) >= sevenDaysAgo
-      ).length;
+      for (const visit of data) {
+        const checkInTime = new Date(visit.checked_in_at).getTime();
 
-      const lastVisit = data.length > 0 ? 
-        data.sort((a, b) => new Date(b.checked_in_at).getTime() - new Date(a.checked_in_at).getTime())[0].checked_in_at 
+        if (checkInTime >= thirtyDaysAgo) {
+          visits30Days++;
+        }
+        if (checkInTime >= sevenDaysAgo) {
+          visits7Days++;
+        }
+        if (visit.checked_out_at) {
+          const checkOutTime = new Date(visit.checked_out_at).getTime();
+          totalDuration += checkOutTime - checkInTime;
+          completedVisitsCount++;
+        }
+      }
+
+      // Data is already sorted by checked_in_at desc, so first item is the latest
+      const lastVisit = data.length > 0 ? data[0].checked_in_at : undefined;
+
+      const avgDuration = completedVisitsCount > 0
+        ? totalDuration / completedVisitsCount / (1000 * 60)
         : undefined;
-
-      const completedVisits = data.filter(visit => visit.checked_out_at);
-      const avgDuration = completedVisits.length > 0 ?
-        completedVisits.reduce((sum, visit) => {
-          const duration = new Date(visit.checked_out_at!).getTime() - new Date(visit.checked_in_at).getTime();
-          return sum + duration;
-        }, 0) / completedVisits.length / (1000 * 60) : undefined;
 
       setAttendance({
         total_visits: data.length,
