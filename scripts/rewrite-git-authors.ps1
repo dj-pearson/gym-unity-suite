@@ -192,9 +192,13 @@ if [ "`$GIT_AUTHOR_EMAIL" = "lovable-dev[bot]@users.noreply.github.com" ] || [ "
 $tempScript = Join-Path $env:TEMP "git-rewrite-filter-$(Get-Date -Format 'yyyyMMddHHmmss').sh"
 $shellScript | Out-File -FilePath $tempScript -Encoding ascii -NoNewline
 
+# Convert Windows path to Git Bash path format (C:\path -> /c/path)
+$bashPath = $tempScript -replace '\\', '/' -replace '^([A-Z]):', '/$1'
+$bashPath = $bashPath.ToLower()
+
 try {
     # Use the temporary file with git filter-branch
-    $result = & git filter-branch --env-filter "source `"$tempScript`"" --tag-name-filter cat -- --all 2>&1
+    $result = & git filter-branch --env-filter "source `"$bashPath`"" --tag-name-filter cat -- --all 2>&1
     
     if ($LASTEXITCODE -ne 0) {
         throw ($result | Out-String)
