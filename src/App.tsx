@@ -17,9 +17,9 @@ import { queryClient } from '@/lib/queryClient';
 import React, { useEffect, lazy, Suspense } from 'react';
 import { MemberLayout } from "./components/layout/MemberLayout";
 import { useIsMobile } from '@/hooks/use-mobile';
-import LandingPage from "./pages/LandingPage";
 
-// Lazy load most page components, but not LandingPage which is needed on first load
+// Lazy load ALL page components including LandingPage to reduce initial bundle size
+const LandingPage = lazy(() => import("./pages/LandingPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
 const MembersPage = lazy(() => import("./pages/MembersPage"));
