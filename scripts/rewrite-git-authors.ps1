@@ -166,6 +166,14 @@ if (-not $Force) {
     }
 }
 
+# Clean up any leftover refs from previous filter-branch attempts
+Write-Host ""
+Write-ColorOutput "Cleaning up previous filter-branch refs..." "Cyan"
+git for-each-ref refs/original/ | ForEach-Object { 
+    $refName = ($_ -split '\s+' | Select-Object -Last 1)
+    git update-ref -d $refName 2>&1 | Out-Null
+}
+
 # Create backup branch
 $backupBranch = "backup-before-author-rewrite-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
 Write-Host ""
