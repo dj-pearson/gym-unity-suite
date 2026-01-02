@@ -1,0 +1,6 @@
+Refactor session timeout feature for improved user experience
+
+- Enhance SessionTimeoutSettings component for better role-based timeout configurations
+- Update useSessionTimeout hook to improve activity tracking and session extension options
+- Revise SessionTimeoutWarning modal for clearer user notifications
+- Integrate changes into SecurityPage for streamlined access to session timeout settings
