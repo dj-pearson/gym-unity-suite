@@ -216,11 +216,22 @@ try {
     # Use the temporary file with git filter-branch
     $result = & git filter-branch --env-filter ". `"$bashPath`"" --tag-name-filter cat -- --all 2>&1
     
-    if ($LASTEXITCODE -ne 0) {
-        throw ($result | Out-String)
+    # Check if there were actual errors (not just "unchanged" warnings)
+    $resultString = ($result | Out-String)
+    $hasUnchangedWarning = $resultString -match "Ref .* is unchanged"
+    $hasRealError = ($LASTEXITCODE -ne 0) -and -not $hasUnchangedWarning
+    
+    if ($hasRealError) {
+        throw $resultString
     }
     
-    Write-ColorOutput "History rewrite complete!" "Green"
+    if ($hasUnchangedWarning) {
+        Write-Host ""
+        Write-ColorOutput "No changes needed - commits already have correct authorship!" "Yellow"
+        Write-ColorOutput "Note: Remote branches may still show old authors until force pushed." "Gray"
+    } else {
+        Write-ColorOutput "History rewrite complete!" "Green"
+    }
     
 } catch {
     Write-Host ""
