@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
+// html5-qrcode is lazy-loaded to reduce initial bundle size (~300KB savings)
+import type { Html5Qrcode as Html5QrcodeType } from 'html5-qrcode';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -13,6 +14,13 @@ import {
   X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Scanner state enum - mirrors Html5QrcodeScannerState from the library
+const ScannerState = {
+  NOT_STARTED: 1,
+  SCANNING: 2,
+  PAUSED: 3,
+} as const;
 
 export interface CameraScannerProps {
   /** Callback when a code is successfully scanned */
@@ -61,9 +69,10 @@ export function CameraScanner({
   const [availableCameras, setAvailableCameras] = useState<{ id: string; label: string }[]>([]);
   const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
 
-  const scannerRef = useRef<Html5Qrcode | null>(null);
+  const scannerRef = useRef<Html5QrcodeType | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const scannerElementId = useRef(`qr-scanner-${Math.random().toString(36).substr(2, 9)}`);
+  const html5QrcodeModuleRef = useRef<typeof import('html5-qrcode') | null>(null);
 
   const {
     fps = 10,
@@ -80,7 +89,7 @@ export function CameraScanner({
     if (scannerRef.current) {
       try {
         const state = scannerRef.current.getState();
-        if (state === Html5QrcodeScannerState.SCANNING || state === Html5QrcodeScannerState.PAUSED) {
+        if (state === ScannerState.SCANNING || state === ScannerState.PAUSED) {
           await scannerRef.current.stop();
         }
       } catch (error) {
@@ -96,6 +105,12 @@ export function CameraScanner({
     setErrorMessage(null);
 
     try {
+      // Lazy load html5-qrcode module on first use (~300KB)
+      if (!html5QrcodeModuleRef.current) {
+        html5QrcodeModuleRef.current = await import('html5-qrcode');
+      }
+      const { Html5Qrcode } = html5QrcodeModuleRef.current;
+
       // Get available cameras
       const devices = await Html5Qrcode.getCameras();
       if (devices.length === 0) {
@@ -168,6 +183,12 @@ export function CameraScanner({
     setStatus('starting');
 
     try {
+      // Module should already be loaded from startScanner, but check just in case
+      if (!html5QrcodeModuleRef.current) {
+        html5QrcodeModuleRef.current = await import('html5-qrcode');
+      }
+      const { Html5Qrcode } = html5QrcodeModuleRef.current;
+
       if (!scannerRef.current) {
         scannerRef.current = new Html5Qrcode(scannerElementId.current);
       }
