@@ -133,10 +133,7 @@ export function SEOHead({
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       
-      {/* Preconnect to external domains for performance */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://lovable.dev" />
+      {/* Note: Preconnects removed - app uses system fonts, not Google Fonts */}
     </Helmet>
   );
 }
