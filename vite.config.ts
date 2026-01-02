@@ -33,6 +33,8 @@ export default defineConfig(({ mode }) => ({
           'vendor-charts': ['recharts'],
           // Animation library - dynamically imported on landing page
           'vendor-gsap': ['gsap', 'gsap/ScrollTrigger'],
+          // QR code scanner - lazy loaded in CameraScanner component (~300KB)
+          'vendor-qrcode': ['html5-qrcode'],
         },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) {
