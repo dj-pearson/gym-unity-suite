@@ -168,10 +168,16 @@ if (-not $Force) {
 
 # Clean up any leftover refs from previous filter-branch attempts
 Write-Host ""
-Write-ColorOutput "Cleaning up previous filter-branch refs..." "Cyan"
+Write-ColorOutput "Cleaning up previous filter-branch refs and backups..." "Cyan"
 git for-each-ref refs/original/ | ForEach-Object { 
     $refName = ($_ -split '\s+' | Select-Object -Last 1)
     git update-ref -d $refName 2>&1 | Out-Null
+}
+
+# Delete old backup branches
+git branch | Select-String "backup-before-author-rewrite" | ForEach-Object { 
+    $branchName = $_.ToString().Trim()
+    git branch -D $branchName 2>&1 | Out-Null
 }
 
 # Create backup branch
