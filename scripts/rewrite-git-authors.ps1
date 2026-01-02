@@ -183,32 +183,18 @@ Write-ColorOutput "Rewriting commit history..." "Cyan"
 
 $env:FILTER_BRANCH_SQUELCH_WARNING = "1"
 
-# Build the environment filter
-# The shell script checks if the author matches patterns and replaces with new author
-$shellScript = @'
-if [ "$GIT_AUTHOR_EMAIL" = "lovable-dev[bot]@users.noreply.github.com" ] || \
-   [ "$GIT_AUTHOR_NAME" = "lovable-dev[bot]" ] || \
-   [ "$GIT_AUTHOR_EMAIL" = "lovable-gpt-engineer[bot]@users.noreply.github.com" ] || \
-   [ "$GIT_AUTHOR_NAME" = "lovable-gpt-engineer[bot]" ] || \
-   echo "$GIT_AUTHOR_EMAIL" | grep -qi "lovable" || \
-   echo "$GIT_AUTHOR_NAME" | grep -qi "lovable" || \
-   echo "$GIT_AUTHOR_EMAIL" | grep -qi "claude" || \
-   echo "$GIT_AUTHOR_NAME" | grep -qi "claude" || \
-   [ "$GIT_AUTHOR_NAME" = "GPT Engineer" ] || \
-   [ "$GIT_AUTHOR_NAME" = "assistant" ]; then
-    export GIT_AUTHOR_NAME="{NEW_AUTHOR_NAME}"
-    export GIT_AUTHOR_EMAIL="{NEW_AUTHOR_EMAIL}"
-    export GIT_COMMITTER_NAME="{NEW_AUTHOR_NAME}"
-    export GIT_COMMITTER_EMAIL="{NEW_AUTHOR_EMAIL}"
-fi
-'@
+# Build the environment filter shell script
+$shellScript = @"
+if [ "`$GIT_AUTHOR_EMAIL" = "lovable-dev[bot]@users.noreply.github.com" ] || [ "`$GIT_AUTHOR_NAME" = "lovable-dev[bot]" ] || [ "`$GIT_AUTHOR_EMAIL" = "lovable-gpt-engineer[bot]@users.noreply.github.com" ] || [ "`$GIT_AUTHOR_NAME" = "lovable-gpt-engineer[bot]" ] || echo "`$GIT_AUTHOR_EMAIL" | grep -qi "lovable" || echo "`$GIT_AUTHOR_NAME" | grep -qi "lovable" || echo "`$GIT_AUTHOR_EMAIL" | grep -qi "claude" || echo "`$GIT_AUTHOR_NAME" | grep -qi "claude" || [ "`$GIT_AUTHOR_NAME" = "GPT Engineer" ] || [ "`$GIT_AUTHOR_NAME" = "assistant" ]; then export GIT_AUTHOR_NAME="$NewAuthorName"; export GIT_AUTHOR_EMAIL="$NewAuthorEmail"; export GIT_COMMITTER_NAME="$NewAuthorName"; export GIT_COMMITTER_EMAIL="$NewAuthorEmail"; fi
+"@
 
-# Replace placeholders with actual values
-$envFilter = $shellScript -replace '{NEW_AUTHOR_NAME}', $NewAuthorName -replace '{NEW_AUTHOR_EMAIL}', $NewAuthorEmail
+# Write script to temporary file for reliable execution
+$tempScript = Join-Path $env:TEMP "git-rewrite-filter-$(Get-Date -Format 'yyyyMMddHHmmss').sh"
+$shellScript | Out-File -FilePath $tempScript -Encoding ascii -NoNewline
 
 try {
-    # Use --env-filter with the shell script as a single argument
-    $result = & git filter-branch --env-filter $envFilter --tag-name-filter cat -- --all 2>&1
+    # Use the temporary file with git filter-branch
+    $result = & git filter-branch --env-filter "source `"$tempScript`"" --tag-name-filter cat -- --all 2>&1
     
     if ($LASTEXITCODE -ne 0) {
         throw ($result | Out-String)
@@ -221,6 +207,11 @@ try {
     Write-ColorOutput "Error during rewrite: $_" "Red"
     Write-ColorOutput "  You can restore from backup branch: $backupBranch" "Yellow"
     exit 1
+} finally {
+    # Clean up temporary file
+    if (Test-Path $tempScript) {
+        Remove-Item $tempScript -Force -ErrorAction SilentlyContinue
+    }
 }
 
 # Clean up refs
