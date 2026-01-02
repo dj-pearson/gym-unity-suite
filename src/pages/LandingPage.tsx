@@ -35,58 +35,76 @@ import { useNavigate } from 'react-router-dom';
 import { EarlyAccessForm } from '@/components/auth/EarlyAccessForm';
 import { Logo } from '@/components/ui/logo';
 import { OneTimePaymentButton } from '@/components/membership/OneTimePaymentButton';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const heroWrapperRef = React.useRef(null);
-  const heroBackgroundRef = React.useRef(null);
+  const heroWrapperRef = React.useRef<HTMLDivElement>(null);
+  const heroBackgroundRef = React.useRef<HTMLDivElement>(null);
   const [showDemoModal, setShowDemoModal] = useState(false);
 
-  useGSAP(() => {
-    gsap.registerPlugin(ScrollTrigger);
+  // Lazy load GSAP for animations - improves initial page load performance
+  React.useEffect(() => {
+    let ctx: { revert: () => void } | undefined;
 
-    // Parallax effect for background
-    gsap.to(heroBackgroundRef.current, {
-      yPercent: 30,
-      ease: "none",
-      scrollTrigger: {
-        trigger: heroWrapperRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true
-      }
-    });
+    const initAnimations = async () => {
+      const [gsapModule, ScrollTriggerModule] = await Promise.all([
+        import('gsap'),
+        import('gsap/ScrollTrigger')
+      ]);
 
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const gsap = gsapModule.default;
+      const ScrollTrigger = ScrollTriggerModule.ScrollTrigger;
 
-    tl.from(".hero-badge", {
-      y: -20,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.2
-    })
-      .from(".hero-title", {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        skewY: 2
-      }, "-=0.4")
-      .from(".hero-description", {
-        y: 30,
-        opacity: 0,
-        duration: 0.8
-      }, "-=0.6")
-      .from(".hero-buttons", {
-        y: 20,
-        opacity: 0,
-        duration: 0.8,
-        scale: 0.95
-      }, "-=0.6");
-  }, { scope: heroWrapperRef });
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Create GSAP context for cleanup
+      ctx = gsap.context(() => {
+        // Parallax effect for background
+        gsap.to(heroBackgroundRef.current, {
+          yPercent: 30,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroWrapperRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true
+          }
+        });
+
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        tl.from(".hero-badge", {
+          y: -20,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.2
+        })
+          .from(".hero-title", {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            skewY: 2
+          }, "-=0.4")
+          .from(".hero-description", {
+            y: 30,
+            opacity: 0,
+            duration: 0.8
+          }, "-=0.6")
+          .from(".hero-buttons", {
+            y: 20,
+            opacity: 0,
+            duration: 0.8,
+            scale: 0.95
+          }, "-=0.6");
+      }, heroWrapperRef);
+    };
+
+    initAnimations();
+
+    return () => {
+      ctx?.revert();
+    };
+  }, []);
 
   // Auto-scroll to pricing section if /pricing route
   React.useEffect(() => {
@@ -352,6 +370,11 @@ export default function LandingPage() {
               src="/assets/Rep_Club_Gym.webp"
               alt="Hero Background"
               className="w-full h-full object-cover opacity-40"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              width={1920}
+              height={1080}
             />
             {/* Gradient Overlay for better text readability */}
             <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/60 to-background"></div>
