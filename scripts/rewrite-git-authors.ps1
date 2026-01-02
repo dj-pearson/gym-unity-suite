@@ -184,7 +184,10 @@ Write-ColorOutput "Rewriting commit history..." "Cyan"
 $env:FILTER_BRANCH_SQUELCH_WARNING = "1"
 
 # Build the environment filter as a single-line script
-$envFilter = 'if [ "$GIT_AUTHOR_EMAIL" = "lovable-dev[bot]@users.noreply.github.com" ] || [ "$GIT_AUTHOR_NAME" = "lovable-dev[bot]" ] || [ "$GIT_AUTHOR_EMAIL" = "lovable-gpt-engineer[bot]@users.noreply.github.com" ] || [ "$GIT_AUTHOR_NAME" = "lovable-gpt-engineer[bot]" ] || echo "$GIT_AUTHOR_EMAIL" | grep -qi "lovable" || echo "$GIT_AUTHOR_NAME" | grep -qi "lovable" || echo "$GIT_AUTHOR_EMAIL" | grep -qi "claude" || echo "$GIT_AUTHOR_NAME" | grep -qi "claude" || [ "$GIT_AUTHOR_NAME" = "GPT Engineer" ] || [ "$GIT_AUTHOR_NAME" = "assistant" ]; then export GIT_AUTHOR_NAME="' + $NewAuthorName + '"; export GIT_AUTHOR_EMAIL="' + $NewAuthorEmail + '"; export GIT_COMMITTER_NAME="' + $NewAuthorName + '"; export GIT_COMMITTER_EMAIL="' + $NewAuthorEmail + '"; fi'
+# Note: We need to escape the dollar signs and quotes properly for the shell
+$envFilter = @"
+if [ `"`$GIT_AUTHOR_EMAIL`" = `"lovable-dev[bot]@users.noreply.github.com`" ] || [ `"`$GIT_AUTHOR_NAME`" = `"lovable-dev[bot]`" ] || [ `"`$GIT_AUTHOR_EMAIL`" = `"lovable-gpt-engineer[bot]@users.noreply.github.com`" ] || [ `"`$GIT_AUTHOR_NAME`" = `"lovable-gpt-engineer[bot]`" ] || echo `"`$GIT_AUTHOR_EMAIL`" | grep -qi `"lovable`" || echo `"`$GIT_AUTHOR_NAME`" | grep -qi `"lovable`" || echo `"`$GIT_AUTHOR_EMAIL`" | grep -qi `"claude`" || echo `"`$GIT_AUTHOR_NAME`" | grep -qi `"claude`" || [ `"`$GIT_AUTHOR_NAME`" = `"GPT Engineer`" ] || [ `"`$GIT_AUTHOR_NAME`" = `"assistant`" ]; then export GIT_AUTHOR_NAME=`"$NewAuthorName`"; export GIT_AUTHOR_EMAIL=`"$NewAuthorEmail`"; export GIT_COMMITTER_NAME=`"$NewAuthorName`"; export GIT_COMMITTER_EMAIL=`"$NewAuthorEmail`"; fi
+"@
 
 try {
     git filter-branch --env-filter $envFilter --tag-name-filter cat -- --all 2>&1 | Out-Null
