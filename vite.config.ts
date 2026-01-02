@@ -29,8 +29,12 @@ export default defineConfig(({ mode }) => ({
           'vendor-react': ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
           // Router in separate chunk
           'vendor-router': ['react-router-dom'],
-          // Heavy chart library
+          // Heavy chart library - lazy loaded on dashboard
           'vendor-charts': ['recharts'],
+          // Animation library - dynamically imported on landing page
+          'vendor-gsap': ['gsap', 'gsap/ScrollTrigger'],
+          // QR code scanner - lazy loaded in CameraScanner component (~300KB)
+          'vendor-qrcode': ['html5-qrcode'],
         },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) {
@@ -55,11 +59,9 @@ export default defineConfig(({ mode }) => ({
         drop_debugger: true,
         pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn', 'console.error'],
       },
-      mangle: {
-        safari10: true,
-      },
     },
-    target: 'es2020',
+    // Target modern browsers - no need for legacy Safari 10 polyfills
+    target: 'es2022',
     chunkSizeWarningLimit: 600,
     // Enable source maps for production debugging
     sourcemap: false,
