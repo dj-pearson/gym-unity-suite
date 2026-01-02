@@ -4,6 +4,12 @@ import App from './App.tsx';
 import './index.css';
 import { initSWConfig } from '@/lib/pwa/swConfig';
 
+// Expose React globally to ensure it's available before other chunks load
+// This prevents "Cannot read properties of undefined (reading 'createContext')" errors
+if (typeof window !== 'undefined') {
+  (window as any).__REACT__ = React;
+}
+
 // Force bundle refresh: 2025-12-02-01:29
 // This comment changes the file content to generate a new vendor bundle hash
 

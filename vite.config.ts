@@ -22,55 +22,15 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true,
     rollupOptions: {
       output: {
-        // Manual chunking strategy for optimal bundle splitting
-        manualChunks: (id) => {
-          // React core and related libraries MUST be first
-          if (id.includes('node_modules/react/') || 
-              id.includes('node_modules/react-dom/') || 
-              id.includes('node_modules/react-is/') || 
-              id.includes('node_modules/scheduler/') ||
-              id.includes('node_modules/object-assign/') ||
-              id.includes('node_modules/prop-types/')) {
-            return 'vendor-react';
-          }
-          
-          // React Router should be in the react bundle too since UI components may import it
-          if (id.includes('node_modules/react-router') || id.includes('node_modules/@remix-run')) {
-            return 'vendor-router';
-          }
-
-          // Recharts and charting libraries (heavy - separate chunk)
-          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-') || id.includes('node_modules/victory')) {
-            return 'vendor-charts';
-          }
-
-          // UI component libraries - these depend on React so ensure stricter matching
-          if (id.includes('node_modules/@radix-ui') || 
-              id.includes('node_modules/lucide-react') || 
-              id.includes('node_modules/@hookform') ||
-              id.includes('node_modules/cmdk')) {
-            return 'vendor-ui-utils';
-          }
-
-          // Data fetching and state management
-          if (id.includes('node_modules/@tanstack') || id.includes('node_modules/@supabase') || id.includes('node_modules/react-query')) {
-            return 'vendor-data';
-          }
-
-          // Date/time libraries
-          if (id.includes('node_modules/date-fns') || id.includes('node_modules/react-big-calendar')) {
-            return 'vendor-calendar';
-          }
-
-          // Form libraries
-          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod')) {
-            return 'vendor-forms';
-          }
-
-          // Other large vendor dependencies
-          if (id.includes('node_modules/')) {
-            return 'vendor-misc';
-          }
+        // Simplified chunking - let Vite handle most automatically
+        // Only split out truly large libraries
+        manualChunks: {
+          // Keep React and React-DOM together in one chunk to ensure proper loading
+          'vendor-react': ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+          // Router in separate chunk
+          'vendor-router': ['react-router-dom'],
+          // Heavy chart library
+          'vendor-charts': ['recharts'],
         },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) {
