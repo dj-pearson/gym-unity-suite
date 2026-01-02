@@ -183,14 +183,16 @@ Write-ColorOutput "Rewriting commit history..." "Cyan"
 
 $env:FILTER_BRANCH_SQUELCH_WARNING = "1"
 
-# Build the environment filter shell script
-$shellScript = @"
-if [ "`$GIT_AUTHOR_EMAIL" = "lovable-dev[bot]@users.noreply.github.com" ] || [ "`$GIT_AUTHOR_NAME" = "lovable-dev[bot]" ] || [ "`$GIT_AUTHOR_EMAIL" = "lovable-gpt-engineer[bot]@users.noreply.github.com" ] || [ "`$GIT_AUTHOR_NAME" = "lovable-gpt-engineer[bot]" ] || echo "`$GIT_AUTHOR_EMAIL" | grep -qi "lovable" || echo "`$GIT_AUTHOR_NAME" | grep -qi "lovable" || echo "`$GIT_AUTHOR_EMAIL" | grep -qi "claude" || echo "`$GIT_AUTHOR_NAME" | grep -qi "claude" || [ "`$GIT_AUTHOR_NAME" = "GPT Engineer" ] || [ "`$GIT_AUTHOR_NAME" = "assistant" ]; then export GIT_AUTHOR_NAME="$NewAuthorName"; export GIT_AUTHOR_EMAIL="$NewAuthorEmail"; export GIT_COMMITTER_NAME="$NewAuthorName"; export GIT_COMMITTER_EMAIL="$NewAuthorEmail"; fi
-"@
+# Build the environment filter shell script without PowerShell escaping
+$shellScript = 'if [ "$GIT_AUTHOR_EMAIL" = "lovable-dev[bot]@users.noreply.github.com" ] || [ "$GIT_AUTHOR_NAME" = "lovable-dev[bot]" ] || [ "$GIT_AUTHOR_EMAIL" = "lovable-gpt-engineer[bot]@users.noreply.github.com" ] || [ "$GIT_AUTHOR_NAME" = "lovable-gpt-engineer[bot]" ] || echo "$GIT_AUTHOR_EMAIL" | grep -qi "lovable" || echo "$GIT_AUTHOR_NAME" | grep -qi "lovable" || echo "$GIT_AUTHOR_EMAIL" | grep -qi "claude" || echo "$GIT_AUTHOR_NAME" | grep -qi "claude" || [ "$GIT_AUTHOR_NAME" = "GPT Engineer" ] || [ "$GIT_AUTHOR_NAME" = "assistant" ]; then export GIT_AUTHOR_NAME="NEW_AUTHOR_NAME_PLACEHOLDER"; export GIT_AUTHOR_EMAIL="NEW_AUTHOR_EMAIL_PLACEHOLDER"; export GIT_COMMITTER_NAME="NEW_AUTHOR_NAME_PLACEHOLDER"; export GIT_COMMITTER_EMAIL="NEW_AUTHOR_EMAIL_PLACEHOLDER"; fi'
 
-# Write script to temporary file for reliable execution
+# Replace placeholders
+$shellScript = $shellScript.Replace("NEW_AUTHOR_NAME_PLACEHOLDER", $NewAuthorName)
+$shellScript = $shellScript.Replace("NEW_AUTHOR_EMAIL_PLACEHOLDER", $NewAuthorEmail)
+
+# Write script to temporary file
 $tempScript = Join-Path $env:TEMP "git-rewrite-filter-$(Get-Date -Format 'yyyyMMddHHmmss').sh"
-$shellScript | Out-File -FilePath $tempScript -Encoding ascii -NoNewline
+[System.IO.File]::WriteAllText($tempScript, $shellScript, [System.Text.Encoding]::ASCII)
 
 # Convert Windows path to Git Bash path format (C:\path -> /c/path)
 $bashPath = $tempScript -replace '\\', '/' -replace '^([A-Z]):', '/$1'
@@ -198,7 +200,7 @@ $bashPath = $bashPath.ToLower()
 
 try {
     # Use the temporary file with git filter-branch
-    $result = & git filter-branch --env-filter "source `"$bashPath`"" --tag-name-filter cat -- --all 2>&1
+    $result = & git filter-branch --env-filter ". `"$bashPath`"" --tag-name-filter cat -- --all 2>&1
     
     if ($LASTEXITCODE -ne 0) {
         throw ($result | Out-String)
