@@ -1,10 +1,11 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import {
+  getCorsHeaders,
+  handleCorsPreFlight,
+  corsJsonResponse,
+  corsErrorResponse,
+} from "../_shared/cors.ts";
 
 // Helper logging function
 const logStep = (step: string, details?: any) => {
@@ -24,8 +25,11 @@ const RATE_LIMITS: Record<string, { maxRequests: number; windowMs: number }> = {
 };
 
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+
+  // Handle CORS preflight
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return handleCorsPreFlight(origin);
   }
 
   const supabaseClient = createClient(
@@ -40,7 +44,7 @@ serve(async (req) => {
     const { action, endpoint, identifier, limitType = 'api' } = await req.json();
 
     if (!action || !endpoint) {
-      throw new Error("Missing required parameters: action, endpoint");
+      return corsErrorResponse("Missing required parameters: action, endpoint", origin, 400);
     }
 
     const config = RATE_LIMITS[limitType] || RATE_LIMITS.api;
@@ -83,24 +87,18 @@ serve(async (req) => {
           if (upsertError) throw upsertError;
 
           logStep("Created new rate limit entry");
-          return new Response(JSON.stringify({
+          return corsJsonResponse({
             allowed: true,
             remaining: config.maxRequests - 1,
             resetAt: now + config.windowMs,
-          }), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-            status: 200,
-          });
+          }, origin);
         } else {
           // Just checking, return full quota
-          return new Response(JSON.stringify({
+          return corsJsonResponse({
             allowed: true,
             remaining: config.maxRequests,
             resetAt: now + config.windowMs,
-          }), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-            status: 200,
-          });
+          }, origin);
         }
       }
 
@@ -112,6 +110,8 @@ serve(async (req) => {
         // Rate limit exceeded
         const retryAfter = Math.ceil((resetAt - now) / 1000);
         logStep("Rate limit exceeded", { currentCount, maxRequests: config.maxRequests });
+
+        const corsHeaders = getCorsHeaders(origin);
         return new Response(JSON.stringify({
           allowed: false,
           remaining: 0,
@@ -119,6 +119,7 @@ serve(async (req) => {
           retryAfter,
           error: 'Rate limit exceeded',
         }), {
+          status: 429,
           headers: {
             ...corsHeaders,
             "Content-Type": "application/json",
@@ -127,7 +128,6 @@ serve(async (req) => {
             "X-RateLimit-Reset": String(resetAt),
             "Retry-After": String(retryAfter),
           },
-          status: 429,
         });
       }
 
@@ -144,11 +144,14 @@ serve(async (req) => {
         if (updateError) throw updateError;
 
         logStep("Incremented rate limit counter", { newCount: currentCount + 1 });
+
+        const corsHeaders = getCorsHeaders(origin);
         return new Response(JSON.stringify({
           allowed: true,
           remaining: config.maxRequests - (currentCount + 1),
           resetAt,
         }), {
+          status: 200,
           headers: {
             ...corsHeaders,
             "Content-Type": "application/json",
@@ -156,15 +159,16 @@ serve(async (req) => {
             "X-RateLimit-Remaining": String(config.maxRequests - (currentCount + 1)),
             "X-RateLimit-Reset": String(resetAt),
           },
-          status: 200,
         });
       } else {
         // Just checking status
+        const corsHeaders = getCorsHeaders(origin);
         return new Response(JSON.stringify({
           allowed: true,
           remaining: config.maxRequests - currentCount,
           resetAt,
         }), {
+          status: 200,
           headers: {
             ...corsHeaders,
             "Content-Type": "application/json",
@@ -172,7 +176,6 @@ serve(async (req) => {
             "X-RateLimit-Remaining": String(config.maxRequests - currentCount),
             "X-RateLimit-Reset": String(resetAt),
           },
-          status: 200,
         });
       }
     } else if (action === 'reset') {
@@ -185,13 +188,10 @@ serve(async (req) => {
       if (deleteError) throw deleteError;
 
       logStep("Reset rate limit", { rateLimitKey });
-      return new Response(JSON.stringify({
+      return corsJsonResponse({
         success: true,
         message: 'Rate limit reset successfully',
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      }, origin);
     } else if (action === 'status') {
       // Get current status without incrementing
       const { data: entry } = await supabaseClient
@@ -203,36 +203,27 @@ serve(async (req) => {
       const windowStart = now - config.windowMs;
 
       if (!entry || new Date(entry.window_start).getTime() < windowStart) {
-        return new Response(JSON.stringify({
+        return corsJsonResponse({
           allowed: true,
           remaining: config.maxRequests,
           resetAt: now + config.windowMs,
           count: 0,
-        }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 200,
-        });
+        }, origin);
       }
 
       const resetAt = new Date(entry.window_start).getTime() + config.windowMs;
-      return new Response(JSON.stringify({
+      return corsJsonResponse({
         allowed: entry.count < config.maxRequests,
         remaining: Math.max(0, config.maxRequests - entry.count),
         resetAt,
         count: entry.count,
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      }, origin);
     }
 
-    throw new Error(`Invalid action: ${action}`);
+    return corsErrorResponse(`Invalid action: ${action}`, origin, 400);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in rate-limit", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    return corsErrorResponse(errorMessage, origin, 500);
   }
 });
