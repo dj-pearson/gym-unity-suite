@@ -1,6 +1,8 @@
 /**
  * useMFA Hook
  * Provides MFA setup and verification functionality
+ *
+ * Security: MFA secrets are encrypted at rest using AES-GCM
  */
 
 import { useState, useCallback } from 'react';
@@ -16,6 +18,10 @@ import {
   MFASetupData,
   MFAVerificationResult,
 } from '@/lib/totp';
+import {
+  encryptSecret,
+  ensureDecrypted,
+} from '@/lib/security/encryption';
 
 const ISSUER = 'Gym Unity Suite';
 
@@ -157,10 +163,13 @@ export function useMFA(): UseMFAReturn {
           setupData.backupCodes.map((code) => hashBackupCode(code))
         );
 
-        // Save to database
+        // Encrypt the TOTP secret before storing
+        const encryptedSecret = await encryptSecret(pendingSecret);
+
+        // Save to database with encrypted secret
         const { error: upsertError } = await supabase.from('user_mfa').upsert({
           user_id: user.id,
-          secret_encrypted: pendingSecret, // In production, encrypt this!
+          secret_encrypted: encryptedSecret,
           enabled: true,
           setup_at: new Date().toISOString(),
           backup_codes: hashedBackupCodes,
@@ -220,8 +229,11 @@ export function useMFA(): UseMFAReturn {
           return { success: false, method: null, error: 'MFA not enabled' };
         }
 
+        // Decrypt the secret (handles both encrypted and legacy plaintext)
+        const decryptedSecret = await ensureDecrypted(mfaData.secret_encrypted);
+
         // Verify the code
-        const verification = await verifyTOTP(code, mfaData.secret_encrypted);
+        const verification = await verifyTOTP(code, decryptedSecret);
 
         if (verification.valid) {
           // Update last used timestamp
