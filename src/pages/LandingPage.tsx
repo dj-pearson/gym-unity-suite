@@ -358,6 +358,8 @@ export default function LandingPage() {
           </div>
         </nav>
 
+        {/* Main content area */}
+        <main>
         {/* Parallax background with hero content only */}
         <div ref={heroWrapperRef} className="relative w-full z-0 pt-20 overflow-hidden min-h-[95vh] flex items-center">
 
@@ -747,6 +749,7 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+        </main>
 
         <Footer />
       </div>
