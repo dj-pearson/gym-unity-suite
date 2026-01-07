@@ -93,13 +93,13 @@ export default function BlogPage() {
               </h1>
             </div>
           </header>
-          <div className="container mx-auto px-4 py-16 text-center">
+          <main className="container mx-auto px-4 py-16 text-center">
             <p className="text-lg text-destructive mb-4">Failed to load articles</p>
             <Button onClick={() => postsQuery.refetch()} variant="outline">
               <RefreshCw className="w-4 h-4 mr-2" />
               Try Again
             </Button>
-          </div>
+          </main>
           <Footer />
         </div>
       </>
@@ -122,11 +122,13 @@ export default function BlogPage() {
         </div>
       </header>
 
-      <BlogGrid
-        posts={posts}
-        title="Latest Articles"
-        description="Stay updated with the latest trends and best practices in the fitness industry."
-      />
+      <main>
+        <BlogGrid
+          posts={posts}
+          title="Latest Articles"
+          description="Stay updated with the latest trends and best practices in the fitness industry."
+        />
+      </main>
 
       <Footer />
     </div>
