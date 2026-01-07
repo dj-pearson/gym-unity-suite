@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
-import { Loader2, Mail, QrCode, Home, ArrowLeft, Calendar, ArrowRight, AlertCircle } from 'lucide-react';
+import { Loader2, Mail, QrCode, Home, ArrowLeft, Calendar, ArrowRight, AlertCircle, ShieldAlert } from 'lucide-react';
 import { Logo } from '@/components/ui/logo';
 import { BarcodeLogin } from './BarcodeLogin';
+import { ForgotPasswordForm } from './ForgotPasswordForm';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { validatePasswordSync } from '@/lib/security/password-policy';
+import { useLoginRateLimit } from '@/hooks/useRateLimiter';
 
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -18,18 +21,75 @@ export const LoginForm: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const [lockoutInfo, setLockoutInfo] = useState<{
+    locked: boolean;
+    lockoutEndsAt?: number;
+    attemptsRemaining: number;
+  }>({ locked: false, attemptsRemaining: 5 });
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Rate limiting for login attempts - use email as identifier
+  const loginRateLimit = useLoginRateLimit(email || 'anonymous');
+
+  // Check lockout status when email changes
+  useEffect(() => {
+    if (email) {
+      const status = loginRateLimit.checkLockout();
+      setLockoutInfo(status);
+    }
+  }, [email]);
+
+  // Calculate remaining lockout time
+  const getLockoutTimeRemaining = (): string => {
+    if (!lockoutInfo.lockoutEndsAt) return '';
+    const remaining = Math.max(0, lockoutInfo.lockoutEndsAt - Date.now());
+    const minutes = Math.ceil(remaining / 60000);
+    return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+  };
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if account is locked out
+    const currentLockout = loginRateLimit.checkLockout();
+    if (currentLockout.locked) {
+      setLockoutInfo(currentLockout);
+      toast({
+        title: 'Account Temporarily Locked',
+        description: `Too many failed attempts. Please try again in ${getLockoutTimeRemaining()}.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
     const { error } = await signIn(email, password);
     setIsLoading(false);
-    
-    // Redirect to dashboard on successful login
-    if (!error) {
+
+    if (error) {
+      // Record failed attempt
+      const result = loginRateLimit.recordFailure();
+      setLockoutInfo(result);
+
+      if (result.locked) {
+        toast({
+          title: 'Account Temporarily Locked',
+          description: 'Too many failed login attempts. Please try again in 15 minutes.',
+          variant: 'destructive',
+        });
+      } else if (result.attemptsRemaining <= 2) {
+        toast({
+          title: 'Warning',
+          description: `${result.attemptsRemaining} attempt${result.attemptsRemaining !== 1 ? 's' : ''} remaining before account lockout.`,
+          variant: 'destructive',
+        });
+      }
+    } else {
+      // Clear failed attempts on successful login
+      loginRateLimit.clearAttempts();
+      setLockoutInfo({ locked: false, attemptsRemaining: 5 });
       navigate('/dashboard');
     }
   };
@@ -136,6 +196,27 @@ export const LoginForm: React.FC = () => {
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="signin" className="space-y-4">
+                {/* Lockout Warning */}
+                {lockoutInfo.locked && (
+                  <Alert variant="destructive">
+                    <ShieldAlert className="h-4 w-4" />
+                    <AlertDescription>
+                      Account temporarily locked due to too many failed attempts.
+                      Please try again in {getLockoutTimeRemaining()}.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {/* Low attempts warning */}
+                {!lockoutInfo.locked && lockoutInfo.attemptsRemaining <= 2 && lockoutInfo.attemptsRemaining > 0 && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Warning: {lockoutInfo.attemptsRemaining} login attempt{lockoutInfo.attemptsRemaining !== 1 ? 's' : ''} remaining before temporary lockout.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="signin-email">Email</Label>
@@ -146,6 +227,7 @@ export const LoginForm: React.FC = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      disabled={lockoutInfo.locked}
                     />
                   </div>
                   <div className="space-y-2">
@@ -157,16 +239,21 @@ export const LoginForm: React.FC = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
+                      disabled={lockoutInfo.locked}
                     />
                   </div>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="w-full bg-gradient-primary hover:opacity-90 transition-smooth"
-                    disabled={isLoading}
+                    disabled={isLoading || lockoutInfo.locked}
                   >
                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Sign In
+                    {lockoutInfo.locked ? 'Account Locked' : 'Sign In'}
                   </Button>
+
+                  <div className="text-center">
+                    <ForgotPasswordForm />
+                  </div>
                 </form>
               </TabsContent>
               
