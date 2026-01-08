@@ -5,6 +5,7 @@ import { usePermissions, Permission, UserRole } from '@/hooks/usePermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, Lock, RefreshCw, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { sanitizeRedirectURL } from '@/lib/security/url-sanitization';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -38,8 +39,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // Redirect to auth if not authenticated
+  // Save current location for redirect after login (with sanitization)
   if (!user) {
-    return <Navigate to={fallbackPath} state={{ from: location }} replace />;
+    const currentPath = `${location.pathname}${location.search}${location.hash}`;
+    const sanitizedPath = sanitizeRedirectURL(currentPath);
+    const authUrl = `${fallbackPath}?redirect=${encodeURIComponent(sanitizedPath)}`;
+    return <Navigate to={authUrl} state={{ from: location }} replace />;
   }
 
   // Handle profile loading errors with retry option

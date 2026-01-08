@@ -57,8 +57,9 @@ interface StrengthThresholds {
 }
 
 // Default policy configuration
+// Updated to match best practices from AUTH_SETUP_DOCUMENTATION.md (12-character minimum)
 const DEFAULT_POLICY: PasswordPolicyConfig = {
-  minLength: 8,
+  minLength: 12, // Increased from 8 to 12 for better security
   maxLength: 128,
   requireUppercase: true,
   requireLowercase: true,

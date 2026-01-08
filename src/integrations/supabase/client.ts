@@ -50,15 +50,27 @@ export const supabaseConfig = {
 // Create the Supabase client
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
+// 
+// Configuration follows best practices from AUTH_SETUP_DOCUMENTATION.md:
+// - localStorage for persistent sessions
+// - Auto token refresh (5 minutes before expiry)
+// - Graceful fallback if localStorage unavailable
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
-    storage: localStorage,
+    // Use localStorage for session persistence (with fallback)
+    storage: typeof localStorage !== 'undefined' ? localStorage : undefined,
+    // Keep user logged in across browser sessions
     persistSession: true,
+    // Automatically refresh JWT tokens before expiry
     autoRefreshToken: true,
+    // Detect session changes in other tabs
+    detectSessionInUrl: true,
+    // Flow type for authentication
+    flowType: 'pkce', // More secure than implicit flow
   },
   global: {
     headers: {
-      'x-client-info': 'gym-unity-suite',
+      'X-Client-Info': 'gym-unity-suite',
     },
   },
 });

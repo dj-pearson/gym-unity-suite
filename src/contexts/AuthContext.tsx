@@ -36,10 +36,12 @@ interface AuthContextType {
   loading: boolean;
   profileError: string | null;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, organizationId?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, organizationId?: string) => Promise<{ error: any; needsEmailVerification?: boolean }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
+  verifyOtp: (email: string, token: string, type: 'signup' | 'email' | 'sms') => Promise<{ error: any }>;
+  resendOtp: (email: string, type: 'signup' | 'email' | 'sms') => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -240,11 +242,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signUp = async (email: string, password: string, organizationId?: string) => {
     try {
       setLoading(true);
+      
+      // Sign up with email confirmation required
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          // Redirect URL after email confirmation
+          emailRedirectTo: `${window.location.origin}/auth?verified=true`,
+          // Request email confirmation
+          data: {
+            organization_id: organizationId,
+          }
         },
       });
       
@@ -257,33 +266,124 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return { error };
       }
 
-      // Set up user profile after successful signup
-      if (data.user) {
+      // Check if email confirmation is required
+      const needsEmailVerification = !data.session && data.user;
+
+      if (needsEmailVerification) {
+        // Email confirmation required - OTP has been sent
+        toast({
+          title: "Verify Your Email",
+          description: "We've sent a verification code to your email address.",
+        });
+        return { error: null, needsEmailVerification: true };
+      }
+
+      // If session exists, user is automatically signed in (email confirmation disabled)
+      if (data.user && data.session) {
         try {
+          // Set up user profile after successful signup
           await edgeFunctions.invoke('setup-new-user', {
             body: {
               userId: data.user.id,
               email: data.user.email,
-              role: 'member'
+              role: 'member',
+              organizationId,
             }
           });
         } catch (setupError) {
           console.error('Profile setup error:', setupError);
           // Don't fail the signup if profile setup fails
         }
+
+        toast({
+          title: "Welcome!",
+          description: "Your account has been created successfully.",
+        });
       }
       
-      toast({
-        title: "Check your email",
-        description: "We've sent you a confirmation link.",
-      });
-      
-      return { error };
+      return { error: null, needsEmailVerification: false };
     } catch (error) {
       console.error('Sign up error:', error);
       return { error };
     } finally {
       setLoading(false);
+    }
+  };
+
+  const verifyOtp = async (email: string, token: string, type: 'signup' | 'email' | 'sms') => {
+    try {
+      setLoading(true);
+      
+      const { data, error } = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type,
+      });
+
+      if (error) {
+        toast({
+          title: "Verification Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        return { error };
+      }
+
+      // Set up user profile after successful email verification
+      if (data.user && data.session) {
+        try {
+          await edgeFunctions.invoke('setup-new-user', {
+            body: {
+              userId: data.user.id,
+              email: data.user.email,
+              role: 'member',
+            }
+          });
+        } catch (setupError) {
+          console.error('Profile setup error:', setupError);
+          // Don't fail the verification if profile setup fails
+        }
+
+        toast({
+          title: "Email Verified!",
+          description: "Welcome to Rep Club!",
+        });
+      }
+
+      return { error: null };
+    } catch (error) {
+      console.error('OTP verification error:', error);
+      return { error };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resendOtp = async (email: string, type: 'signup' | 'email' | 'sms') => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type,
+        email,
+      });
+
+      if (error) {
+        toast({
+          title: "Resend Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        return { error };
+      }
+
+      toast({
+        title: "Code Sent",
+        description: "A new verification code has been sent to your email.",
+      });
+
+      return { error: null };
+    } catch (error) {
+      console.error('Resend OTP error:', error);
+      return { error };
     }
   };
 
@@ -350,6 +450,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signOut,
     refreshProfile,
     resetPassword,
+    verifyOtp,
+    resendOtp,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

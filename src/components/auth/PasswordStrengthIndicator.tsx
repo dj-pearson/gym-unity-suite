@@ -156,7 +156,7 @@ export const PasswordStrengthIndicator = ({
             <div className="space-y-1.5">
               <RequirementItem
                 met={validation.requirements.minLength}
-                label="At least 8 characters"
+                label="At least 12 characters"
               />
               <RequirementItem
                 met={validation.requirements.hasUppercase}
