@@ -96,6 +96,7 @@ const BestGymCRMSoftware2025 = lazy(() => import("./pages/blog/BestGymCRMSoftwar
 const TicketsPage = lazy(() => import("./pages/TicketsPage"));
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
+const MonitoringPage = lazy(() => import("./pages/Monitoring"));
 
 // AppPageLoader - wrapper for Suspense fallback that uses improved PageLoader
 const AppPageLoader = () => <PageLoader message="Loading..." />;
@@ -589,6 +590,12 @@ const AppRoutes = () => {
                   <DashboardLayout>
                     <SecurityPage />
                   </DashboardLayout>
+                </ProtectedRoute>
+              } />
+
+              <Route path="/monitoring" element={
+                <ProtectedRoute permission={PERMISSIONS.MANAGE_SYSTEM}>
+                  <MonitoringPage />
                 </ProtectedRoute>
               } />
               
