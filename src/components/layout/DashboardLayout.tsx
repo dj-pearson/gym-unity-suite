@@ -23,6 +23,7 @@ import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 import { SetupWizard } from '@/components/onboarding/SetupWizard';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { useOnboarding } from '@/hooks/useOnboarding';
+import { SkipLink } from '@/components/accessibility/SkipLink';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -68,14 +69,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
 
   return (
     <SidebarProvider>
+      {/* Accessibility: Skip to main content link */}
+      <SkipLink targetId="main-content" />
+
       <div className="min-h-screen flex w-full bg-background">
         <div data-tour="sidebar">
           <AppSidebar />
         </div>
-        
+
         <SidebarInset className="flex-1 flex flex-col">
           {/* Mobile-first header with sidebar trigger */}
-          <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+          <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border" role="banner">
             <div className="flex h-14 items-center gap-4 px-4 lg:px-6">
               <SidebarTrigger className="-ml-1 text-sidebar-foreground" />
               
@@ -101,8 +105,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                       size="icon"
                       className="relative h-9 w-9"
                       data-tour="notifications"
+                      aria-label="View notifications"
+                      aria-haspopup="dialog"
+                      aria-expanded={notificationsOpen}
                     >
-                      <Bell className="h-4 w-4" />
+                      <Bell className="h-4 w-4" aria-hidden="true" />
                       <NotificationBadge
                         organizationId={profile?.organization_id}
                         userId={profile?.id}
@@ -121,10 +128,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                   onClick={() => setOpen(true)}
                   className="relative h-9 w-9 p-0 lg:w-auto lg:px-3 lg:justify-start"
                   data-tour="search"
+                  aria-label="Open search command palette"
+                  aria-keyshortcuts="Control+K Meta+K"
                 >
-                  <Search className="h-4 w-4 lg:mr-2" />
+                  <Search className="h-4 w-4 lg:mr-2" aria-hidden="true" />
                   <span className="hidden lg:inline-flex">Search</span>
-                  <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 lg:inline-flex">
+                  <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 lg:inline-flex" aria-hidden="true">
                     <span className="text-xs">⌘</span>K
                   </kbd>
                 </Button>
@@ -135,15 +144,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                   size="icon"
                   onClick={handleSignOut}
                   className="w-9 h-9 lg:hidden"
+                  aria-label="Sign out"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
             </div>
           </header>
 
           {/* Main content area - mobile optimized */}
-          <main className="flex-1 overflow-auto">
+          <main id="main-content" className="flex-1 overflow-auto" role="main">
             <div className="container max-w-none p-4 md:p-6 lg:p-8">
               {children}
             </div>

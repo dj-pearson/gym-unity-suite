@@ -97,6 +97,7 @@ const TicketsPage = lazy(() => import("./pages/TicketsPage"));
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
 const MonitoringPage = lazy(() => import("./pages/Monitoring"));
+const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
 
 // AppPageLoader - wrapper for Suspense fallback that uses improved PageLoader
 const AppPageLoader = () => <PageLoader message="Loading..." />;
@@ -677,6 +678,9 @@ const AppRoutes = () => {
               {/* Legal Pages */}
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/terms" element={<TermsPage />} />
+
+              {/* Accessibility Page */}
+              <Route path="/accessibility" element={<AccessibilityPage />} />
 
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
