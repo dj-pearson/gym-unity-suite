@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import DashboardLayout from "@/components/layout/DashboardLayout";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import SystemHealthDashboard from "@/components/monitoring/SystemHealthDashboard";
 import AlertsPanel from "@/components/monitoring/AlertsPanel";
 import { Activity, Bell, BarChart3, Shield } from "lucide-react";
