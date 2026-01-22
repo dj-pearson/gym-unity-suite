@@ -18,6 +18,7 @@ import { validatePasswordSync } from '@/lib/security/password-policy';
 import { useLoginRateLimit } from '@/hooks/useRateLimiter';
 import { getSafeRedirectURL } from '@/lib/security/url-sanitization';
 import { supabase } from '@/integrations/supabase/client';
+import { SkipLink } from '@/components/accessibility/SkipLink';
 
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -229,19 +230,22 @@ export const LoginForm: React.FC = () => {
   // If showing OTP verification, render that component
   if (showOTPVerification) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4">
-        <div className="w-full max-w-md">
-          <div className="mb-6">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <Home className="w-4 h-4" />
-              Back to Homepage
-            </Button>
-          </div>
+      <>
+        <SkipLink targetId="main-content" />
+        <main id="main-content" className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4" role="main">
+          <div className="w-full max-w-md">
+            <div className="mb-6">
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Back to homepage"
+              >
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                <Home className="w-4 h-4" aria-hidden="true" />
+                Back to Homepage
+              </Button>
+            </div>
 
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
@@ -258,24 +262,28 @@ export const LoginForm: React.FC = () => {
           />
         </div>
       </main>
+      </>
     );
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4">
-      <div className="w-full max-w-md">
-        {/* Back to Homepage Button */}
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <Home className="w-4 h-4" />
-            Back to Homepage
-          </Button>
-        </div>
+    <>
+      <SkipLink targetId="main-content" />
+      <main id="main-content" className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4" role="main">
+        <div className="w-full max-w-md">
+          {/* Back to Homepage Button */}
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Back to homepage"
+            >
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+              <Home className="w-4 h-4" aria-hidden="true" />
+              Back to Homepage
+            </Button>
+          </div>
 
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
@@ -567,5 +575,6 @@ export const LoginForm: React.FC = () => {
         </Card>
       </div>
     </main>
+    </>
   );
 };

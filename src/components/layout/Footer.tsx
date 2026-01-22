@@ -8,14 +8,14 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="glass border-t border-white/10 relative z-10">
+    <footer className="glass border-t border-white/10 relative z-10" role="contentinfo">
       <div className="container mx-auto px-4 py-12">
         {/* Main Footer Content */}
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
           {/* Company Info */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center" aria-hidden="true">
                 <span className="text-white font-bold text-sm">RC</span>
               </div>
               <span className="text-xl font-bold">Rep Club</span>
@@ -24,24 +24,24 @@ export function Footer() {
               The complete gym management platform designed to help fitness businesses grow,
               engage members, and streamline operations with powerful tools and insights.
             </p>
-            <div className="space-y-2 text-sm">
+            <address className="space-y-2 text-sm not-italic">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Mail className="h-4 w-4" />
+                <Mail className="h-4 w-4" aria-hidden="true" />
                 <a href="mailto:hello@repclub.app" className="hover:text-foreground transition-colors">
                   hello@repclub.app
                 </a>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Phone className="h-4 w-4" />
+                <Phone className="h-4 w-4" aria-hidden="true" />
                 <a href="tel:+1-555-0123" className="hover:text-foreground transition-colors">
                   +1 (555) 012-3456
                 </a>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
-                <MapPin className="h-4 w-4" />
+                <MapPin className="h-4 w-4" aria-hidden="true" />
                 <span>San Francisco, CA</span>
               </div>
-            </div>
+            </address>
           </div>
 
           {/* Product Links */}
@@ -149,18 +149,22 @@ export function Footer() {
         {/* Newsletter Signup */}
         <div className="bg-card border rounded-lg p-6 mb-8">
           <div className="max-w-md">
-            <h3 className="font-semibold mb-2">Stay Updated</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+            <h3 id="newsletter-heading" className="font-semibold mb-2">Stay Updated</h3>
+            <p id="newsletter-description" className="text-sm text-muted-foreground mb-4">
               Get the latest fitness business tips and Rep Club updates delivered to your inbox.
             </p>
-            <div className="flex gap-2">
+            <form className="flex gap-2" aria-labelledby="newsletter-heading" aria-describedby="newsletter-description">
+              <label htmlFor="newsletter-email" className="sr-only">Email address</label>
               <Input
+                id="newsletter-email"
                 type="email"
                 placeholder="Enter your email"
                 className="flex-1"
+                aria-required="true"
+                autoComplete="email"
               />
-              <Button>Subscribe</Button>
-            </div>
+              <Button type="submit">Subscribe</Button>
+            </form>
           </div>
         </div>
 
@@ -173,7 +177,7 @@ export function Footer() {
           </div>
 
           {/* Social Links */}
-          <div className="flex items-center gap-4">
+          <nav className="flex items-center gap-4" aria-label="Social media links">
             <a
               href="https://twitter.com/repclub"
               target="_blank"
@@ -181,7 +185,7 @@ export function Footer() {
               className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Follow us on Twitter"
             >
-              <Twitter className="h-5 w-5" />
+              <Twitter className="h-5 w-5" aria-hidden="true" />
             </a>
             <a
               href="https://facebook.com/repclub"
@@ -190,7 +194,7 @@ export function Footer() {
               className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Follow us on Facebook"
             >
-              <Facebook className="h-5 w-5" />
+              <Facebook className="h-5 w-5" aria-hidden="true" />
             </a>
             <a
               href="https://instagram.com/repclub"
@@ -199,7 +203,7 @@ export function Footer() {
               className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Follow us on Instagram"
             >
-              <Instagram className="h-5 w-5" />
+              <Instagram className="h-5 w-5" aria-hidden="true" />
             </a>
             <a
               href="https://linkedin.com/company/repclub"
@@ -208,9 +212,9 @@ export function Footer() {
               className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Follow us on LinkedIn"
             >
-              <Linkedin className="h-5 w-5" />
+              <Linkedin className="h-5 w-5" aria-hidden="true" />
             </a>
-          </div>
+          </nav>
         </div>
       </div>
     </footer>
