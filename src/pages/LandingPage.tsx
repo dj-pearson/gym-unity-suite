@@ -35,6 +35,7 @@ import { useNavigate } from 'react-router-dom';
 import { EarlyAccessForm } from '@/components/auth/EarlyAccessForm';
 import { Logo } from '@/components/ui/logo';
 import { OneTimePaymentButton } from '@/components/membership/OneTimePaymentButton';
+import { SkipLink } from '@/components/accessibility/SkipLink';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -296,9 +297,16 @@ export default function LandingPage() {
         keywords="gym management software, fitness studio software, boutique gym software, yoga studio software, gym CRM, gym billing software, gym membership software, affordable gym software, small gym software"
         structuredData={structuredData}
       />
+      {/* Accessibility: Skip to main content link */}
+      <SkipLink targetId="main-content" />
+
       <div className="min-h-screen bg-background selection:bg-primary selection:text-primary-foreground">
         {/* Navigation - Glassmorphism */}
-        <nav className="fixed top-0 w-full z-50 glass border-b border-white/10">
+        <nav
+          className="fixed top-0 w-full z-50 glass border-b border-white/10"
+          role="navigation"
+          aria-label="Main navigation"
+        >
           <div className="container mx-auto px-6 py-4 flex items-center justify-between">
             <Logo size="xl" linkToHome={true} />
 
@@ -359,7 +367,7 @@ export default function LandingPage() {
         </nav>
 
         {/* Main content area */}
-        <main>
+        <main id="main-content" role="main">
         {/* Parallax background with hero content only */}
         <div ref={heroWrapperRef} className="relative w-full z-0 pt-20 overflow-hidden min-h-[95vh] flex items-center">
 
