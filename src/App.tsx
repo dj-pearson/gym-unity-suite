@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { SecurityProvider } from "@/contexts/SecurityContext";
 import { CustomDomainProvider } from "@/contexts/CustomDomainContext";
 import { SessionTimeoutProvider } from "@/components/security/SessionTimeoutProvider";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -141,15 +142,17 @@ const App = () => {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TooltipProvider>
             <AuthProvider>
-              <SessionTimeoutProvider>
-                <CustomDomainProvider>
-                  <Router>
-                    <AppRoutes />
-                  </Router>
-                  <Toaster />
-                  <Sonner />
-                </CustomDomainProvider>
-              </SessionTimeoutProvider>
+              <SecurityProvider>
+                <SessionTimeoutProvider>
+                  <CustomDomainProvider>
+                    <Router>
+                      <AppRoutes />
+                    </Router>
+                    <Toaster />
+                    <Sonner />
+                  </CustomDomainProvider>
+                </SessionTimeoutProvider>
+              </SecurityProvider>
             </AuthProvider>
           </TooltipProvider>
         </ThemeProvider>
