@@ -108,12 +108,12 @@ export default function EquipmentResourceBooking() {
 
     try {
       const { data, error } = await supabase
-        .from('resource_bookings' as any)
+        .from('resource_bookings')
         .select('*')
         .order('start_time', { ascending: false });
 
       if (error) throw error;
-      setBookings((data as any) || []);
+      setBookings(data || []);
     } catch (error) {
       console.error('Error fetching bookings:', error);
       toast.error('Failed to load resource bookings');
@@ -182,7 +182,7 @@ export default function EquipmentResourceBooking() {
       };
 
       const { error } = await supabase
-        .from('resource_bookings' as any)
+        .from('resource_bookings')
         .insert([bookingData]);
 
       if (error) throw error;
@@ -207,7 +207,7 @@ export default function EquipmentResourceBooking() {
   const handleCancelBooking = async (bookingId: string) => {
     try {
       const { error } = await supabase
-        .from('resource_bookings' as any)
+        .from('resource_bookings')
         .update({ status: 'cancelled' })
         .eq('id', bookingId);
 
@@ -223,7 +223,7 @@ export default function EquipmentResourceBooking() {
   const handleCompleteBooking = async (bookingId: string) => {
     try {
       const { error } = await supabase
-        .from('resource_bookings' as any)
+        .from('resource_bookings')
         .update({ status: 'completed' })
         .eq('id', bookingId);
 

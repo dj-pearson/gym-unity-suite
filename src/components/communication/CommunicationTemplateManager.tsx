@@ -140,13 +140,13 @@ export default function CommunicationTemplateManager() {
 
     try {
       const { data, error } = await supabase
-        .from('communication_templates' as any)
+        .from('communication_templates')
         .select('*')
         .eq('organization_id', profile.organization_id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setTemplates((data as any) || []);
+      setTemplates(data || []);
     } catch (error: any) {
       console.error('Error fetching templates:', error);
       toast.error('Failed to load communication templates');
@@ -171,7 +171,7 @@ export default function CommunicationTemplateManager() {
 
       if (editingTemplate) {
         const { error } = await supabase
-          .from('communication_templates' as any)
+          .from('communication_templates')
           .update(templateData)
           .eq('id', editingTemplate.id);
 
@@ -179,7 +179,7 @@ export default function CommunicationTemplateManager() {
         toast.success('Template updated successfully');
       } else {
         const { error } = await supabase
-          .from('communication_templates' as any)
+          .from('communication_templates')
           .insert([templateData]);
 
         if (error) throw error;
@@ -198,7 +198,7 @@ export default function CommunicationTemplateManager() {
   const handleDelete = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('communication_templates' as any)
+        .from('communication_templates')
         .delete()
         .eq('id', id);
 
@@ -239,7 +239,7 @@ export default function CommunicationTemplateManager() {
 
     try {
       const { error } = await supabase
-        .from('communication_templates' as any)
+        .from('communication_templates')
         .insert([duplicateData]);
 
       if (error) throw error;
