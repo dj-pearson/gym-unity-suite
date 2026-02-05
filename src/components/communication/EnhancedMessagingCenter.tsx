@@ -140,14 +140,14 @@ export default function EnhancedMessagingCenter() {
   const fetchTemplates = async () => {
     try {
       const { data, error } = await supabase
-        .from('communication_templates' as any)
+        .from('communication_templates')
         .select('*')
         .eq('organization_id', profile?.organization_id)
         .eq('is_active', true)
         .order('name');
 
       if (error) throw error;
-      setTemplates((data as any) || []);
+      setTemplates(data || []);
     } catch (error: any) {
       console.error('Error fetching templates:', error);
     }
@@ -156,14 +156,14 @@ export default function EnhancedMessagingCenter() {
   const fetchMessageHistory = async () => {
     try {
       const { data, error } = await supabase
-        .from('message_history' as any)
+        .from('message_history')
         .select('*')
         .eq('organization_id', profile?.organization_id)
         .order('created_at', { ascending: false })
         .limit(50);
 
       if (error) throw error;
-      setMessageHistory((data as any) || []);
+      setMessageHistory(data || []);
     } catch (error: any) {
       console.error('Error fetching message history:', error);
     }
@@ -206,7 +206,7 @@ export default function EnhancedMessagingCenter() {
         };
 
         const { error } = await supabase
-          .from('message_history' as any)
+          .from('message_history')
           .insert([messageData]);
 
         if (error) throw error;

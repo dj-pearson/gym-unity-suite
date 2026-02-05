@@ -98,13 +98,13 @@ export default function CommunicationProviderManager() {
 
     try {
       const { data, error } = await supabase
-        .from('communication_providers' as any)
+        .from('communication_providers')
         .select('*')
         .eq('organization_id', profile.organization_id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProviders((data as any) || []);
+      setProviders(data || []);
     } catch (error: any) {
       console.error('Error fetching providers:', error);
       toast.error('Failed to load communication providers');
@@ -124,7 +124,7 @@ export default function CommunicationProviderManager() {
 
       if (editingProvider) {
         const { error } = await supabase
-          .from('communication_providers' as any)
+          .from('communication_providers')
           .update(providerData)
           .eq('id', editingProvider.id);
 
@@ -132,7 +132,7 @@ export default function CommunicationProviderManager() {
         toast.success('Provider updated successfully');
       } else {
         const { error } = await supabase
-          .from('communication_providers' as any)
+          .from('communication_providers')
           .insert([providerData]);
 
         if (error) throw error;
@@ -158,7 +158,7 @@ export default function CommunicationProviderManager() {
   const handleDelete = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('communication_providers' as any)
+        .from('communication_providers')
         .delete()
         .eq('id', id);
 
@@ -187,7 +187,7 @@ export default function CommunicationProviderManager() {
     try {
       // First, unset all defaults for this provider type
       const { error: unsetError } = await supabase
-        .from('communication_providers' as any)
+        .from('communication_providers')
         .update({ is_default: false })
         .eq('organization_id', profile?.organization_id)
         .eq('provider_type', providerType);
@@ -196,7 +196,7 @@ export default function CommunicationProviderManager() {
 
       // Then set this one as default
       const { error: setError } = await supabase
-        .from('communication_providers' as any)
+        .from('communication_providers')
         .update({ is_default: true })
         .eq('id', id);
 

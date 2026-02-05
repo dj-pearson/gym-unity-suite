@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { supabase } from "@/integrations/supabase/client";
+import { invokeEdgeFunction } from "@/integrations/supabase/client";
 import {
   Activity,
   AlertTriangle,
@@ -185,7 +185,7 @@ export default function SystemHealthDashboard() {
     queryKey: ["system-health"],
     queryFn: async () => {
       // Call the health-check edge function
-      const { data, error } = await supabase.functions.invoke("health-check");
+      const { data, error } = await invokeEdgeFunction("health-check");
       if (error) throw error;
       return data;
     },
