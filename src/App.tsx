@@ -23,6 +23,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const MembersPage = lazy(() => import("./pages/MembersPage"));
 const MemberProfilePage = lazy(() => import("./pages/MemberProfilePage"));
 const MembershipPlansPage = lazy(() => import("./pages/MembershipPlansPage"));
@@ -270,6 +271,7 @@ const AppRoutes = () => {
       <Route path="/" element={<HomeRoute />} />
       
       {/* Public Routes */}
+      <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/auth" element={
         <PublicRoute>
           <AuthPage />
