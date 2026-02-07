@@ -101,14 +101,14 @@ export default function InstructorAvailabilityCalendar() {
 
     try {
       const { data, error } = await supabase
-        .from('instructor_availability' as any)
+        .from('instructor_availability')
         .select('*')
         .eq('instructor_id', selectedInstructor)
         .order('day_of_week', { ascending: true })
         .order('start_time', { ascending: true });
 
       if (error) throw error;
-      setAvailability((data as any) || []);
+      setAvailability(data || []);
     } catch (error) {
       console.error('Error fetching availability:', error);
       toast.error('Failed to load availability');
@@ -131,7 +131,7 @@ export default function InstructorAvailabilityCalendar() {
 
       if (editingAvailability) {
         const { error } = await supabase
-          .from('instructor_availability' as any)
+          .from('instructor_availability')
           .update(availabilityData)
           .eq('id', editingAvailability.id);
 
@@ -139,7 +139,7 @@ export default function InstructorAvailabilityCalendar() {
         toast.success('Availability updated successfully');
       } else {
         const { error } = await supabase
-          .from('instructor_availability' as any)
+          .from('instructor_availability')
           .insert([availabilityData]);
 
         if (error) throw error;
@@ -165,7 +165,7 @@ export default function InstructorAvailabilityCalendar() {
   const handleDelete = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('instructor_availability' as any)
+        .from('instructor_availability')
         .delete()
         .eq('id', id);
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, edgeFunctions } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -268,17 +268,13 @@ export default function SystemHealthMonitor() {
 
     // Edge functions - check by seeing if functions URL is configured
     const edgeFunctionsCheck = await measureResponseTime(async () => {
-      // Just verify the functions URL is configured
-      const functionsUrl = (supabase as any).functionsUrl || (supabase as any).functions?.url;
-      if (!functionsUrl) {
-        // Check if edge function is callable (might fail with auth but confirms service is up)
-        try {
-          await supabase.functions.invoke('check-subscription', { body: {} });
-        } catch (e: any) {
-          // If we get an auth error, the service is still up
-          if (!e.message?.includes('not found')) return;
-          throw e;
-        }
+      // Check if edge function is callable (might fail with auth but confirms service is up)
+      try {
+        await edgeFunctions.invoke('check-subscription', { body: {} });
+      } catch (e: any) {
+        // If we get an auth error, the service is still up
+        if (!e.message?.includes('not found')) return;
+        throw e;
       }
     });
     updatedServices.push({
