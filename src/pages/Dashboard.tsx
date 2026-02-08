@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
 import { GettingStartedWidget } from '@/components/dashboard/GettingStartedWidget';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 
 interface DashboardStats {
@@ -192,17 +193,21 @@ export default function Dashboard() {
       </div>
 
       {/* Getting Started Guide for new users */}
-      <GettingStartedWidget />
+      <ErrorBoundary componentName="Getting Started Guide">
+        <GettingStartedWidget />
+      </ErrorBoundary>
 
       {/* Personalized Dashboard Grid */}
-      <DashboardGrid
-        widgets={widgets}
-        stats={stats}
-        onReorder={reorderWidgets}
-        onRemove={removeWidget}
-        onAdd={addWidget}
-        onReset={resetToDefaults}
-      />
+      <ErrorBoundary componentName="Dashboard Widgets">
+        <DashboardGrid
+          widgets={widgets}
+          stats={stats}
+          onReorder={reorderWidgets}
+          onRemove={removeWidget}
+          onAdd={addWidget}
+          onReset={resetToDefaults}
+        />
+      </ErrorBoundary>
     </div>
   );
 }

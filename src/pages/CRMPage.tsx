@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { Plus, Search, Filter, Phone, Mail, Calendar, User, FileText, Settings, BarChart3, Target, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { LeadForm } from '@/components/crm/LeadForm';
@@ -330,19 +331,25 @@ export const CRMPage: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="pipeline">
-          <EnhancedPipelineView 
-            leads={leads} 
-            onLeadSelect={setSelectedLead}
-            onLeadUpdate={fetchLeads}
-          />
+          <ErrorBoundary componentName="Sales Pipeline">
+            <EnhancedPipelineView
+              leads={leads}
+              onLeadSelect={setSelectedLead}
+              onLeadUpdate={fetchLeads}
+            />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="scoring">
-          <LeadScoringDashboard />
+          <ErrorBoundary componentName="Lead Scoring">
+            <LeadScoringDashboard />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="analytics">
-          <LeadAnalyticsDashboard />
+          <ErrorBoundary componentName="Lead Analytics">
+            <LeadAnalyticsDashboard />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="activities" className="space-y-4">
