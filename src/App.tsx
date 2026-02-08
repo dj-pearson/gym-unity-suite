@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { SecurityProvider } from "@/contexts/SecurityContext";
 import { CustomDomainProvider } from "@/contexts/CustomDomainContext";
 import { SessionTimeoutProvider } from "@/components/security/SessionTimeoutProvider";
+import { AuthStateMonitor } from "@/components/security/AuthStateMonitor";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PERMISSIONS } from "@/hooks/usePermissions";
@@ -145,6 +146,7 @@ const App = () => {
             <AuthProvider>
               <SecurityProvider>
                 <SessionTimeoutProvider>
+                  <AuthStateMonitor />
                   <CustomDomainProvider>
                     <Router>
                       <AppRoutes />

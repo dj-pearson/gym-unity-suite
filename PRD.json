@@ -1,0 +1,196 @@
+{
+  "project": "gym-unity-suite",
+  "branchName": "claude/identify-impact-improvements-l3AFF",
+  "description": "Platform-wide improvements identified through comprehensive codebase analysis. Covers security hardening, UX reliability, performance optimization, admin tooling, testing coverage, and marketing/SEO enhancements for the Gym Unity Suite enterprise SaaS platform.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Centralized input validation middleware",
+      "description": "As a developer, I want a centralized input sanitization layer so that all user-facing forms consistently prevent XSS, injection, and malformed input without relying on per-component implementation.",
+      "acceptanceCriteria": [
+        "Create a reusable sanitization wrapper or HOC that integrates with React Hook Form",
+        "Apply sanitizeInput() from src/lib/security/url-sanitization.ts to all text inputs via the wrapper",
+        "Ensure Zod schemas are enforced on every form across CRM, Members, Billing, and Staff domains",
+        "Fix the overly aggressive quote stripping in sanitizeInput() that breaks legitimate input",
+        "Add CSP header configuration in Cloudflare Pages _headers file"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": "The sanitization library exists at src/lib/security/url-sanitization.ts but is not consistently applied across all forms. The sanitizeInput() function strips all quotes which can break legitimate user input like names with apostrophes."
+    },
+    {
+      "id": "US-002",
+      "title": "Client-side rate limiting enforcement",
+      "description": "As a user, I want the application to proactively prevent excessive API calls so that I receive immediate feedback instead of waiting for server-side rejection.",
+      "acceptanceCriteria": [
+        "Wrap supabase client queries with the existing rate-limited-fetch utility from src/lib/rate-limited-fetch.ts",
+        "Create a rate-limited Supabase client wrapper that automatically applies throttling",
+        "Add debouncing to all search/filter inputs (currently only 1 debounce instance exists)",
+        "Show user-friendly toast when rate limit is approaching",
+        "Ensure rate limiting applies to mutation operations (create, update, delete)"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "The rate limiter exists server-side (supabase/functions/rate-limit/) and client-side (src/lib/rate-limited-fetch.ts) but the client-side version is not used by default in any Supabase queries."
+    },
+    {
+      "id": "US-003",
+      "title": "Comprehensive admin dashboard",
+      "description": "As a gym owner/admin, I want a full admin interface so that I can manage users, view audit logs, configure organization settings, and monitor system health without needing direct database access.",
+      "acceptanceCriteria": [
+        "Create admin user/staff management page with role assignment capabilities",
+        "Build audit log viewer with filtering by action type, user, and date range",
+        "Create organization settings configuration panel (branding, timezone, business hours)",
+        "Implement the stubbed Monitoring page metrics and security tabs (src/pages/Monitoring.tsx:59-77)",
+        "Add permission audit trail showing who changed what permissions and when",
+        "Gate all admin pages behind MANAGE_SYSTEM permission"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Currently only 1 admin page exists (BlogAdminPage). The Monitoring page has placeholder tabs for Metrics and Security that are not implemented. Organization settings route shows 'coming soon' text."
+    },
+    {
+      "id": "US-004",
+      "title": "Standardized loading and empty states",
+      "description": "As a user, I want consistent loading indicators and empty state messages across all pages so that I always understand what's happening and what actions I can take.",
+      "acceptanceCriteria": [
+        "Create a reusable <EmptyState> component with icon, title, description, and optional action button",
+        "Create a <SectionLoader> component with skeleton variants for cards, tables, and lists",
+        "Apply consistent loading states to all data-fetching pages (currently only ~48 of 80 pages have loading states)",
+        "Add timeout handling that shows an error state if loading exceeds 10 seconds",
+        "Ensure all empty states include actionable guidance (e.g., 'Add your first member' button)"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "MembersPage has excellent skeleton loading. Most other pages use simple text loading indicators or none at all. No standardized empty state component exists."
+    },
+    {
+      "id": "US-005",
+      "title": "Performance optimization with memoization",
+      "description": "As a user, I want the application to remain responsive even with large datasets so that I can manage my gym operations efficiently.",
+      "acceptanceCriteria": [
+        "Add React.memo to high-frequency render components (table rows, list items, stat cards)",
+        "Implement useCallback for event handlers passed as props in list/grid components",
+        "Add useMemo for expensive computed values in analytics and reporting pages",
+        "Apply virtualization (VirtualList component already exists) to ClassesPage and ReportsPage",
+        "Profile before/after with React DevTools to verify render count reduction",
+        "Ensure dashboard widget components are memoized to prevent re-renders during drag operations"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Zero React.memo usage found across 294 components. MembersPage uses useMemo and useCallback as a good pattern to follow. VirtualList exists at src/components/ui/VirtualList.tsx but is only used in MembersPage."
+    },
+    {
+      "id": "US-006",
+      "title": "Expand test coverage for critical business domains",
+      "description": "As a developer, I want comprehensive test coverage for business-critical features so that I can deploy with confidence and catch regressions early.",
+      "acceptanceCriteria": [
+        "Add unit tests for all custom hooks in src/hooks/ (useMembers, useCheckIn, usePermissions, useSessionTimeout)",
+        "Add component tests for CRM LeadForm validation and submission",
+        "Add component tests for Billing workflow (subscription status, invoice generation)",
+        "Add E2E tests for the member check-in flow",
+        "Add E2E tests for the CRM lead creation and pipeline flow",
+        "Achieve minimum 40% line coverage on src/hooks/ and src/components/auth/",
+        "Add tests for the new ErrorBoundary integration points"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Currently only 4 unit test files and 4 E2E specs exist. Vitest and Playwright infrastructure is established and working. Focus should be on business-critical paths: auth, billing, CRM, and member management."
+    },
+    {
+      "id": "US-007",
+      "title": "Complete incomplete feature placeholders",
+      "description": "As a user, I want all visible features to be functional so that I don't encounter 'coming soon' placeholders that reduce confidence in the platform.",
+      "acceptanceCriteria": [
+        "Implement the Settings page (/settings route currently shows placeholder text)",
+        "Implement the Retail/POS page (/retail route currently shows placeholder text)",
+        "Complete the Payment History tab in BillingPage",
+        "Remove or implement the 4 'coming soon' placeholders in PoolManagementPage",
+        "Add feature flags for genuinely incomplete features instead of showing 'coming soon' text",
+        "Complete the CheckInsPage TODO for navigation"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "Multiple pages show 'coming soon' text: Settings, Retail/POS, BillingPage Payment History, PoolManagementPage (4 instances), and CourtSportsPage. These should either be implemented or hidden behind feature flags."
+    },
+    {
+      "id": "US-008",
+      "title": "SEO coverage for all public pages",
+      "description": "As a marketing manager, I want all public-facing pages to have proper SEO metadata so that we maximize organic search visibility and traffic.",
+      "acceptanceCriteria": [
+        "Add React Helmet <Helmet> meta tags to all public pages (currently only ~10 of 80 pages have SEO)",
+        "Implement dynamic schema.org JSON-LD structured data for solution and comparison pages",
+        "Create a reusable SEOWrapper component that enforces consistent meta tag patterns",
+        "Add Open Graph and Twitter Card meta tags to all blog posts",
+        "Ensure all blog posts have reading time estimates and auto-generated table of contents",
+        "Add internal linking between related blog posts and solution pages"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": "SEOHead component exists at src/components/seo/SEOHead.tsx but is inconsistently used. Compare pages and solution pages have good SEO. Most internal/authenticated pages lack meta tags. Blog posts lack reading time and TOC features."
+    },
+    {
+      "id": "US-009",
+      "title": "Monitoring dashboard completion",
+      "description": "As a system administrator, I want a functional monitoring dashboard so that I can track system health, security events, and performance metrics in real-time.",
+      "acceptanceCriteria": [
+        "Implement the Metrics tab with real-time API response time charts",
+        "Implement the Security tab with security event log viewer and alerting",
+        "Integrate the existing APM service (src/lib/monitoring/apm.ts) data into the dashboard",
+        "Add alerting configuration for critical thresholds (high error rates, slow responses)",
+        "Show Supabase connection health and Edge Function status"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": "The Monitoring page exists at src/pages/Monitoring.tsx but the Metrics (lines 59-67) and Security (lines 71-77) tabs contain only stub placeholder content. APM service exists at src/lib/monitoring/apm.ts but is not fully integrated."
+    },
+    {
+      "id": "US-010",
+      "title": "Bulk operations across all domains",
+      "description": "As a gym manager, I want to perform bulk operations on members, classes, and billing so that I can efficiently manage large-scale changes without repetitive individual actions.",
+      "acceptanceCriteria": [
+        "Add bulk select/deselect functionality to MembersPage list",
+        "Implement bulk member status changes (activate, freeze, cancel)",
+        "Add bulk email/SMS communication to selected members",
+        "Add bulk class cancellation with automatic attendee notification",
+        "Extend existing BulkMemberOperations component (src/components/corporate/) for general use",
+        "Add confirmation dialogs for all destructive bulk actions"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": "BulkMemberOperations component exists in src/components/corporate/ but is limited to the corporate context. No bulk operations exist for classes, billing, or general member management."
+    },
+    {
+      "id": "US-011",
+      "title": "Error boundary coverage for remaining pages",
+      "description": "As a user, I want individual page sections to fail gracefully so that one broken component doesn't prevent me from using the rest of the page.",
+      "acceptanceCriteria": [
+        "Add ErrorBoundary wrappers to ClassesPage calendar and list sections",
+        "Add ErrorBoundary wrappers to ReportsPage chart sections",
+        "Add ErrorBoundary wrappers to StaffPage management sections",
+        "Add ErrorBoundary wrappers to EquipmentPage tracking components",
+        "Add ErrorBoundary wrappers to CheckInsPage kiosk and history sections",
+        "Add ErrorBoundary wrappers to MarketingPage campaign components"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": "Error boundaries have been added to Dashboard (widgets), CRM (pipeline, scoring, analytics), and Billing (subscription, invoices, automation) pages. The ErrorBoundary component at src/components/ui/error-boundary.tsx should be applied to all remaining data-intensive page sections."
+    },
+    {
+      "id": "US-012",
+      "title": "Mobile PWA experience enhancement",
+      "description": "As a gym member, I want a polished mobile experience so that I can check in, view my schedule, and manage my account from my phone.",
+      "acceptanceCriteria": [
+        "Audit and fix mobile responsiveness issues across all pages",
+        "Optimize touch targets for mobile (minimum 44x44px tap targets)",
+        "Implement offline mode for critical features (check-in, schedule viewing)",
+        "Add pull-to-refresh on mobile dashboard and member pages",
+        "Improve PWA install prompt and app-like navigation",
+        "Test and fix dark mode on all mobile views"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": "PWA infrastructure exists (manifest.json, sw.js) and mobile-specific components are in src/components/mobile/. The mobile experience is estimated at 60% completion. Mobile routes exist for dashboard, check-in, and workout."
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { type WidgetType } from '@/lib/dashboardWidgets';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { StatCardContent } from './widgets/StatCardContent';
 import { QuickActionsWidget } from './widgets/QuickActionsWidget';
 import { RecentActivityWidget } from './widgets/RecentActivityWidget';
@@ -13,53 +14,102 @@ interface WidgetRendererProps {
 }
 
 /**
+ * Wraps a widget component with an ErrorBoundary so individual widget
+ * failures don't cascade and take down the entire dashboard.
+ */
+function SafeWidget({ name, children }: { name: string; children: React.ReactNode }) {
+  return (
+    <ErrorBoundary componentName={name}>
+      {children}
+    </ErrorBoundary>
+  );
+}
+
+/**
  * WidgetRenderer - Routes widget types to their respective components
  *
  * Central component that handles rendering the correct widget content
- * based on the widget type
+ * based on the widget type. Each widget is wrapped in an ErrorBoundary
+ * so a single widget crash won't take down the entire dashboard.
  */
 export function WidgetRenderer({ type, stats }: WidgetRendererProps) {
   switch (type) {
     // Stat widgets
     case 'stat-total-members':
       return (
-        <StatCardContent
-          value={stats?.totalMembers || 0}
-          change={{ value: `${stats?.memberGrowth || 0}%`, type: 'positive' }}
-        />
+        <SafeWidget name="Total Members">
+          <StatCardContent
+            value={stats?.totalMembers || 0}
+            change={{ value: `${stats?.memberGrowth || 0}%`, type: 'positive' }}
+          />
+        </SafeWidget>
       );
 
     case 'stat-active-members':
-      return <StatCardContent value={stats?.activeMembers || 0} />;
+      return (
+        <SafeWidget name="Active Members">
+          <StatCardContent value={stats?.activeMembers || 0} />
+        </SafeWidget>
+      );
 
     case 'stat-today-checkins':
-      return <StatCardContent value={stats?.todayCheckins || 0} />;
+      return (
+        <SafeWidget name="Today's Check-ins">
+          <StatCardContent value={stats?.todayCheckins || 0} />
+        </SafeWidget>
+      );
 
     case 'stat-monthly-revenue':
       return (
-        <StatCardContent
-          value={`$${(stats?.monthlyRevenue || 0).toLocaleString()}`}
-        />
+        <SafeWidget name="Monthly Revenue">
+          <StatCardContent
+            value={`$${(stats?.monthlyRevenue || 0).toLocaleString()}`}
+          />
+        </SafeWidget>
       );
 
     case 'stat-upcoming-classes':
-      return <StatCardContent value={stats?.upcomingClasses || 0} />;
+      return (
+        <SafeWidget name="Upcoming Classes">
+          <StatCardContent value={stats?.upcomingClasses || 0} />
+        </SafeWidget>
+      );
 
     // Complex widgets
     case 'quick-actions':
-      return <QuickActionsWidget />;
+      return (
+        <SafeWidget name="Quick Actions">
+          <QuickActionsWidget />
+        </SafeWidget>
+      );
 
     case 'recent-activity':
-      return <RecentActivityWidget />;
+      return (
+        <SafeWidget name="Recent Activity">
+          <RecentActivityWidget />
+        </SafeWidget>
+      );
 
     case 'member-growth-chart':
-      return <MemberGrowthChartWidget />;
+      return (
+        <SafeWidget name="Member Growth Chart">
+          <MemberGrowthChartWidget />
+        </SafeWidget>
+      );
 
     case 'revenue-chart':
-      return <RevenueChartWidget />;
+      return (
+        <SafeWidget name="Revenue Chart">
+          <RevenueChartWidget />
+        </SafeWidget>
+      );
 
     case 'class-schedule':
-      return <ClassScheduleWidget />;
+      return (
+        <SafeWidget name="Class Schedule">
+          <ClassScheduleWidget />
+        </SafeWidget>
+      );
 
     // Placeholder for not-yet-implemented widgets
     case 'sales-pipeline':

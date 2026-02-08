@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { CreditCard, FileText, Clock, Zap, Receipt } from 'lucide-react';
 import SubscriptionStatus from '@/components/membership/SubscriptionStatus';
 import { SubscriptionManager } from '@/components/membership/SubscriptionManager';
@@ -48,22 +49,30 @@ export default function BillingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Current Subscription */}
             <div className="space-y-6">
-              <SubscriptionStatus />
+              <ErrorBoundary componentName="Subscription Status">
+                <SubscriptionStatus />
+              </ErrorBoundary>
             </div>
 
             {/* Subscription Management */}
             <div className="space-y-6">
-              <SubscriptionManager />
+              <ErrorBoundary componentName="Subscription Manager">
+                <SubscriptionManager />
+              </ErrorBoundary>
             </div>
           </div>
         </TabsContent>
 
         <TabsContent value="invoices">
-          <InvoiceGenerator />
+          <ErrorBoundary componentName="Invoice Generator">
+            <InvoiceGenerator />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="automation">
-          <BillingAutomation />
+          <ErrorBoundary componentName="Billing Automation">
+            <BillingAutomation />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="history">
