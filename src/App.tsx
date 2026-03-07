@@ -101,6 +101,8 @@ const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
 const MonitoringPage = lazy(() => import("./pages/Monitoring"));
 const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
+const RetailPage = lazy(() => import("./pages/RetailPage"));
+const OrganizationSettingsPage = lazy(() => import("./pages/OrganizationSettingsPage"));
 
 // AppPageLoader - wrapper for Suspense fallback that uses improved PageLoader
 const AppPageLoader = () => <PageLoader message="Loading..." />;
@@ -569,10 +571,7 @@ const AppRoutes = () => {
               <Route path="/retail" element={
                 <ProtectedRoute permission={PERMISSIONS.VIEW_RETAIL}>
                   <DashboardLayout>
-                    <div className="text-center py-8">
-                      <h1 className="text-2xl font-bold mb-4">Retail & POS</h1>
-                      <p className="text-muted-foreground">Point of sale system coming soon...</p>
-                    </div>
+                    <RetailPage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />
@@ -618,10 +617,7 @@ const AppRoutes = () => {
               <Route path="/settings" element={
                 <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
                   <DashboardLayout>
-                    <div className="text-center py-8">
-                      <h1 className="text-2xl font-bold mb-4">Settings</h1>
-                      <p className="text-muted-foreground">Organization settings coming soon...</p>
-                    </div>
+                    <OrganizationSettingsPage />
                   </DashboardLayout>
                 </ProtectedRoute>
               } />

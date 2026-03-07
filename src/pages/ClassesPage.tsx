@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -29,6 +29,7 @@ import WaitlistManager from '@/components/classes/WaitlistManager';
 import { RecurringClassTemplates } from '@/components/classes/RecurringClassTemplates';
 import ImportButton from '@/components/imports/ImportButton';
 import { Skeleton, SkeletonCard } from '@/components/ui/skeleton';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 
 interface Class {
   id: string;
@@ -191,11 +192,21 @@ export default function ClassesPage() {
 
   const canScheduleClasses = profile?.role && ['owner', 'manager', 'staff'].includes(profile.role);
 
-  const filteredClasses = classes.filter(classItem =>
+  const filteredClasses = useMemo(() => classes.filter(classItem =>
     `${classItem.name} ${classItem.instructor?.first_name} ${classItem.instructor?.last_name} ${classItem.category?.name}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
-  );
+  ), [classes, searchTerm]);
+
+  const classStats = useMemo(() => {
+    const upcomingCount = classes.filter(c => new Date(c.scheduled_at) >= new Date()).length;
+    const totalBookings = classes.reduce((sum, c) => sum + c.bookings.filter(b => b.status === 'booked').length, 0);
+    const waitlistCount = classes.reduce((sum, c) => sum + (c.waitlist?.length || 0), 0);
+    const avgCapacity = classes.length > 0
+      ? Math.round(classes.reduce((sum, c) => sum + (c.bookings.length / c.max_capacity), 0) / classes.length * 100)
+      : 0;
+    return { upcomingCount, totalBookings, waitlistCount, avgCapacity };
+  }, [classes]);
 
   const getInstructorName = (instructor: Class['instructor']) => {
     if (!instructor) return 'No Instructor';
@@ -362,7 +373,7 @@ export default function ClassesPage() {
         <Card className="gym-card">
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-foreground">
-              {classes.filter(c => new Date(c.scheduled_at) >= new Date()).length}
+              {classStats.upcomingCount}
             </div>
             <div className="text-sm text-muted-foreground">Upcoming Classes</div>
           </CardContent>
@@ -370,7 +381,7 @@ export default function ClassesPage() {
         <Card className="gym-card">
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-primary">
-              {classes.reduce((sum, c) => sum + c.bookings.filter(b => b.status === 'booked').length, 0)}
+              {classStats.totalBookings}
             </div>
             <div className="text-sm text-muted-foreground">Total Bookings</div>
           </CardContent>
@@ -378,7 +389,7 @@ export default function ClassesPage() {
         <Card className="gym-card">
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-warning">
-              {classes.reduce((sum, c) => sum + (c.waitlist?.length || 0), 0)}
+              {classStats.waitlistCount}
             </div>
             <div className="text-sm text-muted-foreground">Waitlist Members</div>
           </CardContent>
@@ -386,7 +397,7 @@ export default function ClassesPage() {
         <Card className="gym-card">
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-success">
-              {Math.round(classes.reduce((sum, c) => sum + (c.bookings.length / c.max_capacity), 0) / classes.length * 100) || 0}%
+              {classStats.avgCapacity}%
             </div>
             <div className="text-sm text-muted-foreground">Avg Capacity</div>
           </CardContent>
@@ -611,14 +622,18 @@ export default function ClassesPage() {
         </TabsContent>
 
         <TabsContent value="calendar">
-          <ClassCalendarView 
-            onClassClick={handleClassClick}
-            onScheduleClick={() => setShowScheduleForm(true)}
-          />
+          <ErrorBoundary componentName="Class Calendar">
+            <ClassCalendarView
+              onClassClick={handleClassClick}
+              onScheduleClick={() => setShowScheduleForm(true)}
+            />
+          </ErrorBoundary>
         </TabsContent>
-        
+
         <TabsContent value="templates">
-          <RecurringClassTemplates />
+          <ErrorBoundary componentName="Recurring Templates">
+            <RecurringClassTemplates />
+          </ErrorBoundary>
         </TabsContent>
       </Tabs>
 

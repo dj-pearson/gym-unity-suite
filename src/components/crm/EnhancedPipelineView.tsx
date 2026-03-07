@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -111,13 +111,13 @@ export default function EnhancedPipelineView({ leads, onLeadSelect, onLeadUpdate
     setStageMetrics(metrics);
   };
 
-  const getLeadsForStage = (stageId: string) => {
+  const getLeadsForStage = useCallback((stageId: string) => {
     return leads.filter(lead => lead.stage_id === stageId);
-  };
+  }, [leads]);
 
-  const getUnassignedLeads = () => {
+  const getUnassignedLeads = useCallback(() => {
     return leads.filter(lead => !lead.stage_id);
-  };
+  }, [leads]);
 
   const handleDragStart = (e: React.DragEvent, lead: Lead) => {
     setDraggedLead(lead);

@@ -22,6 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { GuestCheckInDialog } from '@/components/members/GuestCheckInDialog';
 import { Skeleton, SkeletonCard, SkeletonAvatar } from '@/components/ui/skeleton';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 
 interface Member {
   id: string;
@@ -366,6 +367,7 @@ export default function CheckInsPage() {
         />
       </div>
 
+      <ErrorBoundary componentName="Check-in Operations">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Quick Check-in */}
         <Card className="gym-card">
@@ -542,6 +544,7 @@ export default function CheckInsPage() {
           </CardContent>
         </Card>
       </div>
+      </ErrorBoundary>
 
       <GuestCheckInDialog
         isOpen={isGuestDialogOpen}

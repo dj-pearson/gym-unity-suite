@@ -30,7 +30,7 @@ const quickActions = [
 /**
  * QuickActionsWidget - Common tasks and shortcuts
  */
-export function QuickActionsWidget() {
+export const QuickActionsWidget = React.memo(function QuickActionsWidget() {
   const navigate = useNavigate();
 
   return (
@@ -55,4 +55,4 @@ export function QuickActionsWidget() {
       ))}
     </div>
   );
-}
+});

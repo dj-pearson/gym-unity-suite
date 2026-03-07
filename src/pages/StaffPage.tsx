@@ -30,6 +30,7 @@ import ScheduleManager from '@/components/staff/ScheduleManager';
 import PayrollManager from '@/components/staff/PayrollManager';
 import { usePermissions } from '@/hooks/usePermissions';
 import ImportButton from '@/components/imports/ImportButton';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { Skeleton, SkeletonCard, SkeletonAvatar } from '@/components/ui/skeleton';
 
 interface StaffMember {
@@ -467,11 +468,15 @@ export default function StaffPage() {
         </TabsContent>
 
         <TabsContent value="schedules">
-          <ScheduleManager />
+          <ErrorBoundary componentName="Schedule Manager">
+            <ScheduleManager />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="payroll">
-          <PayrollManager />
+          <ErrorBoundary componentName="Payroll Manager">
+            <PayrollManager />
+          </ErrorBoundary>
         </TabsContent>
       </Tabs>
 
