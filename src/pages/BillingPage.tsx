@@ -7,6 +7,7 @@ import SubscriptionStatus from '@/components/membership/SubscriptionStatus';
 import { SubscriptionManager } from '@/components/membership/SubscriptionManager';
 import { InvoiceGenerator } from '@/components/billing/InvoiceGenerator';
 import { BillingAutomation } from '@/components/billing/BillingAutomation';
+import PaymentHistory from '@/components/billing/PaymentHistory';
 
 export default function BillingPage() {
   return (
@@ -76,26 +77,9 @@ export default function BillingPage() {
         </TabsContent>
 
         <TabsContent value="history">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Receipt className="mr-2 h-5 w-5" />
-                Payment History
-              </CardTitle>
-              <CardDescription>
-                View and download your payment receipts and transaction history
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Receipt className="h-6 w-6 text-muted-foreground" />
-                </div>
-                <p className="text-sm text-muted-foreground">Payment history will be displayed here</p>
-                <p className="text-xs text-muted-foreground mt-2">Feature coming soon</p>
-              </div>
-            </CardContent>
-          </Card>
+          <ErrorBoundary componentName="Payment History">
+            <PaymentHistory />
+          </ErrorBoundary>
         </TabsContent>
       </Tabs>
     </div>

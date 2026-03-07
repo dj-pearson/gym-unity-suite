@@ -30,6 +30,7 @@ import RetentionCampaignsManager from '@/components/marketing/RetentionCampaigns
 import ReferralProgramsManager from '@/components/marketing/ReferralProgramsManager';
 import MemberFeedbackManager from '@/components/marketing/MemberFeedbackManager';
 import { usePermissions } from '@/hooks/usePermissions';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 
 interface CampaignStats {
   total_campaigns: number;
@@ -355,23 +356,33 @@ export default function MarketingPage() {
         </TabsContent>
 
         <TabsContent value="email">
-          <EmailCampaignManager />
+          <ErrorBoundary componentName="Email Campaigns">
+            <EmailCampaignManager />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="sms">
-          <SMSCampaignManager />
+          <ErrorBoundary componentName="SMS Campaigns">
+            <SMSCampaignManager />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="loyalty">
-          <LoyaltyProgramsManager />
+          <ErrorBoundary componentName="Loyalty Programs">
+            <LoyaltyProgramsManager />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="retention">
-          <RetentionCampaignsManager />
+          <ErrorBoundary componentName="Retention Campaigns">
+            <RetentionCampaignsManager />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="referrals">
-          <ReferralProgramsManager />
+          <ErrorBoundary componentName="Referral Programs">
+            <ReferralProgramsManager />
+          </ErrorBoundary>
         </TabsContent>
       </Tabs>
     </div>

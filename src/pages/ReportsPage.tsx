@@ -1,5 +1,6 @@
 import React from 'react';
 import { BarChart3 } from 'lucide-react';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 import AnalyticsDashboard from '@/components/analytics/AnalyticsDashboard';
 
 export default function ReportsPage() {
@@ -21,7 +22,9 @@ export default function ReportsPage() {
       </div>
 
       {/* Analytics Dashboard */}
-      <AnalyticsDashboard />
+      <ErrorBoundary componentName="Analytics Dashboard">
+        <AnalyticsDashboard />
+      </ErrorBoundary>
     </div>
   );
 }

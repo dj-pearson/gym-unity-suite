@@ -31,8 +31,9 @@ function SafeWidget({ name, children }: { name: string; children: React.ReactNod
  * Central component that handles rendering the correct widget content
  * based on the widget type. Each widget is wrapped in an ErrorBoundary
  * so a single widget crash won't take down the entire dashboard.
+ * Memoized to prevent re-renders during dashboard drag-and-drop operations.
  */
-export function WidgetRenderer({ type, stats }: WidgetRendererProps) {
+export const WidgetRenderer = React.memo(function WidgetRenderer({ type, stats }: WidgetRendererProps) {
   switch (type) {
     // Stat widgets
     case 'stat-total-members':
@@ -129,4 +130,4 @@ export function WidgetRenderer({ type, stats }: WidgetRendererProps) {
         </div>
       );
   }
-}
+});

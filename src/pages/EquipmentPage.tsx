@@ -20,6 +20,7 @@ import {
   Shield
 } from 'lucide-react';
 import ImportButton from '@/components/imports/ImportButton';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 
 interface EquipmentStats {
   totalEquipment: number;
@@ -239,7 +240,9 @@ export default function EquipmentPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <EquipmentManager />
+              <ErrorBoundary componentName="Equipment Manager">
+                <EquipmentManager />
+              </ErrorBoundary>
             </CardContent>
           </Card>
         </TabsContent>
@@ -256,7 +259,9 @@ export default function EquipmentPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <MaintenanceScheduler />
+              <ErrorBoundary componentName="Maintenance Scheduler">
+                <MaintenanceScheduler />
+              </ErrorBoundary>
             </CardContent>
           </Card>
         </TabsContent>
@@ -273,7 +278,9 @@ export default function EquipmentPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <FacilityAreaManager />
+              <ErrorBoundary componentName="Facility Area Manager">
+                <FacilityAreaManager />
+              </ErrorBoundary>
             </CardContent>
           </Card>
         </TabsContent>
@@ -290,7 +297,9 @@ export default function EquipmentPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <IncidentReports />
+              <ErrorBoundary componentName="Incident Reports">
+                <IncidentReports />
+              </ErrorBoundary>
             </CardContent>
           </Card>
         </TabsContent>
@@ -307,7 +316,9 @@ export default function EquipmentPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <VendorManager />
+              <ErrorBoundary componentName="Vendor Manager">
+                <VendorManager />
+              </ErrorBoundary>
             </CardContent>
           </Card>
         </TabsContent>

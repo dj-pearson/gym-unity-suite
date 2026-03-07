@@ -12,8 +12,9 @@ interface StatCardContentProps {
 
 /**
  * StatCardContent - Simple stat display for dashboard widgets
+ * Memoized to prevent unnecessary re-renders during dashboard drag operations
  */
-export function StatCardContent({ value, change, subtitle }: StatCardContentProps) {
+export const StatCardContent = React.memo(function StatCardContent({ value, change, subtitle }: StatCardContentProps) {
   return (
     <div>
       <div className="text-3xl font-bold text-foreground">{value}</div>
@@ -40,4 +41,4 @@ export function StatCardContent({ value, change, subtitle }: StatCardContentProp
       )}
     </div>
   );
-}
+});
