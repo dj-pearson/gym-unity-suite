@@ -103,6 +103,8 @@ const MonitoringPage = lazy(() => import("./pages/Monitoring"));
 const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
 const RetailPage = lazy(() => import("./pages/RetailPage"));
 const OrganizationSettingsPage = lazy(() => import("./pages/OrganizationSettingsPage"));
+const PortalSetupPage = lazy(() => import("./pages/PortalSetupPage"));
+const MemberPortalPage = lazy(() => import("./pages/MemberPortalPage"));
 
 // AppPageLoader - wrapper for Suspense fallback that uses improved PageLoader
 const AppPageLoader = () => <PageLoader message="Loading..." />;
@@ -684,6 +686,18 @@ const AppRoutes = () => {
 
               {/* Accessibility Page */}
               <Route path="/accessibility" element={<AccessibilityPage />} />
+
+              {/* White-Label Member Portal Setup (admin side) */}
+              <Route path="/portal-setup" element={
+                <ProtectedRoute permission={PERMISSIONS.VIEW_SETTINGS}>
+                  <DashboardLayout>
+                    <PortalSetupPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+
+              {/* Member Portal Routes (served to members via subdomain/custom domain) */}
+              <Route path="/portal/*" element={<MemberPortalPage />} />
 
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />

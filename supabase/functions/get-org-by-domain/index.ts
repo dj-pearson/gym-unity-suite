@@ -41,8 +41,9 @@ serve(async (req) => {
 
     logStep("Looking up organization", { domain });
 
-    // Query organization by custom domain
-    const { data: organization, error: orgError } = await supabaseClient
+    // First, try organization-level custom domain
+    let organization = null;
+    const { data: orgData, error: orgError } = await supabaseClient
       .from("organizations")
       .select("id, name, slug, logo_url, primary_color, secondary_color, custom_domain, custom_domain_verified")
       .eq("custom_domain", domain)
@@ -50,8 +51,38 @@ serve(async (req) => {
       .maybeSingle();
 
     if (orgError) {
-      logStep("Database error", { error: orgError });
-      throw new Error("Failed to query organization");
+      logStep("Database error on organizations", { error: orgError });
+    }
+
+    if (orgData) {
+      organization = orgData;
+    }
+
+    // If not found in organizations, check portal_configurations for portal custom domains
+    if (!organization) {
+      const { data: portalConfig, error: portalError } = await supabaseClient
+        .from("portal_configurations")
+        .select("organization_id")
+        .eq("portal_custom_domain", domain)
+        .eq("portal_domain_verified", true)
+        .maybeSingle();
+
+      if (portalError) {
+        logStep("Database error on portal_configurations", { error: portalError });
+      }
+
+      if (portalConfig) {
+        const { data: portalOrg } = await supabaseClient
+          .from("organizations")
+          .select("id, name, slug, logo_url, primary_color, secondary_color, custom_domain, custom_domain_verified")
+          .eq("id", portalConfig.organization_id)
+          .single();
+
+        if (portalOrg) {
+          organization = portalOrg;
+          logStep("Organization found via portal_configurations");
+        }
+      }
     }
 
     if (!organization) {
@@ -68,15 +99,24 @@ serve(async (req) => {
       );
     }
 
+    // Also fetch portal theme if available
+    const { data: portalTheme } = await supabaseClient
+      .from("portal_themes")
+      .select("*")
+      .eq("organization_id", organization.id)
+      .maybeSingle();
+
     logStep("Organization found", {
       orgId: organization.id,
       orgName: organization.name,
+      hasTheme: !!portalTheme,
     });
 
     return new Response(
       JSON.stringify({
         success: true,
         organization,
+        theme: portalTheme || null,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

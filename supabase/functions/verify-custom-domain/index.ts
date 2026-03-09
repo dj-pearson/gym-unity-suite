@@ -204,33 +204,58 @@ serve(async (req) => {
       throw new Error("Organization not found");
     }
 
-    if (organization.subscription_tier !== "enterprise") {
-      throw new Error("Custom domains are only available for enterprise tier");
+    // Check portal_configurations for portal-level domain verification
+    const { data: portalConfig } = await supabaseClient
+      .from("portal_configurations")
+      .select("portal_custom_domain, portal_domain_verification_token, portal_tier")
+      .eq("organization_id", organizationId)
+      .maybeSingle();
+
+    // Determine which domain/token to verify: portal-level or org-level
+    let verifyDomain: string | null = null;
+    let verifyToken: string | null = null;
+    let isPortalDomain = false;
+
+    if (portalConfig?.portal_custom_domain === domain && portalConfig?.portal_domain_verification_token) {
+      // Portal-level custom domain verification
+      verifyDomain = portalConfig.portal_custom_domain;
+      verifyToken = portalConfig.portal_domain_verification_token;
+      isPortalDomain = true;
+      logStep("Using portal-level domain verification");
+    } else if (organization.custom_domain === domain && organization.domain_verification_token) {
+      // Organization-level custom domain verification (enterprise only)
+      if (organization.subscription_tier !== "enterprise") {
+        throw new Error("Custom domains are only available for enterprise tier");
+      }
+      verifyDomain = organization.custom_domain;
+      verifyToken = organization.domain_verification_token;
+      logStep("Using organization-level domain verification");
+    } else {
+      throw new Error("Domain does not match any configured custom domain for this organization");
     }
 
-    if (organization.custom_domain !== domain) {
-      throw new Error("Domain does not match organization's custom domain");
-    }
-
-    if (!organization.domain_verification_token) {
+    if (!verifyToken) {
       throw new Error("No verification token found. Please set a custom domain first.");
     }
 
-    logStep("Organization data retrieved", {
-      domain: organization.custom_domain,
-      hasToken: !!organization.domain_verification_token,
+    logStep("Domain data retrieved", {
+      domain: verifyDomain,
+      hasToken: !!verifyToken,
+      isPortalDomain,
     });
 
     // Perform DNS verification
-    const dnsResult = await verifyDNS(domain, organization.domain_verification_token);
+    const dnsResult = await verifyDNS(domain, verifyToken);
 
     logStep("DNS verification result", dnsResult);
 
-    // Update organization with verification result
+    // Update with verification result
     if (dnsResult.txtVerified || dnsResult.cnameVerified) {
+      // Update organization table
       const { error: updateError } = await supabaseClient
         .from("organizations")
         .update({
+          custom_domain: domain,
           custom_domain_verified: true,
           updated_at: new Date().toISOString(),
         })
@@ -239,6 +264,17 @@ serve(async (req) => {
       if (updateError) {
         logStep("Error updating organization", { error: updateError });
         throw new Error("Failed to update organization verification status");
+      }
+
+      // Also update portal_configurations if this is a portal domain
+      if (isPortalDomain) {
+        await supabaseClient
+          .from("portal_configurations")
+          .update({
+            portal_domain_verified: true,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("organization_id", organizationId);
       }
 
       logStep("Domain verified successfully");

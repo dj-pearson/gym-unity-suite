@@ -2,8 +2,11 @@ name = "gym-unity-custom-domain-router"
 main = "index.ts"
 compatibility_date = "2024-09-25"
 
-# Worker routes - add your custom domains here
+# Worker routes for white-label portal subdomains and custom domains
+# *.repclub.app handles all portal subdomains (e.g., irontemple.repclub.app)
+# Custom domains are routed via CNAME pointing to portal.repclub.app
 routes = [
+  { pattern = "*.repclub.app", zone_name = "repclub.app" },
   { pattern = "*/*", custom_domain = true }
 ]
 
@@ -12,7 +15,7 @@ routes = [
 DEFAULT_ORIGIN = "gym-unity.app"
 
 # Secrets (set these using: wrangler secret put <SECRET_NAME>)
-# SUPABASE_URL - Your Supabase project URL (API subdomain for self-hosted)
+# SUPABASE_URL - Your Supabase project URL
 #   Example for hosted: https://yourproject.supabase.co
 #   Example for self-hosted: https://api.yourdomain.com
 # SUPABASE_ANON_KEY - Your Supabase anonymous key
@@ -24,6 +27,7 @@ DEFAULT_ORIGIN = "gym-unity.app"
 [env.production]
 name = "gym-unity-custom-domain-router-production"
 routes = [
+  { pattern = "*.repclub.app", zone_name = "repclub.app" },
   { pattern = "*/*", custom_domain = true }
 ]
 
@@ -31,5 +35,6 @@ routes = [
 [env.staging]
 name = "gym-unity-custom-domain-router-staging"
 routes = [
+  { pattern = "*.repclub.app", zone_name = "repclub.app" },
   { pattern = "*/*", custom_domain = true }
 ]

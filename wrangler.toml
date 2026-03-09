@@ -27,3 +27,19 @@ STRIPE_LINK_ENTERPRISE = "plink_1SkQhWRk7qIKHyBw66wN6zky"
 # Note: Secret keys should be set via `wrangler secret put` command:
 # wrangler secret put STRIPE_SECRET_KEY
 # wrangler secret put STRIPE_WEBHOOK_SECRET
+
+# ============================================
+# White-Label Portal Configuration
+# ============================================
+# The custom-domain-router worker (workers/custom-domain-router/) handles:
+# 1. *.repclub.app subdomain routing (white-label member portals)
+# 2. Custom domain routing (enterprise white-label portals)
+#
+# Worker routes (configured via Cloudflare dashboard or worker wrangler.toml):
+#   *.repclub.app/* -> custom-domain-router worker
+#   Custom domains  -> custom-domain-router worker (via DNS CNAME to portal.repclub.app)
+#
+# Deploy worker: cd workers/custom-domain-router && wrangler deploy
+#
+# Required worker secrets (set via wrangler secret put):
+#   SUPABASE_URL, SUPABASE_ANON_KEY, DEFAULT_ORIGIN
