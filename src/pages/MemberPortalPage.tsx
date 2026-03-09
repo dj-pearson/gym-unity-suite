@@ -16,6 +16,10 @@ const MemberProfilePage = lazy(() => import('@/pages/MemberProfilePage'));
 const MemberNotifications = lazy(() => import('@/pages/MemberNotifications'));
 const MemberWorkoutHistory = lazy(() => import('@/pages/MemberWorkoutHistory'));
 const PortalCheckInPage = lazy(() => import('@/components/portal/PortalCheckInPage'));
+const PortalBillingPage = lazy(() => import('@/components/portal/PortalBillingPage'));
+const PortalLoyaltyPage = lazy(() => import('@/components/portal/PortalLoyaltyPage'));
+const PortalReferralsPage = lazy(() => import('@/components/portal/PortalReferralsPage'));
+const PortalFitnessPage = lazy(() => import('@/components/portal/PortalFitnessPage'));
 
 /**
  * Protected wrapper for portal routes - redirects to login if not authenticated
@@ -132,6 +136,46 @@ function MemberPortalContent({ organizationId, organizationName, logoUrl }: Memb
             <PortalProtected>
               <PortalShell organizationName={organizationName} logoUrl={logoUrl}>
                 <PortalSuspense><MemberWorkoutHistory /></PortalSuspense>
+              </PortalShell>
+            </PortalProtected>
+          }
+        />
+        <Route
+          path="/billing"
+          element={
+            <PortalProtected>
+              <PortalShell organizationName={organizationName} logoUrl={logoUrl}>
+                <PortalSuspense><PortalBillingPage /></PortalSuspense>
+              </PortalShell>
+            </PortalProtected>
+          }
+        />
+        <Route
+          path="/loyalty"
+          element={
+            <PortalProtected>
+              <PortalShell organizationName={organizationName} logoUrl={logoUrl}>
+                <PortalSuspense><PortalLoyaltyPage /></PortalSuspense>
+              </PortalShell>
+            </PortalProtected>
+          }
+        />
+        <Route
+          path="/referrals"
+          element={
+            <PortalProtected>
+              <PortalShell organizationName={organizationName} logoUrl={logoUrl}>
+                <PortalSuspense><PortalReferralsPage /></PortalSuspense>
+              </PortalShell>
+            </PortalProtected>
+          }
+        />
+        <Route
+          path="/fitness"
+          element={
+            <PortalProtected>
+              <PortalShell organizationName={organizationName} logoUrl={logoUrl}>
+                <PortalSuspense><PortalFitnessPage /></PortalSuspense>
               </PortalShell>
             </PortalProtected>
           }
