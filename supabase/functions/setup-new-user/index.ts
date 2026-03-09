@@ -1,12 +1,16 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
-// Allowed origins for CORS - production domains only
+// Allowed origins for CORS - production domains and white-label portals
 const ALLOWED_ORIGINS = [
   "https://gym-unity-suite.com",
   "https://www.gym-unity-suite.com",
   "https://gym-unity-suite.pages.dev",
   "https://api.repclub.net",
+  "https://repclub.net",
+  "https://www.repclub.net",
+  "https://repclub.app",
+  "https://*.repclub.app",  // White-label portal subdomains
   // Development origins (remove in production)
   "http://localhost:8080",
   "http://localhost:3000",

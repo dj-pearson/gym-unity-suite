@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { PortalThemeProvider } from '@/components/portal/PortalThemeProvider';
 import { PortalAuthProvider, usePortalAuth } from '@/components/portal/PortalAuthProvider';
@@ -9,83 +9,13 @@ import { useCustomDomainContext } from '@/contexts/CustomDomainContext';
 import { usePortalConfig } from '@/hooks/usePortalConfig';
 import { PageLoader } from '@/components/ui/skeleton';
 
-// Portal-specific page placeholders (these wrap existing member components)
-function PortalDashboard() {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-      <p className="text-muted-foreground">Welcome to your member dashboard. Your upcoming classes, check-ins, and activity will appear here.</p>
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-lg border p-6 text-center">
-          <p className="text-3xl font-bold">0</p>
-          <p className="text-sm text-muted-foreground">Check-ins This Month</p>
-        </div>
-        <div className="rounded-lg border p-6 text-center">
-          <p className="text-3xl font-bold">0</p>
-          <p className="text-sm text-muted-foreground">Upcoming Classes</p>
-        </div>
-        <div className="rounded-lg border p-6 text-center">
-          <p className="text-3xl font-bold">0</p>
-          <p className="text-sm text-muted-foreground">Loyalty Points</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PortalClasses() {
-  return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Classes</h1>
-      <p className="text-muted-foreground">Browse and book available classes.</p>
-    </div>
-  );
-}
-
-function PortalCheckIn() {
-  return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Check In</h1>
-      <p className="text-muted-foreground">Show your member card QR code to check in.</p>
-    </div>
-  );
-}
-
-function PortalProfile() {
-  const { profile } = usePortalAuth();
-  return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Profile</h1>
-      <p className="text-muted-foreground">
-        Manage your account information.
-      </p>
-      {profile && (
-        <div className="rounded-lg border p-4 space-y-2">
-          <p><strong>Name:</strong> {profile.first_name} {profile.last_name}</p>
-          <p><strong>Email:</strong> {profile.email}</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function PortalNotifications() {
-  return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Notifications</h1>
-      <p className="text-muted-foreground">Your notifications and alerts.</p>
-    </div>
-  );
-}
-
-function PortalMore() {
-  return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">More</h1>
-      <p className="text-muted-foreground">Additional features and settings.</p>
-    </div>
-  );
-}
+// Lazy-load real member page components for portal routes
+const MemberDashboard = lazy(() => import('@/pages/MemberDashboard'));
+const MemberClasses = lazy(() => import('@/pages/MemberClasses'));
+const MemberProfilePage = lazy(() => import('@/pages/MemberProfilePage'));
+const MemberNotifications = lazy(() => import('@/pages/MemberNotifications'));
+const MemberWorkoutHistory = lazy(() => import('@/pages/MemberWorkoutHistory'));
+const PortalCheckInPage = lazy(() => import('@/components/portal/PortalCheckInPage'));
 
 /**
  * Protected wrapper for portal routes - redirects to login if not authenticated
@@ -102,6 +32,12 @@ function PortalProtected({ children }: { children: React.ReactNode }) {
 
   return <>{children}</>;
 }
+
+const PortalSuspense = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<PageLoader message="Loading..." />}>
+    {children}
+  </Suspense>
+);
 
 interface MemberPortalContentProps {
   organizationId: string;
@@ -139,13 +75,13 @@ function MemberPortalContent({ organizationId, organizationName, logoUrl }: Memb
           }
         />
 
-        {/* Protected portal routes */}
+        {/* Protected portal routes - uses real member components */}
         <Route
           path="/dashboard"
           element={
             <PortalProtected>
               <PortalShell organizationName={organizationName} logoUrl={logoUrl}>
-                <PortalDashboard />
+                <PortalSuspense><MemberDashboard /></PortalSuspense>
               </PortalShell>
             </PortalProtected>
           }
@@ -155,7 +91,7 @@ function MemberPortalContent({ organizationId, organizationName, logoUrl }: Memb
           element={
             <PortalProtected>
               <PortalShell organizationName={organizationName} logoUrl={logoUrl}>
-                <PortalClasses />
+                <PortalSuspense><MemberClasses /></PortalSuspense>
               </PortalShell>
             </PortalProtected>
           }
@@ -165,7 +101,7 @@ function MemberPortalContent({ organizationId, organizationName, logoUrl }: Memb
           element={
             <PortalProtected>
               <PortalShell organizationName={organizationName} logoUrl={logoUrl}>
-                <PortalCheckIn />
+                <PortalSuspense><PortalCheckInPage /></PortalSuspense>
               </PortalShell>
             </PortalProtected>
           }
@@ -175,7 +111,7 @@ function MemberPortalContent({ organizationId, organizationName, logoUrl }: Memb
           element={
             <PortalProtected>
               <PortalShell organizationName={organizationName} logoUrl={logoUrl}>
-                <PortalProfile />
+                <PortalSuspense><MemberProfilePage /></PortalSuspense>
               </PortalShell>
             </PortalProtected>
           }
@@ -185,17 +121,17 @@ function MemberPortalContent({ organizationId, organizationName, logoUrl }: Memb
           element={
             <PortalProtected>
               <PortalShell organizationName={organizationName} logoUrl={logoUrl}>
-                <PortalNotifications />
+                <PortalSuspense><MemberNotifications /></PortalSuspense>
               </PortalShell>
             </PortalProtected>
           }
         />
         <Route
-          path="/more"
+          path="/history"
           element={
             <PortalProtected>
               <PortalShell organizationName={organizationName} logoUrl={logoUrl}>
-                <PortalMore />
+                <PortalSuspense><MemberWorkoutHistory /></PortalSuspense>
               </PortalShell>
             </PortalProtected>
           }

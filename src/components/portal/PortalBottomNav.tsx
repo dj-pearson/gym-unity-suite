@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, CalendarDays, QrCode, User, MoreHorizontal } from 'lucide-react';
+import { Home, CalendarDays, QrCode, User, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePortalThemeContext } from './PortalThemeProvider';
 
@@ -16,7 +16,7 @@ const defaultNavItems: NavItem[] = [
   { label: 'Classes', icon: CalendarDays, path: '/portal/classes', featureKey: 'classes' },
   { label: 'Check In', icon: QrCode, path: '/portal/check-in', featureKey: 'check_in' },
   { label: 'Profile', icon: User, path: '/portal/profile' },
-  { label: 'More', icon: MoreHorizontal, path: '/portal/more' },
+  { label: 'History', icon: Clock, path: '/portal/history', featureKey: 'workout_history' },
 ];
 
 export function PortalBottomNav() {
