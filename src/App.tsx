@@ -105,6 +105,7 @@ const RetailPage = lazy(() => import("./pages/RetailPage"));
 const OrganizationSettingsPage = lazy(() => import("./pages/OrganizationSettingsPage"));
 const PortalSetupPage = lazy(() => import("./pages/PortalSetupPage"));
 const MemberPortalPage = lazy(() => import("./pages/MemberPortalPage"));
+const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
 
 // AppPageLoader - wrapper for Suspense fallback that uses improved PageLoader
 const AppPageLoader = () => <PageLoader message="Loading..." />;
@@ -605,6 +606,12 @@ const AppRoutes = () => {
               <Route path="/monitoring" element={
                 <ProtectedRoute permission={PERMISSIONS.MANAGE_SYSTEM}>
                   <MonitoringPage />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/admin" element={
+                <ProtectedRoute permission={PERMISSIONS.MANAGE_SYSTEM}>
+                  <AdminDashboardPage />
                 </ProtectedRoute>
               } />
               

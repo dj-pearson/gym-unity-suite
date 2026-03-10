@@ -2,13 +2,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import SystemHealthDashboard from "@/components/monitoring/SystemHealthDashboard";
 import AlertsPanel from "@/components/monitoring/AlertsPanel";
+import MetricsDashboard from "@/components/monitoring/MetricsDashboard";
+import SecurityDashboard from "@/components/monitoring/SecurityDashboard";
 import { Activity, Bell, BarChart3, Shield } from "lucide-react";
+import { ErrorBoundary } from "react-error-boundary";
+
+function TabErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
+  return (
+    <div className="rounded-lg border bg-card p-8 text-center text-muted-foreground">
+      <p className="text-sm mb-2">Something went wrong loading this section.</p>
+      <button onClick={resetErrorBoundary} className="text-primary underline text-sm">
+        Try again
+      </button>
+    </div>
+  );
+}
 
 /**
  * Monitoring Page
  *
- * Provides system health monitoring, alerting, and security dashboards
- * for administrators and DevOps teams.
+ * Provides system health monitoring, alerting, performance metrics,
+ * and security dashboards for administrators and DevOps teams.
  */
 export default function MonitoringPage() {
   return (
@@ -44,38 +58,32 @@ export default function MonitoringPage() {
           </TabsList>
 
           <TabsContent value="health" className="space-y-4">
-            <SystemHealthDashboard />
+            <ErrorBoundary FallbackComponent={TabErrorFallback}>
+              <SystemHealthDashboard />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="alerts" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
-              <AlertsPanel />
-              <div className="space-y-4">
-                {/* Alert summary cards could go here */}
+            <ErrorBoundary FallbackComponent={TabErrorFallback}>
+              <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+                <AlertsPanel />
+                <div className="space-y-4">
+                  {/* Alert summary cards could go here */}
+                </div>
               </div>
-            </div>
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="metrics" className="space-y-4">
-            <div className="rounded-lg border bg-card p-8 text-center text-muted-foreground">
-              <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-medium mb-2">Metrics Dashboard</h3>
-              <p className="max-w-md mx-auto">
-                Detailed performance metrics, query analytics, and business KPIs
-                will be displayed here. Configure your metrics in the settings.
-              </p>
-            </div>
+            <ErrorBoundary FallbackComponent={TabErrorFallback}>
+              <MetricsDashboard />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="security" className="space-y-4">
-            <div className="rounded-lg border bg-card p-8 text-center text-muted-foreground">
-              <Shield className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-medium mb-2">Security Dashboard</h3>
-              <p className="max-w-md mx-auto">
-                Webhook verification status, failed authentication attempts,
-                and security incident logs will be displayed here.
-              </p>
-            </div>
+            <ErrorBoundary FallbackComponent={TabErrorFallback}>
+              <SecurityDashboard />
+            </ErrorBoundary>
           </TabsContent>
         </Tabs>
       </div>

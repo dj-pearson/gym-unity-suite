@@ -86,8 +86,11 @@ export function sanitizeHTML(html: string): string {
 
 /**
  * Sanitize input to prevent injection attacks
- * Removes potential SQL injection patterns and HTML tags
- * 
+ * Removes HTML tags and dangerous patterns while preserving legitimate characters.
+ *
+ * NOTE: Apostrophes and quotes in names (e.g., O'Brien, "nickname") are preserved.
+ * SQL injection is handled by parameterized queries via Supabase, not string stripping.
+ *
  * @param input - The input string to sanitize
  * @returns Sanitized input string
  */
@@ -97,8 +100,11 @@ export function sanitizeInput(input: string): string {
   return input
     // Remove HTML tags
     .replace(/<[^>]*>/g, '')
-    // Remove SQL injection patterns
-    .replace(/['";\\]/g, '')
+    // Remove null bytes
+    .replace(/\0/g, '')
+    // Remove javascript: and data: URI schemes
+    .replace(/javascript\s*:/gi, '')
+    .replace(/data\s*:text\/html/gi, '')
     // Trim whitespace
     .trim();
 }
