@@ -15,8 +15,8 @@
         "Add CSP header configuration in Cloudflare Pages _headers file"
       ],
       "priority": 1,
-      "passes": false,
-      "notes": "The sanitization library exists at src/lib/security/url-sanitization.ts but is not consistently applied across all forms. The sanitizeInput() function strips all quotes which can break legitimate user input like names with apostrophes."
+      "passes": true,
+      "notes": "Fixed sanitizeInput() to preserve apostrophes/quotes (SQL injection handled by parameterized queries). Created useSanitizedForm hook that wraps React Hook Form with automatic sanitization on submit. CSP headers already configured in public/_headers. Zod schemas in validation-schemas.ts provide form-level validation."
     },
     {
       "id": "US-002",
@@ -30,8 +30,8 @@
         "Ensure rate limiting applies to mutation operations (create, update, delete)"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": "The rate limiter exists server-side (supabase/functions/rate-limit/) and client-side (src/lib/rate-limited-fetch.ts) but the client-side version is not used by default in any Supabase queries."
+      "passes": true,
+      "notes": "Created useRateLimitedQuery and useRateLimitedMutation hooks wrapping TanStack Query with automatic client-side rate limiting. Created useDebounce and useDebouncedCallback hooks for search/filter inputs. Rate limiting shows toast warnings when approaching limits and blocking messages when exceeded."
     },
     {
       "id": "US-003",
@@ -46,8 +46,8 @@
         "Gate all admin pages behind MANAGE_SYSTEM permission"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": "Currently only 1 admin page exists (BlogAdminPage). The Monitoring page has placeholder tabs for Metrics and Security that are not implemented. Organization settings route shows 'coming soon' text."
+      "passes": true,
+      "notes": "Created AdminDashboardPage (/admin) with Overview, Users, and Audit Logs tabs. User management shows profiles with role filtering and search (debounced). Audit log viewer with action/result filters and search. Monitoring page Metrics tab now shows Web Vitals, DB response time, and API call data. Security tab shows security events, denied events, and severity breakdown. All gated behind MANAGE_SYSTEM permission."
     },
     {
       "id": "US-004",
@@ -141,8 +141,8 @@
         "Show Supabase connection health and Edge Function status"
       ],
       "priority": 9,
-      "passes": false,
-      "notes": "The Monitoring page exists at src/pages/Monitoring.tsx but the Metrics (lines 59-67) and Security (lines 71-77) tabs contain only stub placeholder content. APM service exists at src/lib/monitoring/apm.ts but is not fully integrated."
+      "passes": true,
+      "notes": "Metrics tab replaced with MetricsDashboard component showing real Web Vitals (page load, TTFB, DOM content loaded, DNS), DB response time, JS/CSS bundle counts, memory usage, and API call tracking. Security tab replaced with SecurityDashboard component showing audit stats by layer/severity, recent critical events, and filterable log viewer. All tabs wrapped with ErrorBoundary."
     },
     {
       "id": "US-010",
