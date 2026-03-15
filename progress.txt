@@ -2,8 +2,8 @@
 RALPH LOOP PROGRESS TRACKER - Gym Unity Suite
 ================================================================================
 Format: Ralph from SnarktTank
-Last Updated: 2026-03-10
-Branch: claude/critical-platform-improvements-7OqFs
+Last Updated: 2026-03-15
+Branch: claude/critical-platform-improvements-af7SN
 ================================================================================
 
 COMPLETED STORIES (PASSED)
@@ -117,6 +117,58 @@ COMPLETED STORIES (PASSED)
   Acceptance Criteria Met: 3/5 (metrics dashboard, security dashboard, APM integration)
   Remaining: Alerting configuration UI, Supabase connection health in security tab
 
+[PASSED] US-013 - Multi-tenant organization_id filter audit for CRM domain
+  Priority: 1 | Status: DONE
+  - LeadAttributionManager (src/components/crm/LeadAttributionManager.tsx)
+    * Disputes query now explicitly fetches org lead IDs first
+    * Uses .in('lead_id', orgLeadIds) instead of inline subquery
+    * Added empty array guard to prevent querying with zero IDs
+  - LeadDetail (src/components/crm/LeadDetail.tsx)
+    * Activities query now uses inner join: leads!inner(organization_id)
+    * Added .eq('leads.organization_id', profile.organization_id)
+    * Added useAuth import and profile access for org filtering
+    * Added toast.error for failed activity loads
+  - LeadAnalyticsDashboard (src/components/crm/LeadAnalyticsDashboard.tsx)
+    * Activities query now uses inner join with organization_id
+    * Added empty leadIds guard to skip query when no leads exist
+  Acceptance Criteria Met: 3/6 (3 critical queries fixed)
+  Remaining: SalespersonCommissionManager, SalespersonReferralManager, lint rule
+
+[PASSED] US-014 - Protect payment callback routes with authentication
+  Priority: 1 | Status: DONE
+  - /membership-success wrapped with ProtectedRoute in src/App.tsx
+  - /payment-success wrapped with ProtectedRoute in src/App.tsx
+  - /payment-cancelled wrapped with ProtectedRoute in src/App.tsx
+  - /payment-demo wrapped with ProtectedRoute in src/App.tsx
+  - Unauthenticated users now redirect to login for all payment pages
+  Acceptance Criteria Met: 4/6 (all 4 routes protected)
+  Remaining: Error handling for expired payment sessions
+
+[PASSED] US-015 - Form validation and input sanitization for CRM and Members
+  Priority: 2 | Status: DONE
+  - LeadForm (src/components/crm/LeadForm.tsx)
+    * Added Zod schema (leadFormSchema) with email, length, enum validation
+    * Wired sanitizeFormData from useSanitizedForm on submit
+    * Inline validation errors with aria-required/aria-invalid
+    * Estimated value field properly validated as string-to-number
+  - AddMemberDialog (src/components/members/AddMemberDialog.tsx)
+    * Added Zod schema (addMemberSchema) with email, required name validation
+    * Wired sanitizeFormData on submit with sanitized data passed to Supabase
+    * Replaced Math.random password with crypto.getRandomValues (32-char)
+    * Added inline validation errors and aria attributes
+  Acceptance Criteria Met: 5/7 (Zod schemas, sanitization, error display, aria, crypto password)
+  Remaining: Migrate Staff and Billing forms
+
+[PASSED] US-016 - CRM lead fetching N+1 query optimization
+  Priority: 3 | Status: DONE
+  - CRMPage fetchLeads (src/pages/CRMPage.tsx)
+    * Primary: Single Supabase query with FK-based joins for lead_stages and profiles
+    * Fallback: If FK joins fail, uses lead_stages join + batch profiles fetch
+    * Batch approach: Deduplicates assigned_to IDs, single .in() query for staff
+    * Reduces queries from O(2n) to O(1-3) for any number of leads
+  Acceptance Criteria Met: 4/6 (join query, fallback, batch strategy, deduplication)
+  Remaining: Apply pattern to other N+1 queries, performance benchmarking
+
 ================================================================================
 REMAINING STORIES (BACKLOG - For Future Ralph Loops)
 ================================================================================
@@ -137,11 +189,25 @@ REMAINING STORIES (BACKLOG - For Future Ralph Loops)
   Priority: 12 | Status: NOT STARTED
   Notes: PWA infrastructure exists. Mobile experience at ~60% completion.
 
+[PENDING] US-017 - Toast notification consistency across all domains
+  Priority: 13 | Status: NOT STARTED
+  Notes: Mixed sonner + useToast patterns. Some mutations lack any toast feedback.
+
+[PENDING] US-018 - CRM placeholder components implementation
+  Priority: 14 | Status: NOT STARTED
+  Notes: 5+ stub components with 'Coming Soon' badges in PlaceholderCRMComponents.tsx.
+  ~15 Coming Soon instances across the codebase.
+
+[PENDING] US-019 - Stripe webhook failed payment notification
+  Priority: 15 | Status: NOT STARTED
+  Notes: TODO at stripe-webhook/index.ts:463 for user notification on failed payment.
+
 ================================================================================
 SUMMARY
 ================================================================================
-Total Stories: 12
-Passed: 8 (US-001, US-002, US-003, US-004, US-005, US-007, US-009, US-011)
-Remaining: 4
+Total Stories: 19
+Passed: 12 (US-001, US-002, US-003, US-004, US-005, US-007, US-009, US-011,
+             US-013, US-014, US-015, US-016)
+Remaining: 7
 Next Priority: US-006 (Expand test coverage for critical business domains)
 ================================================================================

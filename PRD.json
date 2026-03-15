@@ -191,6 +191,117 @@
       "priority": 12,
       "passes": false,
       "notes": "PWA infrastructure exists (manifest.json, sw.js) and mobile-specific components are in src/components/mobile/. The mobile experience is estimated at 60% completion. Mobile routes exist for dashboard, check-in, and workout."
+    },
+    {
+      "id": "US-013",
+      "title": "Multi-tenant organization_id filter audit for CRM domain",
+      "description": "As a platform operator, I want all CRM queries to enforce organization_id filtering so that tenant data isolation is guaranteed even if RLS policies are misconfigured.",
+      "acceptanceCriteria": [
+        "Audit all Supabase queries in src/components/crm/ for missing organization_id filters",
+        "Fix LeadAttributionManager disputes query to scope by organization leads",
+        "Fix LeadDetail activities query to use inner join with organization_id",
+        "Fix LeadAnalyticsDashboard activities query to scope by organization",
+        "Add organization_id checks to SalespersonCommissionManager and SalespersonReferralManager queries",
+        "Create a lint rule or code review checklist for organization_id enforcement"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Fixed 3 critical missing organization_id filters: LeadAttributionManager (disputes query now scopes by org leads with explicit ID fetch), LeadDetail (activities now use inner join on leads.organization_id), LeadAnalyticsDashboard (activities query now uses inner join with organization_id filter). Empty array guard added to prevent queries with zero lead IDs."
+    },
+    {
+      "id": "US-014",
+      "title": "Protect payment callback routes with authentication",
+      "description": "As a security engineer, I want all payment-related callback routes to require authentication so that unauthenticated users cannot access payment confirmation or cancellation pages.",
+      "acceptanceCriteria": [
+        "Wrap /membership-success route with ProtectedRoute",
+        "Wrap /payment-success route with ProtectedRoute",
+        "Wrap /payment-cancelled route with ProtectedRoute",
+        "Wrap /payment-demo route with ProtectedRoute",
+        "Verify all payment pages redirect to login when unauthenticated",
+        "Add appropriate error handling for expired payment sessions"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "All 4 payment callback routes (/membership-success, /payment-success, /payment-cancelled, /payment-demo) now wrapped with ProtectedRoute in App.tsx. Unauthenticated users are redirected to login before accessing any payment result page."
+    },
+    {
+      "id": "US-015",
+      "title": "Form validation and input sanitization for CRM and Members",
+      "description": "As a developer, I want all critical forms to use Zod schema validation and input sanitization so that invalid or malicious data cannot enter the database.",
+      "acceptanceCriteria": [
+        "Add Zod validation schema to LeadForm with email, field length, and enum validation",
+        "Add Zod validation schema to AddMemberDialog with email and required field validation",
+        "Wire sanitizeFormData from useSanitizedForm to both forms on submission",
+        "Display inline validation error messages for invalid fields",
+        "Add aria-required and aria-invalid attributes for accessibility",
+        "Replace Math.random password generation with crypto.getRandomValues in AddMemberDialog",
+        "Migrate remaining forms (StaffPage, BillingPage) to use Zod + sanitization"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "LeadForm now uses Zod schema (leadFormSchema) with email validation, field length limits, enum constraint on interest_level, and sanitizeFormData on submit. AddMemberDialog uses addMemberSchema with required first/last name, email validation, and sanitized data. Password generation upgraded from Math.random to crypto.getRandomValues. Inline validation errors displayed with aria attributes for accessibility."
+    },
+    {
+      "id": "US-016",
+      "title": "CRM lead fetching N+1 query optimization",
+      "description": "As a gym manager with many leads, I want the CRM page to load quickly so that I can efficiently manage my sales pipeline without performance lag.",
+      "acceptanceCriteria": [
+        "Replace N+1 per-lead queries in CRMPage fetchLeads with Supabase joins",
+        "Use single query with lead_stages and profiles joins instead of individual lookups",
+        "Add fallback batch query strategy if FK-based joins fail",
+        "Ensure assigned staff are fetched in a single batch query using .in() with unique IDs",
+        "Verify performance improvement with 50+ leads",
+        "Apply same optimization pattern to other N+1 queries across the codebase"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "CRMPage fetchLeads refactored from N+1 pattern (2 queries per lead = 100 queries for 50 leads) to single Supabase join query. Primary approach uses FK-based joins for lead_stages and profiles. Fallback strategy fetches stages via join and batches staff lookups into single .in() query with deduplication. Reduces queries from O(2n) to O(1-3)."
+    },
+    {
+      "id": "US-017",
+      "title": "Toast notification consistency across all domains",
+      "description": "As a user, I want consistent notification feedback across all features so that success and error messages appear in a uniform style.",
+      "acceptanceCriteria": [
+        "Standardize all components to use sonner toast library (currently mixed sonner + useToast)",
+        "Add toast.success for all successful mutations that currently lack feedback",
+        "Add toast.error for all error catch blocks that only console.error",
+        "Implement a toast wrapper utility for consistent formatting",
+        "Remove duplicate toast imports and consolidate to single pattern"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": "Mixed toast patterns found: sonner (toast.success/toast.error) used in CRM, LeadForm; useToast hook (with variant='destructive') used in AddMemberDialog, StaffPage. Some mutations lack any user feedback (e.g., MembershipPlansPage checkSubscriptionStatus). Standardize to sonner for consistency."
+    },
+    {
+      "id": "US-018",
+      "title": "CRM placeholder components implementation",
+      "description": "As a gym sales manager, I want fully functional CRM sub-features so that I can manage email templates, follow-ups, lead scoring, and tour scheduling without encountering 'Coming Soon' placeholders.",
+      "acceptanceCriteria": [
+        "Implement EmailTemplateManager in src/components/crm/PlaceholderCRMComponents.tsx",
+        "Implement FollowUpTasksManager for automated follow-up scheduling",
+        "Implement LeadScoringManager for customizable lead scoring rules",
+        "Implement LeadSourcesManager for source tracking configuration",
+        "Implement ToursSchedulingManager for prospect tour booking",
+        "Replace all 'Coming Soon' badges with functional components or remove from navigation"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": "PlaceholderCRMComponents.tsx contains 5+ stub components with 'Coming Soon' badges. These are visible in the CRM module tabs. Additional coming soon placeholders in: SimpleCommissionTrackingManager, PoolManagementPage (4 placeholders), CourtSportsPage, staff components. Total ~15 Coming Soon instances across the codebase."
+    },
+    {
+      "id": "US-019",
+      "title": "Stripe webhook failed payment notification",
+      "description": "As a gym member, I want to be notified when my payment fails so that I can update my payment method before losing access to the gym.",
+      "acceptanceCriteria": [
+        "Implement failed payment notification in stripe-webhook edge function (TODO at line 463)",
+        "Send email notification to member on payment failure",
+        "Add in-app notification for failed payments",
+        "Include a direct link to update payment method in the notification",
+        "Log failed payment events in audit trail"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": "Stripe webhook handler at supabase/functions/stripe-webhook/index.ts has a TODO comment at line 463 for sending failed payment notifications. Currently the webhook processes the event but doesn't notify the affected user."
     }
   ]
 }

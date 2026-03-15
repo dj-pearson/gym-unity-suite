@@ -8,6 +8,24 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { z } from 'zod';
+import { sanitizeFormData } from '@/hooks/useSanitizedForm';
+
+const leadFormSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  first_name: z.string().max(100, 'First name is too long').optional().default(''),
+  last_name: z.string().max(100, 'Last name is too long').optional().default(''),
+  phone: z.string().max(30, 'Phone number is too long').optional().default(''),
+  source: z.string().optional().default(''),
+  interest_level: z.enum(['cold', 'warm', 'hot']).default('cold'),
+  estimated_value: z.string().optional().default(''),
+  stage_id: z.string().optional().default(''),
+  notes: z.string().max(5000, 'Notes are too long').optional().default(''),
+  assigned_salesperson: z.string().optional().default(''),
+  referral_code: z.string().max(50, 'Referral code is too long').optional().default(''),
+});
+
+type LeadFormValues = z.infer<typeof leadFormSchema>;
 
 interface LeadFormProps {
   onClose: () => void;
@@ -26,6 +44,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ onClose, onSuccess, lead }) 
   const [loading, setLoading] = useState(false);
   const [stages, setStages] = useState<LeadStage[]>([]);
   const [salespeople, setSalespeople] = useState([]);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     email: lead?.email || '',
     first_name: lead?.first_name || '',
@@ -33,7 +52,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ onClose, onSuccess, lead }) 
     phone: lead?.phone || '',
     source: lead?.source || '',
     interest_level: lead?.interest_level || 'cold',
-    estimated_value: lead?.estimated_value || '',
+    estimated_value: lead?.estimated_value?.toString() || '',
     stage_id: lead?.stage_id || '',
     notes: lead?.notes || '',
     assigned_salesperson: lead?.assigned_salesperson || '',
@@ -89,30 +108,48 @@ export const LeadForm: React.FC<LeadFormProps> = ({ onClose, onSuccess, lead }) 
     e.preventDefault();
     if (!profile?.organization_id) return;
 
+    // Validate form data with Zod
+    const result = leadFormSchema.safeParse(formData);
+    if (!result.success) {
+      const errors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0]) {
+          errors[err.path[0] as string] = err.message;
+        }
+      });
+      setValidationErrors(errors);
+      toast.error('Please fix the validation errors');
+      return;
+    }
+    setValidationErrors({});
+
+    // Sanitize form data before submission
+    const sanitizedData = sanitizeFormData(result.data);
+
     setLoading(true);
     try {
       const leadData = {
-        ...formData,
+        ...sanitizedData,
         organization_id: profile.organization_id,
-        entered_by: profile.id, // Set who entered this lead
-        estimated_value: formData.estimated_value ? parseFloat(formData.estimated_value) : null,
-        stage_id: formData.stage_id || null, // Convert empty string to null for UUID field
-        assigned_salesperson: formData.assigned_salesperson || null
+        entered_by: profile.id,
+        estimated_value: sanitizedData.estimated_value ? parseFloat(sanitizedData.estimated_value) : null,
+        stage_id: sanitizedData.stage_id || null,
+        assigned_salesperson: sanitizedData.assigned_salesperson || null
       };
 
-      let result;
+      let dbResult;
       if (lead) {
-        result = await supabase
+        dbResult = await supabase
           .from('leads')
           .update(leadData)
           .eq('id', lead.id);
       } else {
-        result = await supabase
+        dbResult = await supabase
           .from('leads')
           .insert([leadData]);
       }
 
-      if (result.error) throw result.error;
+      if (dbResult.error) throw dbResult.error;
 
       toast.success(lead ? 'Lead updated successfully' : 'Lead created successfully');
       onSuccess();
@@ -157,9 +194,14 @@ export const LeadForm: React.FC<LeadFormProps> = ({ onClose, onSuccess, lead }) 
               id="email"
               type="email"
               required
+              aria-required="true"
+              aria-invalid={!!validationErrors.email}
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
+            {validationErrors.email && (
+              <p className="text-sm text-destructive mt-1">{validationErrors.email}</p>
+            )}
           </div>
 
           <div>

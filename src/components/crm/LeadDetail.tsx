@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -33,12 +34,13 @@ interface Activity {
   created_by: string;
 }
 
-export const LeadDetail: React.FC<LeadDetailProps> = ({ 
-  lead, 
-  onClose, 
-  onUpdate, 
-  onActivityAdd 
+export const LeadDetail: React.FC<LeadDetailProps> = ({
+  lead,
+  onClose,
+  onUpdate,
+  onActivityAdd
 }) => {
+  const { profile } = useAuth();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -52,18 +54,26 @@ export const LeadDetail: React.FC<LeadDetailProps> = ({
   }, [lead.id]);
 
   const fetchActivities = async () => {
+    if (!profile?.organization_id) return;
     setLoading(true);
     try {
+      // Use inner join to ensure activities belong to leads in this organization
       const { data, error } = await supabase
         .from('lead_activities')
-        .select('*')
+        .select(`
+          id, activity_type, title, description, scheduled_at, completed_at,
+          outcome, next_action, created_at, created_by,
+          leads!inner(organization_id)
+        `)
         .eq('lead_id', lead.id)
+        .eq('leads.organization_id', profile.organization_id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       setActivities(data || []);
     } catch (error) {
       console.error('Error fetching activities:', error);
+      toast.error('Failed to load activities');
     } finally {
       setLoading(false);
     }
