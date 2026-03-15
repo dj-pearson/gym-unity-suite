@@ -95,12 +95,18 @@ export default function LeadAnalyticsDashboard() {
         .select('*')
         .eq('organization_id', profile.organization_id);
 
-      // Fetch activities
+      // Fetch activities scoped to this organization's leads
       const leadIds = leads?.map(l => l.id) || [];
-      const { data: activities } = await supabase
-        .from('lead_activities')
-        .select('*')
-        .in('lead_id', leadIds);
+      const { data: activities } = leadIds.length > 0
+        ? await supabase
+            .from('lead_activities')
+            .select(`
+              *,
+              leads!inner(organization_id)
+            `)
+            .in('lead_id', leadIds)
+            .eq('leads.organization_id', profile.organization_id)
+        : { data: [] };
 
       // Calculate analytics
       const analyticsData: LeadAnalytics = {

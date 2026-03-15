@@ -63,22 +63,28 @@ export const LeadAttributionManager: React.FC<LeadAttributionManagerProps> = ({
     
     setLoading(true);
     try {
-      // Fetch disputes
-      const { data: disputesData, error: disputesError } = await supabase
-        .from('lead_attribution_disputes')
-        .select(`
-          *,
-          lead:lead_id(first_name, last_name, email, phone),
-          disputing_salesperson:disputing_salesperson_id(first_name, last_name, email),
-          current_salesperson:current_salesperson_id(first_name, last_name, email),
-          reviewer:reviewed_by(first_name, last_name, email)
-        `)
-        .in('lead_id', (
-          await supabase
-            .from('leads')
-            .select('id')
-            .eq('organization_id', profile.organization_id)
-        ).data?.map(l => l.id) || []);
+      // Fetch org lead IDs first, then filter disputes by organization scope
+      const { data: orgLeads, error: orgLeadsError } = await supabase
+        .from('leads')
+        .select('id')
+        .eq('organization_id', profile.organization_id);
+
+      if (orgLeadsError) throw orgLeadsError;
+      const orgLeadIds = orgLeads?.map(l => l.id) || [];
+
+      // Fetch disputes scoped to this organization's leads
+      const { data: disputesData, error: disputesError } = orgLeadIds.length > 0
+        ? await supabase
+            .from('lead_attribution_disputes')
+            .select(`
+              *,
+              lead:lead_id(first_name, last_name, email, phone),
+              disputing_salesperson:disputing_salesperson_id(first_name, last_name, email),
+              current_salesperson:current_salesperson_id(first_name, last_name, email),
+              reviewer:reviewed_by(first_name, last_name, email)
+            `)
+            .in('lead_id', orgLeadIds)
+        : { data: [], error: null };
 
       if (disputesError) throw disputesError;
       setDisputes(disputesData || []);

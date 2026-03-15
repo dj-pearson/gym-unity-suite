@@ -344,10 +344,26 @@ const AppRoutes = () => {
                 </DashboardLayout>
               } />
 
-            <Route path="/membership-success" element={<MembershipSuccessPage />} />
-            <Route path="/payment-success" element={<PaymentSuccessPage />} />
-            <Route path="/payment-cancelled" element={<PaymentCancelledPage />} />
-            <Route path="/payment-demo" element={<PaymentDemoPage />} />
+            <Route path="/membership-success" element={
+              <ProtectedRoute>
+                <MembershipSuccessPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/payment-success" element={
+              <ProtectedRoute>
+                <PaymentSuccessPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/payment-cancelled" element={
+              <ProtectedRoute>
+                <PaymentCancelledPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/payment-demo" element={
+              <ProtectedRoute>
+                <PaymentDemoPage />
+              </ProtectedRoute>
+            } />
               
               <Route path="/member/notifications" element={
                 <ProtectedRoute roles={['member']}>

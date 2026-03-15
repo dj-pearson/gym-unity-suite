@@ -85,41 +85,54 @@ export const CRMPage: React.FC = () => {
 
     try {
       setLoading(true);
+      // Use Supabase joins to fetch leads with stage and assigned staff in a single query
+      // This replaces the N+1 pattern (2 queries per lead) with a single query
       const { data, error } = await supabase
         .from('leads')
-        .select('*')
+        .select(`
+          *,
+          stage:lead_stages(id, name, color),
+          assigned_staff:profiles!leads_assigned_to_fkey(first_name, last_name)
+        `)
         .eq('organization_id', profile.organization_id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      
-      // Fetch related data separately to avoid join issues
-      const leadsWithDetails = await Promise.all((data || []).map(async (lead) => {
-        let stage = null;
-        let assigned_staff = null;
+      if (error) {
+        // Fallback: if join fails (e.g., FK name mismatch), try simpler approach
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('leads')
+          .select(`
+            *,
+            stage:lead_stages(id, name, color)
+          `)
+          .eq('organization_id', profile.organization_id)
+          .order('created_at', { ascending: false });
 
-        if (lead.stage_id) {
-          const { data: stageData } = await supabase
-            .from('lead_stages')
-            .select('id, name, color')
-            .eq('id', lead.stage_id)
-            .single();
-          stage = stageData;
-        }
+        if (fallbackError) throw fallbackError;
 
-        if (lead.assigned_to) {
+        // Batch fetch assigned staff in one query instead of N queries
+        const assignedIds = [...new Set(
+          (fallbackData || []).map(l => l.assigned_to).filter(Boolean)
+        )];
+
+        let staffMap: Record<string, { first_name: string; last_name: string }> = {};
+        if (assignedIds.length > 0) {
           const { data: staffData } = await supabase
             .from('profiles')
-            .select('first_name, last_name')
-            .eq('id', lead.assigned_to)
-            .single();
-          assigned_staff = staffData;
+            .select('id, first_name, last_name')
+            .in('id', assignedIds);
+          staffData?.forEach(s => { staffMap[s.id] = s; });
         }
 
-        return { ...lead, stage, assigned_staff };
-      }));
+        const leadsWithDetails = (fallbackData || []).map(lead => ({
+          ...lead,
+          assigned_staff: lead.assigned_to ? staffMap[lead.assigned_to] || null : null,
+        }));
 
-      setLeads(leadsWithDetails);
+        setLeads(leadsWithDetails);
+      } else {
+        setLeads(data || []);
+      }
     } catch (error) {
       console.error('Error fetching leads:', error);
       toast.error('Failed to load leads');
