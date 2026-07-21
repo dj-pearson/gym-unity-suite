@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useRef, useCallback, ty
 import { Session, User } from '@supabase/supabase-js';
 import { supabase, edgeFunctions } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { setUser as setSentryUser, clearUser as clearSentryUser } from '@/lib/monitoring/sentry';
 
 interface Profile {
   id: string;
@@ -108,6 +109,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       setProfile(profileData);
 
+      // Attach user context to Sentry for error attribution (scoped by org/role).
+      setSentryUser({
+        userId: profileData.id,
+        email: profileData.email,
+        organizationId: profileData.organization_id,
+        role: profileData.role,
+      });
+
       // Fetch organization data
       if (profileData.organization_id) {
         const { data: orgData, error: orgError } = await supabase
@@ -178,6 +187,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setProfile(null);
           setOrganization(null);
           setProfileError(null);
+          clearSentryUser();
           currentUserIdRef.current = null;
           setLoading(false);
         }
@@ -395,6 +405,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setOrganization(null);
       setSession(null);
       setProfileError(null);
+      clearSentryUser();
       currentUserIdRef.current = null;
       toast({
         title: "Signed out successfully",

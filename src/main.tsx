@@ -3,12 +3,17 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { initSWConfig } from '@/lib/pwa/swConfig';
+import { sentryService } from '@/lib/monitoring/sentry';
 
 // Expose React globally to ensure it's available before other chunks load
 // This prevents "Cannot read properties of undefined (reading 'createContext')" errors
 if (typeof window !== 'undefined') {
   (window as any).__REACT__ = React;
 }
+
+// Initialize Sentry error tracking as early as possible so it can capture
+// errors that occur during app bootstrap. Routes to the RepClub Sentry project.
+void sentryService.init();
 
 // Force bundle refresh: 2025-12-02-01:29
 // This comment changes the file content to generate a new vendor bundle hash

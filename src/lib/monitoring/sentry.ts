@@ -8,6 +8,17 @@
  * @module monitoring/sentry
  */
 
+import * as Sentry from '@sentry/react';
+
+/**
+ * RepClub project DSN (Sentry).
+ *
+ * Used as the default so error tracking works out of the box in production.
+ * Override per-environment with the `VITE_SENTRY_DSN` env var if needed.
+ */
+const REPCLUB_SENTRY_DSN =
+  'https://79a9af0c9504da5dd5ba4c4e7a522063@o4510398791352320.ingest.us.sentry.io/4511770293436416';
+
 // Types for Sentry configuration and error tracking
 export interface SentryConfig {
   dsn: string;
@@ -44,7 +55,7 @@ export type ErrorSeverity = 'fatal' | 'error' | 'warning' | 'info' | 'debug';
 
 // Default configuration
 const DEFAULT_CONFIG: SentryConfig = {
-  dsn: import.meta.env.VITE_SENTRY_DSN || '',
+  dsn: import.meta.env.VITE_SENTRY_DSN || REPCLUB_SENTRY_DSN,
   environment: (import.meta.env.MODE as SentryConfig['environment']) || 'development',
   release: import.meta.env.VITE_APP_VERSION || '1.0.0',
   sampleRate: 1.0, // 100% error sampling
@@ -52,6 +63,8 @@ const DEFAULT_CONFIG: SentryConfig = {
   replaysSessionSampleRate: 0.1, // 10% session replay sampling
   replaysOnErrorSampleRate: 1.0, // 100% replay on error
   debug: import.meta.env.DEV,
+  // Enabled in production (default DSN routes to the RepClub project), or in any
+  // environment where a DSN is explicitly provided via VITE_SENTRY_DSN.
   enabled: import.meta.env.PROD || !!import.meta.env.VITE_SENTRY_DSN,
 };
 
@@ -117,24 +130,25 @@ class SentryService {
     }
 
     try {
-      // In production, you would import and initialize the actual Sentry SDK:
-      // import * as Sentry from '@sentry/react';
-      // Sentry.init({
-      //   dsn: this.config.dsn,
-      //   environment: this.config.environment,
-      //   release: this.config.release,
-      //   sampleRate: this.config.sampleRate,
-      //   tracesSampleRate: this.config.tracesSampleRate,
-      //   replaysSessionSampleRate: this.config.replaysSessionSampleRate,
-      //   replaysOnErrorSampleRate: this.config.replaysOnErrorSampleRate,
-      //   debug: this.config.debug,
-      //   integrations: [
-      //     new Sentry.BrowserTracing(),
-      //     new Sentry.Replay(),
-      //   ],
-      //   beforeSend: this.beforeSend.bind(this),
-      //   beforeBreadcrumb: this.beforeBreadcrumb.bind(this),
-      // });
+      Sentry.init({
+        dsn: this.config.dsn,
+        environment: this.config.environment,
+        release: this.config.release,
+        sampleRate: this.config.sampleRate,
+        tracesSampleRate: this.config.tracesSampleRate,
+        replaysSessionSampleRate: this.config.replaysSessionSampleRate,
+        replaysOnErrorSampleRate: this.config.replaysOnErrorSampleRate,
+        debug: this.config.debug,
+        integrations: [
+          Sentry.browserTracingIntegration(),
+          Sentry.replayIntegration({
+            maskAllText: true,
+            blockAllMedia: true,
+          }),
+        ],
+        // Scrub sensitive data from outgoing events.
+        beforeSend: (event) => this.beforeSend(event),
+      });
 
       this.initialized = true;
       this.setupGlobalErrorHandlers();
@@ -149,29 +163,43 @@ class SentryService {
   }
 
   /**
-   * Set up global error handlers
+   * Set up global error handlers.
+   *
+   * Note: the Sentry SDK already installs `window.onerror` and
+   * `unhandledrejection` handlers via its default `globalHandlersIntegration`,
+   * so we intentionally do NOT add our own here to avoid duplicate events.
+   * This method is kept as an extension point for future custom handling.
    */
   private setupGlobalErrorHandlers(): void {
-    // Unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event) => {
-      this.captureException(event.reason, {
-        component: 'UnhandledPromiseRejection',
-        extra: { type: 'unhandledrejection' },
-      });
-    });
+    // Intentionally no-op: handled natively by the Sentry SDK.
+  }
 
-    // Global error handler
-    window.addEventListener('error', (event) => {
-      this.captureException(event.error || event.message, {
-        component: 'GlobalErrorHandler',
-        extra: {
-          type: 'error',
-          filename: event.filename,
-          lineno: event.lineno,
-          colno: event.colno,
-        },
-      });
-    });
+  /**
+   * Scrub sensitive data from outgoing Sentry events (beforeSend hook)
+   */
+  private beforeSend(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
+    try {
+      if (event.message) {
+        event.message = this.scrubString(event.message);
+      }
+
+      const values = event.exception?.values;
+      if (values) {
+        values.forEach((value) => {
+          if (value.value) {
+            value.value = this.scrubString(value.value);
+          }
+        });
+      }
+
+      if (event.request?.url) {
+        event.request.url = this.scrubString(event.request.url);
+      }
+    } catch {
+      // Never let scrubbing throw and drop the event silently.
+    }
+
+    return event;
   }
 
   /**
@@ -180,14 +208,19 @@ class SentryService {
   setUser(context: ErrorContext): void {
     this.userContext = { ...this.userContext, ...context };
 
-    // In production with Sentry SDK:
-    // Sentry.setUser({
-    //   id: context.userId,
-    //   email: context.email,
-    //   username: context.email,
-    // });
-    // Sentry.setTag('organization_id', context.organizationId);
-    // Sentry.setTag('user_role', context.role);
+    if (!this.initialized) return;
+
+    Sentry.setUser({
+      id: context.userId,
+      email: context.email,
+      username: context.email,
+    });
+    if (context.organizationId) {
+      Sentry.setTag('organization_id', context.organizationId);
+    }
+    if (context.role) {
+      Sentry.setTag('user_role', context.role);
+    }
   }
 
   /**
@@ -195,7 +228,8 @@ class SentryService {
    */
   clearUser(): void {
     this.userContext = {};
-    // In production: Sentry.setUser(null);
+    if (!this.initialized) return;
+    Sentry.setUser(null);
   }
 
   /**
@@ -224,15 +258,19 @@ class SentryService {
       });
     }
 
-    // In production with Sentry SDK:
-    // return Sentry.captureException(errorObj, {
-    //   fingerprint,
-    //   extra: scrubbedContext.extra,
-    //   tags: {
-    //     component: scrubbedContext.component,
-    //     action: scrubbedContext.action,
-    //   },
-    // });
+    if (this.initialized) {
+      return Sentry.captureException(errorObj, {
+        fingerprint,
+        extra: scrubbedContext.extra,
+        tags: {
+          component: scrubbedContext.component,
+          action: scrubbedContext.action,
+        },
+        user: scrubbedContext.userId
+          ? { id: scrubbedContext.userId, email: scrubbedContext.email }
+          : undefined,
+      });
+    }
 
     return eventId;
   }
@@ -254,15 +292,16 @@ class SentryService {
       });
     }
 
-    // In production with Sentry SDK:
-    // return Sentry.captureMessage(message, {
-    //   level,
-    //   extra: scrubbedContext.extra,
-    //   tags: {
-    //     component: scrubbedContext.component,
-    //     action: scrubbedContext.action,
-    //   },
-    // });
+    if (this.initialized) {
+      return Sentry.captureMessage(scrubbedMessage, {
+        level: level as Sentry.SeverityLevel,
+        extra: scrubbedContext.extra,
+        tags: {
+          component: scrubbedContext.component,
+          action: scrubbedContext.action,
+        },
+      });
+    }
 
     return eventId;
   }
@@ -284,13 +323,14 @@ class SentryService {
       this.breadcrumbs = this.breadcrumbs.slice(-this.maxBreadcrumbs);
     }
 
-    // In production with Sentry SDK:
-    // Sentry.addBreadcrumb({
-    //   category: breadcrumb.category,
-    //   message: breadcrumb.message,
-    //   level: breadcrumb.level,
-    //   data: breadcrumb.data,
-    // });
+    if (this.initialized) {
+      Sentry.addBreadcrumb({
+        category: scrubbedBreadcrumb.category,
+        message: scrubbedBreadcrumb.message,
+        level: scrubbedBreadcrumb.level as Sentry.SeverityLevel,
+        data: scrubbedBreadcrumb.data,
+      });
+    }
   }
 
   /**

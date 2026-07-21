@@ -19,6 +19,7 @@ import { queryClient } from '@/lib/queryClient';
 import React, { useEffect, lazy, Suspense } from 'react';
 import { MemberLayout } from "./components/layout/MemberLayout";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { captureException } from '@/lib/monitoring/sentry';
 
 // Lazy load ALL page components including LandingPage to reduce initial bundle size
 const LandingPage = lazy(() => import("./pages/LandingPage"));
@@ -183,6 +184,11 @@ class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     // Log to console so we can debug issues without a white screen
     console.error('App error boundary caught an error', error, info);
+    // Report to Sentry (RepClub project) with the React component stack.
+    captureException(error, {
+      component: 'AppErrorBoundary',
+      extra: { componentStack: info.componentStack },
+    });
   }
 
   render() {
