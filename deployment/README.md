@@ -8,6 +8,7 @@ Reusable deployment scripts for Supabase projects with self-hosted infrastructur
 deployment/
 ├── README.md                      # This file
 ├── QUICK_START.md                 # Quick start guide
+├── PAUSE_PROJECT.md               # Safe teardown + restore checklist
 ├── env.template                   # Environment variables template
 │
 ├── LOCAL SCRIPTS (Windows PowerShell):
