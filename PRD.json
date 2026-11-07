@@ -315,7 +315,7 @@
         "The hub's Backups tab shows repclub as fresh after the first 02:00 run of backup-all-supabase.sh, and the Studio tunnel opens with .\\run.ps1 repclub",
         "repclub.net and its Cloudflare Pages build (wrangler.toml) serve the restored front end, and UptimeRobot monitors exist for repclub.net and api.repclub.net"
       ],
-      "priority": 16,
+      "priority": 5.05,
       "passes": false,
       "notes": "Competitive rationale: the precondition, not a differentiator. Sources: hub registry and the Server CLAUDE.md backup notes (craftlocal/repclub are retired-stack; their dumps are the only copy). Verified in repo: 22 function dirs plus _shared, 100 migration files. Size: L. Success metric: hub health green for repclub for 7 straight days, backup freshness fresh, 0 restore row-count mismatches."
     },
@@ -333,7 +333,7 @@
         "The hardcoded testimonials and the 30% claim are removed from LandingPage.tsx and src/components/seo/TestimonialSection.tsx; a named testimonial renders only from a DB row carrying a consent flag, and a founding-club block states plainly that RepClub has no customers yet",
         "SEOHead.tsx and LandingPage.tsx JSON-LD use https://repclub.net, a test asserts the canonical host, and a case-insensitive grep for 'gym.?unity' over src/ and public/ returns 0"
       ],
-      "priority": 17,
+      "priority": 5.1,
       "passes": false,
       "notes": "Competitive rationale: Mindbody (Accelerate/Ultimate 'Let's talk') and Glofox (quote-based) make buyers sit through a sales call; Gymdesk publishes prices and PushPress has a free plan. Absorbs the honesty and brand-cleanup criteria of the draft's repositioning story, which was mostly polish. Sources: https://www.mindbodyonline.com/business/pricing ; https://costbench.com/software/gym-management/gymdesk/ ; https://costbench.com/software/gym-management/pushpress/ . Overlap: US-008 (open, SEO meta) covers meta tags, not the canonical host. Size: M. Success metric: visitor-to-trial-org conversion on repclub.net, % of trial orgs finishing 3 of 4 checklist steps in 7 days, 0 unverifiable claims on public pages."
     },
@@ -349,7 +349,7 @@
         "An optional application_fee_amount is applied per charge from the org's plan (LEAP-004), and fee revenue is stored separately from SaaS subscription revenue",
         "src/pages/TermsPage.tsx states that the gym owns its connected account and its customers' card data, and that leaving RepClub requires no token export request to RepClub"
       ],
-      "priority": 18,
+      "priority": 5.14,
       "passes": false,
       "notes": "Competitive rationale: PushPress built its business on embedded Stripe payments; switching off Mindbody or Glofox stalls on card tokens (one documented case: 900 tokens released, 11 matched). Sources: https://stripe.com/fr-ca/customers/pushpress ; https://blog.gyminsight.com/13820-data-transfer-nightmares-how-two-gyms-survived-to-tell-their-tale/ ; https://gymdesk.com/blog/how-to-switch-gym-software . Not in any PRD file (searched PRD.json, PRD.md, roadmaps for Connect/connected account). Size: L. Success metric: % of active orgs with an active connected account, and monthly gross member volume processed."
     },
@@ -365,7 +365,7 @@
         "Per-location pricing applies to multi-location orgs (src/pages/MultiLocationPage.tsx), and paid add-ons (AI front desk conversations, SMS bundles) are separate subscription items",
         "Plans are month-to-month with no cancellation fee, and the pricing section says so in words"
       ],
-      "priority": 19,
+      "priority": 5.19,
       "passes": false,
       "notes": "Competitive rationale: Glofox buyers report year-long auto-renewing contracts and a reported 70% mid-contract rise; Mindbody has 12-month terms; PushPress offers a free tier funded by processing. Sources: https://www.trustpilot.com/review/www.glofox.com?page=4 ; https://costbench.com/software/gym-management/pushpress/ ; https://gymdesk.com/blog/mindbody-fees . Corrected from draft: line 174 is in create-one-time-payment, not LandingPage. Size: L. Success metric: trial-to-paid conversion, SaaS MRR, and platform-fee revenue reported as separate lines."
     },
@@ -381,7 +381,7 @@
         "A guided card-migration request generates the processor-to-processor transfer letter for the gym's connected account (LEAP-003) and tracks requested, received and matched token counts; a match rate below 100% is shown as a number",
         "Each /compare/<competitor> page links to a /migrate/<competitor> guide stating what that competitor's export contains and what the importer maps, every competitor fact carries a source URL and a checkedAt date, and PushPress, Wodify and Gymdesk compare pages are added"
       ],
-      "priority": 20,
+      "priority": 5.24,
       "passes": false,
       "notes": "Competitive rationale: switching cost is the category's documented lock-in: export fees, a 30-day export window after cancellation, and card tokens that must move processor to processor. Sources: https://gymdesk.com/blog/how-to-switch-gym-software ; https://www.mindbodyonline.com/sites/default/files/public/education/learning-assets/How_to_switch_fitness_software.pdf ; https://www.joinzipper.com/blog/how-to-switch-from-mindbody-in-24-hours . The '$500 export' figure in the draft is third-party; keep it off public pages unless re-sourced. Size: L. Success metric: median time from signup to first imported member, % of imports completed without support, paid orgs whose source is a /migrate page."
     },
@@ -398,7 +398,7 @@
         "Consent is a record (basis, source, timestamp) per member per channel; SMS never sends without explicit consent, STOP is honoured automatically, and an unsubscribe from one list is not a suppression across channels",
         "SimpleMessagingCenter.tsx sends and receives real two-way SMS and email threads per member, the 'coming soon' text is gone, and marketing mail uses a sender identity separate from transactional mail"
       ],
-      "priority": 21,
+      "priority": 5.29,
       "passes": false,
       "notes": "Competitive rationale: PushPress sells automation as a separate GoHighLevel tier; Mindbody and ABC market AI churn journeys and 'intelligent billing'. Merged the draft's separate dunning story into this one because dunning is one journey on this engine and its notification half is already open as US-019. Also unblocks US-010's 'bulk email/SMS' criterion, which has no sender today. Sources: https://costbench.com/software/gym-management/pushpress/ ; https://athletechnews.com/mindbody-ai-features/ ; https://www.ausleisure.com.au/news/abc-fitness-acquires-fitmetrics-to-expand-ai-assisted-coaching-capabilities . Size: XL. Success metric: messages delivered per active org per month, recovered dollars per org per month, 14-day check-in rate of members reached by an absence journey vs not reached."
     },
@@ -414,7 +414,7 @@
         "Missed-call text-back fires within 60 seconds of a missed inbound call and is logged with the lead",
         "The monthly allowance per plan comes from the LEAP-004 pricing declaration, and src/pages/BillingPage.tsx shows conversations used out of the allowance"
       ],
-      "priority": 22,
+      "priority": 5.33,
       "passes": false,
       "notes": "Competitive rationale: AI front desk is top-tier and gated at incumbents. Sources: https://www.mindbodyonline.com/business/pricing ; https://www.ausleisure.com.au/news/abc-fitness-acquires-replify-to-accelerate-agentic-ai-powered-fitness-operations ; https://www.callmissed.com/blog/ai-receptionist-gyms-2026-buyer-implementation-guide . Corrected from draft: FollowUpTasksManager was treated as live; it is orphaned (overlaps US-018). Depends on LEAP-006 for SMS delivery. Size: XL. Success metric: leads created and intro classes booked by the agent per org per month, and handoff rate (refusals counted, not hidden)."
     },
@@ -430,7 +430,7 @@
         "The member portal (/portal/*) shows one schedule and one balance across all amenities, and the owner's member detail view shows amenity usage per period",
         "src/pages/DepartmentPLPage.tsx attributes amenity revenue to its department automatically from these bookings rather than manual entry"
       ],
-      "priority": 23,
+      "priority": 5.38,
       "passes": false,
       "notes": "Competitive rationale: transparent-price competitors target studios and boxes with no amenity model; amenity-capable software is quote-only enterprise. This niche is an inference from vendor positioning: validate with 10 club-owner interviews before paid acquisition. Sources: https://costbench.com/software/gym-management/gymdesk/ ; https://www.costbench.com/compare/pushpress-vs-wodify/ ; https://costbench.com/compare/glofox-vs-pushpress/ . Size: XL. Success metric: % of active members at amenity clubs with at least one amenity booking per month, and amenity overage revenue per org."
     },
@@ -446,7 +446,7 @@
         "Staff can waive any fee in one action, and waivers are recorded with who and why",
         "A per-org report shows utilisation by time block and fee revenue, with no-show rate before and after the policy went live"
       ],
-      "priority": 24,
+      "priority": 5.43,
       "passes": false,
       "notes": "Replacement for the draft's dunning story (merged into LEAP-006 and overlapping open US-019). Competitive rationale: CourtReserve documents prime-time pricing but no automatic no-show or cancellation fees (manual workaround). Sources: https://intercom.help/courtreserve/en/articles/12305634-solutions-for-managing-cancellation-and-no-show-fees ; https://intercom.help/courtreserve/en/articles/4437803-custom-costs ; https://intercom.help/courtreserve/en/articles/5138725-booking-settings-prime-times . Not planned in PRD.json, PRD.md or the roadmaps. Size: L. Success metric: prime-hour utilisation, no-show rate change, and fee plus off-peak revenue per club per month."
     },
@@ -463,7 +463,7 @@
         "Milestones from src/components/communication/MilestoneTracking.tsx can produce an opt-in branded share image linking to the gym's intro offer with the member's code; nothing is posted on a member's behalf",
         "An opt-out 'Powered by RepClub' link appears on the widget and portal footer (PortalFooter.tsx), removable on Enterprise, and owner signups from it are attributed to 'powered_by'"
       ],
-      "priority": 25,
+      "priority": 5.48,
       "passes": false,
       "notes": "Absorbs the draft's referral story, whose core was a dropped-parameter bug fix plus share cards (too small alone; referral links are also described in PRD.md vision lines 654-658). Competitive rationale: ClassPass, in the same Playlist/EGYM group as Mindbody, reportedly pays studios as little as about $7 a visit; Mindbody's marketplace charges new-client fees. Sources: https://www.vice.com/en/article/classpass-is-squeezing-studios-to-the-point-of-death ; https://nfpt.com/gym-offering-classpass/ ; https://www.mindbodyonline.com/business/mindbody-app . Size: L. Success metric: intro offers sold through /g pages and widgets per org per month, paid members from referral links, owner signups attributed to powered_by."
     },
@@ -479,7 +479,7 @@
         "With no check-ins recorded the metric reads 'Unavailable - no check-ins recorded', never 0%, and a real 0% renders as 0% (both cases tested)",
         "Members who leave during the 90 days are tallied with the step they reached, so the owner sees where new members drop off"
       ],
-      "priority": 26,
+      "priority": 5.52,
       "passes": false,
       "notes": "Competitive rationale: early churn is where retention is decided, and competitors mostly report churn after it happens. Sources (all vendor-reported): https://morningchalkup.com/2021/06/17/wodify-blog-series-reveals-45-of-members-quit-after-90-days/ ; https://gymdesk.com/blog/5th-class-cliff-gym-member-retention ; https://blog.jericommerce.com/resources/gyms-fitness-studios-retention-statistics . Size: M. Success metric: % of new members past visit 5 within 30 days, and 90-day new-member retention per org."
     },
@@ -495,7 +495,7 @@
         "Outcomes are recorded: a flagged member who later cancels, stays or returns is logged so precision is measured, not asserted",
         "Retraining runs on a schedule, and the model version and training date show next to the scores"
       ],
-      "priority": 27,
+      "priority": 5.57,
       "passes": false,
       "notes": "Competitive rationale: Mindbody and ABC sell AI churn prediction as scores. Sources: https://athletechnews.com/mindbody-ai-features/ ; https://www.ausleisure.com.au/news/abc-fitness-acquires-replify-to-accelerate-agentic-ai-powered-fitness-operations . The draft's claim that both give 'no explanation' is unsourced and was dropped. Corrected line range and increment list from the file. Size: M. Success metric: backtest AUC per org, and retention of flagged members contacted vs not contacted."
     },
@@ -511,7 +511,7 @@
         "Every tool call is written to an audit log (org, key, tool, arguments, result) viewable at /security",
         "Public docs on repclub.net list each tool's inputs and outputs and show how to connect it to Claude and ChatGPT"
       ],
-      "priority": 28,
+      "priority": 5.62,
       "passes": false,
       "notes": "Competitive rationale: Wodify's MCP Server reached release in May 2026 per its help centre. Sources: https://help.wodify.com/hc/en-us/articles/40794428452247-What-s-New-May-29th-2026 ; https://www.wodify.com/blog/ai-cant-run-your-gym-but-it-can-help-you-run-it-better . 'Mindbody, Glofox and Zen Planner have not' is an absence claim: re-check before using it in marketing. Not in any PRD file. Size: M. Success metric: orgs with an active MCP key, and weekly tool calls per connected org."
     },
@@ -527,7 +527,7 @@
         "Every unlock and refusal is written to check-in history with door, member and result",
         "The owner's final-retry rule from LEAP-006 applies to door access exactly as it does to staffed check-in"
       ],
-      "priority": 29,
+      "priority": 5.67,
       "passes": false,
       "notes": "Corrected from draft: 'no e-signature capture' was false; AgreementStep captures a typed signature. Door access is described in PRD.md vision but is not a PRD.json story. Competitive rationale: access control and waivers are standard in enterprise club software and add-ons in boutique tools; amenity-level door rules are an inference from vendor positioning. Sources: https://costbench.com/compare/glofox-vs-pushpress/ ; https://gymdesk.com/blog/how-to-switch-gym-software . Size: L. Success metric: % of visits through unstaffed door check-in at clubs with hardware, and 0 visits recorded without a current waiver."
     },
@@ -543,7 +543,7 @@
         "An inspector export produces a dated PDF or CSV for a chosen period covering chemical readings, inspections, incidents and certification status",
         "Missing readings show as dated gaps in the UI and the export, not omitted"
       ],
-      "priority": 30,
+      "priority": 5.71,
       "passes": false,
       "notes": "Competitive rationale: studio-focused competitors (PushPress, Wodify, Gymdesk) market no amenity compliance; amenity suites are enterprise and quote-only. Inference from vendor positioning; validate in founding-club interviews. Sources: https://costbench.com/software/gym-management/gymdesk/ ; https://www.costbench.com/compare/pushpress-vs-wodify/ . Size: M. Success metric: % of amenity clubs logging chemical readings daily, and inspector exports per club per quarter."
     },
@@ -559,7 +559,7 @@
         "Aggregator payouts can be entered or imported so revenue per visit compares with direct bookings (LEAP-010), reading 'Unavailable' when no payout data exists",
         "Disconnecting an integration stops new syncs and keeps history"
       ],
-      "priority": 31,
+      "priority": 5.76,
       "passes": false,
       "notes": "Competitive rationale: Wellhub has a large partner network and Glofox integrates with it. Sources: https://support.gympass.com/hc/en-us/articles/39238265111187-Partner-Portal-Guide-The-management-platform-for-gyms-and-studios ; https://classpass.com/partners/integrations ; https://support.glofox.com/hc/en-us/articles/46792898120980 . The draft's 'one software integration per gym' rule and '100,000 partners' figure were not verified here; confirm against the Wellhub partner guide before relying on them. Already on PROJECT_ROADMAP.md as unchecked items, but not a PRD story, so kept. Size: L. Success metric: orgs with an aggregator connected, and aggregator-visitor-to-member conversion rate."
     },
@@ -575,7 +575,7 @@
         "A class whiteboard shows the day's results, with names only for members who opted in",
         "Personal trainers assign programmes to individual clients and see completion, linked to /personal-training sessions"
       ],
-      "priority": 32,
+      "priority": 5.81,
       "passes": false,
       "notes": "Competitive rationale: programming is the core loop Wodify and TrueCoach own. Sources: https://insider.fitt.co/press-release/wodify-and-hyrox-team-up-to-scale-one-of-the-fastest-growing-fitness-formats-in-the-world/ ; https://www.g2.com/compare/pushpress-vs-wodify ; https://www.g2.com/products/exercise-com/reviews/exercise-com-review-11349203 . This is parity for the CrossFit/PT vertical, not a differentiator, hence its low rank. Size: L. Success metric: weekly active members logging results per CrossFit/PT org, and win rate on CrossFit/PT deals."
     },
@@ -591,7 +591,7 @@
         "Each metric states its definition, peer-group size and computation date beside the number",
         "An org whose own metric is unmeasured shows 'Unavailable - <reason>' for itself rather than 0, while the peer median still renders"
       ],
-      "priority": 33,
+      "priority": 5.86,
       "passes": false,
       "notes": "Replacement for the draft's repositioning story, whose acceptance criteria were brand and copy polish (grep, canonical, README) now folded into LEAP-002. Competitive rationale: an inference; this review found no published peer-benchmark feature from Gymdesk, PushPress or Wodify, but did not verify every vendor, so do not claim exclusivity publicly until checked. Value grows with gym count, so it ranks below the revenue-path stories. Size: M. Success metric: weekly active owners viewing benchmarks, opt-in rate, and 90-day retention of orgs that view benchmarks vs those that don't."
     },
@@ -607,7 +607,7 @@
         "Activation (LEAP-011) can count an outside workout toward the habit track if the owner enables it, off by default",
         "Members without the integration are scored exactly as before, and the feature reads 'Not connected' rather than zero activity"
       ],
-      "priority": 34,
+      "priority": 5.9,
       "passes": false,
       "notes": "Replacement slot freed by merging the draft's referral story into LEAP-010. Competitive rationale: the Playlist/EGYM merger is a bet on connected fitness data; Myzone documents Apple Health and Health Connect sync. Using outside activity as a churn signal is an inference, not a documented competitor gap. Sources: https://www.myzone.digital/app-support/how-do-i-sync-myzone-to-health-connect ; https://www.myzone.org/software ; https://athletechnews.com/playlist-egym-close-7-5-billion-merger-forming-fitness-tech-giant/ . Health data needs a privacy review before build. Size: L. Success metric: % of active members connected, and the churn model's AUC with vs without the outside-activity features."
     },
@@ -623,7 +623,7 @@
         "Results show only offers bookable now; a full or past class is hidden, not shown as available",
         "The feature stays dark until a configured minimum number of gyms in a metro are listed, so a near-empty directory is never public"
       ],
-      "priority": 35,
+      "priority": 5.95,
       "passes": false,
       "notes": "Competitive rationale: Mindbody's marketplace is its moat and its fees a recurring complaint; ClassPass captures the same consumer at a steep studio discount. Sources: https://www.mindbodyonline.com/business/mindbody-app ; https://gymdesk.com/blog/mindbody-fees ; https://athletechnews.com/classpass-moves-to-ease-studios-complaints-new-partner-policies-protections/ . Needs gym density, so last. Size: XL. Success metric: marketplace bookings per listed gym per month, and the share of those bookers who become paying members."
     }
