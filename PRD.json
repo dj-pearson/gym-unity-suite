@@ -302,6 +302,330 @@
       "priority": 15,
       "passes": false,
       "notes": "Stripe webhook handler at supabase/functions/stripe-webhook/index.ts has a TODO comment at line 463 for sending failed payment notifications. Currently the webhook processes the event but doesn't notify the affected user."
+    },
+    {
+      "id": "LEAP-001",
+      "title": "Revive RepClub's hosting stack and restore its data",
+      "description": "As the owner, I want RepClub running again on a fresh self-hosted Supabase stack and edge-functions app, so every story after this one has somewhere to ship. RepClub is archived in the hub and its Coolify service was deleted in 2026. The nightly dumps in /opt/backups/dumps/repclub/ are now the only copy of its data. No competitive move matters until repclub.net serves the product, the 22 edge functions in supabase/functions/ (23 directories including _shared) deploy, and the hub watches the stack again.",
+      "acceptanceCriteria": [
+        "A new Coolify Supabase service and an edge-functions app exist for RepClub, with functions.repclub.net and api.repclub.net resolving, and the 22 functions under supabase/functions/ (create-checkout, stripe-webhook, setup-new-user, ai-generate and the rest) deployed from dj-pearson/gym-unity-suite",
+        "The last nightly dump from /opt/backups/dumps/repclub/ is restored using the BAK-006 procedure: the image's stub auth, storage, graphql, graphql_public and realtime schemas are dropped first and the restore runs as supabase_admin. Row counts of auth.users and organizations match the dump, and a mismatch fails the story rather than reading as restored",
+        "All 100 files in supabase/migrations/ are reconciled against the restored schema through the hub's Migrations panel (baseline present, apply absent, partial/unknown sent to human review). No blind apply",
+        "The hub/projects.json entry for repclub moves from archived to an operating status with the new coolify uuids and supabaseServiceUuid, so health, logs, backups and edge-heal resolve",
+        "The hub's Backups tab shows repclub as fresh after the first 02:00 run of backup-all-supabase.sh, and the Studio tunnel opens with .\\run.ps1 repclub",
+        "repclub.net and its Cloudflare Pages build (wrangler.toml) serve the restored front end, and UptimeRobot monitors exist for repclub.net and api.repclub.net"
+      ],
+      "priority": 16,
+      "passes": false,
+      "notes": "Competitive rationale: the precondition, not a differentiator. Sources: hub registry and the Server CLAUDE.md backup notes (craftlocal/repclub are retired-stack; their dumps are the only copy). Verified in repo: 22 function dirs plus _shared, 100 migration files. Size: L. Success metric: hub health green for repclub for 7 straight days, backup freshness fresh, 0 restore row-count mismatches."
+    },
+    {
+      "id": "LEAP-002",
+      "title": "Self-serve gym signup with a 14-day trial and a landing page that tells the truth",
+      "description": "As a studio or club owner, I want to create my own gym in RepClub from repclub.net and start a trial without talking to anyone, on a page that claims nothing false. Today supabase/functions/setup-new-user/index.ts:175 attaches every signup with no organizationId to the hard-coded org slug 'fitnesspro', and no code path inserts a new organizations row, so no trial can start. src/pages/LandingPage.tsx shows 'Request Early Access' (lines 341, 426), three invented testimonials (lines 235-250, including a '30% retention' claim at 243), and canonical and JSON-LD URLs on gymunitysuite.com (LandingPage.tsx:259,273; src/components/seo/SEOHead.tsx:22,41,54-55). 55 files under src/ and public/ still say Gym Unity against 38 that say RepClub. Gymdesk and PushPress win small gyms partly because a trial or free plan starts in minutes, while Mindbody's upper tiers and Glofox are quote-based. Self-serve signup plus an honest page is the entry point for every acquisition story below.",
+      "acceptanceCriteria": [
+        "setup-new-user no longer references the 'fitnesspro' slug. A signup with no invite creates a new organizations row (name, slug, timezone, owner) and makes the signer its owner, and a test asserts two signups produce two distinct organizations",
+        "An invited staff member who signs up with an organizationId joins that org and creates no new one (counter-assertion test)",
+        "The 'Request Early Access' CTAs in LandingPage.tsx are replaced by a 'Start your gym' flow collecting gym name, type (studio, CrossFit, martial arts, multi-amenity club) and location count",
+        "A first-run checklist (add a plan, add a class, invite staff, import members) appears on the dashboard for a new org and records completion per step in a new org_onboarding_steps table",
+        "organizations gains trial_ends_at and plan columns via a new migration, and the trial length is read from the LEAP-004 pricing declaration, not hard-coded in the UI",
+        "Slugs are unique and validated, and get-org-by-slug resolves the new org's portal at /portal/* immediately after signup",
+        "The hardcoded testimonials and the 30% claim are removed from LandingPage.tsx and src/components/seo/TestimonialSection.tsx; a named testimonial renders only from a DB row carrying a consent flag, and a founding-club block states plainly that RepClub has no customers yet",
+        "SEOHead.tsx and LandingPage.tsx JSON-LD use https://repclub.net, a test asserts the canonical host, and a case-insensitive grep for 'gym.?unity' over src/ and public/ returns 0"
+      ],
+      "priority": 17,
+      "passes": false,
+      "notes": "Competitive rationale: Mindbody (Accelerate/Ultimate 'Let's talk') and Glofox (quote-based) make buyers sit through a sales call; Gymdesk publishes prices and PushPress has a free plan. Absorbs the honesty and brand-cleanup criteria of the draft's repositioning story, which was mostly polish. Sources: https://www.mindbodyonline.com/business/pricing ; https://costbench.com/software/gym-management/gymdesk/ ; https://costbench.com/software/gym-management/pushpress/ . Overlap: US-008 (open, SEO meta) covers meta tags, not the canonical host. Size: M. Success metric: visitor-to-trial-org conversion on repclub.net, % of trial orgs finishing 3 of 4 checklist steps in 7 days, 0 unverifiable claims on public pages."
+    },
+    {
+      "id": "LEAP-003",
+      "title": "Stripe Connect so member dues reach the gym",
+      "description": "As a gym owner, I want my members' payments to land in my own Stripe account, with RepClub taking a disclosed platform fee, so the gym, not RepClub, owns the money and the card tokens. Today supabase/functions/create-checkout/index.ts builds inline price_data (line 153) on RepClub's single platform Stripe key, and no stripeAccount, application_fee or transfer_data appears anywhere in supabase/functions or src. Every member's dues would land in RepClub's account. Integrated payments are how PushPress funds a free plan. Connect also makes card portability real: tokens sit in the gym's connected account and leave with it, which answers the token lock-in that keeps studios on Mindbody and Glofox.",
+      "acceptanceCriteria": [
+        "create-checkout, create-one-time-payment, customer-portal, verify-payment and stripe-webhook create every member charge on the organization's Connect account (Standard or Express), never the platform account. A test fails if any member-facing charge is created without a connected account id",
+        "src/pages/OrganizationSettingsPage.tsx gains a Payments section that runs Connect onboarding and shows its state (not started, pending verification, active, restricted) read from Stripe, not assumed",
+        "An org without an active connected account cannot publish paid membership_plans or take member payments, and the UI names the missing step instead of failing silently",
+        "stripe-webhook handles Connect events (account.updated, and charge and invoice events carrying the account header) and writes them against the right organization_id",
+        "An optional application_fee_amount is applied per charge from the org's plan (LEAP-004), and fee revenue is stored separately from SaaS subscription revenue",
+        "src/pages/TermsPage.tsx states that the gym owns its connected account and its customers' card data, and that leaving RepClub requires no token export request to RepClub"
+      ],
+      "priority": 18,
+      "passes": false,
+      "notes": "Competitive rationale: PushPress built its business on embedded Stripe payments; switching off Mindbody or Glofox stalls on card tokens (one documented case: 900 tokens released, 11 matched). Sources: https://stripe.com/fr-ca/customers/pushpress ; https://blog.gyminsight.com/13820-data-transfer-nightmares-how-two-gyms-survived-to-tell-their-tale/ ; https://gymdesk.com/blog/how-to-switch-gym-software . Not in any PRD file (searched PRD.json, PRD.md, roadmaps for Connect/connected account). Size: L. Success metric: % of active orgs with an active connected account, and monthly gross member volume processed."
+    },
+    {
+      "id": "LEAP-004",
+      "title": "Recurring SaaS billing, plan entitlements and a payments-led free tier",
+      "description": "As RepClub, I want gyms to pay a real monthly subscription that unlocks what their plan includes, plus a $0 Starter tier paid for by the Connect platform fee, so a trial turns into MRR. Today the landing page's 'Get Started' button (LandingPage.tsx:571) is a OneTimePaymentButton labelled 'Monthly Subscription' that calls create-one-time-payment, which sets mode: 'payment' (create-one-time-payment/index.ts:174), so a monthly plan is charged once. create-checkout does use mode: 'subscription' (line 165) but the landing page never calls it. src/config/stripe.config.ts declares price ids with placeholder fallbacks and nothing imports it, and organizations has no plan columns, so a paying gym gets nothing a non-paying one doesn't. Mindbody and Glofox hide price behind a demo and lock buyers into 12-month terms; RepClub can publish every price and use no contracts.",
+      "acceptanceCriteria": [
+        "One pricing declaration (e.g. src/config/pricing.ts) defines Starter ($0 plus platform fee, capped members), Studio $149, Professional $349 and Enterprise $649 (today's literals at LandingPage.tsx:173,193,213), and feeds LandingPage.tsx, stripe.config.ts, public/llms.txt and the SoftwareApplication JSON-LD. A test asserts all four agree",
+        "The landing CTA starts Stripe Checkout in mode: 'subscription' against recurring price ids; OneTimePaymentButton is no longer used for plans",
+        "stripe-webhook writes plan, subscription status and current_period_end onto organizations, and a cancelled or unpaid subscription moves the org to read-only after a stated grace period, never a silent lockout",
+        "An entitlement helper (e.g. useEntitlement('ai_front_desk')) gates premium modules in src/App.tsx routes and the sidebar from the plan, with a test covering one allowed and one refused feature per tier",
+        "Per-location pricing applies to multi-location orgs (src/pages/MultiLocationPage.tsx), and paid add-ons (AI front desk conversations, SMS bundles) are separate subscription items",
+        "Plans are month-to-month with no cancellation fee, and the pricing section says so in words"
+      ],
+      "priority": 19,
+      "passes": false,
+      "notes": "Competitive rationale: Glofox buyers report year-long auto-renewing contracts and a reported 70% mid-contract rise; Mindbody has 12-month terms; PushPress offers a free tier funded by processing. Sources: https://www.trustpilot.com/review/www.glofox.com?page=4 ; https://costbench.com/software/gym-management/pushpress/ ; https://gymdesk.com/blog/mindbody-fees . Corrected from draft: line 174 is in create-one-time-payment, not LandingPage. Size: L. Success metric: trial-to-paid conversion, SaaS MRR, and platform-fee revenue reported as separate lines."
+    },
+    {
+      "id": "LEAP-005",
+      "title": "Switch-in-a-day migration from Mindbody, Glofox, Zen Planner, PushPress and Wodify",
+      "description": "As a studio owner stuck on an incumbent, I want to bring my members, plans, class packs, remaining credits, contract end dates and visit history into RepClub in one afternoon, with a preview before anything is written, so switching stops being the reason I stay. RepClub already has an AI-assisted importer (src/components/imports/CSVImportWizard.tsx, ColumnMappingStep.tsx calling getAIColumnMapping from src/lib/csv/aiImport.ts) and compare pages for three competitors (src/pages/compare/GlofoxAlternativePage.tsx, MindbodyAlternativePage.tsx, ZenPlannerAlternativePage.tsx), but the two are not connected and there are no source-specific presets. Mindbody reportedly charges for a full export and the category has a 30-day post-cancellation export window. A challenger that publishes exactly how to leave each incumbent turns their lock-in into its acquisition channel.",
+      "acceptanceCriteria": [
+        "CSVImportWizard offers named presets for Mindbody, Glofox, Zen Planner, PushPress and Wodify exports that pre-map known columns (added to src/lib/csv/moduleConfigs.ts); getAIColumnMapping only fills fields the preset does not know",
+        "A reconciliation step maps memberships to membership_plans, class packs, remaining credits and contract end dates, and shows a pre-import diff: N members, N active contracts, N unmapped fields, each named",
+        "Dry run is the default. Nothing is written until the owner confirms, and the import is recorded as one batch that can be rolled back",
+        "Unmapped data is listed by field and kept in an import_unmapped table, never silently dropped (test with a fixture containing an unknown column)",
+        "A guided card-migration request generates the processor-to-processor transfer letter for the gym's connected account (LEAP-003) and tracks requested, received and matched token counts; a match rate below 100% is shown as a number",
+        "Each /compare/<competitor> page links to a /migrate/<competitor> guide stating what that competitor's export contains and what the importer maps, every competitor fact carries a source URL and a checkedAt date, and PushPress, Wodify and Gymdesk compare pages are added"
+      ],
+      "priority": 20,
+      "passes": false,
+      "notes": "Competitive rationale: switching cost is the category's documented lock-in: export fees, a 30-day export window after cancellation, and card tokens that must move processor to processor. Sources: https://gymdesk.com/blog/how-to-switch-gym-software ; https://www.mindbodyonline.com/sites/default/files/public/education/learning-assets/How_to_switch_fitness_software.pdf ; https://www.joinzipper.com/blog/how-to-switch-from-mindbody-in-24-hours . The '$500 export' figure in the draft is third-party; keep it off public pages unless re-sourced. Size: L. Success metric: median time from signup to first imported member, % of imports completed without support, paid orgs whose source is a /migrate page."
+    },
+    {
+      "id": "LEAP-006",
+      "title": "A messaging, automation and dunning engine that actually sends",
+      "description": "As a gym owner, I want email and SMS campaigns, retention journeys, failed-payment recovery and transactional messages to actually reach members, triggered by what members do, so the marketing modules RepClub already shows produce revenue. Today SMSCampaignManager and EmailCampaignManager write rows but no edge function sends campaign email or SMS, send-email-response is support-desk only, src/components/communication/SimpleMessagingCenter.tsx:63 and :180 say messaging is 'coming soon', and stripe-webhook/index.ts:463 leaves failed payments at '// TODO: Send notification to user about failed payment'. retention_campaigns and member_referrals tables exist with no engine behind them. PushPress sells automation as a separate Grow tier on GoHighLevel; RepClub can ship it natively, tied to check-in and billing data an outside CRM never sees, and report recovered dollars.",
+      "acceptanceCriteria": [
+        "A send pipeline (queue table plus a scheduled edge function) delivers email through an ESP and SMS through a telephony provider for campaigns created in src/components/marketing/EmailCampaignManager and SMSCampaignManager, with per-message status (queued, sent, delivered, bounced, failed)",
+        "A trigger engine runs journeys from events configured in retention_campaigns: first check-in, N days absent, failed payment, card expiring, membership expiring, birthday, class pack low",
+        "On invoice.payment_failed, stripe-webhook starts a dunning journey (Smart Retries on the connected account plus reminders at day 0, 3 and 7) whose messages carry a customer-portal card-update link scoped to the gym's connected account; the line-463 TODO is removed and US-019 is marked superseded by this story",
+        "Owners choose what happens after the final retry (pause access, suspend, keep active), and /checkins and /tablet-checkin respect it",
+        "The dashboard shows recovered revenue for the month and revenue still at risk from Stripe events: a real $0 with no failures, 'Unavailable' with no Stripe connection (both tested)",
+        "Consent is a record (basis, source, timestamp) per member per channel; SMS never sends without explicit consent, STOP is honoured automatically, and an unsubscribe from one list is not a suppression across channels",
+        "SimpleMessagingCenter.tsx sends and receives real two-way SMS and email threads per member, the 'coming soon' text is gone, and marketing mail uses a sender identity separate from transactional mail"
+      ],
+      "priority": 21,
+      "passes": false,
+      "notes": "Competitive rationale: PushPress sells automation as a separate GoHighLevel tier; Mindbody and ABC market AI churn journeys and 'intelligent billing'. Merged the draft's separate dunning story into this one because dunning is one journey on this engine and its notification half is already open as US-019. Also unblocks US-010's 'bulk email/SMS' criterion, which has no sender today. Sources: https://costbench.com/software/gym-management/pushpress/ ; https://athletechnews.com/mindbody-ai-features/ ; https://www.ausleisure.com.au/news/abc-fitness-acquires-fitmetrics-to-expand-ai-assisted-coaching-capabilities . Size: XL. Success metric: messages delivered per active org per month, recovered dollars per org per month, 14-day check-in rate of members reached by an absence journey vs not reached."
+    },
+    {
+      "id": "LEAP-007",
+      "title": "AI front desk on every paid plan, grounded in the gym's own data",
+      "description": "As a gym owner, I want an AI front desk that answers SMS, web chat and email around the clock, texts back missed calls, books tours and intro classes, and creates CRM leads, without paying an upper-tier price for it. Mindbody includes AI Concierge only in Ultimate and sells it as an add-on below that, and ABC bought Replify for AI agents. RepClub should include a capped allowance on every paid plan, built on the existing ai-generate, receive-email and send-email-response functions. Its difference is that it refuses rather than invents: it quotes only plans, prices and class times that exist in RepClub, and anything else becomes a logged staff handoff. The staff task surface it hands off to, src/components/crm/FollowUpTasksManager.tsx, exists but is imported nowhere; the CRM still renders the stub of the same name from PlaceholderCRMComponents.tsx (open story US-018).",
+      "acceptanceCriteria": [
+        "A new edge function (e.g. front-desk-agent) answers inbound SMS (telephony webhook), portal web chat and receive-email, retrieving only from the org's membership_plans, classes, schedules and policy text",
+        "Every price, plan name or class time in a reply must match a row in the org's data; a reply citing a value not found is blocked and becomes a staff handoff, and a test asks about a non-existent plan and asserts a handoff",
+        "Intro-class and tour bookings go through the public gym page checkout (LEAP-010), and every conversation is attached to a lead in the CRM LeadDetail view with its transcript",
+        "The agent cannot issue refunds, change a membership or alter billing; those requests become tasks in src/components/crm/FollowUpTasksManager.tsx, which is mounted in the CRM in place of the PlaceholderCRMComponents stub",
+        "Missed-call text-back fires within 60 seconds of a missed inbound call and is logged with the lead",
+        "The monthly allowance per plan comes from the LEAP-004 pricing declaration, and src/pages/BillingPage.tsx shows conversations used out of the allowance"
+      ],
+      "priority": 22,
+      "passes": false,
+      "notes": "Competitive rationale: AI front desk is top-tier and gated at incumbents. Sources: https://www.mindbodyonline.com/business/pricing ; https://www.ausleisure.com.au/news/abc-fitness-acquires-replify-to-accelerate-agentic-ai-powered-fitness-operations ; https://www.callmissed.com/blog/ai-receptionist-gyms-2026-buyer-implementation-guide . Corrected from draft: FollowUpTasksManager was treated as live; it is orphaned (overlaps US-018). Depends on LEAP-006 for SMS delivery. Size: XL. Success metric: leads created and intro classes booked by the agent per org per month, and handoff rate (refusals counted, not hidden)."
+    },
+    {
+      "id": "LEAP-008",
+      "title": "One member account across classes, pool, courts, spa and childcare",
+      "description": "As a member of a multi-amenity club, I want one membership that entitles, meters and bills my classes, pool lanes, court time, spa appointments and childcare, with add-ons where I want them. As the owner, I want amenity use in one member record and one bill. RepClub has PoolManagementPage, CourtSportsPage, SpaManagementPage and ChildcarePage in src/pages/ with their own tables (migrations 20250920151551..20250920153605), but each stands alone and the module doc admits many still render demo data. Transparent-price tools for studios (Gymdesk, PushPress, Wodify) have no amenity model, and the suites that do are enterprise and quote-only. Unified entitlements are the thing a single-amenity tool cannot cheaply copy, and the anchor of RepClub's niche.",
+      "acceptanceCriteria": [
+        "No component under src/pages/{PoolManagement,CourtSports,SpaManagement,Childcare}Page.tsx or src/components/{pools,courts,spa,childcare} renders hard-coded demo arrays; all data comes from Supabase tables, enforced by a grep test for inline sample arrays in those directories",
+        "A new amenity_entitlements table links membership_plans to amenities with an allowance (unlimited, N per period, not included) and an overage price",
+        "Booking a pool lane, court slot, spa appointment or childcare session checks the member's entitlement, decrements the allowance, and charges overage or guest fees on the gym's connected account (LEAP-003)",
+        "Childcare check-in records the guardian and verifies pickup against authorised guardians, keeping check-in and check-out times",
+        "The member portal (/portal/*) shows one schedule and one balance across all amenities, and the owner's member detail view shows amenity usage per period",
+        "src/pages/DepartmentPLPage.tsx attributes amenity revenue to its department automatically from these bookings rather than manual entry"
+      ],
+      "priority": 23,
+      "passes": false,
+      "notes": "Competitive rationale: transparent-price competitors target studios and boxes with no amenity model; amenity-capable software is quote-only enterprise. This niche is an inference from vendor positioning: validate with 10 club-owner interviews before paid acquisition. Sources: https://costbench.com/software/gym-management/gymdesk/ ; https://www.costbench.com/compare/pushpress-vs-wodify/ ; https://costbench.com/compare/glofox-vs-pushpress/ . Size: XL. Success metric: % of active members at amenity clubs with at least one amenity booking per month, and amenity overage revenue per org."
+    },
+    {
+      "id": "LEAP-009",
+      "title": "Yield-managed booking: prime-time pricing, automatic no-show fees and paid waitlist promotion",
+      "description": "As a club owner, I want court, pool-lane, spa and class slots priced by demand (prime and off-peak), late cancels and no-shows charged automatically to the card on file, and freed slots offered to the waitlist with a short paid hold, so my scarcest hours earn what they are worth and empty slots refill. Nothing in RepClub does this today: a search of src/ and supabase/migrations for peak pricing, no-show or late-cancel fees returns nothing, while src/components/classes/WaitlistManager.tsx keeps a waitlist that does not charge or time out. CourtReserve, a leading court-booking tool, supports prime-time 'Custom Court Costs' but its own help centre says it does not automatically charge cancellation or no-show fees; clubs post them by hand. Automatic, policy-driven fees on the gym's own Stripe account are a concrete step past the specialist tool in RepClub's target niche.",
+      "acceptanceCriteria": [
+        "A booking_price_rules table lets an org set prices per amenity, resource, weekday and time block (prime, standard, off-peak), with entitlement allowances (LEAP-008) consumed before any price applies; the rule chosen is stored on the booking",
+        "Org-level late-cancel and no-show policies (window, fee, exemptions) are set per amenity, shown to the member before they book, and stored with the booking as the version agreed to",
+        "A scheduled job marks bookings with no check-in by the grace time as no-shows and charges the fee on the gym's connected account (LEAP-003); a member with no card on file gets a balance, not a failed silent charge, and a test covers both paths",
+        "When a slot frees, WaitlistManager offers it to the next member with a configurable hold (e.g. 15 minutes) by SMS or push through LEAP-006, auto-books on accept, and moves on at expiry, with every offer and outcome logged",
+        "Staff can waive any fee in one action, and waivers are recorded with who and why",
+        "A per-org report shows utilisation by time block and fee revenue, with no-show rate before and after the policy went live"
+      ],
+      "priority": 24,
+      "passes": false,
+      "notes": "Replacement for the draft's dunning story (merged into LEAP-006 and overlapping open US-019). Competitive rationale: CourtReserve documents prime-time pricing but no automatic no-show or cancellation fees (manual workaround). Sources: https://intercom.help/courtreserve/en/articles/12305634-solutions-for-managing-cancellation-and-no-show-fees ; https://intercom.help/courtreserve/en/articles/4437803-custom-costs ; https://intercom.help/courtreserve/en/articles/5138725-booking-settings-prime-times . Not planned in PRD.json, PRD.md or the roadmaps. Size: L. Success metric: prime-hour utilisation, no-show rate change, and fee plus off-peak revenue per club per month."
+    },
+    {
+      "id": "LEAP-010",
+      "title": "Public gym pages, intro-offer checkout, an embeddable widget and referrals that credit someone",
+      "description": "As a gym owner, I want a crawlable page at repclub.net/g/<slug> with my schedule, intro offer and location, a script-tag widget for my own site, and member referral links that actually work, so prospects buy an intro class without an account and without an aggregator taking a cut. get-org-by-slug and the white-label portal exist, but there is no public booking surface and no widget. Referrals are broken: src/components/portal/PortalReferralsPage.tsx:27 builds /portal/signup?ref=<code> from the first characters of profile.id, and nothing in src/ reads the ref parameter, so every shared link is dropped. Aggregator payouts are reported far below drop-in rates; a direct channel the gym owns is worth more per visit, and every widget and referral is distribution for RepClub.",
+      "acceptanceCriteria": [
+        "Each organization with a published intro offer gets a /g/<slug> page with schedule, offer, address and LocalBusiness JSON-LD, prerendered or server-rendered so the HTML carries the content (a test fetches it without JavaScript and finds the schedule)",
+        "An intro-offer purchase needs only name, email, phone and card, charges the gym's connected account (LEAP-003), and creates a CRM lead with source 'gym_page'",
+        "A script-tag widget renders the schedule and the same checkout on the gym's site, loads under 50 KB gzipped, and tags bookings source=widget",
+        "/g pages appear in generate-sitemap output and are submitted through google-indexing",
+        "A referral_codes table issues random, non-guessable codes (no part of profile.id); BrandedSignup.tsx and setup-new-user read ?ref=, write a member_referrals row, record unknown codes as 'unattributed', and award loyalty_points on the friend's first paid visit, with an end-to-end test from signup to ledger entry",
+        "Milestones from src/components/communication/MilestoneTracking.tsx can produce an opt-in branded share image linking to the gym's intro offer with the member's code; nothing is posted on a member's behalf",
+        "An opt-out 'Powered by RepClub' link appears on the widget and portal footer (PortalFooter.tsx), removable on Enterprise, and owner signups from it are attributed to 'powered_by'"
+      ],
+      "priority": 25,
+      "passes": false,
+      "notes": "Absorbs the draft's referral story, whose core was a dropped-parameter bug fix plus share cards (too small alone; referral links are also described in PRD.md vision lines 654-658). Competitive rationale: ClassPass, in the same Playlist/EGYM group as Mindbody, reportedly pays studios as little as about $7 a visit; Mindbody's marketplace charges new-client fees. Sources: https://www.vice.com/en/article/classpass-is-squeezing-studios-to-the-point-of-death ; https://nfpt.com/gym-offering-classpass/ ; https://www.mindbodyonline.com/business/mindbody-app . Size: L. Success metric: intro offers sold through /g pages and widgets per org per month, paid members from referral links, owner signups attributed to powered_by."
+    },
+    {
+      "id": "LEAP-011",
+      "title": "First-90-days activation programme with a visit-5 metric",
+      "description": "As a gym owner, I want every new member put on a 90-day track with visit goals up to the 5th visit, an automatic nudge after 7 days absent and a staff escalation at 14, so fewer new members quit before the habit forms. Vendor data puts about 45% of new members quitting within 90 days, with retention holding much better past the 5th visit. Incumbents sell churn scores after the fact; RepClub can make the gym act inside the window where retention is decided and show the owner the one number that predicts it.",
+      "acceptanceCriteria": [
+        "Every new member enrolment creates an activation track record (start date, visit count, status) fed from check-ins at /checkins, /tablet-checkin and portal check-in",
+        "At 7 days without a check-in the member gets a nudge through the LEAP-006 pipeline; at 14 days a coach task is created in src/components/crm/FollowUpTasksManager.tsx (mounted by LEAP-007) with the member's history attached",
+        "Owners can edit visit goals, nudge copy and escalation thresholds per org",
+        "The dashboard shows '% of new members past visit 5 within 30 days' for the last 90 days of joins",
+        "With no check-ins recorded the metric reads 'Unavailable - no check-ins recorded', never 0%, and a real 0% renders as 0% (both cases tested)",
+        "Members who leave during the 90 days are tallied with the step they reached, so the owner sees where new members drop off"
+      ],
+      "priority": 26,
+      "passes": false,
+      "notes": "Competitive rationale: early churn is where retention is decided, and competitors mostly report churn after it happens. Sources (all vendor-reported): https://morningchalkup.com/2021/06/17/wodify-blog-series-reveals-45-of-members-quit-after-90-days/ ; https://gymdesk.com/blog/5th-class-cliff-gym-member-retention ; https://blog.jericommerce.com/resources/gyms-fitness-studios-retention-statistics . Size: M. Success metric: % of new members past visit 5 within 30 days, and 90-day new-member retention per org."
+    },
+    {
+      "id": "LEAP-012",
+      "title": "Churn risk that names its reasons and backtests itself",
+      "description": "As a gym owner, I want each at-risk member flagged with the signals behind the flag (visit decay, cancelled bookings, a failed payment, dropping off the pool), and the model's own accuracy shown, so I trust it enough to act. Today src/components/analytics/PredictiveAnalytics.tsx:91-110 adds five fixed increments (+40, +20, +25, +15, +10) to a churnProbability. Mindbody's 'Clients At Risk' and ABC's churn tooling give a score; RepClub can beat them by explaining each flag and admitting when it lacks the data.",
+      "acceptanceCriteria": [
+        "A per-org model (logistic regression first) trains on visit cadence, booking cancellations and no-shows (LEAP-009), payment failures from stripe-webhook, tenure and amenity usage (LEAP-008), replacing the fixed increments in PredictiveAnalytics.tsx",
+        "Each flagged member shows the top contributing factors in plain words",
+        "The model reports backtest AUC per org; below a minimum history size the org sees 'Insufficient history' instead of scores",
+        "At-risk members can be pushed into a RetentionCampaignsManager journey (LEAP-006) or assigned to staff in one action",
+        "Outcomes are recorded: a flagged member who later cancels, stays or returns is logged so precision is measured, not asserted",
+        "Retraining runs on a schedule, and the model version and training date show next to the scores"
+      ],
+      "priority": 27,
+      "passes": false,
+      "notes": "Competitive rationale: Mindbody and ABC sell AI churn prediction as scores. Sources: https://athletechnews.com/mindbody-ai-features/ ; https://www.ausleisure.com.au/news/abc-fitness-acquires-replify-to-accelerate-agentic-ai-powered-fitness-operations . The draft's claim that both give 'no explanation' is unsourced and was dropped. Corrected line range and increment list from the file. Size: M. Success metric: backtest AUC per org, and retention of flagged members contacted vs not contacted."
+    },
+    {
+      "id": "LEAP-013",
+      "title": "RepClub MCP server so owners run the gym from Claude or ChatGPT",
+      "description": "As a gym owner, I want to ask an AI assistant 'who is at risk this week', 'what did the pool make last month' or 'move Tuesday's 6am class', and have it answer from RepClub and act only with my confirmation. Wodify's release notes list an MCP server in May 2026; the draft found no equivalent from Mindbody, Glofox or Zen Planner. An agent-facing API is cheap for a challenger and costly for a legacy suite to retrofit, and it makes RepClub the system other AI tools plug into. RepClub already has an api_keys table (migration 20250927194758) to authenticate it.",
+      "acceptanceCriteria": [
+        "A remote MCP server under functions.repclub.net authenticates with a per-org key from the existing api_keys table, scoped to that organization only",
+        "Read tools ship first: member search, at-risk list (LEAP-012), revenue by department, class schedule, attendance and lead pipeline, each reading through the same RLS-protected queries the UI uses",
+        "Write tools (create a class, message a member, add a lead) return a pending action the owner confirms in RepClub before it executes; a test asserts no write runs on the model's call alone",
+        "No tool exists to issue refunds, delete members or change billing, asserted by a test over the registered tool list with a counter-assertion that the check fires on a planted forbidden tool",
+        "Every tool call is written to an audit log (org, key, tool, arguments, result) viewable at /security",
+        "Public docs on repclub.net list each tool's inputs and outputs and show how to connect it to Claude and ChatGPT"
+      ],
+      "priority": 28,
+      "passes": false,
+      "notes": "Competitive rationale: Wodify's MCP Server reached release in May 2026 per its help centre. Sources: https://help.wodify.com/hc/en-us/articles/40794428452247-What-s-New-May-29th-2026 ; https://www.wodify.com/blog/ai-cant-run-your-gym-but-it-can-help-you-run-it-better . 'Mindbody, Glofox and Zen Planner have not' is an absence claim: re-check before using it in marketing. Not in any PRD file. Size: M. Success metric: orgs with an active MCP key, and weekly tool calls per connected org."
+    },
+    {
+      "id": "LEAP-014",
+      "title": "Versioned digital waivers and amenity-level door access on commodity hardware",
+      "description": "As a club owner, I want members and guests to e-sign the current waiver before their first visit, and the door to open only for members entitled to that space (a pool-only member cannot enter the courts), using hardware I can buy off the shelf. Today the waiver is a checkbox (waiver_signed in src/components/members/TabletSignupForm.tsx:26), and src/components/crm/conversion/AgreementStep.tsx stores a typed-name signature_data in membership_agreements with no template version, IP or per-amenity scope. There is no access-control integration (no Kisi, Brivo or Openpath code), although PRD.md's vision (lines 330-333) describes one. Check-in already has QR (CameraScanner), NFC (NfcScanner) and wallet passes (generate-wallet-pass); wiring those to doors with per-amenity rules suits multi-amenity clubs in a way studio software doesn't.",
+      "acceptanceCriteria": [
+        "Waivers are templated and versioned per org, signed in the portal, at /tablet-checkin or from an emailed link, and stored in liability_waivers with signer, timestamp, IP and the exact template version; the TabletSignupForm checkbox is replaced by this flow",
+        "Check-in refuses a member or guest with no current waiver for that amenity and shows staff why; publishing a new template version marks older signatures as needing re-sign",
+        "An access-control adapter interface with at least one commodity provider (e.g. Kisi or Brivo) unlocks a door on a valid QR, NFC or wallet-pass scan",
+        "Door rules come from amenity_entitlements (LEAP-008): an unentitled scan is refused and logged with the reason",
+        "Every unlock and refusal is written to check-in history with door, member and result",
+        "The owner's final-retry rule from LEAP-006 applies to door access exactly as it does to staffed check-in"
+      ],
+      "priority": 29,
+      "passes": false,
+      "notes": "Corrected from draft: 'no e-signature capture' was false; AgreementStep captures a typed signature. Door access is described in PRD.md vision but is not a PRD.json story. Competitive rationale: access control and waivers are standard in enterprise club software and add-ons in boutique tools; amenity-level door rules are an inference from vendor positioning. Sources: https://costbench.com/compare/glofox-vs-pushpress/ ; https://gymdesk.com/blog/how-to-switch-gym-software . Size: L. Success metric: % of visits through unstaffed door check-in at clubs with hardware, and 0 visits recorded without a current waiver."
+    },
+    {
+      "id": "LEAP-015",
+      "title": "Compliance pack for pool, childcare and facility operators",
+      "description": "As the operator of a club with a pool and childcare, I want pool chemical readings, lifeguard and staff certification expiry, childcare staff-to-child ratios and incident reports kept in one place and exportable for an inspector, so an inspection is a download rather than a binder hunt. Today the pool schema holds a chemical_balance_ok boolean and a maintenance chemicals_used JSONB (migration 20250920152354) but no timed readings; SafetyInspectionsPage.tsx, IncidentsPage.tsx, the certification tables and ChildcarePage.tsx exist but don't connect to each other or to staff scheduling. Small-gym tools don't market compliance, which makes it a moat for the multi-amenity niche.",
+      "acceptanceCriteria": [
+        "A pool_chemical_readings table logs readings (chlorine, pH and others the org configures) on a schedule; an out-of-range reading creates an incident and alerts the manager on duty",
+        "Staff certifications (lifeguard, CPR, childcare) carry expiry dates in the existing certification tables, and staff with an expired required certification cannot be scheduled for that role (tested)",
+        "Childcare check-in computes the live staff-to-child ratio against an org-configured limit and blocks a check-in that would breach it",
+        "Incidents link to the member, staff, amenity and any related inspection",
+        "An inspector export produces a dated PDF or CSV for a chosen period covering chemical readings, inspections, incidents and certification status",
+        "Missing readings show as dated gaps in the UI and the export, not omitted"
+      ],
+      "priority": 30,
+      "passes": false,
+      "notes": "Competitive rationale: studio-focused competitors (PushPress, Wodify, Gymdesk) market no amenity compliance; amenity suites are enterprise and quote-only. Inference from vendor positioning; validate in founding-club interviews. Sources: https://costbench.com/software/gym-management/gymdesk/ ; https://www.costbench.com/compare/pushpress-vs-wodify/ . Size: M. Success metric: % of amenity clubs logging chemical readings daily, and inspector exports per club per quarter."
+    },
+    {
+      "id": "LEAP-016",
+      "title": "Wellhub and ClassPass integrations with conversion-to-member attribution",
+      "description": "As a club that takes aggregator visitors, I want Wellhub and ClassPass bookings and check-ins to flow into RepClub and show which visitors later bought a membership, so aggregators become a measured lead source rather than a margin leak. RepClub has no aggregator code (no match for wellhub, gympass or classpass in src/), which rules it out for gyms that depend on one; PROJECT_ROADMAP.md lines 154-155 list 'ClassPass integration' and 'Gympass integration' as unchecked roadmap items with no story. src/pages/AttributionPage.tsx renders LeadAttributionManager from PlaceholderCRMComponents.tsx, a 'Coming Soon' stub (open story US-018), so attribution has to be built, not extended. Glofox already integrates with Wellhub.",
+      "acceptanceCriteria": [
+        "A Wellhub integration uses its booking API and check-in webhooks, enabled per org from src/pages/IntegrationsPage.tsx via IntegrationsManager, with credentials stored as references and never shown back in the UI",
+        "RepClub applies for ClassPass integration-partner status; until approval the ClassPass card states 'pending' rather than showing a working-looking toggle",
+        "Aggregator visits create or match a visitor record (src/pages/VisitorsPage.tsx) and appear in check-in history",
+        "LeadAttributionManager is implemented (replacing the stub) and attributes a later membership purchase to the aggregator, showing aggregator revenue and conversion-to-member rate per month",
+        "Aggregator payouts can be entered or imported so revenue per visit compares with direct bookings (LEAP-010), reading 'Unavailable' when no payout data exists",
+        "Disconnecting an integration stops new syncs and keeps history"
+      ],
+      "priority": 31,
+      "passes": false,
+      "notes": "Competitive rationale: Wellhub has a large partner network and Glofox integrates with it. Sources: https://support.gympass.com/hc/en-us/articles/39238265111187-Partner-Portal-Guide-The-management-platform-for-gyms-and-studios ; https://classpass.com/partners/integrations ; https://support.glofox.com/hc/en-us/articles/46792898120980 . The draft's 'one software integration per gym' rule and '100,000 partners' figure were not verified here; confirm against the Wellhub partner guide before relying on them. Already on PROJECT_ROADMAP.md as unchecked items, but not a PRD story, so kept. Size: L. Success metric: orgs with an aggregator connected, and aggregator-visitor-to-member conversion rate."
+    },
+    {
+      "id": "LEAP-017",
+      "title": "Workout programming and tracking for CrossFit and PT gyms",
+      "description": "As a CrossFit coach or personal trainer, I want to publish the day's workout, have members log scores and PRs from their phone, and see a whiteboard and leaderboard, so RepClub covers the training loop and not just the front desk. RepClub markets to CrossFit gyms and personal training (/solutions/crossfit-gyms, /solutions/personal-training), but src/components/mobile/MobileWorkoutTracker.tsx makes no Supabase calls and estimates calories as sessionTime * 0.2 (line 134), and no workout or exercise tables exist in supabase/migrations. PRD.md mentions WOD results and trainer programming only as vision (lines 422, 499). Wodify and TrueCoach win these buyers on programming.",
+      "acceptanceCriteria": [
+        "New tables (exercises, workouts, workout_sections, workout_results, personal_records) are added by migration with org-scoped RLS, and a test asserts one org cannot read another's results",
+        "Coaches build and schedule workouts per class or track and attach them to classes on /classes",
+        "Members log results in the PWA at /mobile/workout; MobileWorkoutTracker.tsx persists to workout_results and the calories formula is removed",
+        "PRs are detected per movement and shown on the member's profile, and a PR can trigger the opt-in milestone share card (LEAP-010)",
+        "A class whiteboard shows the day's results, with names only for members who opted in",
+        "Personal trainers assign programmes to individual clients and see completion, linked to /personal-training sessions"
+      ],
+      "priority": 32,
+      "passes": false,
+      "notes": "Competitive rationale: programming is the core loop Wodify and TrueCoach own. Sources: https://insider.fitt.co/press-release/wodify-and-hyrox-team-up-to-scale-one-of-the-fastest-growing-fitness-formats-in-the-world/ ; https://www.g2.com/compare/pushpress-vs-wodify ; https://www.g2.com/products/exercise-com/reviews/exercise-com-review-11349203 . This is parity for the CrossFit/PT vertical, not a differentiator, hence its low rank. Size: L. Success metric: weekly active members logging results per CrossFit/PT org, and win rate on CrossFit/PT deals."
+    },
+    {
+      "id": "LEAP-018",
+      "title": "Peer benchmarks: how your club compares with similar RepClub clubs",
+      "description": "As a club owner, I want to see my retention, revenue per member, visit-5 rate, no-show rate and dunning recovery next to the median of similar RepClub clubs (same vertical, size band and amenity mix), so I know which number to fix first. RepClub is multi-tenant on one schema, so the comparison is a query, not a data-sharing deal; every metric already exists once LEAP-006, LEAP-009 and LEAP-011 ship. A single-gym tool cannot show a peer median, and an owner who sees their gap every week has a reason to stay that a cheaper competitor cannot match. Nothing like this exists in RepClub or in any PRD file.",
+      "acceptanceCriteria": [
+        "A scheduled job computes per-org metrics (12-month retention, revenue per active member, visit-5 rate from LEAP-011, no-show rate from LEAP-009, recovered-revenue rate from LEAP-006) and writes peer-group medians and quartiles to a benchmarks table",
+        "A peer group is shown only when it has at least a configured minimum of orgs (e.g. 10); below that the panel reads 'Not enough similar clubs yet' and shows no number, and a test covers both sides of the threshold",
+        "No org-identifying value leaves its own tenant: benchmark rows carry only aggregates, and an RLS test asserts an org cannot read another org's per-org metric rows",
+        "Orgs opt in to contributing from OrganizationSettingsPage.tsx; an org that opts out sees no benchmarks (give-to-get), and the setting is shown in the privacy page",
+        "Each metric states its definition, peer-group size and computation date beside the number",
+        "An org whose own metric is unmeasured shows 'Unavailable - <reason>' for itself rather than 0, while the peer median still renders"
+      ],
+      "priority": 33,
+      "passes": false,
+      "notes": "Replacement for the draft's repositioning story, whose acceptance criteria were brand and copy polish (grep, canonical, README) now folded into LEAP-002. Competitive rationale: an inference; this review found no published peer-benchmark feature from Gymdesk, PushPress or Wodify, but did not verify every vendor, so do not claim exclusivity publicly until checked. Value grows with gym count, so it ranks below the revenue-path stories. Size: M. Success metric: weekly active owners viewing benchmarks, opt-in rate, and 90-day retention of orgs that view benchmarks vs those that don't."
+    },
+    {
+      "id": "LEAP-019",
+      "title": "Out-of-gym activity as a retention signal via Apple Health and Health Connect",
+      "description": "As a member, I want the workouts I do outside the club (runs, rides, home sessions) to count toward my goals in the RepClub portal. As the owner, I want to know when a member's overall activity drops, not only their visits, so the club reaches out before a lapse becomes a cancellation. Today RepClub reads only check-ins: a search of src/ for Apple Health, HealthKit, Health Connect, Garmin or wearables finds nothing outside a blog post. Myzone documents Apple Health and Health Connect sync for its own heart-rate product, which shows the data path is practical; feeding it into churn risk and activation is what a front-desk-only tool lacks.",
+      "acceptanceCriteria": [
+        "The member PWA offers opt-in import of workout summaries (type, duration, date, optional average heart rate) from Apple Health and Health Connect through a supported bridge, storing them in an external_activity table with org-scoped RLS",
+        "Consent is per member and revocable; revoking deletes imported rows, and a test asserts staff see only summaries, never raw health samples",
+        "Imported workouts count toward member goals and milestones in the portal, labelled as outside the club",
+        "The churn model (LEAP-012) uses 'visits down but outside activity steady' and 'all activity down' as separate features, and the factor text names which applied",
+        "Activation (LEAP-011) can count an outside workout toward the habit track if the owner enables it, off by default",
+        "Members without the integration are scored exactly as before, and the feature reads 'Not connected' rather than zero activity"
+      ],
+      "priority": 34,
+      "passes": false,
+      "notes": "Replacement slot freed by merging the draft's referral story into LEAP-010. Competitive rationale: the Playlist/EGYM merger is a bet on connected fitness data; Myzone documents Apple Health and Health Connect sync. Using outside activity as a churn signal is an inference, not a documented competitor gap. Sources: https://www.myzone.digital/app-support/how-do-i-sync-myzone-to-health-connect ; https://www.myzone.org/software ; https://athletechnews.com/playlist-egym-close-7-5-billion-merger-forming-fitness-tech-giant/ . Health data needs a privacy review before build. Size: L. Success metric: % of active members connected, and the churn model's AUC with vs without the outside-activity features."
+    },
+    {
+      "id": "LEAP-020",
+      "title": "Cross-gym discovery at repclub.net/find with fees disclosed up front",
+      "description": "As someone looking for a class or club near me, I want to search intro offers by city and activity across every RepClub gym and book directly. As a gym, I want to be listed free, with any new-client fee disclosed before I opt in and never applied to my existing members. Mindbody's consumer app is a two-sided network effect and its booking fees are a standing owner complaint. RepClub can build the honest version once enough gyms have public pages (LEAP-010); gym-platform-feature-modules.md mentions discovery only as an idea, with no story.",
+      "acceptanceCriteria": [
+        "repclub.net/find searches published intro offers from /g/<slug> pages by city, vertical and amenity, server-rendered or prerendered so results are indexable",
+        "Listing is opt-in per org from OrganizationSettingsPage.tsx and free by default",
+        "Any promoted placement or new-client fee is shown to the gym with its amount before opt-in and applies only to a person with no prior member, lead or visitor record at that gym; a test asserts an existing member is never charged a marketplace fee",
+        "Bookings made through /find carry source 'marketplace' into the CRM and attribution reports",
+        "Results show only offers bookable now; a full or past class is hidden, not shown as available",
+        "The feature stays dark until a configured minimum number of gyms in a metro are listed, so a near-empty directory is never public"
+      ],
+      "priority": 35,
+      "passes": false,
+      "notes": "Competitive rationale: Mindbody's marketplace is its moat and its fees a recurring complaint; ClassPass captures the same consumer at a steep studio discount. Sources: https://www.mindbodyonline.com/business/mindbody-app ; https://gymdesk.com/blog/mindbody-fees ; https://athletechnews.com/classpass-moves-to-ease-studios-complaints-new-partner-policies-protections/ . Needs gym density, so last. Size: XL. Success metric: marketplace bookings per listed gym per month, and the share of those bookers who become paying members."
     }
   ]
 }
